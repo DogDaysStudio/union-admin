@@ -3,8 +3,8 @@ import http from '../service'
 
 export const iamAuth = {
   // 获取图片验证码
-  iamAuthGetImageVerifyCode() {
-    return http.post<Res<Record<string, string>>>('/iam/auth/get-image-verifyCode')
+  iamAuthGetImgCode() {
+    return http.post<Res<Record<string, string>>>('/iam/auth/get-imgCode')
   },
 
   // 发送验证码 | object:{mobile:手机号}

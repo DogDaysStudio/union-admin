@@ -2,7 +2,7 @@
 
 ## 概述
 
-本文档为 Vue 3 + TypeScript 项目提供完整的开发规范，旨在确保代码一致性、可维护性和高质量。
+本文档为 Vue 3 + TypeScript + Element Plus + Axios + vue-request 项目提供完整的开发规范，旨在确保代码一致性、可维护性和高质量。
 
 ## 目录
 
@@ -168,7 +168,7 @@ const increment = () => {
   <div class="component-name">
     <h1>{{ props.title }}</h1>
     <p>{{ props.subtitle }}</p>
-    <button @click="increment">Count: {{ count }}</button>
+    <el-button @click="increment">Count: {{ count }}</el-button>
   </div>
 </template>
 
