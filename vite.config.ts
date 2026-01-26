@@ -17,15 +17,23 @@ export default defineConfig({
     vueDevTools(),
     tailwindcss(),
     AutoImport({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver({importStyle: 'sass'})],
     }),
     Components({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver({importStyle: 'sass'})],
     }),
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // 全局注入自定义变量文件
+        additionalData: `@use "@/assets/styles/element/variables.scss" as *;`,
+      },
     },
   },
 })

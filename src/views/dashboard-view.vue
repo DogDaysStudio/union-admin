@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import {reactive} from 'vue'
+import {useRouter} from 'vue-router'
+// import styles from '@/assets/styles/element/index.scss'
+// console.log('primary', styles)
+
 import {defineSchema, defineField} from '@/utils/form-schema'
+
+const router = useRouter()
 
 const formState = reactive({
   name: '',
@@ -31,7 +37,7 @@ const formSchema = defineSchema({
       label: '姓名姓名姓名姓名',
       prop: 'select',
       placeholder: '请选择姓名',
-      options: [{value: '1a', label: '1b'}],
+      options: [{value: '1a', lable: '1b'}],
     }),
     defineField.Checkbox({
       label: '姓名',
@@ -77,6 +83,8 @@ const formSchema = defineSchema({
       <template #header>数据筛选</template>
       <schema-form :schema="formSchema" :model="formState" @finish="handleFinish"></schema-form>
     </el-card>
+
+    <el-button @click="router.push('home')">跳转</el-button>
   </div>
 </template>
 

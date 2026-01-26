@@ -1,5 +1,6 @@
 import './assets/main.css'
 import 'element-plus/dist/index.css'
+import './assets/styles/element/override.scss'
 
 import {createApp} from 'vue'
 import {setGlobalOptions} from 'vue-request'

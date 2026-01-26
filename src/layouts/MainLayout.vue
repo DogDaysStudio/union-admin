@@ -1,18 +1,24 @@
 <template>
   <el-container class="h-screen">
-    <el-header class="h-16 p-0">
+    <el-header class="p-0!">
       <AppHeader />
     </el-header>
     <el-container>
-      <el-aside width="200px" class="bg-[#001529]">
+      <el-aside width="200px">
         <AppSidebar />
       </el-aside>
       <el-main class="p-0">
-        <el-tabs v-model="activeTab" type="card" closable @tab-remove="handleTabRemove">
+        <el-tabs
+          :model-value="route.path"
+          type="card"
+          closable
+          @tab-remove="handleTabRemove"
+          @tab-change="handleTabChange"
+        >
           <el-tab-pane
             v-for="tab in tabsStore.tabs"
             :key="tab.path"
-            :label="String(tab.meta.title)"
+            :label="tab.meta.title"
             :name="tab.path"
           />
         </el-tabs>
@@ -27,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, onUnmounted} from 'vue'
+import {onMounted, onUnmounted} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useTabStore} from '@/stores/tabs'
 import type {TabPaneName} from 'element-plus'
@@ -38,15 +44,15 @@ const route = useRoute()
 const router = useRouter()
 const tabsStore = useTabStore()
 
-const activeTab = computed({
-  get: () => route.path,
-  set: (value: string) => {
-    router.push(value)
-  },
-})
-
 const handleTabRemove = (name: TabPaneName) => {
   tabsStore.removeTab(name as string)
+}
+
+// 标注 name 的类型为 tabs 的 @tab-change 事件的入参
+const handleTabChange = (name: TabPaneName) => {
+  console.log('name', name)
+
+  router.push(name as string)
 }
 
 // 存储路由守卫的移除函数

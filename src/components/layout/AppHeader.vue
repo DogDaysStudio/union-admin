@@ -1,11 +1,11 @@
 <template>
   <div class="flex items-center bg-white shadow-[0_2px_8px_rgba(0,0,0,0.09)]">
-    <div class="flex flex-row justify-center" style="width: 200px">
+    <div class="flex flex-row justify-center items-center" style="width: 200px">
       <el-icon class="text-lg"><Compass /></el-icon>
       <span class="ml-2 font-bold">深安居运营平台</span>
     </div>
     <el-menu
-      class="flex-1 border-none"
+      class="flex-1 border-none!"
       mode="horizontal"
       :default-active="activeKey"
       @select="handleMenuSelect"

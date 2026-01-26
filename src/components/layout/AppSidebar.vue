@@ -1,14 +1,18 @@
 <template>
-  <div class="h-full bg-[#001529]">
+  <div class="h-full">
     <el-menu
       mode="vertical"
       :default-active="activeKey"
       :default-openeds="defaultOpenKeys"
-      background-color="#001529"
-      text-color="#fff"
-      active-text-color="#1890ff"
-      class="h-full w-[200px] border-none"
+      class="h-full"
       @select="handleMenuSelect"
+      style="
+        --el-menu-bg-color: #1f283e;
+        --el-menu-hover-bg-color: #1f283e;
+        --el-menu-text-color: #fff;
+        --el-menu-active-color: #fff;
+        width: 200px;
+      "
     >
       <template v-for="item in sidebarItems" :key="item.key">
         <el-sub-menu v-if="item.children" :index="item.key">

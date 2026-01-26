@@ -57,6 +57,7 @@
     "npm-run-all2": "^8.0.4",
     "oxlint": "~1.38.0",
     "prettier": "3.7.4",
+    "sass": "^1.97.3",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
     "unplugin-auto-import": "^21.0.0",
