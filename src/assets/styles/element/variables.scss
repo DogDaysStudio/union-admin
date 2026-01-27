@@ -1,10 +1,30 @@
-:root {
-  --el-color-primary: var(--color-primary);
-}
-
-// $primary: var(--el-color-primary);
-
-// :export {
-//   primary: var(--el-color-primary);
-//   space: 8px;
+// :root {
+//   --el-color-primary: var(--color-primary);
+//   // 基于主色生成的完整颜色变体
+//   --el-color-primary-light-9: #fff6ed;
+//   --el-color-primary-light-8: #ffe6c7;
+//   --el-color-primary-light-7: #ffd6a1;
+//   --el-color-primary-light-6: #ffc67b;
+//   --el-color-primary-light-5: #ffb655;
+//   --el-color-primary-light-4: #ffa62f;
+//   --el-color-primary-light-3: #ff9e26;
+//   --el-color-primary-light-2: #ff961d;
+//   --el-color-primary-light-1: #ff8e14;
+//   --el-color-primary-dark-1: #e8882e;
+//   --el-color-primary-dark-2: #d17a2a;
+//   --el-color-primary-dark-3: #ba6c26;
+//   --el-color-primary-dark-4: #a35e22;
+//   --el-color-primary-dark-5: #8c501e;
+//   --el-color-primary-dark-6: #75421a;
+//   --el-color-primary-dark-7: #5e3416;
+//   --el-color-primary-dark-8: #472612;
+//   --el-color-primary-dark-9: #30180e;
 // }
+
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      'base': #0e61d7,
+    ),
+  )
+);

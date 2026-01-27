@@ -2,6 +2,7 @@ import axios from 'axios'
 import {enhance} from 'foca-axios'
 import {baseUrl} from '@/common/config'
 import {useUserStore} from '@/stores/user'
+import {ElMessage} from 'element-plus'
 
 const instance = axios.create({
   baseURL: baseUrl,
@@ -22,19 +23,21 @@ http.interceptors.response.use(
     return response
   },
   error => {
+    const status = error.response?.data?.code || error.response?.status
+
     const userStore = useUserStore()
 
     // 处理未授权错误，自动登出
-    if (error.response?.status === 401 || error.response?.data?.code === 401) {
+    if (status === 401) {
       // 调用登出方法
       userStore.logout()
 
       // 显示错误信息
-      if (error.response?.data?.msg) {
-        console.error('登录已过期，请重新登录:', error.response.data.msg)
-      } else {
-        console.error('登录已过期，请重新登录')
-      }
+      ElMessage.error(
+        `登录已过期，请重新登录${error.response?.data?.msg ? `: ${error.response?.data?.msg}` : ''}`
+      )
+    } else {
+      ElMessage.error(error.response?.data?.msg || error.message || '请求失败')
     }
 
     return Promise.reject(error)

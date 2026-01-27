@@ -8,12 +8,6 @@ interface Res<T = any> {
 }
 
 interface ApiType {
-  /* 【企业微信】
-  // GET认证
-  iamWeworkCallback() {return http.post<Res<>>('/iam/wework/callback')},
-  */
-  '/iam/wework/callback': {}
-
   /* 【登录认证】
   // 设置密码 | object:{loginPwdOrigin:原登录密码,loginPwd:新登录密码}
   iamUserAuthUpdatePwd(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/user-auth/update-pwd', payload)},
@@ -118,9 +112,9 @@ interface ApiType {
 
   /* 【登录认证】
   // 获取SSO票据 | object:{appId:应用Id}
-  iamAuthSsoTicket(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth/sso-ticket', payload)},
+  iamAuthSsoTicket(payload: Record<string, any>) {return http.post<Res<string>>('/iam/auth/sso-ticket', payload)},
   */
-  '/iam/auth/sso-ticket': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth/sso-ticket': {Req: Record<string, any>; Res: string}
 
   /* 【登录认证】
   // 发送验证码 | object:{mobile:手机号}

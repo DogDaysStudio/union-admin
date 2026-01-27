@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import {ref, reactive, onMounted, onUnmounted, useTemplateRef} from 'vue'
-import {useRouter} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import {iamAuth} from '@/service/api/iamAuth'
 import {ElMessage} from 'element-plus'
 import {useRequest} from 'vue-request'
+import {useUserStore} from '@/stores/user'
 
 const router = useRouter()
+const route = useRoute()
+const userStore = useUserStore()
+
+const appId = route.query.appId as string | undefined
+const redirectUrl = route.query.redirectUrl as string | undefined
 
 // 表单数据
 const formData = reactive<AuthLoginDTO>({
@@ -117,49 +123,43 @@ const {runAsync, loading} = useRequest(
   }
 )
 
+// 附带 ticket 跳转至指定页面
+const redirectWithTicket = async (appId: string, redirectUrl: string) => {
+  const {data} = await iamAuth.iamAuthSsoTicket({appId})
+  const url = new URL(redirectUrl)
+  url.searchParams.set('ticket', data)
+  location.href = url.toString()
+}
+
 // 登录方法
 const handleLogin = async () => {
   await formRef.value.validate()
 
-  try {
-    if (formData.loginType === 'PWD') {
-      await runAsync({
-        loginType: 'PWD',
-        loginAccount: formData.loginAccount,
-        loginPwd: formData.loginPwd,
-        imgId: formData.imgId,
-        imgCode: formData.imgCode,
-      })
-    } else if (formData.loginType === 'SMS') {
-      await runAsync({
-        loginType: 'SMS',
-        loginAccount: formData.loginAccount,
-        verifyCode: formData.verifyCode,
-        imgId: formData.imgId,
-        imgCode: formData.imgCode,
-      })
-    }
+  if (formData.loginType === 'PWD') {
+    await runAsync({
+      loginType: 'PWD',
+      loginAccount: formData.loginAccount,
+      loginPwd: formData.loginPwd,
+      imgId: formData.imgId,
+      imgCode: formData.imgCode,
+    })
+  } else if (formData.loginType === 'SMS') {
+    await runAsync({
+      loginType: 'SMS',
+      loginAccount: formData.loginAccount,
+      verifyCode: formData.verifyCode,
+      imgId: formData.imgId,
+      imgCode: formData.imgCode,
+    })
+  }
 
+  if (appId && redirectUrl) {
+    await redirectWithTicket(appId, redirectUrl)
+  } else {
     // 跳转至首页
     router.push('/dashboard')
-    ElMessage.success('登录成功')
-  } catch (error: any) {
-    console.error('登录失败', error)
-    // 显示错误信息
-    if (error.message) {
-      ElMessage.error(error.message)
-    } else {
-      ElMessage.error(
-        formData.loginType === 'PWD'
-          ? '登录失败，请检查用户名、密码和验证码是否正确'
-          : '登录失败，请检查手机号和验证码是否正确'
-      )
-    }
-    // 重新生成图形验证码
-    if (formData.loginType === 'PWD') {
-      generateCaptcha()
-    }
   }
+  ElMessage.success('登录成功')
 }
 
 // 获取短信验证码
@@ -175,24 +175,19 @@ const getVerifyCode = async () => {
     return
   }
 
-  try {
-    // 调用发送验证码API
-    await iamAuth.iamAuthSendVerifyCode({mobile: formData.loginAccount})
-    ElMessage.success('验证码发送成功')
+  // 调用发送验证码API
+  await iamAuth.iamAuthSendVerifyCode({mobile: formData.loginAccount})
+  ElMessage.success('验证码发送成功')
 
-    // 开始倒计时
-    countDown.value = 60
-    timer.value = setInterval(() => {
-      countDown.value--
-      if (countDown.value <= 0) {
-        clearInterval(timer.value!)
-        timer.value = null
-      }
-    }, 1000)
-  } catch (error: any) {
-    console.error('发送验证码失败', error)
-    ElMessage.error(error.message || '验证码发送失败，请稍后重试')
-  }
+  // 开始倒计时
+  countDown.value = 60
+  timer.value = setInterval(() => {
+    countDown.value--
+    if (countDown.value <= 0) {
+      clearInterval(timer.value!)
+      timer.value = null
+    }
+  }, 1000)
 }
 
 // 忘记密码
@@ -203,7 +198,11 @@ const handleForgotPassword = () => {
 
 // 页面加载时生成验证码
 onMounted(() => {
-  generateCaptcha()
+  if (userStore.token && appId && redirectUrl) {
+    redirectWithTicket(appId, redirectUrl)
+  } else {
+    generateCaptcha()
+  }
 })
 
 // 清理定时器

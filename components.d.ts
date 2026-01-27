@@ -46,6 +46,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SchemaForm: typeof import('./src/components/form/SchemaForm.vue')['default']
+    SchemaTable: typeof import('./src/components/table/SchemaTable.vue')['default']
   }
 }
 
@@ -85,4 +86,5 @@ declare global {
   const RouterLink: typeof import('vue-router')['RouterLink']
   const RouterView: typeof import('vue-router')['RouterView']
   const SchemaForm: typeof import('./src/components/form/SchemaForm.vue')['default']
+  const SchemaTable: typeof import('./src/components/table/SchemaTable.vue')['default']
 }
