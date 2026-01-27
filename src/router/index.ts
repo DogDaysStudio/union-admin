@@ -1,37 +1,38 @@
-import {createRouter, createWebHistory} from 'vue-router'
-import MainLayout from '@/layouts/MainLayout.vue'
-// import {useUserStore} from '@/stores/user'
+import {createRouter, createWebHistory, type RouteRecordRaw} from 'vue-router'
+import {useModuleStore} from '@/stores/module'
+// 导入各模块路由
+import data from './data'
+import asset from './asset'
+import lease from './lease'
+import property from './property'
+import iot from './iot'
+
+export const routes: RouteRecordRaw[] = [
+  // 登录路由
+  {
+    path: '/login',
+    name: 'login',
+    meta: {title: '登录' /*, requiresAuth: false*/},
+    component: () => import('@/views/login-view.vue'),
+  },
+
+  {path: '/', redirect: '/data-center'},
+  ...data,
+  ...asset,
+  ...lease,
+  ...property,
+  ...iot,
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    // 登录路由
-    {
-      path: '/login',
-      name: 'login',
-      meta: {title: '登录' /*, requiresAuth: false*/},
-      component: () => import('@/views/login-view.vue'),
-    },
-    // 主路由
-    {
-      path: '/',
-      redirect: '/dashboard',
-      component: MainLayout,
-      // meta: {requiresAuth: true},
-      children: [
-        {
-          path: '/dashboard',
-          meta: {title: '数据看板'},
-          component: () => import('../views/dashboard-view.vue'),
-        },
-        {
-          path: '/home',
-          meta: {title: '主页'},
-          component: () => import('../views/home-view.vue'),
-        },
-      ],
-    },
-  ],
+  routes,
+})
+
+// 路由守卫
+router.afterEach(to => {
+  const moduleStore = useModuleStore()
+  moduleStore.updateModuleFromRoute(to.path)
 })
 
 // 路由守卫

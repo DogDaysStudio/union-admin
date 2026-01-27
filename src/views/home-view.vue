@@ -1,27 +1,27 @@
 <script setup lang="tsx">
-import {defineComponent, ref} from 'vue'
+import {ref} from 'vue'
 
 const name2 = ref('张三')
 
-const DemoView = defineComponent({
-  props: {
-    gender: {type: String},
-  },
-  setup(props, ctx) {
-    console.log('props', props, ctx)
-    return () => {
-      console.log('ctx.slots.default?.({go: 2})', ctx.slots.default?.())
+// const DemoView = defineComponent({
+//   props: {
+//     gender: {type: String},
+//   },
+//   setup(props, ctx) {
+//     console.log('props', props, ctx)
+//     return () => {
+//       console.log('ctx.slots.default?.({go: 2})', ctx.slots.default?.())
 
-      return (
-        <div>
-          {props.gender}
-          <el-button type='primary'>按钮</el-button>
-          {/* {ctx.slots.default?.({go: 2})} */}
-        </div>
-      )
-    }
-  },
-})
+//       return (
+//         <div>
+//           {props.gender}
+//           <el-button type='primary'>按钮</el-button>
+//           {/* {ctx.slots.default?.({go: 2})} */}
+//         </div>
+//       )
+//     }
+//   },
+// })
 </script>
 
 <template>

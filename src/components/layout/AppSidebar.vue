@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted, onUpdated, ref, useTemplateRef} from 'vue'
-
+import {computed, ref, onMounted, onUnmounted} from 'vue'
 import {useRouter} from 'vue-router'
-
-const router = useRouter()
+import {useModuleStore} from '@/stores/module'
+import {routes} from '@/router'
 
 interface MenuItem {
   label: string
@@ -11,50 +10,56 @@ interface MenuItem {
   children?: MenuItem[]
 }
 
-const menuRef = useTemplateRef<typeof ElMenu>('menuRef')
+const router = useRouter()
+const moduleStore = useModuleStore()
 
-// onMounted(() => {
-//   setTimeout(() => {
-//     menuRef.value.updateActiveIndex('/resource-management/property-managem3ent')
-//   }, 3000)
-//   // console.log(menuRef.value)
-// })
+// 从路由生成菜单结构
+const generateMenuFromRoutes = (modulePath: string): MenuItem[] => {
+  // 找到对应模块的路由
+  const moduleRoute = routes.find(route => route.path === modulePath)
 
-const sidebarItems = ref<MenuItem[]>([
-  {
-    label: '资源管理',
-    key: '/dashboard2',
-    children: [
-      {label: '盘点任务', key: '/resource-management/inventory-tasks'},
-      {label: '工作台', key: '/dashboard/a2'},
-      {label: '盘点计划', key: '/resource-management/inventory-plans'},
-      {label: '租控管理', key: '/resource-management/lease-control'},
-      {
-        label: '房产项目',
-        key: '/resource-management/property-projects',
-        children: [
-          {label: '房产资料(商业)', key: '/resource-management/property-projects/commercial'},
-          {label: '房产资料(住宅)', key: '/resource-management/property-projects/residential'},
-          {label: '房产资料(公寓)', key: '/resource-management/property-projects/apartment'},
-          {label: '房产资料(菜场)', key: '/resource-management/property-projects/market'},
-        ],
-      },
-      {label: '物管项目', key: '/resource-management/property-management'},
-      {label: '产权房屋', key: '/resource-management/property-rights'},
-    ],
-  },
-  {
-    label: '大屏',
-    key: '/dashboard',
-  },
-  {
-    label: '主页',
-    key: '/home',
-  },
-])
+  if (!moduleRoute || !moduleRoute.children) {
+    return []
+  }
 
-const activeKey = ref('/dashboard/a2')
-const defaultOpenKeys = ref(['/dashboard'])
+  // 递归转换路由为菜单，确保生成完整路径
+  const convertRouteToMenu = (route: any, parentPath: string = ''): MenuItem => {
+    // 生成完整路径
+    const fullPath = parentPath ? `${parentPath}/${route.path}` : route.path
+
+    const menuItem: MenuItem = {
+      label: route.meta?.title || '',
+      key: fullPath,
+    }
+
+    if (route.children && route.children.length > 0) {
+      menuItem.children = route.children.map((child: any) => convertRouteToMenu(child, fullPath))
+    }
+
+    return menuItem
+  }
+
+  return moduleRoute.children.map((child: any) => convertRouteToMenu(child, moduleRoute.path))
+}
+
+// 模块路径映射
+const modulePathMap = {
+  data: '/data-center',
+  asset: '/asset',
+  lease: '/lease',
+  property: '/property',
+  iot: '/iot',
+}
+
+// 根据当前激活的模块获取对应的菜单
+const sidebarItems = computed(() => {
+  const currentModule = moduleStore.activeModule
+  const modulePath =
+    modulePathMap[currentModule as keyof typeof modulePathMap] || modulePathMap.data
+  return generateMenuFromRoutes(modulePath)
+})
+
+const activeKey = ref(router.currentRoute.value.path)
 
 const handleMenuSelect = (key: string) => {
   activeKey.value = key
@@ -63,7 +68,6 @@ const handleMenuSelect = (key: string) => {
 let subscription: ReturnType<typeof router.afterEach> = null
 onMounted(() => {
   subscription = router.afterEach(to => {
-    // menuRef.value.updateActiveIndex(to.path)
     activeKey.value = to.path
   })
 })
@@ -76,7 +80,6 @@ onUnmounted(() => {
 <template>
   <div class="h-full">
     <el-menu
-      ref="menuRef"
       mode="vertical"
       :default-active="activeKey"
       :default-openeds="

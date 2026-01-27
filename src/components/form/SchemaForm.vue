@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import get from 'lodash.get'
 import set from 'lodash.set'
 import {type FormProps} from 'element-plus'
@@ -16,11 +16,11 @@ const {
      * 表单 Schema
      */
     schema: FormSchema<FieldConfig<any>[]>
-  } & Partial<FormProps>
+  } & Partial<Omit<FormProps, 'model'>> & {model: T}
 >()
 
 const emit = defineEmits<{
-  finish: []
+  finish: [model: T]
   reset: []
 }>()
 
@@ -35,7 +35,7 @@ const submit = async () => {
   // }
   // todo: try catch
   await formRef.value?.validate()
-  emit('finish')
+  emit('finish', model)
 }
 const reset = () => {
   formRef.value?.resetFields()
@@ -51,8 +51,7 @@ const reset = () => {
         <el-col
           v-for="(
             {
-              // eslint-disable-next-line vue/no-unused-vars
-              valuePropName = 'model-value',
+              // valuePropName = 'model-value',
               component,
               // componentProps,
               span = 8,
@@ -96,7 +95,7 @@ const reset = () => {
           <el-form-item>
             <el-space>
               <el-button @click="reset">重置</el-button>
-              <el-button type="primary" @click="submit">提交</el-button>
+              <el-button type="primary" @click="submit">查询</el-button>
             </el-space>
           </el-form-item>
         </el-col>

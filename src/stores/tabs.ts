@@ -24,7 +24,7 @@ export const useTabStore = defineStore('tab', {
       this.tabs = this.tabs.filter(item => item.path !== path)
     },
   },
-  // persist: true,
+  persist: true,
 })
 
 export function getComponentName(route: TabRoute) {

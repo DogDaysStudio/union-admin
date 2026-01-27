@@ -35,10 +35,9 @@ export type FormSchema<Fields extends FieldConfig<any>[]> = {
 export type FieldConfig<T extends Component = Component> = {
   component: T
   /**
-   * @default 'value'
+   * @default 'model-value'
    */
-  valuePropName?: string
-  // componentProps?: Partial<ComponentSpecificProps<T>> // 可以直接在 field 中设置组件 props，不再需要 componentProps
+  // valuePropName?: string
   formItemProps?: FormItemProps
   colProps?: ColProps
   // 可以添加其他通用属性
@@ -72,7 +71,7 @@ export function defineField<T extends Component>(field: FieldConfig<T>): FieldCo
 defineField.Input = (
   field: Omit<FieldConfig<typeof ElInput>, 'component'>
 ): FieldConfig<typeof ElInput> => {
-  return defineField({component: ElInput, ...field})
+  return defineField({component: ElInput, placeholder: '请输入', ...field})
 }
 
 defineField.Checkbox = (
@@ -96,7 +95,7 @@ defineField.DatePicker = (
 defineField.Select = (
   field: Omit<FieldConfig<typeof ElSelect>, 'component'>
 ): FieldConfig<typeof ElSelect> => {
-  return defineField({component: ElSelect, ...field})
+  return defineField({component: ElSelect, placeholder: '请选择', ...field})
 }
 
 defineField.Radio = (
@@ -114,11 +113,11 @@ defineField.RadioGroup = (
 defineField.AutoComplete = (
   field: Omit<FieldConfig<typeof ElAutocomplete>, 'component'>
 ): FieldConfig<typeof ElAutocomplete> => {
-  return defineField({component: ElAutocomplete, ...field})
+  return defineField({component: ElAutocomplete, placeholder: '请输入', ...field})
 }
 
 defineField.Cascader = (
   field: Omit<FieldConfig<typeof ElCascader>, 'component'>
 ): FieldConfig<typeof ElCascader> => {
-  return defineField({component: ElCascader, ...field})
+  return defineField({component: ElCascader, placeholder: '请选择', ...field})
 }

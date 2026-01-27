@@ -157,7 +157,7 @@ const handleLogin = async () => {
     await redirectWithTicket(appId, redirectUrl)
   } else {
     // 跳转至首页
-    router.push('/dashboard')
+    router.push('/')
   }
   ElMessage.success('登录成功')
 }

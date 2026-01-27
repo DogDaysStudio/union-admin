@@ -84,7 +84,7 @@ const formSchema = defineSchema({
       <schema-form :schema="formSchema" :model="formState" @finish="handleFinish"></schema-form>
     </el-card>
 
-    <el-button @click="router.push('home')">跳转</el-button>
+    <el-button @click="router.push('analysis')">跳转</el-button>
   </div>
 </template>
 

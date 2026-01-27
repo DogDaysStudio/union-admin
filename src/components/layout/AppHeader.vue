@@ -34,25 +34,30 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
+import {computed} from 'vue'
 import {Compass, User, ArrowDown} from '@element-plus/icons-vue'
+import {useModuleStore} from '@/stores/module'
 
-interface MenuItem {
-  label: string
-  key: string
-}
+const moduleStore = useModuleStore()
 
-const menuItems = ref<MenuItem[]>([
-  {label: '数据', key: '/data-center'},
-  {label: '资产', key: '/asset'},
-  {label: '租赁', key: '/lease'},
-  {label: '物业', key: '/property'},
-  {label: 'IOT', key: '/iot'},
-])
+const menuItems = [
+  {label: '数据', key: '/data-center', module: 'data'},
+  {label: '资产', key: '/asset', module: 'asset'},
+  {label: '租赁', key: '/lease', module: 'lease'},
+  {label: '物业', key: '/property', module: 'property'},
+  {label: 'IOT', key: '/iot', module: 'iot'},
+]
 
-const activeKey = ref(menuItems.value[0].key)
+const activeKey = computed(() => {
+  const currentModule = moduleStore.activeModule
+  const menuItem = menuItems.find(item => item.module === currentModule)
+  return menuItem ? menuItem.key : menuItems[0].key
+})
 
 const handleMenuSelect = (key: string) => {
-  activeKey.value = key
+  const menuItem = menuItems.find(item => item.key === key)
+  if (menuItem) {
+    moduleStore.setActiveModule(menuItem.module)
+  }
 }
 </script>
