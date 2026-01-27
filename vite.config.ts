@@ -8,6 +8,7 @@ import tailwindcss from '@tailwindcss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
+import GenerateComponentName from 'unplugin-generate-component-name/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -21,6 +22,17 @@ export default defineConfig({
     }),
     Components({
       resolvers: [ElementPlusResolver({importStyle: 'sass'})],
+    }),
+    GenerateComponentName({
+      include: ['src/views/**/*.vue'],
+      enter: [
+        {
+          include: ['src/views/**/*.vue'],
+          exclude: ['src/views/**/components/**/*.vue'],
+          genComponentName: ({attrName, dirname, originalName}) =>
+            attrName ?? `${dirname}-${originalName}`,
+        },
+      ],
     }),
   ],
   resolve: {

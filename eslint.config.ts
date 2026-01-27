@@ -41,5 +41,14 @@ export default defineConfigWithVueTs(
     },
   },
 
+  {
+    name: 'app/views-no-multi-word-component-names',
+    files: ['src/views/**/*.vue'],
+    ignores: ['src/views/**/components/**/*.vue'],
+    rules: {
+      'vue/multi-word-component-names': 'off',
+    },
+  },
+
   ...pluginOxlint.configs['flat/recommended']
 )

@@ -10,7 +10,7 @@ const dataRoutes: RouteRecordRaw[] = [
       {
         path: 'dashboard',
         meta: {title: '数据看板'},
-        component: () => import('@/views/dashboard-view.vue'),
+        component: () => import('@/views/dashboard.vue'),
       },
       {
         path: 'analysis',

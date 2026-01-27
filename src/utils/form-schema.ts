@@ -5,6 +5,7 @@ import {
   ElCheckboxGroup,
   ElDatePicker,
   ElInput,
+  ElInputNumber,
   ElRadio,
   ElRadioGroup,
   ElSelect,
@@ -37,9 +38,8 @@ export type FieldConfig<T extends Component = Component> = {
   /**
    * @default 'model-value'
    */
-  // valuePropName?: string
-  formItemProps?: FormItemProps
-  colProps?: ColProps
+  formItemProps?: Partial<FormItemProps>
+  colProps?: Partial<ColProps>
   // 可以添加其他通用属性
 } & Pick<FormItemProps, 'label' | 'prop' | 'rules' | 'required'> &
   Partial<Pick<ColProps, 'span'>> &
@@ -120,4 +120,10 @@ defineField.Cascader = (
   field: Omit<FieldConfig<typeof ElCascader>, 'component'>
 ): FieldConfig<typeof ElCascader> => {
   return defineField({component: ElCascader, placeholder: '请选择', ...field})
+}
+
+defineField.InputNumber = (
+  field: Omit<FieldConfig<typeof ElInputNumber>, 'component'>
+): FieldConfig<typeof ElInputNumber> => {
+  return defineField({component: ElInputNumber, ...field})
 }

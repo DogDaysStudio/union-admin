@@ -9,6 +9,7 @@
 - [代码风格规范](#代码风格规范)
 - [TypeScript 规范](#typescript-规范)
 - [Vue 组件规范](#vue-组件规范)
+- [页面请求规范](#页面请求规范)
 - [CSS 样式规范](#css-样式规范)
 - [项目架构规范](#项目架构规范)
 - [Git 规范](#git-规范)
@@ -235,6 +236,59 @@ const user = reactive<{name: string; age: number}>({
 // 大型数据（推荐使用 shallowRef）
 const largeData = shallowRef({
   /* 大量数据 */
+})
+```
+
+---
+
+## 页面请求规范
+
+### 基本规则
+
+1. **统一使用 vue-request**：项目中所有页面请求必须使用 `vue-request` 库进行管理
+2. **导入规范**：在组件中导入 `useRequest` 函数
+3. **类型安全**：确保请求参数和返回值都有正确的 TypeScript 类型定义
+
+### 核心功能使用
+
+#### Loading 状态管理
+
+- 使用 `useRequest` 返回的 `loading` 状态来控制 UI 加载状态
+- 在表单提交、数据获取等操作中，使用 `:loading` 属性绑定到按钮或其他 UI 元素
+
+```vue
+<template>
+  <el-button :loading="loading" @click="handleLogin">登录</el-button>
+</template>
+
+<script setup lang="ts">
+import {useRequest} from 'vue-request'
+import {iamAuth} from '@/service/api/iamAuth'
+
+const {runAsync, loading} = useRequest(iamAuth.iamAuthLogin)
+
+const handleLogin = async () => {
+  await runAsync({
+    /* 登录参数 */
+  })
+}
+</script>
+```
+
+#### 节流和防抖
+
+- **节流 (throttle)**：适用于频繁触发的操作，如获取验证码、搜索输入等
+- **防抖 (debounce)**：适用于需要等待用户输入完成后再执行的操作
+
+```typescript
+// 节流示例 - 验证码获取
+const reqImgCode = useRequest(iamAuth.iamAuthGetImgCode, {
+  throttleInterval: 500, // 500ms 内最多执行一次
+})
+
+// 防抖示例 - 搜索
+const reqSearch = useRequest(searchApi, {
+  debounceInterval: 300, // 300ms 内无操作才执行
 })
 ```
 

@@ -13,7 +13,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'login',
     meta: {title: '登录' /*, requiresAuth: false*/},
-    component: () => import('@/views/login-view.vue'),
+    component: () => import('@/views/login.vue'),
   },
 
   {path: '/', redirect: '/data-center'},
