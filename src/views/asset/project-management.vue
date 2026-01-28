@@ -2,6 +2,7 @@
 import {defineField, defineSchema} from '@/utils/form-schema'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
+import {ElMessage, ElMessageBox} from 'element-plus'
 import {iamCommon} from '@/service/api/iamCommon'
 import {amsAsset} from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
@@ -16,6 +17,14 @@ const cityOptions = reactive<PairModel[]>([])
 
 // 列表数据
 const projectList = useRequest(amsAsset.amsAssetProjectList, {
+  throttleInterval: 500,
+})
+// 修改数据状态
+const toggleStatusProject = useRequest(amsAsset.amsAssetProjectEnable, {
+  throttleInterval: 500,
+})
+// 删除数据
+const deleteProject = useRequest(amsAsset.amsAssetProjectDelete, {
   throttleInterval: 500,
 })
 
@@ -87,8 +96,8 @@ const formSchema = defineSchema({
       label: '状态',
       prop: 'enable',
       options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
+        {value: '0', label: '禁用'},
+        {value: '1', label: '启用'},
       ],
       clearable: true,
     }),
@@ -139,6 +148,55 @@ const addProject = () => {
   router.push('/asset/management/add')
 }
 
+// 修改状态
+const toggleStatus = (projectId: string, enable: number): void => {
+  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}项目?`, '确认提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      const {code} = await toggleStatusProject.runAsync({projectId, enable: enable ? 0 : 1})
+      if (code === 200) {
+        getData()
+        ElMessage({
+          type: 'success',
+          message: '修改成功',
+        })
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '已取消操作',
+      })
+    })
+}
+
+// 删除
+const deleteData = (projectId: string): void => {
+  ElMessageBox.confirm(`是否确定删除项目?`, '确认提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      const {code} = await deleteProject.runAsync({projectId})
+      if (code === 200) {
+        getData()
+        ElMessage({
+          type: 'success',
+          message: '删除成功',
+        })
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '已取消操作',
+      })
+    })
+}
 </script>
 
 <template>
@@ -183,11 +241,26 @@ const addProject = () => {
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" min-width="185">
-        <template #default>
-          <el-button link type="primary">停用</el-button>
+        <template #default="{row}">
+          <el-button
+            v-if="row.enable"
+            link
+            type="danger"
+            @click="toggleStatus(row.projectId, row.enable)"
+          >
+            停用
+          </el-button>
+          <el-button
+            v-if="!row.enable"
+            link
+            type="primary"
+            @click="toggleStatus(row.projectId, row.enable)"
+          >
+            启用
+          </el-button>
           <el-button link type="primary">查看详情</el-button>
           <el-button link type="primary">编辑</el-button>
-          <el-button link type="danger">删除</el-button>
+          <el-button link type="danger" @click="deleteData(row.projectId)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

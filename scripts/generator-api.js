@@ -14,6 +14,7 @@ const apis = [
   },
   {
     url: 'https://union-sit.anjueasy.com/ams/v3/api-docs?token=M0DIK8E6PYO7F5B9WRJANV2GCZQHSL1T',
+    // url:'http://172.24.163.130:9000/ams/v3/api-docs?token=M0DIK8E6PYO7F5B9WRJANV2GCZQHSL1T',
     prefix: '/ams',
   },
 ]

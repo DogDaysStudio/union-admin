@@ -8,18 +8,6 @@ interface Res<T = any> {
 }
 
 interface ApiType {
-  /* 【登录认证】
-  // 设置密码 | object:{loginPwdOrigin:原登录密码,loginPwd:新登录密码}
-  iamUserAuthUpdatePwd(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/user-auth/update-pwd', payload)},
-  */
-  '/iam/user-auth/update-pwd': {Req: Record<string, any>; Res: Record<string, any>}
-
-  /* 【登录认证】
-  // 绑定企业微信 | object:{code:企业微信code}
-  iamUserAuthBindWework(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/user-auth/bind-wework', payload)},
-  */
-  '/iam/user-auth/bind-wework': {Req: Record<string, any>; Res: Record<string, any>}
-
   /* 【开放平台应用】
   // 新增/修改应用
   iamOpenAppUpsert(payload: OpenAppUpsertDTO) {return http.post<Res<string>>('/iam/open-app/upsert', payload)},
@@ -105,6 +93,12 @@ interface ApiType {
   '/iam/common/area/city-info': {Req: Record<string, any>; Res: Record<string, TreeModel[]>}
 
   /* 【登录认证】
+  // 设置密码 | object:{loginPwdOrigin:原登录密码,loginPwd:新登录密码}
+  iamAuthUpdatePwd(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth/update-pwd', payload)},
+  */
+  '/iam/auth/update-pwd': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【登录认证】
   // 初次设置密码 | object:{loginPwd:登录密码}
   iamAuthUpdatePwdInit(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth/update-pwd-init', payload)},
   */
@@ -157,6 +151,12 @@ interface ApiType {
   iamAuthCheckImgCode(payload: Record<string, any>) {return http.post<Res<boolean>>('/iam/auth/check-imgCode', payload)},
   */
   '/iam/auth/check-imgCode': {Req: Record<string, any>; Res: boolean}
+
+  /* 【登录认证】
+  // 绑定企业微信 | object:{code:企业微信code}
+  iamAuthBindWework(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth/bind-wework', payload)},
+  */
+  '/iam/auth/bind-wework': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【人员管理】
   // 新增/更新人员
@@ -484,15 +484,21 @@ interface ApiType {
 
   /* 【资产管理-资源管理】
   // 新增/更新资源
-  amsAssetResourceUpsert(payload: AssetResourceUpsertDTO) {return http.post<Res<string>>('/ams/asset-resource/upsert', payload)},
+  amsAssetResourceUpdate(payload: AssetResourceUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/update', payload)},
   */
-  '/ams/asset-resource/upsert': {Req: AssetResourceUpsertDTO; Res: string}
+  '/ams/asset-resource/update': {Req: AssetResourceUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
   // 资源列表
   amsAssetResourceList(payload: AssetResourceListDTO) {return http.post<Res<AssetResourceVO[]>>('/ams/asset-resource/list', payload)},
   */
   '/ams/asset-resource/list': {Req: AssetResourceListDTO; Res: AssetResourceVO[]}
+
+  /* 【资产管理-资源管理】
+  // 新增/更新资源
+  amsAssetResourceInsert(payload: AssetResourceUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/insert', payload)},
+  */
+  '/ams/asset-resource/insert': {Req: AssetResourceUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
   // 资源详情
@@ -502,9 +508,9 @@ interface ApiType {
 
   /* 【资产管理-资源管理】
   // 生成资源编码
-  amsAssetResourceGenerateResourceId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-resource/generate-resource-id', payload)},
+  amsAssetResourceGenerateResourceId(payload: AssetResourceIdGenerateDTO) {return http.post<Res<string>>('/ams/asset-resource/generate-resource-id', payload)},
   */
-  '/ams/asset-resource/generate-resource-id': {Req: Record<string, any>; Res: string}
+  '/ams/asset-resource/generate-resource-id': {Req: AssetResourceIdGenerateDTO; Res: string}
 
   /* 【资产管理-资源管理】
   // 启用/禁用资源 | object:{resourceId:资源编码,enable:bool}
@@ -514,9 +520,15 @@ interface ApiType {
 
   /* 【资产管理-资源管理】
   // 删除资源
-  amsAssetResourceDelete(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-resource/delete', payload)},
+  amsAssetResourceDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/delete', payload)},
   */
-  '/ams/asset-resource/delete': {Req: Record<string, any>; Res: string}
+  '/ams/asset-resource/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-资源管理】
+  // 批量启用/禁用资源
+  amsAssetResourceBatchEnable(payload: AssetResourceBatchEnableDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/batch-enable', payload)},
+  */
+  '/ams/asset-resource/batch-enable': {Req: AssetResourceBatchEnableDTO; Res: Record<string, any>}
 
   /* 【资产管理-项目管理】
   // 更新项目
@@ -585,6 +597,12 @@ interface ApiType {
   '/ams/asset-parking/get': {Req: Record<string, any>; Res: AssetParkingVO}
 
   /* 【资产管理-停车场管理】
+  // 生成车位区域编码 | object:{"parkingId":"P0001_plt001","regionJson":[{"regionId":"P0001_plt001_pa001","regionName":"负一楼B区"}]}
+  amsAssetParkingGenerateParkingRegionId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-region-id', payload)},
+  */
+  '/ams/asset-parking/generate-parking-region-id': {Req: Record<string, any>; Res: string}
+
+  /* 【资产管理-停车场管理】
   // 生成停车场编码 | object:{projectId:项目编码}
   amsAssetParkingGenerateParkingId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-id', payload)},
   */
@@ -598,9 +616,9 @@ interface ApiType {
 
   /* 【资产管理-停车场管理】
   // 删除停车场 | object:{parkingId:停车场编码}
-  amsAssetParkingDelete(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-parking/delete', payload)},
+  amsAssetParkingDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/delete', payload)},
   */
-  '/ams/asset-parking/delete': {Req: Record<string, any>; Res: string}
+  '/ams/asset-parking/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-停车位管理】
   // 更新停车位
@@ -634,9 +652,9 @@ interface ApiType {
 
   /* 【资产管理-停车位管理】
   // 删除停车位 | object:{parkingSpaceId:停车位编码}
-  amsAssetParkingSpaceDelete(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-parking-space/delete', payload)},
+  amsAssetParkingSpaceDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/delete', payload)},
   */
-  '/ams/asset-parking-space/delete': {Req: Record<string, any>; Res: string}
+  '/ams/asset-parking-space/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-楼层管理】
   // 更新楼层
@@ -663,6 +681,12 @@ interface ApiType {
   '/ams/asset-floor/generate-floor-id': {Req: Record<string, any>; Res: string}
 
   /* 【资产管理-楼层管理】
+  // 围合新增楼层
+  amsAssetFloorEnclosureInsert(payload: AssetEnclosureFloorSaveDTO) {return http.post<Res<string>>('/ams/asset-floor/enclosure-insert', payload)},
+  */
+  '/ams/asset-floor/enclosure-insert': {Req: AssetEnclosureFloorSaveDTO; Res: string}
+
+  /* 【资产管理-楼层管理】
   // 启用/禁用楼层 | object:{floorId:楼层编码,enable:bool}
   amsAssetFloorEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)},
   */
@@ -670,21 +694,33 @@ interface ApiType {
 
   /* 【资产管理-楼层管理】
   // 删除楼层
-  amsAssetFloorDelete(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-floor/delete', payload)},
+  amsAssetFloorDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/delete', payload)},
   */
-  '/ams/asset-floor/delete': {Req: Record<string, any>; Res: string}
+  '/ams/asset-floor/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-楼层管理】
+  // 楼栋新增楼层
+  amsAssetFloorBuildingInsert(payload: AssetBuildingFloorSaveDTO) {return http.post<Res<string>>('/ams/asset-floor/building-insert', payload)},
+  */
+  '/ams/asset-floor/building-insert': {Req: AssetBuildingFloorSaveDTO; Res: string}
 
   /* 【资产管理-固定资产管理】
-  // 新增/更新固定资产
-  amsAssetFixedUpsert(payload: AssetFixedUpsertDTO) {return http.post<Res<string>>('/ams/asset-fixed/upsert', payload)},
+  // 更新固定资产
+  amsAssetFixedUpdate(payload: AssetFixedUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/update', payload)},
   */
-  '/ams/asset-fixed/upsert': {Req: AssetFixedUpsertDTO; Res: string}
+  '/ams/asset-fixed/update': {Req: AssetFixedUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 固定资产列表
   amsAssetFixedList(payload: AssetFixedListDTO) {return http.post<Res<AssetFixedVO[]>>('/ams/asset-fixed/list', payload)},
   */
   '/ams/asset-fixed/list': {Req: AssetFixedListDTO; Res: AssetFixedVO[]}
+
+  /* 【资产管理-固定资产管理】
+  // 新增固定资产
+  amsAssetFixedInsert(payload: AssetFixedUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/insert', payload)},
+  */
+  '/ams/asset-fixed/insert': {Req: AssetFixedUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 固定资产详情
@@ -694,9 +730,9 @@ interface ApiType {
 
   /* 【资产管理-固定资产管理】
   // 生成固定资产编码
-  amsAssetFixedGenerateFixedId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-fixed/generate-fixed-id', payload)},
+  amsAssetFixedGenerateFixedId(payload: AssetFixedIdGenerateDTO) {return http.post<Res<string>>('/ams/asset-fixed/generate-fixed-id', payload)},
   */
-  '/ams/asset-fixed/generate-fixed-id': {Req: Record<string, any>; Res: string}
+  '/ams/asset-fixed/generate-fixed-id': {Req: AssetFixedIdGenerateDTO; Res: string}
 
   /* 【资产管理-固定资产管理】
   // 启用/禁用固定资产 | object:{fixedId:固定资产编码,enable:bool}
@@ -706,9 +742,27 @@ interface ApiType {
 
   /* 【资产管理-固定资产管理】
   // 删除固定资产
-  amsAssetFixedDelete(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-fixed/delete', payload)},
+  amsAssetFixedDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/delete', payload)},
   */
-  '/ams/asset-fixed/delete': {Req: Record<string, any>; Res: string}
+  '/ams/asset-fixed/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-固定资产管理】
+  // 批量维护质保信息
+  amsAssetFixedBatchWarranty(payload: AssetFixedBatchWarrantyDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-warranty', payload)},
+  */
+  '/ams/asset-fixed/batch-warranty': {Req: AssetFixedBatchWarrantyDTO; Res: Record<string, any>}
+
+  /* 【资产管理-固定资产管理】
+  // 批量更新固定资产
+  amsAssetFixedBatchUpdate(payload: AssetFixedBatchUpdateDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-update', payload)},
+  */
+  '/ams/asset-fixed/batch-update': {Req: AssetFixedBatchUpdateDTO; Res: Record<string, any>}
+
+  /* 【资产管理-固定资产管理】
+  // 批量启用/禁用固定资产
+  amsAssetFixedBatchEnable(payload: AssetFixedBatchEnableDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-enable', payload)},
+  */
+  '/ams/asset-fixed/batch-enable': {Req: AssetFixedBatchEnableDTO; Res: Record<string, any>}
 
   /* 【资产管理-围合管理】
   // 更新围合
@@ -748,15 +802,9 @@ interface ApiType {
 
   /* 【资产管理-围合管理】
   // 删除围合
-  amsAssetEnclosureDelete(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-enclosure/delete', payload)},
+  amsAssetEnclosureDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/delete', payload)},
   */
-  '/ams/asset-enclosure/delete': {Req: Record<string, any>; Res: string}
-
-  /* 【资产管理-楼层管理】
-  // 围合新增楼层
-  amsAssetEnclosureFloorInsert(payload: AssetEnclosureFloorSaveDTO) {return http.post<Res<string>>('/ams/asset-enclosure-floor/insert', payload)},
-  */
-  '/ams/asset-enclosure-floor/insert': {Req: AssetEnclosureFloorSaveDTO; Res: string}
+  '/ams/asset-enclosure/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-楼栋管理】
   // 更新楼栋
@@ -799,31 +847,6 @@ interface ApiType {
   amsAssetBuildingDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-building/delete', payload)},
   */
   '/ams/asset-building/delete': {Req: Record<string, any>; Res: Record<string, any>}
-
-  /* 【资产管理-楼层管理】
-  // 楼栋新增楼层
-  amsAssetBuildingFloorInsert(payload: AssetBuildingFloorSaveDTO) {return http.post<Res<string>>('/ams/asset-building-floor/insert', payload)},
-  */
-  '/ams/asset-building-floor/insert': {Req: AssetBuildingFloorSaveDTO; Res: string}
-}
-
-interface JSONConfig {
-  keyComparator: any
-  ignoreError: boolean
-  ignoreCase: boolean
-  dateFormat: string
-  ignoreNullValue: boolean
-  transientSupport: boolean
-  stripTrailingZeros: boolean
-  checkDuplicate: boolean
-  writeLongAsString: boolean
-  order: boolean
-}
-
-interface JSONObject {
-  raw: Record<string, any>
-  config: JSONConfig
-  empty: boolean
 }
 
 interface OpenAppUpsertDTO {
@@ -862,6 +885,25 @@ interface OpenAppVO {
   insertBy: string // 记录插入操作人
   updateTime: string // 记录更新时间
   updateBy: string // 记录更新操作人
+}
+
+interface JSONConfig {
+  keyComparator: any
+  ignoreError: boolean
+  ignoreCase: boolean
+  dateFormat: string
+  ignoreNullValue: boolean
+  transientSupport: boolean
+  stripTrailingZeros: boolean
+  checkDuplicate: boolean
+  writeLongAsString: boolean
+  order: boolean
+}
+
+interface JSONObject {
+  raw: Record<string, any>
+  config: JSONConfig
+  empty: boolean
 }
 
 interface FileModel {
@@ -1179,12 +1221,12 @@ interface SysDicUpsertDTO {
   dicId?: string // ID
   dicType: number // 字典类型
   dicPcode?: string // 父级ID（用于树形结构，顶级为NULL）
-  dicCode?: string // 字典编码（唯一标识）
+  dicCode: string // 字典编码（唯一标识）
   dicCodeShort?: string // 字典编码简称
-  dicName?: string // 字典名称
+  dicName: string // 字典名称
   dicNameShort?: string // 字典简称
   dicSys?: string // 字典所属系统
-  dicLevel?: number // 层级深度（从1开始）
+  dicLevel: number // 层级深度（从1开始）
   dicSort?: number // 排序值（越小越靠前）
   dicNotes?: string // 字典备注
   enable?: number // 0-禁用;1-启用
@@ -1210,24 +1252,40 @@ interface SysDicListDTO {
 interface AssetShopUpsertDTO {
   shopId: string // 商铺编码
   projectId: string // 项目编码
-  assetId: string // 资产编码
-  assetType: string // 资产类型(楼栋/围合/停车场)
+  assetId: string // 楼栋/围合/停车场id
+  assetType: string // 楼栋/围合/停车场
   floorId: string // 楼层编码
+  ownershipUnitCode: string // 产权单位编码
+  ownershipUnitName: string // 产权单位名称
+  ownershipTypeCode: string // 产权类型编码
+  ownershipTypeName: string // 产权类型名称
+  ownershipYear: number // 产权年限
+  ownershipRatio: number // 产权比例
+  realEstateNumber: string // 不动产编号
   shopNumber: string // 商铺号
-  shopType: string // 商铺类型
+  shopTypeCode: string // 商铺类型编码
+  shopTypeName: string // 商铺类型名称
+  businessModelCode: string // 经营模式编码
+  businessModelName: string // 经营模式名称
   shopHeight: number // 商铺层高
   shopState: number // 0-空闲;1-出租中
   buildingArea: number // 建筑面积
   usableArea: number // 实用面积
   rentalArea: number // 计租面积
   propertyFeeArea: number // 物业费收费面积
-  waterServiceNo: string // 水务户号
-  powerGridNo: string // 电网户号
-  gasNo: string // 燃气户号
   decorationLevel: string // 装修等级
+  resourceCategory: string // 资源类别
+  resourceType: string // 资源类型
+  resourceLevel: string // 资源等级
+  cateringCondition: number // 餐饮条件,0-否;1-是
+  gasCondition: number // 燃气,0-否;1-是
+  weakCurrentCondition: number // 弱电条件,0-否;1-是
+  waterServiceNo: string // 水表号
+  powerGridNo: string // 电表号
+  gasNo: string // 燃气号
+  voltage: string // 电压
   effectiveTime: string // 生效时间
   expireTime: string // 失效时间
-  enable: number // 0-禁用;1-启用
 }
 
 // 资产管理-商业管理
@@ -1235,12 +1293,11 @@ interface AssetShopListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
-  buildingName: string // 楼栋名称
-  floorName: string // 楼层名称
   projectName: string // 项目名称
+  enclosureName: string // 围合名称
+  floorName: string // 楼层名称
   ownershipUnitCode: string // 产权单位编码
   businessModelCode: string // 经营模式编码
-  projectTypeCode: string // 项目类型编码
   provinceCode: string // 所在区域-省 code
   cityCode: string // 所在区域-城市 code
   districtCode: string // 地址-区域 code
@@ -1250,39 +1307,55 @@ interface AssetShopListDTO {
 // 资产管理-商铺
 interface AssetShopVO {
   shopId: string // 商铺编码
-  projectId: string // 项目编码
-  assetId: string // 资产编码
-  assetType: string // 资产类型(楼栋/围合/停车场)
-  floorId: string // 楼层编码
   shopNumber: string // 商铺号
-  shopType: string // 商铺类型
-  shopHeight: number // 商铺层高
-  shopState: number // 商铺状态(0-空闲;1-出租中)
   buildingArea: number // 建筑面积
   usableArea: number // 实用面积
+  projectName: string // 项目名称
+  enclosureName: string // 围合名称
+  floorName: string // 楼层名称
+  businessModelName: string // 经营模式名称
+  ownershipUnitName: string // 产权单位名称
+  enable: number // 0-禁用;1-启用
+  ownershipTypeName: string // 产权类型名称
+  ownershipYear: number // 产权年限
+  ownershipRatio: number // 产权比例
+  realEstateNumber: string // 不动产编号
+  shopTypeName: string // 商铺类型名称
+  shopHeight: number // 商铺层高
+  shopState: number // 0-空闲;1-出租中
   rentalArea: number // 计租面积
   propertyFeeArea: number // 物业费收费面积
-  waterServiceNo: string // 水务户号
-  powerGridNo: string // 电网户号
-  gasNo: string // 燃气户号
   decorationLevel: string // 装修等级
+  resourceCategory: string // 资源类别
+  resourceType: string // 资源类型
+  resourceLevel: string // 资源等级
+  cateringCondition: number // 餐饮条件,0-否;1-是
+  gasCondition: number // 燃气,0-否;1-是
+  weakCurrentCondition: number // 弱电条件,0-否;1-是
+  waterServiceNo: string // 水表号
+  powerGridNo: string // 电表号
+  gasNo: string // 燃气号
+  voltage: string // 电压
   effectiveTime: string // 生效时间
   expireTime: string // 失效时间
-  enable: number // 0-禁用;1-启用
 }
 
 // 资产管理-住宅管理
 interface AssetRoomUpsertDTO {
-  roomId: string // 房屋编码
+  roomId: string // 住宅编码
   projectId: string // 项目编码
-  assetId: string // 资产编码
-  assetType: string // 资产类型(楼栋/围合/停车场)
+  assetId: string // 楼栋/围合/停车场id
+  assetType: string // 楼栋/围合/停车场
   floorId: string // 楼层编码
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
   roomNumber: string // 房间号
-  roomTypeCode: string // 户型编码
-  roomTypeName: string // 户型名称
+  roomLayoutCode: string // 户型编码
+  roomLayoutName: string // 户型名称
+  roomTypeCode: string // 房屋类型编码
+  roomTypeName: string // 房屋类型名称
+  businessModelCode: string // 经营模式编码
+  businessModelName: string // 经营模式名称
   roomHeight: number // 房间层高
   roomState: number // 0-空闲;1-出租中
   buildingArea: number // 建筑面积
@@ -1313,27 +1386,26 @@ interface AssetRoomListDTO {
 
 // 资产管理-住宅
 interface AssetRoomVO {
-  roomId: string // 房屋编码
-  projectId: string // 项目编码
-  assetId: string // 资产编码
-  assetType: string // 资产类型(楼栋/围合/停车场)
-  floorId: string // 楼层编码
-  ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
+  roomId: string // 住宅编码
   roomNumber: string // 房间号
-  roomTypeCode: string // 户型编码
-  roomTypeName: string // 户型名称
-  roomHeight: number // 房间层高
-  roomState: number // 房屋状态(0-空闲;1-出租中)
+  roomLayoutName: string // 户型名称
   buildingArea: number // 建筑面积
+  projectName: string // 项目名称
+  buildingName: string // 楼栋名称
+  floorName: string // 楼层名称
+  businessModelName: string // 经营模式名称
+  ownershipUnitName: string // 产权单位名称
+  leaseType: string // 租赁方式 0-整租;1-合租
+  enable: number // 0-禁用;1-启用
+  roomTypeName: string // 房屋类型名称
+  roomHeight: number // 房间层高
   rentalArea: number // 计租面积
   propertyFeeArea: number // 物业费收费面积
+  roomState: number // 0-空闲;1-出租中
   waterServiceNo: string // 水务户号
   powerGridNo: string // 电网户号
   gasNo: string // 燃气户号
   decorationLevel: string // 房屋装修等级
-  leaseType: string // 租赁方式 0-整租;1-合租
-  enable: number // 0-禁用;1-启用
 }
 
 // 资产管理-空间点位资源
@@ -1353,11 +1425,13 @@ interface AssetResourceUpsertDTO {
   resourceAdTypeCode: string // 资源广告类型编码
   resourceMediaType: string // 资源媒体类型
   resourceMediaTypeCode: string // 资源媒体类型编码
-  resourceLocation: string // 资源位置
   resourceSpecs: string // 资源规格
   resourceArea: number // 资源面积
   resourceState: number // 资源状态，0-待租;1-已租
-  enable: number // 0-禁用;1-启用
+  locationTypeCode: string // 位置类型编码(Pz or NonPz)
+  locationTypeName: string // 位置类型名称(公区 或 非公区)
+  locationId: string // 位置编码(非公区为房间或商铺编码;公区为字典编码)
+  locationName: string // 位置名称(非公区为房间号或商铺号;公区为字典字典名称)
 }
 
 // 资产管理-空间点位资源
@@ -1391,11 +1465,27 @@ interface AssetResourceVO {
   resourceBusinessType: string // 资源业务类型
   resourceAdType: string // 资源广告类型
   resourceMediaType: string // 资源媒体类型
-  resourceLocation: string // 资源位置
   resourceSpecs: string // 资源规格
   resourceArea: number // 资源面积
   resourceState: number // 资源状态，0-待租;1-已租
   enable: number // 0-禁用;1-启用
+  locationTypeCode: string // 位置类型编码(Pz or NonPz)
+  locationTypeName: string // 位置类型名称(公区 或 非公区)
+  locationId: string // 位置编码(非公区为房间或商铺编码;公区为字典编码)
+  locationName: string // 位置名称(非公区为房间号或商铺号;公区为字典字典名称)
+}
+
+interface AssetResourceIdGenerateDTO {
+  projectId: string // 项目编码
+  floorId: string // 楼层编码
+  locationId: string // 位置编码
+  resourceBusinessTypeCode: string // 业务类型编码
+  resourceMediaTypeCode: string // 媒体类型编码
+}
+
+interface AssetResourceBatchEnableDTO {
+  resourceIdList: string[] // 固定资产编码列表
+  enable: boolean // 启用状态（1：启用、0：禁用）
 }
 
 interface AssetProjectUpsertDTO {
@@ -1571,16 +1661,22 @@ interface AssetParkingInsertDTO {
   parkingSpaces: AssetParkingSpaceBaseDTO[] // 车位信息
 }
 
-// 资产管理-停车位管理
+// 资产管理-停车位
 interface AssetParkingSpaceBaseDTO {
   parkingSpaceId: string // 车位编码
   projectId: string // 项目编码
   parkingId: string // 停车场编码
   parkingSpaceName: string // 车位名称
-  parkingSpaceRegion: string // 车位区域
-  parkingSpaceAttribute: string // 车位属性
+  parkingSpaceRegionId: string // 车位区域编码
+  parkingSpaceRegionName: string // 车位区域名称
+  parkingSpaceAttributeCode: string // 车位属性编码
+  parkingSpaceAttributeName: string // 车位属性名称
   parkingSpaceArea: number // 车位面积
   parkingSpaceState: string // 车位状态
+  ownershipInfo: string // 权属方信息
+  userInfo: string // 使用方信息
+  leaseTerm: number // 租期
+  licensePlate: string // 车牌号
   chargingPort: number // 是否充电位
 }
 
@@ -1629,12 +1725,17 @@ interface AssetParkingSpaceVO {
   projectId: string // 项目编码
   parkingId: string // 停车场编码
   parkingSpaceName: string // 车位名称
-  parkingSpaceRegion: string // 车位区域
-  parkingSpaceAttribute: string // 车位属性
+  parkingSpaceRegionId: string // 车位区域编码
+  parkingSpaceRegionName: string // 车位区域名称
+  parkingSpaceAttributeCode: string // 车位属性编码
+  parkingSpaceAttributeName: string // 车位属性名称
   parkingSpaceArea: number // 车位面积
   parkingSpaceState: string // 车位状态
+  ownershipInfo: string // 权属方信息
+  userInfo: string // 使用方信息
+  leaseTerm: number // 租期
+  licensePlate: string // 车牌号
   chargingPort: number // 是否充电位
-  enable: number // 是否启用;0-禁用;1-启用
 }
 
 // 资产管理-楼层管理
@@ -1676,27 +1777,44 @@ interface AssetFloorVO {
   valid: number // 记录是否有效
 }
 
+interface AssetEnclosureFloorSaveDTO {
+  floor: AssetFloorBaseDTO // 楼层信息
+  shopList: AssetShopUpsertDTO[] // 商铺信息
+}
+
+interface AssetBuildingFloorSaveDTO {
+  floor: AssetFloorBaseDTO // 楼层信息
+  roomList: AssetRoomUpsertDTO[] // 住宅信息
+}
+
 // 资产管理-固定资产
 interface AssetFixedUpsertDTO {
   fixedId: string // 固定资产编码
   projectId: string // 项目编码
-  assetId: string // 资产编码
-  assetType: string // 资产类型(楼栋/围合/停车场)
+  assetId: string // 楼栋/围合/停车场id
+  assetType: string // 楼栋/围合/停车场
   floorId: string // 楼层编码
-  positionType: string // 位置类型
-  positionSpecific: string // 具体位置
+  locationTypeCode: string // 位置类型编码(Pz or NonPz)
+  locationTypeName: string // 位置类型名称(公区 或 非公区)
+  locationId: string // 位置编码(非公区为房间或商铺编码;公区为字典编码)
+  locationName: string // 位置名称(非公区为房间号或商铺号;公区为字典字典名称)
   fixedName: string // 固定资产名称
   serialNumber: string // 序列号
-  fixedType: string // 资产类型
-  deviceType: string // 设备类型
-  fixedBrand: string // 品牌
-  fixedSpecs: string // 规格
-  fixedModel: string // 型号
-  fixedSource: string // 资产来源
+  fixedTypeCode: string // 资产类型编码
+  fixedTypeName: string // 资产类型名称
+  deviceTypeCode: string // 设备类型编码
+  deviceTypeName: string // 设备类型名称
+  fixedBrand: string // 固定资产品牌
+  fixedSpecs: string // 固定资产规格
+  fixedModel: string // 固定资产型号
+  fixedSource: string // 固定资产来源
   purchaseDate: string // 购买日期
   assetAmount: number // 资产金额
+  elevatorSpeed: number // 电梯速度(固定资产为电梯时有值)
+  parkingSpaceNo: string // 关联车位号(固定资产为充电桩时有值)
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
+  deviceWorkState: number // 设备工作状态
   deviceManageUser: string // 设备管理人员
   deviceMajordomoUser: string // 设备总监
   deviceCheckDate: string // 设备年检日期
@@ -1710,6 +1828,15 @@ interface AssetFixedUpsertDTO {
   maintenanceCompany: string // 设备维保方名称
   maintenanceLinkman: string // 设备维保方联系人
   maintenancePhone: string // 设备维保方联系方式
+  maintenanceExpireDate: string // 设备维保到期日
+  nextPatrolDate: string // 下次巡检日期
+  nextMaintenanceDate: string // 下次保养日期
+  label: string // 标签
+  drawingFid: string // 图纸
+  deviceContractFid: string // 设备合同
+  deviceInformationFid: string // 设备技术资料
+  contractFid: string // 合同
+  attachmentFid: string // 其他附件
 }
 
 // 资产管理-固定资产
@@ -1732,20 +1859,27 @@ interface AssetFixedVO {
   assetId: string // 楼栋/围合/停车场id
   assetType: string // 楼栋/围合/停车场
   floorId: string // 楼层编码
-  positionType: string // 位置类型
-  positionSpecific: string // 具体位置
+  locationTypeCode: string // 位置类型编码(Pz or NonPz)
+  locationTypeName: string // 位置类型名称(公区 或 非公区)
+  locationId: string // 位置编码(非公区为房间或商铺编码;公区为字典编码)
+  locationName: string // 位置名称(非公区为房间号或商铺号;公区为字典字典名称)
   fixedName: string // 固定资产名称
   serialNumber: string // 序列号
-  fixedType: string // 资产类型
-  deviceType: string // 设备类型
-  fixedBrand: string // 品牌
-  fixedSpecs: string // 规格
-  fixedModel: string // 型号
-  fixedSource: string // 资产来源
+  fixedTypeCode: string // 资产类型编码
+  fixedTypeName: string // 资产类型名称
+  deviceTypeCode: string // 设备类型编码
+  deviceTypeName: string // 设备类型名称
+  fixedBrand: string // 固定资产品牌
+  fixedSpecs: string // 固定资产规格
+  fixedModel: string // 固定资产型号
+  fixedSource: string // 固定资产来源
   purchaseDate: string // 购买日期
   assetAmount: number // 资产金额
+  elevatorSpeed: number // 电梯速度(固定资产为电梯时有值)
+  parkingSpaceNo: string // 关联车位号(固定资产为充电桩时有值)
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
+  deviceWorkState: number // 设备工作状态
   deviceManageUser: string // 设备管理人员
   deviceMajordomoUser: string // 设备总监
   deviceCheckDate: string // 设备年检日期
@@ -1759,6 +1893,45 @@ interface AssetFixedVO {
   maintenanceCompany: string // 设备维保方名称
   maintenanceLinkman: string // 设备维保方联系人
   maintenancePhone: string // 设备维保方联系方式
+  maintenanceExpireDate: string // 设备维保到期日
+  nextPatrolDate: string // 下次巡检日期
+  nextMaintenanceDate: string // 下次保养日期
+  label: string // 标签
+  drawingFid: string // 图纸
+  deviceContractFid: string // 设备合同
+  deviceInformationFid: string // 设备技术资料
+  contractFid: string // 合同
+  attachmentFid: string // 其他附件
+}
+
+interface AssetFixedIdGenerateDTO {
+  projectId: string // 项目编码
+  floorId: string // 楼层编码
+  locationId: string // 位置编码
+  fixedTypeCode: string // 资产类型编码
+  deviceTypeCode: string // 设备类型编码
+}
+
+interface AssetFixedBatchWarrantyDTO {
+  fixedIdList: string[] // 固定资产编码列表
+  warrantyCompany: string // 设备质保方名称
+  warrantyLinkman: string // 设备质保方联系人
+  warrantyPhone: string // 设备质保方联系方式
+  warrantyExpireDate: string // 设备质保到期日
+  contractFid: string // 合同
+}
+
+interface AssetFixedBatchUpdateDTO {
+  fixedIdList: string[] // 固定资产编码列表
+  label: string // 标签
+  drawingFid: string // 图纸
+  deviceContractFid: string // 设备合同
+  deviceInformationFid: string // 设备技术资料
+}
+
+interface AssetFixedBatchEnableDTO {
+  fixedIdList: string[] // 固定资产编码列表
+  enable: boolean // 启用状态（1：启用、0：禁用）
 }
 
 interface AssetEnclosureUpdateDTO {
@@ -1773,7 +1946,7 @@ interface AssetEnclosureListDTO {
   pageNum: number
   pageSize: number
   enclosureId: string // 围合编码
-  projectId: string // 项目编码
+  projectName: string // 项目名称
   enclosureName: string // 围合名称
   enclosureTypeCode: string // 围合类型编码
   ownershipUnitCode: string // 产权单位编码
@@ -1783,11 +1956,9 @@ interface AssetEnclosureListDTO {
 // 资产管理-围合
 interface AssetEnclosureVO {
   enclosureId: string // 围合编码
-  projectId: string // 项目编码
   enclosureName: string // 围合名称
-  enclosureTypeCode: string // 围合类型code
-  enclosureTypeName: string // 围合类型type
-  ownershipUnitCode: string // 产权单位编码
+  enclosureTypeName: string // 围合类型
+  projectName: string // 项目名称
   ownershipUnitName: string // 产权单位名称
   enable: number // 0-禁用;1-启用
 }
@@ -1803,11 +1974,6 @@ interface AssetEnclosureInsertDTO {
   ownershipUnitName: string // 产权单位名称
   floorList: AssetFloorBaseDTO[] // 楼层信息
   shopList: AssetShopUpsertDTO[] // 商业信息
-}
-
-interface AssetEnclosureFloorSaveDTO {
-  floor: AssetFloorBaseDTO // 楼层信息
-  shopList: AssetShopUpsertDTO[] // 商铺信息
 }
 
 interface AssetBuildingUpdateDTO {
@@ -1856,9 +2022,4 @@ interface AssetBuildingInsertDTO {
   buildingList: AssetBuildingDTO[] // 楼栋数据
   floorList: AssetFloorBaseDTO[] // 楼层数据
   roomList: AssetRoomUpsertDTO[] // 住宅数据
-}
-
-interface AssetBuildingFloorSaveDTO {
-  floor: AssetFloorBaseDTO // 楼层信息
-  roomList: AssetRoomUpsertDTO[] // 住宅信息
 }
