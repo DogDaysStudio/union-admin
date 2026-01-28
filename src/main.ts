@@ -13,11 +13,11 @@ import router from './router'
 setGlobalOptions({
   manual: true,
   // loadingDelay: 500,
-  // pagination: {
-  //   currentKey: 'pageNum',
-  //   pageSizeKey: 'pageSize',
-  //   totalKey: 'data.total',
-  // },
+  pagination: {
+    currentKey: 'pageNum',
+    pageSizeKey: 'pageSize',
+    totalKey: 'total',
+  },
 })
 
 const pinia = createPinia()
