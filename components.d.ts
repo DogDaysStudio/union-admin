@@ -51,6 +51,9 @@ declare module 'vue' {
     SchemaForm: typeof import('./src/components/form/SchemaForm.vue')['default']
     SchemaTable: typeof import('./src/components/table/SchemaTable.vue')['default']
   }
+  export interface GlobalDirectives {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
+  }
 }
 
 // For TSX support

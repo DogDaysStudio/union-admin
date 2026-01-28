@@ -10,18 +10,18 @@ const assetRoutes: RouteRecordRaw[] = [
       {
         path: 'management',
         meta: {title: '资产管理'},
-        component: () => import('@/views/home-view.vue'),
+        component: () => import('@/views/asset/project-management.vue'),
         children: [
           {
             path: 'project',
             meta: {title: '项目管理'},
             component: () => import('@/views/asset/project-management.vue'),
           },
-          {
-            path: 'list',
-            meta: {title: '资产列表'},
-            component: () => import('@/views/home-view.vue'),
-          },
+          // {
+          //   path: 'list',
+          //   meta: {title: '资产列表'},
+          //   component: () => import('@/views/home-view.vue'),
+          // },
         ],
       },
       {
