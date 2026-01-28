@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import {computed, onUpdated, reactive} from 'vue'
 import {useRouter} from 'vue-router'
 
@@ -53,13 +53,38 @@ const formSchema = computed(() =>
     // span: 24,
     fields: [
       defineField.Empty({
-        label: 'Empty with props',
+        label: '空字段1',
         prop: 'name',
       }),
       defineField.Empty({
-        label: 'Empty with model-value',
+        label: '空字段2',
         modelValue: `name 字数：${formState.name?.length}`,
       }),
+      defineField.SubField({
+        label: '经纬度',
+        schema: {
+          span: 12,
+          formItemProps: {labelWidth: 0},
+          fields: [defineField.Input({prop: 'name'}), defineField.Input({prop: 'name'})],
+        },
+      }),
+      // {
+      //   label: '',
+      //   fields: [
+      //     defineField.Input({
+      //       label: 'sub1',
+      //       prop: 'name',
+      //       // disabled: true,
+      //       rules: formState.name?.length > 2 ? [rules.required()] : undefined,
+      //     }),
+      //     defineField.Input({
+      //       label: 'sub2',
+      //       prop: 'name',
+      //       // disabled: true,
+      //       rules: formState.name?.length > 2 ? [rules.required()] : undefined,
+      //     }),
+      //   ],
+      // },
       defineField.Input({
         label: '姓名姓名',
         prop: 'name',
@@ -72,19 +97,9 @@ const formSchema = computed(() =>
         label: '姓名名姓名',
         prop: 'select',
         placeholder: '请选择姓名',
-        options: [{value: '1a', lable: '1b'}],
+        // options: [{value: '1a', lable: '1b'}],
       }),
       defineField.Checkbox({label: '姓名', prop: 'checked'}),
-      defineField.Input({
-        // label: '经纬度',
-        prop: 'lng',
-        span: 4,
-      }),
-      defineField.Input({
-        // label: '',
-        prop: 'lag',
-        span: 4,
-      }),
       defineField.DateTimeRangePicker({
         label: 'DateTimePicker',
         propMapping: [
@@ -118,8 +133,8 @@ const formSchema = computed(() =>
   <div>
     <el-card>
       <template #header>数据筛选</template>
-      <!-- label-position="top" -->
       <schema-form
+        label-position="top"
         :schema="formSchema"
         :model="formState"
         @finish="handleFinish"

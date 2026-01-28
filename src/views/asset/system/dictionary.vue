@@ -9,6 +9,38 @@ import {rules} from '@/common/rules'
 const dialogVisible = ref(false)
 const isEdit = ref(false)
 
+// SYS_TYPE(9000, 1, "系统分类"), // (union,ams,iam,eportal,pms,openapi,job)
+// SYS_PERM_TYPE(9001, 1, "权限分类"),// (menu,api,button,data,file)
+
+const dict = [
+  {lable: '公司', value: 1001},
+  {lable: '资产分类', value: 1002},
+  {lable: '业态', value: 1003},
+  {lable: '位置', value: 1004},
+  {lable: '房间类型', value: 1005},
+  {lable: '客户来源', value: 1006},
+  {lable: '客户类型', value: 1007},
+  {lable: '设备类型', value: 1008},
+  {lable: '业务类型', value: 1009},
+  {lable: '广告类型', value: 1010},
+  {lable: '点位类型', value: 1011},
+  {lable: '媒体类型分类', value: 1012},
+  {lable: '停车场位置', value: 1013},
+  {lable: '车位类别', value: 1014},
+  {lable: '充电位', value: 1015},
+  {lable: '车位属性', value: 1016},
+  {lable: '供应商合作模式', value: 1017},
+  {lable: '供应商分类', value: 1018},
+  {lable: '企业性质', value: 1019},
+  {lable: '经营模式', value: 1020},
+  {lable: '筹集方式', value: 1021},
+  {lable: '产权性质', value: 1022},
+  {lable: '围合类型', value: 1023},
+  {lable: '户型', value: 1024},
+  {lable: '区域类别', value: 1025},
+  {lable: '停车方式', value: 1026},
+]
+
 const listQuery = reactive({
   // pageable: true,
   // pageNum: 1,
@@ -16,7 +48,10 @@ const listQuery = reactive({
   enable: 1,
 } as SysDicListDTO)
 
-const formState = reactive({} as SysDicUpsertDTO)
+const formState = reactive({
+  dicType: 1001,
+  dicLevel: 1,
+} as SysDicUpsertDTO)
 
 const upsertFormSchema = defineSchema({
   span: 24,

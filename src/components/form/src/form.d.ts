@@ -1,4 +1,4 @@
-import type {FormSchema, FieldConfig} from '@/components/form/form-schema.ts'
+import type {FormSchema, FieldConfig} from '@/components/form/form-schema'
 import type {ColProps} from 'element-plus'
 
 export interface DynamicFieldProps<T> {

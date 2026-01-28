@@ -3,6 +3,8 @@ import get from 'lodash.get'
 import set from 'lodash.set'
 import type {DynamicFieldProps} from './form'
 
+defineOptions({name: 'DynamicFieldCol'})
+
 defineProps<DynamicFieldProps<T>>()
 </script>
 
@@ -20,6 +22,7 @@ defineProps<DynamicFieldProps<T>>()
         rules,
         required,
         formItemProps,
+        // fields,
         ...field
       },
       index
@@ -37,7 +40,7 @@ defineProps<DynamicFieldProps<T>>()
           :rules="rules"
           :required="required"
           label-width="120px"
-          v-bind="formItemProps"
+          v-bind="Object.assign({}, schema.formItemProps, formItemProps)"
         >
           <component
             :is="component"
@@ -59,7 +62,7 @@ defineProps<DynamicFieldProps<T>>()
       :rules="rules"
       :required="required"
       label-width="120px"
-      v-bind="formItemProps"
+      v-bind="Object.assign({}, schema.formItemProps, formItemProps)"
     >
       <component
         :is="component"

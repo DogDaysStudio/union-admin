@@ -10,18 +10,24 @@ import {
   ElRadio,
   ElRadioGroup,
   ElSelect,
-  type ColProps,
-  type FormItemProps,
+  type ColPropsPublic,
+  type FormItemPropsPublic,
+  type FormPropsPublic,
 } from 'element-plus'
 import {type Component, type VNodeProps} from 'vue'
 import EmptyField from './src/EmptyField.vue'
+import SubField from './src/SubField.vue'
 
 // 提取组件 Props 的实用类型
-type ExtractComponentProps<T> = T extends new () => {$props: infer P}
+import type {ComponentPublicInstance} from 'vue'
+
+type ExtractComponentProps<T> = T extends new () => ComponentPublicInstance<infer P>
   ? P
-  : T extends (props: infer P, ...args: any[]) => any
+  : T extends new () => {$props: infer P}
     ? P
-    : Record<string, any>
+    : T extends (props: infer P, ...args: any[]) => any
+      ? P
+      : Record<string, any>
 
 // 排除 Vue 的通用属性，只保留组件特定属性
 type ComponentSpecificProps<T> = Omit<
@@ -31,7 +37,10 @@ type ComponentSpecificProps<T> = Omit<
 >
 
 export type FormSchema<Fields extends FieldConfig<any>[]> = {
-  span?: ColProps['span']
+  // span?: ColProps['span']
+  span?: ColPropsPublic['span']
+  // labelWidth?: FormPropsPublic['labelWidth']
+  formItemProps?: FormPropsPublic
   fields: Fields
 }
 
@@ -44,11 +53,12 @@ export type FieldConfig<T extends Component = Component> = {
    * @default 'model-value'
    */
   // valuePropName?: string
-  formItemProps?: Partial<FormItemProps>
-  colProps?: Partial<ColProps>
+  // formItemProps?: Partial<FormItemProps>
+  formItemProps?: FormItemPropsPublic
+  colProps?: ColPropsPublic
   // 可以添加其他通用属性
-} & Pick<FormItemProps, 'label' | 'prop' | 'rules' | 'required'> &
-  Partial<Pick<ColProps, 'span'>> &
+} & Pick<FormItemPropsPublic, 'label' | 'prop' | 'rules' | 'required'> &
+  Pick<ColPropsPublic, 'span'> &
   ComponentSpecificProps<T>
 
 /**
@@ -71,7 +81,7 @@ defineField.Input = (field => {
   return defineField({
     component: ElInput,
     placeholder: '请输入',
-    clearable: true,
+    // clearable: true,
     ...field,
   })
 }) as DefineField<typeof ElInput>
@@ -147,3 +157,7 @@ defineField.InputNumber = (field => {
 defineField.Empty = (field => {
   return defineField({component: EmptyField, ...field})
 }) as DefineField<typeof EmptyField>
+
+defineField.SubField = (field => {
+  return defineField({component: SubField, ...field})
+}) as DefineField<typeof SubField>
