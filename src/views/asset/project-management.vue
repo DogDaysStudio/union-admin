@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {defineField, defineSchema} from '@/utils/form-schema'
 import {onMounted, reactive, ref} from 'vue'
+import {useRouter} from 'vue-router'
 import {iamCommon} from '@/service/api/iamCommon'
 import {amsAsset} from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
@@ -132,6 +133,12 @@ const handleCurrentChange = (val: number): void => {
   formState.pageNum = val
   getData()
 }
+
+const router = useRouter()
+const addProject = () => {
+  router.push('/asset/management/add')
+}
+
 </script>
 
 <template>
@@ -145,7 +152,7 @@ const handleCurrentChange = (val: number): void => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default">新增项目</el-button>
+          <el-button type="primary" size="default" @click="addProject">新增项目</el-button>
           <el-button type="primary" size="default">导入</el-button>
           <el-button type="primary" size="default">导出</el-button>
         </div>
