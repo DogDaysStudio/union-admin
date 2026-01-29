@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineField, defineSchema} from '@/utils/form-schema'
+import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'

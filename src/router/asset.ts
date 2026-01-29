@@ -39,6 +39,18 @@ const assetRoutes: RouteRecordRaw[] = [
         meta: {title: '资产统计'},
         component: () => import('@/views/home-view.vue'),
       },
+      // 系统管理
+      {
+        path: 'system',
+        meta: {title: '系统管理'},
+        children: [
+          {
+            path: 'dictionary',
+            meta: {title: '数据字典管理'},
+            component: () => import('@/views/asset/system/dictionary.vue'),
+          },
+        ],
+      },
     ],
   },
 ]

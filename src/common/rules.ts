@@ -7,4 +7,6 @@ export const rules = {
     message,
   }),
   idCard: (message = '请输入正确的身份证号') => ({pattern: /^\d{17}[\dXx]|\d{15}$/, message}),
+  // todo: 支持小数
+  // number: (message = '请输入数字') => ({pattern: /^\d+$/, message}),
 }
