@@ -13,4 +13,8 @@ export const amsAsset = {
   amsAssetProjectDelete(payload: Record<string, any>) {
     return http.post<Res<Record<string, any>>>('/ams/asset-project/delete', payload)
   },
+  // 新增项目
+  amsAssetProjectInsert(payload: AssetProjectUpsertDTO) {
+    return http.post<Res<Record<string, any>>>('/ams/asset-project/insert', payload)
+  },
 }

@@ -46,13 +46,32 @@ const formState = reactive({
 const formSchema = defineSchema({
   fields: [
     defineField.Input({label: '项目名称', prop: 'projectName', clearable: true}),
-    defineField.Select({
+    defineField.Cascader({
       label: '所属省市区',
       prop: 'provinceCode',
-      options: cityOptions,
       props: {
         value: 'k',
         label: 'v',
+        checkStrictly: true,
+        lazy: true,
+        lazyLoad(node, resolve) {
+          const {level, value} = node
+          setTimeout(async () => {
+            let nodes: {k: string; v: string; leaf?: boolean}[] = []
+            switch (level) {
+              case 0:
+                nodes = cityOptions
+                break
+              case 1:
+              case 2:
+                const {data} = await areaList.runAsync({pid: value})
+                nodes = data
+                break
+            }
+            nodes.forEach(item => (level >= 2 ? (item.leaf = true) : ''))
+            resolve(nodes)
+          }, 800)
+        },
       },
       clearable: true,
     }),
@@ -126,7 +145,11 @@ const getOptions = async (): Promise<void> => {
 const tableData = reactive<AssetProjectVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
-  const {total: resTotal, data} = await projectList.runAsync({...formState})
+  const cloneformState = {...formState}
+  cloneformState.cityCode = cloneformState?.provinceCode?.[1]
+  cloneformState.districtCode = cloneformState?.provinceCode?.[2]
+  cloneformState.provinceCode = cloneformState?.provinceCode?.[0]
+  const {total: resTotal, data} = await projectList.runAsync({...cloneformState})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)

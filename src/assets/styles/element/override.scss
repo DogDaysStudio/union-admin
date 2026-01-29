@@ -1,3 +1,11 @@
 .el-aside .el-menu-item.is-active {
   background-color: var(--el-color-primary);
 }
+
+.el-cascader{
+  width: 100%;
+}
+
+.el-date-editor.el-input{
+  width: 100% !important;
+}
