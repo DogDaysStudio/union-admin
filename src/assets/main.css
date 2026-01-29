@@ -15,7 +15,10 @@
   --color-gray-8: #f5f7fa;
   --color-gray-9: #212832; */
 
+  /* @deprecated */
   --spacing-base: 8px;
+  --spacing-radius: 8px;
+  --spacing-space: 12px;
 
   --radius-base: 8px;
 }

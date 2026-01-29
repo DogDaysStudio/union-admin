@@ -29,6 +29,15 @@ const formState = reactive({
   // }),
 })
 
+const formState2 = reactive({
+  nameList: [
+    {name1: '111', name2: '222'},
+    {name1: '111', name2: '222'},
+    {name1: '111', name2: '222'},
+    // {name1: '333', name2: '444'},
+  ],
+})
+
 const handleFinish = values => {
   console.log('values', values)
 }
@@ -127,6 +136,37 @@ const formSchema = computed(() =>
     ],
   })
 )
+
+const formSchema2 = computed(() =>
+  defineSchema({
+    // span: 24,
+    fields: [
+      defineField.Input({
+        label: '姓名姓名',
+        prop: 'name',
+        // disabled: true,
+        rules: formState.name?.length > 2 ? [rules.required()] : undefined,
+      }),
+      defineField.Input({label: '姓名', prop: 'name2'}),
+      defineField.ListField({
+        label: '姓名列表',
+        prop: 'nameList',
+        schema: {
+          formItemProps: {labelPosition: 'right'},
+          fields: [
+            defineField.Input({
+              prop: 'name1',
+              label: 'hello',
+              rules: [rules.required()],
+            }),
+            defineField.Input({prop: 'name2', label: ' a'}),
+            defineField.Input({prop: 'name3', label: ' '}),
+          ],
+        },
+      }),
+    ],
+  })
+)
 </script>
 
 <template>
@@ -138,6 +178,16 @@ const formSchema = computed(() =>
         :schema="formSchema"
         :model="formState"
         @finish="handleFinish"
+        @reset="handleReset"
+      ></schema-form>
+    </el-card>
+
+    <el-card>
+      <schema-form
+        label-position="top"
+        :schema="formSchema2"
+        :model="formState2"
+        @finish="console.log('$event', $event)"
         @reset="handleReset"
       ></schema-form>
     </el-card>

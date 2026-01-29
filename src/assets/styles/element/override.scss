@@ -2,10 +2,16 @@
   background-color: var(--el-color-primary);
 }
 
-.el-cascader{
+.el-cascader {
   width: 100%;
 }
 
-.el-date-editor.el-input{
+.el-date-editor.el-input {
   width: 100% !important;
+}
+
+.el-form-item--label-top .dynamic-list-field .el-form-item--label-right .el-form-item__label {
+  margin-bottom: 0;
+  margin-right: 4px;
+  line-height: 32px;
 }

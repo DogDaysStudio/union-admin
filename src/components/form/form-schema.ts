@@ -17,6 +17,7 @@ import {
 import {type Component, type VNodeProps} from 'vue'
 import EmptyField from './src/EmptyField.vue'
 import SubField from './src/SubField.vue'
+import ListField from './src/ListField.vue'
 
 // 提取组件 Props 的实用类型
 import type {ComponentPublicInstance} from 'vue'
@@ -75,7 +76,9 @@ export function defineField<T extends Component>(field: FieldConfig<T>): FieldCo
   return field
 }
 
-type DefineField<T extends Component> = (field: Omit<FieldConfig<T>, 'component'>) => FieldConfig<T>
+type DefineField<T extends Component, OmitProps extends keyof FieldConfig<T> = 'component'> = (
+  field: Omit<FieldConfig<T>, OmitProps>
+) => FieldConfig<T>
 
 defineField.Input = (field => {
   return defineField({
@@ -161,3 +164,7 @@ defineField.Empty = (field => {
 defineField.SubField = (field => {
   return defineField({component: SubField, ...field})
 }) as DefineField<typeof SubField>
+
+defineField.ListField = (field => {
+  return defineField({component: ListField, ...field})
+}) as DefineField<typeof ListField, 'component' | 'propMapping'>

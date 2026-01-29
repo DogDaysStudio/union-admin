@@ -2,6 +2,7 @@
 import get from 'lodash.get'
 import set from 'lodash.set'
 import type {DynamicFieldProps} from './form'
+import ListField from './ListField.vue'
 
 defineOptions({name: 'DynamicFieldCol'})
 
@@ -66,8 +67,9 @@ defineProps<DynamicFieldProps<T>>()
     >
       <component
         :is="component"
-        :model-value="get(model, prop)"
-        @update:model-value="set(model, prop, $event)"
+        :model-value="prop ? get(model, prop) : undefined"
+        @update:model-value="$event => prop && set(model, prop, $event)"
+        :prop="component === ListField ? prop : undefined"
         v-bind="field"
       />
     </el-form-item>
