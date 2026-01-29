@@ -4,7 +4,7 @@ import type {CascaderProps, FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {Search} from '@element-plus/icons-vue'
 import {iamCommon} from '@/service/api/iamCommon'
-import {amsAsset} from '@/service/api/amsAsset'
+// import {amsAsset} from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
 
 // 所属省市区
@@ -13,9 +13,9 @@ const areaList = useRequest(iamCommon.iamCommonAreaList, {
 })
 const cityOptions = reactive<PairModel[]>([])
 // 新增项目
-const addAmsAssetProject = useRequest(amsAsset.amsAssetProjectInsert, {
-  throttleInterval: 500,
-})
+// const addAmsAssetProject = useRequest(amsAsset.amsAssetProjectInsert, {
+//   throttleInterval: 500,
+// })
 
 // 表单Ref：用于调用表单内置方法（验证、重置）
 const formRef = ref<FormInstance>()

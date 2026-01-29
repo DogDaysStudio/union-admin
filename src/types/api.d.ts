@@ -1522,7 +1522,7 @@ interface AssetProjectUpsertDTO {
   undergroundArea: number // 地下建筑面积
   roomArea: number // 住宅建筑面积
   roomUtilityArea: number // 住宅实用面积
-  shopArea: number // 商业面积
+  shopArea: number // 商业建筑面积
   shopUtilityArea: number // 商业实用面积
   manageRoomArea: number // 管理用房面积
   deviceRoomArea: number // 设备用房面积
