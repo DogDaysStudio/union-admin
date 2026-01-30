@@ -65,11 +65,12 @@ defineProps<DynamicFieldProps<T>>()
       label-width="120px"
       v-bind="Object.assign({}, schema.formItemProps, formItemProps)"
     >
+      <component v-if="component === ListField" :is="component" :prop="prop" v-bind="field" />
       <component
+        v-else
         :is="component"
         :model-value="prop ? get(model, prop) : undefined"
         @update:model-value="$event => prop && set(model, prop, $event)"
-        :prop="component === ListField ? prop : undefined"
         v-bind="field"
       />
     </el-form-item>

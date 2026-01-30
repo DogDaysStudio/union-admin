@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {inject} from 'vue'
+import {computed, inject} from 'vue'
 import get from 'lodash.get'
 import set from 'lodash.set'
 import type {FieldConfig, FormSchema} from '../form-schema'
@@ -11,7 +11,36 @@ const props = defineProps<{
 }>()
 
 const model = inject('DynamicFieldFormModel')
-console.log('model?.[prop]?.length', model, props, model?.[props.prop]?.length)
+
+const addItem = () => {
+  if (!model?.[props.prop]) {
+    model[props.prop] = []
+  }
+  model?.[props.prop]?.push(props.defaultItem || {})
+}
+
+// const dynamicColSpan = computed(() => {
+//   const schema = props.schema
+//   return schema.span ?? Math.floor((24 - 3) / schema.fields.length)
+// })
+
+const calcColSpan = (span: number, schema: typeof props.schema) => {
+  return typeof span === 'number'
+    ? span
+    : (schema.span ?? Math.floor((24 - 3) / schema.fields.length))
+}
+
+// const dynamicColSpan = (schema: typeof props.schema) => {
+//   return schema.fields.reduce((span, field) => {
+//     return span + calcColSpan(field.span, schema)
+//   }, 0)
+// }
+const dynamicColSpan = computed(() => {
+  const schema = props.schema
+  return schema.fields.reduce((span, field) => {
+    return span + calcColSpan(field.span, schema)
+  }, 0)
+})
 </script>
 
 <template>
@@ -37,11 +66,7 @@ console.log('model?.[prop]?.length', model, props, model?.[props.prop]?.length)
         ) in schema.fields"
         :key="index"
         class="mb-4"
-        :span="
-          typeof span === 'number'
-            ? span
-            : (schema.span ?? Math.floor((24 - 3) / schema.fields.length))
-        "
+        :span="calcColSpan(span, schema)"
         v-bind="colProps"
       >
         <el-form-item
@@ -59,7 +84,7 @@ console.log('model?.[prop]?.length', model, props, model?.[props.prop]?.length)
           />
         </el-form-item>
       </el-col>
-      <el-col :span="3" class="text-right">
+      <el-col :span="24 - dynamicColSpan">
         <el-button
           link
           type="danger"
@@ -70,15 +95,9 @@ console.log('model?.[prop]?.length', model, props, model?.[props.prop]?.length)
         </el-button>
       </el-col>
     </template>
-    <el-col :span="24" class="text-right">
-      <el-button
-        link
-        type="primary"
-        size="small"
-        @click="model?.[props.prop]?.push(props.defaultItem || {})"
-      >
-        添加
-      </el-button>
+    <el-col :span="dynamicColSpan" />
+    <el-col :span="24 - dynamicColSpan">
+      <el-button link type="primary" size="small" @click="addItem">添加</el-button>
     </el-col>
   </el-row>
 </template>

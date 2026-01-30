@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref, useTemplateRef, watch} from 'vue'
 import LevelDict from './components/LevelDict.vue'
+import KvDict from './components/KvDict.vue'
 
 interface Tree {
   label: string
@@ -76,7 +77,8 @@ watch(filterText, val => {
       />
     </el-col>
     <el-col :span="18">
-      <LevelDict />
+      <!-- <LevelDict /> -->
+      <KvDict :dicType="1020" />
     </el-col>
   </el-row>
 </template>
