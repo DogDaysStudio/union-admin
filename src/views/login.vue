@@ -244,7 +244,8 @@ onUnmounted(() => {
         <!-- 登录类型切换 -->
         <div class="flex mb-6">
           <el-button
-            type="text"
+            link
+            type="primary"
             :class="[
               'flex-1 py-2 text-center font-medium',
               formData.loginType === 'PWD'
@@ -256,7 +257,8 @@ onUnmounted(() => {
             密码登陆
           </el-button>
           <el-button
-            type="text"
+            link
+            type="primary"
             :class="[
               'flex-1 py-2 text-center font-medium',
               formData.loginType === 'SMS'
@@ -353,7 +355,12 @@ onUnmounted(() => {
           <div>
             <span class="text-gray-500">没有账号，联系企业管理员开通账号</span>
           </div>
-          <el-button type="text" @click="handleForgotPassword" class="text-primary hover:underline">
+          <el-button
+            link
+            type="primary"
+            @click="handleForgotPassword"
+            class="text-primary hover:underline"
+          >
             忘记密码
           </el-button>
         </div>
@@ -366,7 +373,7 @@ onUnmounted(() => {
             <div class="flex-1 h-px bg-gray-300"></div>
           </div>
           <div class="mt-4 flex justify-center space-x-6">
-            <el-button type="text" class="text-gray-400 hover:text-primary transition-colors">
+            <el-button link class="text-gray-400 hover:text-primary transition-colors">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6"

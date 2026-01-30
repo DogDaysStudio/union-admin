@@ -36,4 +36,12 @@ export const iamAuth = {
   iamAuthSsoTicket(payload: Record<string, any>) {
     return http.post<Res<string>>('/iam/auth/sso-ticket', payload)
   },
+
+  // 登出
+  async iamAuthLogout(payload: Record<string, any>) {
+    const result = await http.post<Res<Record<string, any>>>('/iam/auth/logout', payload)
+    useUserStore().logout()
+
+    return result
+  },
 }

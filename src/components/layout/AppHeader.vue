@@ -25,7 +25,7 @@
           <el-dropdown-menu>
             <el-dropdown-item>个人中心</el-dropdown-item>
             <el-dropdown-item>设置</el-dropdown-item>
-            <el-dropdown-item>退出登录</el-dropdown-item>
+            <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -37,6 +37,8 @@
 import {computed} from 'vue'
 import {Compass, User, ArrowDown} from '@element-plus/icons-vue'
 import {useModuleStore} from '@/stores/module'
+import {iamAuth} from '@/service/api/iamAuth'
+import {ElMessage} from 'element-plus'
 
 const moduleStore = useModuleStore()
 
@@ -59,5 +61,10 @@ const handleMenuSelect = (key: string) => {
   if (menuItem) {
     moduleStore.setActiveModule(menuItem.module)
   }
+}
+
+const handleLogout = async () => {
+  await iamAuth.iamAuthLogout({})
+  ElMessage.success('退出登录成功')
 }
 </script>

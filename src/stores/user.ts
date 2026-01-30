@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {useRouter} from 'vue-router'
+import router from '@/router'
 
 interface State {
   token: string | null
@@ -26,7 +26,6 @@ export const useUserStore = defineStore('user', {
       this.setUserInfo(null)
 
       // 跳转到登录页
-      const router = useRouter()
       router.push('/login')
     },
   },
