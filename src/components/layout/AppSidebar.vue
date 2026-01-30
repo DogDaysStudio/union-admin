@@ -5,6 +5,7 @@ import {useModuleStore} from '@/stores/module'
 import {routes} from '@/router'
 
 interface MenuItem {
+  hidden?: boolean
   label: string
   key: string
   children?: MenuItem[]
@@ -28,6 +29,7 @@ const generateMenuFromRoutes = (modulePath: string): MenuItem[] => {
     const fullPath = parentPath ? `${parentPath}/${route.path}` : route.path
 
     const menuItem: MenuItem = {
+      hidden: route.meta?.hidden || false,
       label: route.meta?.title || '',
       key: fullPath,
     }
@@ -115,7 +117,7 @@ onUnmounted(() => {
                 {{ grandChild.label }}
               </el-menu-item>
             </el-sub-menu>
-            <el-menu-item v-else :index="child.key">
+            <el-menu-item v-else-if="!child.children && !child.hidden" :index="child.key">
               {{ child.label }}
             </el-menu-item>
           </template>

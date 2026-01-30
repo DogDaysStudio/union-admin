@@ -3,28 +3,19 @@ import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
-import {iamCommon} from '@/service/api/iamCommon'
 import {amsAsset} from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
 
-// 所属省市区
-const areaList = useRequest(iamCommon.iamCommonAreaList, {
-  throttleInterval: 500,
-})
-const cityOptions = reactive<PairModel[]>([])
-// 项目来源
-// 产权单位
-
 // 列表数据
-const projectList = useRequest(amsAsset.amsAssetProjectList, {
+const floorList = useRequest(amsAsset.amsAssetFloorList, {
   throttleInterval: 500,
 })
 // 修改数据状态
-const toggleStatusProject = useRequest(amsAsset.amsAssetProjectEnable, {
+const toggleStatusFloor = useRequest(amsAsset.amsAssetFloorEnable, {
   throttleInterval: 500,
 })
 // 删除数据
-const deleteProject = useRequest(amsAsset.amsAssetProjectDelete, {
+const deleteFloor = useRequest(amsAsset.amsAssetFloorDelete, {
   throttleInterval: 500,
 })
 
@@ -32,52 +23,21 @@ const formState = reactive({
   pageable: false,
   pageNum: 1,
   pageSize: 10,
-  projectName: '', // 项目名称
-  provinceCode: '', // 所在区域-省 code
-  cityCode: '', // 所在区域-城市 code
-  districtCode: '', // 地址-区域 code
-  collectWayCode: '', // 筹集方式编码
+  floorId: '', // 楼层编码
+  floorName: '', // 楼层名称
+  projectId: '', // 项目编码
+  assetId: '', // 楼层编码
   ownershipUnitCode: '', // 产权单位编码
-  ownershipPropertyCode: '', // 产权性质编码
-  businessModelCode: '', // 经营模式编码
-  enable: null, // 状态
-} as AssetProjectListDTO)
+  enable: null, // 0-禁用;1-启用
+} as AssetFloorListDTO)
 
 const formSchema = defineSchema({
   fields: [
-    defineField.Input({label: '项目名称', prop: 'projectName', clearable: true}),
-    defineField.Cascader({
-      label: '所属省市区',
-      prop: 'provinceCode',
-      props: {
-        value: 'k',
-        label: 'v',
-        checkStrictly: true,
-        lazy: true,
-        lazyLoad(node, resolve) {
-          const {level, value} = node
-          setTimeout(async () => {
-            let nodes: {k: string; v: string; leaf?: boolean}[] = []
-            switch (level) {
-              case 0:
-                nodes = cityOptions
-                break
-              case 1:
-              case 2:
-                const {data} = await areaList.runAsync({pid: value})
-                nodes = data
-                break
-            }
-            nodes.forEach(item => (level >= 2 ? (item.leaf = true) : ''))
-            resolve(nodes)
-          }, 800)
-        },
-      },
-      clearable: true,
-    }),
+    defineField.Input({label: '楼层名称', prop: 'floorName', clearable: true}),
+    defineField.Input({label: '楼层编码', prop: 'floorId', clearable: true}),
     defineField.Select({
-      label: '项目来源',
-      prop: 'collectWayCode',
+      label: '所属楼层',
+      prop: 'assetId',
       options: [
         {value: 'option1', label: 'option1'},
         {value: 'option2', label: 'option2'},
@@ -85,26 +45,8 @@ const formSchema = defineSchema({
       clearable: true,
     }),
     defineField.Select({
-      label: '产权单位',
+      label: '产权公司',
       prop: 'ownershipUnitCode',
-      options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
-      ],
-      clearable: true,
-    }),
-    defineField.Select({
-      label: '产权性质',
-      prop: 'ownershipPropertyCode',
-      options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
-      ],
-      clearable: true,
-    }),
-    defineField.Select({
-      label: '运营模式',
-      prop: 'businessModelCode',
       options: [
         {value: 'option1', label: 'option1'},
         {value: 'option2', label: 'option2'},
@@ -133,23 +75,14 @@ const total = ref<number>(0)
 const loading = ref<boolean>(false)
 
 onMounted(() => {
-  getOptions()
   getData()
 })
 
-const getOptions = async (): Promise<void> => {
-  const {data: cityOption} = await areaList.runAsync({pid: ''})
-  cityOptions.push(...cityOption)
-}
-
-const tableData = reactive<AssetProjectVO[]>([])
+const tableData = reactive<AssetFloorVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
   const cloneformState = {...formState}
-  cloneformState.cityCode = cloneformState?.provinceCode?.[1]
-  cloneformState.districtCode = cloneformState?.provinceCode?.[2]
-  cloneformState.provinceCode = cloneformState?.provinceCode?.[0]
-  const {total: resTotal, data} = await projectList.runAsync({...cloneformState})
+  const {total: resTotal, data} = await floorList.runAsync({...cloneformState})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
@@ -172,14 +105,14 @@ const addProject = () => {
 }
 
 // 修改状态
-const toggleStatus = (projectId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}项目?`, '确认提示', {
+const toggleStatus = (floorId: string, enable: number): void => {
+  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}楼层?`, '确认提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   })
     .then(async () => {
-      const {code} = await toggleStatusProject.runAsync({projectId, enable: enable ? 0 : 1})
+      const {code} = await toggleStatusFloor.runAsync({floorId, enable: enable ? 0 : 1})
       if (code === 200) {
         getData()
         ElMessage({
@@ -197,14 +130,14 @@ const toggleStatus = (projectId: string, enable: number): void => {
 }
 
 // 删除
-const deleteData = (projectId: string): void => {
-  ElMessageBox.confirm(`是否确定删除项目?`, '确认提示', {
+const deleteData = (floorId: string): void => {
+  ElMessageBox.confirm(`是否确定删除楼层?`, '确认提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   })
     .then(async () => {
-      const {code} = await deleteProject.runAsync({projectId})
+      const {code} = await deleteFloor.runAsync({floorId})
       if (code === 200) {
         getData()
         ElMessage({
@@ -233,7 +166,7 @@ const deleteData = (projectId: string): void => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addProject">新增项目</el-button>
+          <el-button type="primary" size="default" @click="addProject">新增楼层</el-button>
           <el-button type="primary" size="default">导入</el-button>
           <el-button type="primary" size="default">导出</el-button>
         </div>
@@ -242,22 +175,11 @@ const deleteData = (projectId: string): void => {
 
     <el-table v-loading="loading" :data="tableData" border>
       <el-table-column label="序号" type="index" width="60" />
-      <el-table-column label="项目编码" prop="projectId" />
-      <el-table-column label="项目名称" prop="projectName" />
-      <el-table-column label="项目简称" prop="projectShortName" />
-      <el-table-column label="项目来源" prop="collectWayName" />
-      <el-table-column label="项目类型" prop="projectTypeName" />
-      <el-table-column label="产权单位" prop="ownershipUnitName" />
-      <el-table-column label="产权性质" prop="ownershipPropertyName" />
-      <el-table-column label="经营模式" prop="businessModelName" />
-      <el-table-column label="所属省市区">
-        <template #default="scope">
-          <div>
-            {{ scope?.row?.provinceName + scope?.row?.cityName + scope?.row?.districtName }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="详细地址" prop="address" />
+      <el-table-column label="楼层编码" prop="floorId" />
+      <el-table-column label="楼层名称" prop="floorName" />
+      <el-table-column label="所属楼栋" prop="assetType" />
+      <el-table-column label="所属项目" prop="projectName" />
+      <el-table-column label="产权公司" prop="ownershipUnitName" />
       <el-table-column label="状态" prop="enable">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
@@ -269,7 +191,7 @@ const deleteData = (projectId: string): void => {
             v-if="row.enable"
             link
             type="danger"
-            @click="toggleStatus(row.projectId, row.enable)"
+            @click="toggleStatus(row.floorId, row.enable)"
           >
             停用
           </el-button>
@@ -277,13 +199,13 @@ const deleteData = (projectId: string): void => {
             v-if="!row.enable"
             link
             type="primary"
-            @click="toggleStatus(row.projectId, row.enable)"
+            @click="toggleStatus(row.floorId, row.enable)"
           >
             启用
           </el-button>
           <el-button link type="primary">查看详情</el-button>
           <el-button link type="primary">编辑</el-button>
-          <el-button link type="danger" @click="deleteData(row.projectId)">删除</el-button>
+          <el-button link type="danger" @click="deleteData(row.floorId)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
