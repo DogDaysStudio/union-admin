@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref, useTemplateRef, watch} from 'vue'
 import LevelDict from './components/LevelDict.vue'
-import KvDict from './components/KvDict.vue'
+import KVDict from './components/KVDict.vue'
 
 interface Tree {
   label: string
@@ -40,6 +40,18 @@ const dict = [
   {label: '区域类别', value: 1025},
   {label: '停车方式', value: 1026},
 ]
+const dictNameMap: Record<number, Partial<{[key in keyof SysDicVO]: string}>> = {
+  ...Object.fromEntries(dict.map(item => [item.value, {dicName: item.label}])),
+  1001: {
+    dicName: '公司名称',
+    dicNameShort: '公司简称', //
+    dicCode: '英文名称',
+    dicCodeShort: '英文简称', //
+    dicPname: '上级公司',
+    dicNotes: '公司描述',
+  },
+  1018: {dicName: '供应商分类', dicCode: '分类编码', dicPname: '供应商上级分类'},
+}
 
 const tree: Tree[] = [
   {
@@ -76,9 +88,13 @@ watch(filterText, val => {
         :filter-node-method="(value, data) => (!value ? true : data.label.includes(value))"
       />
     </el-col>
-    <el-col :span="18">
-      <!-- <LevelDict /> -->
-      <KvDict :dicType="1020" />
+    <el-col :span="18" :key="activeNode">
+      <LevelDict
+        v-if="[1001, 1018].includes(activeNode)"
+        :dicType="activeNode"
+        :dic-names="dictNameMap[activeNode]"
+      />
+      <KVDict v-else :dicType="activeNode" :dic-names="dictNameMap[activeNode]" />
     </el-col>
   </el-row>
 </template>

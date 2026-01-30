@@ -47,6 +47,8 @@ export type FormSchema<Fields extends FieldConfig<any>[]> = {
 
 // 字段配置类型
 export type FieldConfig<T extends Component = Component> = {
+  /** 是否显示该字段  @default true */
+  show?: boolean
   component: T
   // 映射属性，用于组合并绑定组件的 model-value
   propMapping?: (string | string[])[]

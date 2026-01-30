@@ -7,20 +7,32 @@ import {ElMessageBox} from 'element-plus'
 import {reactive, useTemplateRef, computed, ref} from 'vue'
 import {usePagination, useRequest} from 'vue-request'
 
+const props = defineProps<{
+  dicType: number
+  dicNames: Partial<Record<keyof SysDicVO, string>>
+}>()
+
+const {
+  dicName: dicNameLabel,
+  dicNameShort: dicNameShortLabel,
+  dicCode: dicCodeLabel,
+  dicCodeShort: dicCodeShortLabel,
+  dicPname: dicPnameLabel,
+  dicNotes: dicNotesLabel,
+} = props.dicNames || {}
+
 const dialogVisible = ref(false)
 
 const listQuery = reactive({
   // pageNum: 1,
   // pageSize: 10,
   pageable: false,
+  dicType: props.dicType,
   // enable: 1,
 } as SysDicListDTO)
 
 const modelFormRef = useTemplateRef('modelFormRef')
-const [formModel, resetModel] = useModel(
-  {dicType: 1001, dicLevel: 1} as SysDicUpsertDTO,
-  modelFormRef
-)
+const [formModel, resetModel] = useModel({} as SysDicUpsertDTO, modelFormRef)
 
 const {
   runAsync: getList,
@@ -41,15 +53,43 @@ const upsertFormSchema = computed(() =>
     span: 24,
     fields: [
       defineField.Select({
-        label: '上级公司',
+        show: !!dicPnameLabel,
+        label: dicPnameLabel,
         prop: 'dicPcode',
         options: data.value?.data.filter(item => item.enable === 1),
         props: {value: 'dicCode', label: 'dicName'},
       }),
-      defineField.Input({label: '公司名称', prop: 'dicName', rules: [rules.required()]}),
-      defineField.Input({label: '英文名称', prop: 'dicCode', rules: [rules.required()]}),
-      defineField.Input({label: '英文简称', prop: 'dicCodeShort', rules: [rules.required()]}),
-      defineField.Input({label: '公司描述', prop: 'dicNotes', type: 'textarea', rows: 4}),
+      defineField.Input({
+        show: !!dicNameLabel,
+        label: dicNameLabel,
+        prop: 'dicName',
+        rules: [rules.required()],
+      }),
+      defineField.Input({
+        show: !!dicNameShortLabel,
+        label: dicNameShortLabel,
+        prop: 'dicNameShort',
+        rules: [rules.required()],
+      }),
+      defineField.Input({
+        show: !!dicCodeLabel,
+        label: dicCodeLabel,
+        prop: 'dicCode',
+        rules: [rules.required()],
+      }),
+      defineField.Input({
+        show: !!dicCodeShortLabel,
+        label: dicCodeShortLabel,
+        prop: 'dicCodeShort',
+        rules: [rules.required()],
+      }),
+      defineField.Input({
+        show: !!dicNotesLabel,
+        label: dicNotesLabel,
+        prop: 'dicNotes',
+        type: 'textarea',
+        rows: 4,
+      }),
     ],
   })
 )
@@ -66,7 +106,7 @@ const handleEdit = (row: SysDicVO) => {
 const handleSubmit = async () => {
   await modelFormRef.value?.validate()
 
-  await upsertDic(formModel)
+  await upsertDic({...formModel, dicType: props.dicType})
   ElMessage.success(formModel.dicId ? '修改成功' : '新增成功')
   dialogVisible.value = false
   getList(listQuery)
@@ -103,11 +143,26 @@ const handleEnable = async (row: SysDicVO) => {
     </template>
     <!-- todo: 选完字典类型后，展示不同的字典列表 -->
     <el-table v-loading="listLoading" :data="data?.data" stripe border>
-      <el-table-column label="公司名称" prop="dicName" min-width="150" />
-      <el-table-column label="公司简称" prop="dicNameShort" min-width="150" />
-      <el-table-column label="英文名称" prop="dicCode" min-width="120" />
-      <el-table-column label="英文简称" prop="dicCodeShort" min-width="120" />
-      <el-table-column label="上级公司" prop="dicPcode" min-width="120" />
+      <el-table-column v-if="!!dicNameLabel" :label="dicNameLabel" prop="dicName" min-width="150" />
+      <el-table-column
+        v-if="!!dicNameShortLabel"
+        :label="dicNameShortLabel"
+        prop="dicNameShort"
+        min-width="150"
+      />
+      <el-table-column v-if="!!dicCodeLabel" :label="dicCodeLabel" prop="dicCode" min-width="120" />
+      <el-table-column
+        v-if="!!dicCodeShortLabel"
+        :label="dicCodeShortLabel"
+        prop="dicCodeShort"
+        min-width="120"
+      />
+      <el-table-column
+        v-if="!!dicPnameLabel"
+        :label="dicPnameLabel"
+        prop="dicPname"
+        min-width="120"
+      />
       <el-table-column label="状态" prop="enable" width="100" align="center">
         <template #default="{row}">
           <el-tag :type="row.enable === 1 ? 'success' : 'danger'">

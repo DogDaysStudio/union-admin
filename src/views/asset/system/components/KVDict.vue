@@ -9,7 +9,10 @@ import {usePagination, useRequest} from 'vue-request'
 
 const props = defineProps<{
   dicType: number
+  dicNames: Partial<Record<keyof SysDicVO, string>>
 }>()
+
+const {dicCode: dicCodeLabel = '简写', dicName: dicNameLabel} = props.dicNames || {}
 
 const dialogVisible = ref(false)
 const editDialogVisible = ref(false)
@@ -41,10 +44,10 @@ const upsertFormSchema = computed(() =>
           fields: [
             defineField.Input({
               prop: 'dicName',
-              label: '经营模式',
+              label: dicNameLabel,
               rules: [rules.required()],
             }),
-            defineField.Input({prop: 'dicCode', label: '简写', rules: [rules.required()]}),
+            defineField.Input({prop: 'dicCode', label: dicCodeLabel, rules: [rules.required()]}),
           ],
         },
       }),
@@ -56,10 +59,10 @@ const editFormSchema = defineSchema({
   fields: [
     defineField.Input({
       prop: 'dicName',
-      label: '经营模式',
+      label: dicNameLabel,
       rules: [rules.required()],
     }),
-    defineField.Input({prop: 'dicCode', label: '简写', rules: [rules.required()]}),
+    defineField.Input({prop: 'dicCode', label: dicCodeLabel, rules: [rules.required()]}),
   ],
 })
 
@@ -125,12 +128,12 @@ const handleAdd = () => {
 <template>
   <section-group title="数据列表">
     <template #extra>
-      <el-button type="primary" @click="handleAdd">新增经营模式</el-button>
+      <el-button type="primary" @click="handleAdd">新增{{ dicNameLabel }}</el-button>
     </template>
     <el-table v-loading="amsSysDicListLoading" :data="data?.data" stripe border>
       <el-table-column type="selection" width="50" />
-      <el-table-column label="经营模式" prop="dicName" min-width="150" />
-      <el-table-column label="简写" prop="dicCode" min-width="120" />
+      <el-table-column :label="dicNameLabel" prop="dicName" min-width="150" />
+      <el-table-column :label="dicCodeLabel" prop="dicCode" min-width="120" />
       <el-table-column label="状态" prop="enable" width="100" align="center">
         <template #default="{row}">
           <el-tag :type="row.enable === 1 ? 'success' : 'danger'">
@@ -159,7 +162,7 @@ const handleAdd = () => {
 
   <el-dialog
     v-model="editDialogVisible"
-    title="编辑经营模式"
+    :title="`编辑${dicNameLabel}`"
     width="600px"
     destroy-on-close
     @closed="resetEditModel"
@@ -175,7 +178,7 @@ const handleAdd = () => {
 
   <el-dialog
     v-model="dialogVisible"
-    title="新增经营模式"
+    :title="`新增${dicNameLabel}`"
     width="600px"
     destroy-on-close
     @closed="resetFormModel"

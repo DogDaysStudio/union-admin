@@ -10,7 +10,7 @@ defineProps<DynamicFieldProps<T>>()
 </script>
 
 <template>
-  <el-col
+  <template
     v-for="(
       {
         // valuePropName = 'model-value',
@@ -23,56 +23,61 @@ defineProps<DynamicFieldProps<T>>()
         rules,
         required,
         formItemProps,
+        show = true,
         // fields,
         ...field
       },
       index
     ) in schema?.fields"
     :key="index"
-    :span="typeof span === 'number' ? span : (schema.span ?? 8)"
-    v-bind="colProps"
   >
-    <template v-if="propMapping?.length">
-      <template v-for="(prop, index) in propMapping" :key="index">
-        <el-form-item
-          v-if="index === 0"
-          :label="label"
-          :prop="prop"
-          :rules="rules"
-          :required="required"
-          label-width="120px"
-          v-bind="Object.assign({}, schema.formItemProps, formItemProps)"
-        >
-          <component
-            :is="component"
-            :model-value="propMapping.map(prop => get(model, prop))"
-            @update:model-value="
-              $event => propMapping.forEach((prop, index) => set(model, prop, $event?.[index]))
-            "
-            v-bind="field"
-          />
-        </el-form-item>
-        <el-form-item v-else :prop="prop" :rules="rules" class="hidden!" />
-      </template>
-    </template>
-
-    <el-form-item
-      v-else
-      :label="label"
-      :prop="prop"
-      :rules="rules"
-      :required="required"
-      label-width="120px"
-      v-bind="Object.assign({}, schema.formItemProps, formItemProps)"
+    <el-col
+      v-if="show"
+      :span="typeof span === 'number' ? span : (schema.span ?? 8)"
+      v-bind="colProps"
     >
-      <component v-if="component === ListField" :is="component" :prop="prop" v-bind="field" />
-      <component
+      <template v-if="propMapping?.length">
+        <template v-for="(prop, index) in propMapping" :key="index">
+          <el-form-item
+            v-if="index === 0"
+            :label="label"
+            :prop="prop"
+            :rules="rules"
+            :required="required"
+            label-width="120px"
+            v-bind="Object.assign({}, schema.formItemProps, formItemProps)"
+          >
+            <component
+              :is="component"
+              :model-value="propMapping.map(prop => get(model, prop))"
+              @update:model-value="
+                $event => propMapping.forEach((prop, index) => set(model, prop, $event?.[index]))
+              "
+              v-bind="field"
+            />
+          </el-form-item>
+          <el-form-item v-else :prop="prop" :rules="rules" class="hidden!" />
+        </template>
+      </template>
+
+      <el-form-item
         v-else
-        :is="component"
-        :model-value="prop ? get(model, prop) : undefined"
-        @update:model-value="$event => prop && set(model, prop, $event)"
-        v-bind="field"
-      />
-    </el-form-item>
-  </el-col>
+        :label="label"
+        :prop="prop"
+        :rules="rules"
+        :required="required"
+        label-width="120px"
+        v-bind="Object.assign({}, schema.formItemProps, formItemProps)"
+      >
+        <component v-if="component === ListField" :is="component" :prop="prop" v-bind="field" />
+        <component
+          v-else
+          :is="component"
+          :model-value="prop ? get(model, prop) : undefined"
+          @update:model-value="$event => prop && set(model, prop, $event)"
+          v-bind="field"
+        />
+      </el-form-item>
+    </el-col>
+  </template>
 </template>

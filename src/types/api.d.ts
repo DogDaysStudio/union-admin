@@ -327,6 +327,12 @@ interface ApiType {
   '/ams/sys-dic/upsert': {Req: SysDicUpsertDTO; Res: string}
 
   /* 【字典管理】
+  // 新增/修改字典(批量)
+  amsSysDicUpsertBatch(payload: SysDicUpsertDTO) {return http.post<Res<string>>('/ams/sys-dic/upsert-batch', payload)},
+  */
+  '/ams/sys-dic/upsert-batch': {Req: SysDicUpsertDTO; Res: string}
+
+  /* 【字典管理】
   // 字典列表
   amsSysDicList(payload: SysDicListDTO) {return http.post<Res<SysDicVO[]>>('/ams/sys-dic/list', payload)},
   */
@@ -935,6 +941,7 @@ interface SysDicVO {
   insertBy: string // 记录插入操作人
   updateTime: string // 记录更新时间
   updateBy: string // 记录更新操作人
+  dicPname: string // 父级名称
   children: SysDicVO[] // 子级字典
 }
 
@@ -1226,7 +1233,6 @@ interface SysDicUpsertDTO {
   dicName: string // 字典名称
   dicNameShort?: string // 字典简称
   dicSys?: string // 字典所属系统
-  dicLevel: number // 层级深度（从1开始）
   dicSort?: number // 排序值（越小越靠前）
   dicNotes?: string // 字典备注
   enable?: number // 0-禁用;1-启用
@@ -1454,25 +1460,21 @@ interface AssetResourceListDTO {
 
 // 资产管理-空间点位资源
 interface AssetResourceVO {
-  resourceId: string // 空间资源编码
-  projectId: string // 项目编码
-  assetId: string // 楼栋/围合/停车场编码
-  assetType: string // 资产类型(楼栋/围合/停车场)
-  floorId: string // 楼层编码
-  resourceNumber: string // 资源编号
+  resourceId: string // 资源编码
   resourceName: string // 资源名称
+  resourceNumber: string // 资源编号
   resourceType: string // 资源类型
-  resourceBusinessType: string // 资源业务类型
-  resourceAdType: string // 资源广告类型
-  resourceMediaType: string // 资源媒体类型
-  resourceSpecs: string // 资源规格
-  resourceArea: number // 资源面积
-  resourceState: number // 资源状态，0-待租;1-已租
+  resourceBusinessType: string // 业务类型
+  resourceAdType: string // 广告类型
+  resourceMediaType: string // 媒体类型
+  projectName: string // 项目名称
+  buildingEnclosureName: string // 楼栋/围合名称
+  floorName: string // 楼层名称
+  location: string // 位置
+  resourceSpecs: string // 规格
+  resourceArea: number // 面积
+  resourceState: number // 状态，0-待租;1-已租
   enable: number // 0-禁用;1-启用
-  locationTypeCode: string // 位置类型编码(Pz or NonPz)
-  locationTypeName: string // 位置类型名称(公区 或 非公区)
-  locationId: string // 位置编码(非公区为房间或商铺编码;公区为字典编码)
-  locationName: string // 位置名称(非公区为房间号或商铺号;公区为字典字典名称)
 }
 
 interface AssetResourceIdGenerateDTO {
@@ -1489,89 +1491,6 @@ interface AssetResourceBatchEnableDTO {
 }
 
 interface AssetProjectUpsertDTO {
-  projectId: string // 项目编码
-  projectCoverImage: string // 封面照片
-  projectName: string // 项目名称
-  projectShortName: string // 项目简称
-  provinceCode: string // 所在区域-省 code
-  provinceName: string // 所在区域-省名称
-  cityCode: string // 所在区域-城市 code
-  cityName: string // 所在区域-城市名称
-  districtCode: string // 地址-区域 code
-  districtName: string // 地址-区域名称
-  address: string // 地址-详细地址
-  lng: number // 经度
-  lat: number // 纬度
-  landNumber: string // 宗地号
-  ownershipPropertyCode: string // 产权性质编码
-  ownershipPropertyName: string // 产权性质名称
-  ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
-  collectWayCode: string // 筹集方式编码
-  collectWayName: string // 筹集方式名称
-  collectSubject: string // 筹集主体
-  collectDate: string // 筹集日期
-  businessModelCode: string // 经营模式编码
-  businessModelName: string // 经营模式名称
-  projectTypeCode: string // 项目类型编码
-  projectTypeName: string // 项目类型名称
-  projectPhone: string // 项目电话
-  totalLandArea: number // 总占地面积
-  totalArea: number // 总建筑面积
-  groundArea: number // 地上建筑面积
-  undergroundArea: number // 地下建筑面积
-  roomArea: number // 住宅建筑面积
-  roomUtilityArea: number // 住宅实用面积
-  shopArea: number // 商业建筑面积
-  shopUtilityArea: number // 商业实用面积
-  manageRoomArea: number // 管理用房面积
-  deviceRoomArea: number // 设备用房面积
-  greenArea: number // 绿化面积
-  propertyFeeArea: number // 物业费收费面积
-  roadArea: number // 道路面积
-  plotRatio: string // 容积率
-  completeDate: string // 竣工时间
-  prepareDate: string // 竣备时间
-  totalHouseholds: number // 总户数
-  groundParkingSpace: number // 地上车位数量
-  undergroundParkingSpace: number // 地下车位数量
-  machineryParkingSpace: number // 机械车位数量
-  parkingSpaceRatio: string // 车位配比
-  staffEntrance: number // 人行出入口数量
-  carEntrance: number // 车辆出入口数量
-  customElevator: number // 客梯数量
-  goodsElevator: number // 货梯数量
-  firefightElevator: number // 消防梯数量
-  propertyFeeModel: string // 物业费收费模式
-  roomStandard: string // 住宅物业收费标准
-  shopStandard: string // 底商物业收费标准
-  independentShopStandard: string // 独立商业物业收费标准
-  groundParkingStandard: string // 地上车位收费标准
-  undergroundParkingStandard: string // 地下车位收费标准
-  checkInDate: string // 入伙时间
-  contractBegin: string // 物业合同生效日期
-  contractEnd: string // 物业合同终止日期
-  enable: number // 0-禁用;1-启用
-  valid: number // 记录是否有效
-}
-
-interface AssetProjectListDTO {
-  pageable: boolean
-  pageNum: number
-  pageSize: number
-  projectName: string // 项目名称
-  provinceCode: string // 所在区域-省 code
-  cityCode: string // 所在区域-城市 code
-  districtCode: string // 地址-区域 code
-  collectWayCode: string // 筹集方式编码
-  ownershipUnitCode: string // 产权单位编码
-  ownershipPropertyCode: string // 产权性质编码
-  businessModelCode: string // 经营模式编码
-  enable: number // 状态
-}
-
-// 资产管理-项目管理
-interface AssetProjectVO {
   projectId: string // 项目编码
   projectCoverImage: string // 封面照片
   projectName: string // 项目名称
@@ -1635,7 +1554,91 @@ interface AssetProjectVO {
   contractBegin: string // 物业合同生效日期
   contractEnd: string // 物业合同终止日期
   enable: number // 0-禁用;1-启用
-  valid: number // 记录是否有效
+}
+
+interface AssetProjectListDTO {
+  pageable: boolean
+  pageNum: number
+  pageSize: number
+  projectId: string // 项目编码
+  projectName: string // 项目名称
+  projectShortName: string // 项目简称
+  provinceCode: string // 所在区域-省 code
+  cityCode: string // 所在区域-城市 code
+  districtCode: string // 地址-区域 code
+  address: string // 详细地址
+  collectWayCode: string // 筹集方式编码
+  ownershipUnitCode: string // 产权单位编码
+  ownershipPropertyCode: string // 产权性质编码
+  businessModelCode: string // 经营模式编码
+  projectTypeCode: string // 项目类型编码
+  enable: number // 状态
+}
+
+// 资产管理-项目管理
+interface AssetProjectVO {
+  projectId: string // 项目编码
+  projectCoverImage: string // 封面照片
+  projectName: string // 项目名称
+  projectShortName: string // 项目简称
+  areaName: string // 所在省市区
+  address: string // 详细地址
+  lng: number // 经度
+  lat: number // 纬度
+  landNumber: string // 宗地号
+  ownershipPropertyName: string // 产权性质名称
+  ownershipUnitName: string // 产权单位名称
+  collectWayName: string // 筹集方式名称
+  collectSubject: string // 筹集主体
+  collectDate: string // 筹集日期
+  businessModelName: string // 经营模式名称
+  projectTypeName: string // 项目类型名称
+  projectPhone: string // 项目电话
+  totalLandArea: number // 总占地面积
+  totalArea: number // 总建筑面积
+  groundArea: number // 地上建筑面积
+  undergroundArea: number // 地下建筑面积
+  roomArea: number // 住宅建筑面积
+  roomUtilityArea: number // 住宅实用面积
+  shopArea: number // 商业面积
+  shopUtilityArea: number // 商业实用面积
+  manageRoomArea: number // 管理用房面积
+  deviceRoomArea: number // 设备用房面积
+  greenArea: number // 绿化面积
+  propertyFeeArea: number // 物业费收费面积
+  roadArea: number // 道路面积
+  plotRatio: string // 容积率
+  completeDate: string // 竣工时间
+  prepareDate: string // 竣备时间
+  totalHouseholds: number // 总户数
+  groundParkingSpace: number // 地上车位数量
+  undergroundParkingSpace: number // 地下车位数量
+  machineryParkingSpace: number // 机械车位数量
+  parkingSpaceRatio: string // 车位配比
+  staffEntrance: number // 人行出入口数量
+  carEntrance: number // 车辆出入口数量
+  customElevator: number // 客梯数量
+  goodsElevator: number // 货梯数量
+  firefightElevator: number // 消防梯数量
+  propertyFeeModel: string // 物业费收费模式
+  roomStandard: string // 住宅物业收费标准
+  shopStandard: string // 底商物业收费标准
+  independentShopStandard: string // 独立商业物业收费标准
+  groundParkingStandard: string // 地上车位收费标准
+  undergroundParkingStandard: string // 地下车位收费标准
+  checkInDate: string // 入伙时间
+  contractBegin: string // 物业合同生效日期
+  contractEnd: string // 物业合同终止日期
+  enable: number // 0-禁用;1-启用
+  buildingCount: number // 楼栋数量
+  floorCount: number // 楼层数量
+  roomCount: number // 住宅数量
+  enclosureCount: number // 围合数量
+  fixedCount: number // 固定资产数量
+  shopCount: number // 商铺数量
+  parkingCount: number // 停车场数量
+  parkingSpaceCount: number // 停车位数量
+  resourceCount: number // 空间点位数量
 }
 
 // 资产管理-停车场管理
@@ -1649,10 +1652,11 @@ interface AssetParkingBaseDTO {
   parkingLocationName: string // 停车场位置名称
   parkingCategoryCode: string // 车位类别编码
   parkingCategoryName: string // 车位类别名称
-  regionTypeCode: string // 区域类别编码
-  regionTypeName: string // 区域类别名称
+  regionCategoryCode: string // 区域类别编码
+  regionCategoryName: string // 区域类别名称
   parkingSpaceRegionJson: string // 车位区域
   parkingSpaceQuantity: number // 停车位数
+  regionMapFid: string // 区域地图图片
 }
 
 // 资产管理-新增停车场DTO
@@ -1693,19 +1697,16 @@ interface AssetParkingListDTO {
 // 资产管理-停车场
 interface AssetParkingVO {
   parkingId: string // 停车场编码
-  projectId: string // 项目编码
   parkingName: string // 停车场名称
-  parkingMethodCode: string // 停车方式编码
   parkingMethodName: string // 停车方式名称
-  parkingLocationCode: string // 停车场位置编码
   parkingLocationName: string // 停车场位置名称
-  parkingCategoryCode: string // 车位类别编码
   parkingCategoryName: string // 车位类别名称
-  regionTypeCode: string // 区域类别编码
-  regionTypeName: string // 区域类别名称
+  regionCategoryName: string // 区域类别名称
   parkingSpaceRegionJson: string // 车位区域
   parkingSpaceQuantity: number // 停车位数
   enable: number // 是否启用;0-禁用;1-启用
+  regionMapFid: string // 区域地图图片文件 Fid
+  regionMapFileModel: FileModel // 区域地图图片文件 Model
 }
 
 // 资产管理-停车位管理
@@ -1713,20 +1714,30 @@ interface AssetParkingSpaceListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
-  projectName: string // 项目名称
+  parkingSpaceName: string // 车位名称
+  parkingSpaceId: string // 车位编码
+  parkingId: string // 停车场编码
   parkingName: string // 停车场名称
-  floorName: string // 楼层名称
-  enable: number // 是否启用;0-禁用;1-启用
+  parkingSpaceRegionId: string // 车位区域编码
+  parkingSpaceRegionName: string // 车位区域名称
+  projectName: string // 项目名称
+  parkingSpaceState: string // 车位状态
+  ownershipInfo: string // 权属方信息
+  userInfo: string // 使用方信息
+  leaseTerm: number // 租期
+  licensePlate: string // 车牌号
+  enable: number // 启停状态
 }
 
 // 资产管理-停车位
 interface AssetParkingSpaceVO {
-  parkingSpaceId: string // 车位编码
-  projectId: string // 项目编码
-  parkingId: string // 停车场编码
   parkingSpaceName: string // 车位名称
+  parkingSpaceId: string // 车位编码
+  parkingId: string // 停车场编码
+  parkingName: string // 停车场名称
   parkingSpaceRegionId: string // 车位区域编码
   parkingSpaceRegionName: string // 车位区域名称
+  projectName: string // 项目名称
   parkingSpaceAttributeCode: string // 车位属性编码
   parkingSpaceAttributeName: string // 车位属性名称
   parkingSpaceArea: number // 车位面积
@@ -1736,6 +1747,7 @@ interface AssetParkingSpaceVO {
   leaseTerm: number // 租期
   licensePlate: string // 车牌号
   chargingPort: number // 是否充电位
+  enable: number // 启停状态
 }
 
 // 资产管理-楼层管理
@@ -1992,6 +2004,7 @@ interface AssetBuildingListDTO {
   projectName: string // 项目名称
   buildingId: string // 楼栋编码
   buildingName: string // 楼栋名称
+  projectTypeCode: string // 项目类型编码
   ownershipUnitCode: string // 产权单位编码
   enable: number // 状态
 }
