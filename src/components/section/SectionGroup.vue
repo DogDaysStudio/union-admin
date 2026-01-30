@@ -4,13 +4,13 @@ import {useSlots} from 'vue'
 withDefaults(
   defineProps<{
     title?: string
-    /**
-     * 是否显示标题
-     */
-    header?: boolean
-    headerClass?: string
     titleClass?: string
     contentClass?: string
+    /**
+     * 是否内联显示，true 相当与：header-class="px-0!" :shadow="false" :border="false"
+     * 非响应式字段，不可动态变化
+     */
+    inline?: boolean
     /**
      * 是否显示分隔线
      */
@@ -23,8 +23,19 @@ withDefaults(
      * 是否显示边框
      */
     border?: boolean
+    /**
+     * 是否显示标题
+     */
+    header?: boolean
+    headerClass?: string
   }>(),
-  {divider: true, shadow: true, border: true, header: true}
+  {
+    header: true,
+    divider: true,
+    shadow: props => (props.inline ? false : true),
+    border: props => (props.inline ? false : true),
+    headerClass: props => (props.inline ? 'px-0!' : undefined),
+  }
 )
 
 const slots = useSlots()

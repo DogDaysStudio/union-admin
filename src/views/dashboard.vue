@@ -176,7 +176,7 @@ const formSchema2 = computed(() =>
         <el-button>新增</el-button>
         <el-button>删除</el-button>
       </template>
-      <section-group header-class="px-0!" :shadow="false" :border="false">
+      <section-group title="基本信息" inline>
         <template #title>
           <span class="text-red-600">基本信息</span>
         </template>
@@ -188,7 +188,7 @@ const formSchema2 = computed(() =>
           @reset="handleReset"
         ></schema-form>
       </section-group>
-      <section-group title="建筑信息信息" header-class="px-0!" :shadow="false" :border="false">
+      <section-group title="建筑信息信息" inline>
         <template #extra>
           <el-button>新增</el-button>
           <el-button>删除</el-button>
