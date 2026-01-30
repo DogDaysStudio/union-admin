@@ -171,16 +171,37 @@ const formSchema2 = computed(() =>
 
 <template>
   <div>
-    <el-card>
-      <template #header>数据筛选</template>
-      <schema-form
-        label-position="top"
-        :schema="formSchema"
-        :model="formState"
-        @finish="handleFinish"
-        @reset="handleReset"
-      ></schema-form>
-    </el-card>
+    <section-group title="新增项目">
+      <template #extra>
+        <el-button>新增</el-button>
+        <el-button>删除</el-button>
+      </template>
+      <section-group header-class="px-0!" :shadow="false" :border="false">
+        <template #title>
+          <span class="text-red-600">基本信息</span>
+        </template>
+        <schema-form
+          label-position="top"
+          :schema="formSchema"
+          :model="formState"
+          @finish="handleFinish"
+          @reset="handleReset"
+        ></schema-form>
+      </section-group>
+      <section-group title="建筑信息信息" header-class="px-0!" :shadow="false" :border="false">
+        <template #extra>
+          <el-button>新增</el-button>
+          <el-button>删除</el-button>
+        </template>
+        <schema-form
+          label-position="top"
+          :schema="formSchema"
+          :model="formState"
+          @finish="handleFinish"
+          @reset="handleReset"
+        ></schema-form>
+      </section-group>
+    </section-group>
 
     <el-card>
       <schema-form

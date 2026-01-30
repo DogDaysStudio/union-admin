@@ -28,6 +28,7 @@ declare module 'vue' {
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElDivider: typeof import('element-plus/es')['ElDivider']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
     ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
@@ -70,6 +71,8 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SchemaForm: typeof import('./src/components/form/SchemaForm.vue')['default']
+    Section: typeof import('./src/components/section/SectionGroup.vue')['default']
+    SectionGroup: typeof import('./src/components/section/SectionGroup.vue')['default']
     SubField: typeof import('./src/components/form/src/SubField.vue')['default']
   }
   export interface GlobalDirectives {
@@ -95,6 +98,7 @@ declare global {
   const ElContainer: typeof import('element-plus/es')['ElContainer']
   const ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
   const ElDialog: typeof import('element-plus/es')['ElDialog']
+  const ElDivider: typeof import('element-plus/es')['ElDivider']
   const ElDropdown: typeof import('element-plus/es')['ElDropdown']
   const ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
   const ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
@@ -137,5 +141,7 @@ declare global {
   const RouterLink: typeof import('vue-router')['RouterLink']
   const RouterView: typeof import('vue-router')['RouterView']
   const SchemaForm: typeof import('./src/components/form/SchemaForm.vue')['default']
+  const Section: typeof import('./src/components/section/SectionGroup.vue')['default']
+  const SectionGroup: typeof import('./src/components/section/SectionGroup.vue')['default']
   const SubField: typeof import('./src/components/form/src/SubField.vue')['default']
 }
