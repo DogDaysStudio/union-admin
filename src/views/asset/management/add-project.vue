@@ -146,7 +146,13 @@ const props: CascaderProps = {
     <!-- 外层容器：水平居中 -->
     <div class="mx-auto">
       <!-- 表单核心：绑定数据/验证、标签宽度、间距 -->
-      <el-form :model="formData" :rules="formRules" ref="formRef" label-width="80px">
+      <el-form
+        :model="formData"
+        :rules="formRules"
+        ref="formRef"
+        label-width="80px"
+        label-position="top"
+      >
         <!-- 第一行：项目名称、编码、简称 -->
         <el-row :gutter="24">
           <el-col :span="8">

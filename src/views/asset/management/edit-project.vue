@@ -226,8 +226,8 @@ const props: CascaderProps = {
         label-width="80px"
         label-position="top"
       >
-        <el-card>基本信息</el-card>
-        <!-- 第一行：项目名称、编码、简称 -->
+        <el-tag class="mb-4">基本信息</el-tag>
+        <!-- 项目名称、编码、简称 -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="项目名称" prop="projectName">
@@ -246,7 +246,7 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <!-- 第二行：省市区、详细地址、经纬度 -->
+        <!-- 省市区、详细地址、经纬度 -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="省市区" prop="provinceCode">
@@ -282,7 +282,7 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <!-- 第三行：宗地号、产权性质、产权单位 -->
+        <!-- 宗地号、产权性质、产权单位 -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="宗地号" prop="landNumber">
@@ -308,7 +308,7 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <!-- 第四行：筹集方式、筹集主体、筹集日期 -->
+        <!-- 筹集方式、筹集主体、筹集日期 -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="筹集方式" prop="collectWayCode">
@@ -340,7 +340,7 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <!-- 第五行：经营模式、项目类型、项目电话 -->
+        <!-- 经营模式、项目类型、项目电话 -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="经营模式" prop="businessModelCode">
@@ -367,8 +367,8 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <el-card>建筑信息</el-card>
-        <!-- 面积相关行1：总占地面积、总建筑面积、地上建筑面积 -->
+        <el-tag class="mb-4">建筑信息</el-tag>
+        <!-- 总占地面积、总建筑面积、地上建筑面积 -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="总占地面积(㎡)" prop="totalLandArea">
@@ -402,7 +402,7 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <!-- 面积相关行2：地下建筑面积、住宅建筑面积、住宅实用面积 -->
+        <!-- 地下建筑面积、住宅建筑面积、住宅实用面积 -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="地下建筑面积(㎡)" prop="undergroundArea">
@@ -436,7 +436,7 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <!-- 面积相关行3：商业建筑面积、商业实用面积、管理用房面积 -->
+        <!-- 商业建筑面积、商业实用面积、管理用房面积 -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="商业建筑面积(㎡)" prop="shopArea">
@@ -470,7 +470,7 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <!-- 面积相关行4：设备用房面积、绿化面积、物业费收费面积 -->
+        <!-- 设备用房面积、绿化面积、物业费收费面积 -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="设备用房面积(㎡)" prop="deviceRoomArea">
@@ -504,7 +504,7 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <!-- 面积/容积率/日期行：道路面积、容积率、竣工时间 -->
+        <!-- 道路面积、容积率、竣工时间 -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="道路面积(㎡)" prop="roadArea">
@@ -547,7 +547,7 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <el-card>项目配套</el-card>
+        <el-tag class="mb-4">项目配套</el-tag>
         <!-- 第1行：总户数、地上车位数量、地下车位数量 -->
         <el-row :gutter="24">
           <el-col :span="8">
@@ -697,7 +697,7 @@ const props: CascaderProps = {
           </el-col>
         </el-row>
 
-        <!-- 第十九行：物业费收费模式、住宅物业收费标准、底商物业收费标准（模式+基础收费） -->
+        <!-- 第6行：物业费收费模式、住宅物业收费标准、底商物业收费标准（模式+基础收费） -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="物业费收费模式" prop="propertyFeeModel">
@@ -712,7 +712,7 @@ const props: CascaderProps = {
             <el-form-item label="住宅物业收费标准" prop="roomStandard">
               <el-input
                 v-model="formData.roomStandard"
-                placeholder="请填写住宅收费标准（元/㎡）"
+                placeholder="请填写住宅收费标准"
                 clearable
               />
             </el-form-item>
@@ -721,20 +721,20 @@ const props: CascaderProps = {
             <el-form-item label="底商物业收费标准" prop="shopStandard">
               <el-input
                 v-model="formData.shopStandard"
-                placeholder="请填写底商收费标准（元/㎡）"
+                placeholder="请填写底商收费标准"
                 clearable
               />
             </el-form-item>
           </el-col>
         </el-row>
 
-        <!-- 第二十行：独立商业物业收费标准、地上车位收费标准、地下车位收费标准（剩余收费项） -->
+        <!-- 第7行：独立商业物业收费标准、地上车位收费标准、地下车位收费标准（剩余收费项） -->
         <el-row :gutter="24">
           <el-col :span="8">
             <el-form-item label="独立商业物业收费标准" prop="independentShopStandard">
               <el-input
                 v-model="formData.independentShopStandard"
-                placeholder="请填写独立商业收费标准（元/㎡）"
+                placeholder="请填写独立商业收费标准"
                 clearable
               />
             </el-form-item>
@@ -743,7 +743,7 @@ const props: CascaderProps = {
             <el-form-item label="地上车位收费标准" prop="groundParkingStandard">
               <el-input
                 v-model="formData.groundParkingStandard"
-                placeholder="请填写地上车位收费标准（元/个）"
+                placeholder="请填写地上车位收费标准"
                 clearable
               />
             </el-form-item>
@@ -752,7 +752,7 @@ const props: CascaderProps = {
             <el-form-item label="地下车位收费标准" prop="undergroundParkingStandard">
               <el-input
                 v-model="formData.undergroundParkingStandard"
-                placeholder="请填写地下车位收费标准（元/个）"
+                placeholder="请填写地下车位收费标准"
                 clearable
               />
             </el-form-item>
