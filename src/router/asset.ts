@@ -32,6 +32,11 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '项目管理-导入', hidden: true},
             component: () => import('@/views/asset/management/import-project.vue'),
           },
+          {
+            path: 'detail',
+            meta: {title: '项目管理-详情', hidden: true},
+            component: () => import('@/views/asset/management/detail-project.vue'),
+          },
           // {
           //   path: 'lists',
           //   meta: {title: '资产列表'},

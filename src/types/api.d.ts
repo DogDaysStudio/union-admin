@@ -1554,24 +1554,21 @@ interface AssetProjectUpsertDTO {
   contractBegin: string // 物业合同生效日期
   contractEnd: string // 物业合同终止日期
   enable: number // 0-禁用;1-启用
+  valid: number // 记录是否有效
 }
 
 interface AssetProjectListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
-  projectId: string // 项目编码
   projectName: string // 项目名称
-  projectShortName: string // 项目简称
   provinceCode: string // 所在区域-省 code
   cityCode: string // 所在区域-城市 code
   districtCode: string // 地址-区域 code
-  address: string // 详细地址
   collectWayCode: string // 筹集方式编码
   ownershipUnitCode: string // 产权单位编码
   ownershipPropertyCode: string // 产权性质编码
   businessModelCode: string // 经营模式编码
-  projectTypeCode: string // 项目类型编码
   enable: number // 状态
 }
 
@@ -1581,17 +1578,27 @@ interface AssetProjectVO {
   projectCoverImage: string // 封面照片
   projectName: string // 项目名称
   projectShortName: string // 项目简称
-  areaName: string // 所在省市区
-  address: string // 详细地址
+  provinceCode: string // 所在区域-省 code
+  provinceName: string // 所在区域-省名称
+  cityCode: string // 所在区域-城市 code
+  cityName: string // 所在区域-城市名称
+  districtCode: string // 地址-区域 code
+  districtName: string // 地址-区域名称
+  address: string // 地址-详细地址
   lng: number // 经度
   lat: number // 纬度
   landNumber: string // 宗地号
+  ownershipPropertyCode: string // 产权性质编码
   ownershipPropertyName: string // 产权性质名称
+  ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
+  collectWayCode: string // 筹集方式编码
   collectWayName: string // 筹集方式名称
   collectSubject: string // 筹集主体
   collectDate: string // 筹集日期
+  businessModelCode: string // 经营模式编码
   businessModelName: string // 经营模式名称
+  projectTypeCode: string // 项目类型编码
   projectTypeName: string // 项目类型名称
   projectPhone: string // 项目电话
   totalLandArea: number // 总占地面积
