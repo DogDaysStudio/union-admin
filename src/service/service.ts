@@ -28,7 +28,7 @@ http.interceptors.response.use(
     const userStore = useUserStore()
 
     // 处理未授权错误，自动登出
-    if (status === 401) {
+    if ([401, 402, 403].includes(status)) {
       // 调用登出方法
       userStore.logout()
 

@@ -120,6 +120,11 @@ const {runAsync, loading} = useRequest(
     await iamAuth.iamAuthLogin(payload)
 
     await iamAuth.iamAuthInfo()
+  },
+  {
+    onError: () => {
+      generateCaptcha()
+    },
   }
 )
 

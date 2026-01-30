@@ -6,8 +6,12 @@ import asset from './asset'
 import lease from './lease'
 import property from './property'
 import iot from './iot'
+import {useUserStore} from '@/stores/user'
+
+const businessRoutes = [...data, ...asset, ...lease, ...property, ...iot]
 
 export const routes: RouteRecordRaw[] = [
+  ...businessRoutes,
   // 登录路由
   {
     path: '/login',
@@ -17,11 +21,16 @@ export const routes: RouteRecordRaw[] = [
   },
 
   {path: '/', redirect: '/data-center'},
-  ...data,
-  ...asset,
-  ...lease,
-  ...property,
-  ...iot,
+  // 404 页面路由
+  {
+    path: '/404',
+    name: '404',
+    meta: {title: '页面不存在'},
+    component: () => import('@/views/404.vue'),
+  },
+
+  // 404 路由重定向
+  {path: '/:pathMatch(.*)*', redirect: '/404'},
 ]
 
 const router = createRouter({
@@ -36,22 +45,21 @@ router.afterEach(to => {
 })
 
 // 路由守卫
-// router.beforeEach((to, from, next) => {
-//   const userStore = useUserStore()
-//   const requiresAuth = to.matched.some(record => record.meta.requiresAuth !== false)
+router.beforeEach(to => {
+  const userStore = useUserStore()
 
-//   // 如果页面需要登录，且用户未登录，则跳转到登录页
-//   if (requiresAuth && !userStore.token) {
-//     next({path: '/login'})
-//   }
-//   // 如果用户已登录，访问登录页则自动跳转到首页
-//   else if (to.path === '/login' && userStore.token) {
-//     next({path: '/dashboard'})
-//   }
-//   // 其他情况正常跳转
-//   else {
-//     next()
-//   }
-// })
+  const requiresAuth = businessRoutes.some(route =>
+    to.path.startsWith(route.path)
+  ) /* || to.path === '/404' */
+
+  // 如果页面需要登录，且用户未登录，则跳转到登录页
+  if (requiresAuth && !userStore.token) {
+    return {path: '/login'}
+  }
+  // 如果用户已登录，访问登录页则自动跳转到首页
+  else if (to.path === '/login' && userStore.token) {
+    return {path: '/'}
+  }
+})
 
 export default router

@@ -81,6 +81,8 @@ const handleTabChange = (name: TabPaneName) => {
 let removeAfterEachGuard: ReturnType<typeof router.afterEach> | null = null
 
 onMounted(() => {
+  console.log('removeAfterEachGuard onMounted')
+
   // 在组件挂载时添加路由守卫
   removeAfterEachGuard = router.afterEach(to => {
     tabsStore.addTab(to)
