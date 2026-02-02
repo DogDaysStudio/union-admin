@@ -20,6 +20,8 @@ export const useModuleStore = defineStore('module', () => {
       activeModule.value = 'property'
     } else if (path.startsWith('/iot')) {
       activeModule.value = 'iot'
+    } else if (path.startsWith('/management')) {
+      activeModule.value = 'management'
     }
   }
 

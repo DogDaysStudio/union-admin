@@ -51,6 +51,7 @@ const modulePathMap = {
   lease: '/lease',
   property: '/property',
   iot: '/iot',
+  management: '/management',
 }
 
 // 根据当前激活的模块获取对应的菜单

@@ -6,9 +6,10 @@ import asset from './asset'
 import lease from './lease'
 import property from './property'
 import iot from './iot'
-import {useUserStore} from '@/stores/user'
+import management from './management'
+// import {useUserStore} from '@/stores/user'
 
-const businessRoutes = [...data, ...asset, ...lease, ...property, ...iot]
+const businessRoutes = [...data, ...asset, ...lease, ...property, ...iot, ...management]
 
 export const routes: RouteRecordRaw[] = [
   ...businessRoutes,
@@ -45,21 +46,21 @@ router.afterEach(to => {
 })
 
 // 路由守卫
-router.beforeEach(to => {
-  const userStore = useUserStore()
+// router.beforeEach(to => {
+//   const userStore = useUserStore()
 
-  const requiresAuth = businessRoutes.some(route =>
-    to.path.startsWith(route.path)
-  ) /* || to.path === '/404' */
+//   const requiresAuth = businessRoutes.some(route =>
+//     to.path.startsWith(route.path)
+//   ) /* || to.path === '/404' */
 
-  // 如果页面需要登录，且用户未登录，则跳转到登录页
-  if (requiresAuth && !userStore.token) {
-    return {path: '/login'}
-  }
-  // 如果用户已登录，访问登录页则自动跳转到首页
-  else if (to.path === '/login' && userStore.token) {
-    return {path: '/'}
-  }
-})
+//   // 如果页面需要登录，且用户未登录，则跳转到登录页
+//   if (requiresAuth && !userStore.token) {
+//     return {path: '/login'}
+//   }
+//   // 如果用户已登录，访问登录页则自动跳转到首页
+//   else if (to.path === '/login' && userStore.token) {
+//     return {path: '/'}
+//   }
+// })
 
 export default router

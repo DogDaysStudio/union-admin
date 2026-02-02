@@ -2,7 +2,7 @@
 import {computed, onUpdated, reactive} from 'vue'
 import {useRouter} from 'vue-router'
 
-import {defineSchema, defineField} from '@/components/form/form-schema.ts'
+import {defineSchema, defineField} from '@/components'
 import {rules} from '@/common/rules'
 
 const router = useRouter()

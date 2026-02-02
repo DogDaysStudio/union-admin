@@ -48,6 +48,7 @@ const menuItems = [
   {label: '租赁', key: '/lease', module: 'lease'},
   {label: '物业', key: '/property', module: 'property'},
   {label: 'IOT', key: '/iot', module: 'iot'},
+  {label: '管理', key: '/management', module: 'management'},
 ]
 
 const activeKey = computed(() => {
