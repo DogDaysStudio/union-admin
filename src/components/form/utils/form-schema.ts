@@ -15,9 +15,10 @@ import {
   type FormPropsPublic,
 } from 'element-plus'
 import {type Component, type VNodeProps} from 'vue'
-import EmptyField from './src/EmptyField.vue'
-import SubField from './src/SubField.vue'
-import ListField from './src/ListField.vue'
+import EmptyField from '@/components/form/components/EmptyField.vue'
+import SubField from '@/components/form/components/SubField.vue'
+import ListField from '@/components/form/components/ListField.vue'
+import UploadFile from '@/components/upload/UploadFile.vue'
 
 // 提取组件 Props 的实用类型
 import type {ComponentPublicInstance} from 'vue'
@@ -170,3 +171,7 @@ defineField.SubField = (field => {
 defineField.ListField = (field => {
   return defineField({component: ListField, ...field})
 }) as DefineField<typeof ListField, 'component' | 'propMapping'>
+
+defineField.UploadFile = (field => {
+  return defineField({component: UploadFile, ...field})
+}) as DefineField<typeof UploadFile, 'component'>

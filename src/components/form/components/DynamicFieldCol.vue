@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T">
 import get from 'lodash.get'
 import set from 'lodash.set'
-import type {DynamicFieldProps} from './form'
+import type {DynamicFieldProps} from '../types/form'
 import ListField from './ListField.vue'
 
 defineOptions({name: 'DynamicFieldCol'})

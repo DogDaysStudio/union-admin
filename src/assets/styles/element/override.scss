@@ -6,7 +6,8 @@
   width: 100%;
 }
 
-.el-date-editor.el-input , .el-input-number {
+.el-date-editor.el-input,
+.el-input-number {
   width: 100% !important;
 }
 
@@ -14,4 +15,8 @@
   margin-bottom: 0;
   margin-right: 4px;
   line-height: 32px;
+}
+
+.el-upload-list--picture-card .el-upload-list__item.is-fail {
+  border-color: var(--el-color-danger);
 }

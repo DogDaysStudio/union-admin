@@ -8,13 +8,19 @@ const instance = axios.create({
   baseURL: baseUrl,
 })
 
+export const createHeaders = () => {
+  const userStore = useUserStore()
+  return {
+    'union-auth': userStore.token,
+  }
+}
+
 const http = enhance(instance, {
   getHttpStatus: (response: any) => response.data?.code,
 })
 
 http.interceptors.request.use(config => {
-  const userStore = useUserStore()
-  config.headers['union-auth'] = userStore.token
+  Object.assign(config.headers, createHeaders())
   return config
 })
 

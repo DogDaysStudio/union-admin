@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T">
 import {type FormProps} from 'element-plus'
 import {useTemplateRef} from 'vue'
-import type {DynamicFieldProps} from './src/form'
+import type {DynamicFieldProps} from './types/form'
 
 const {
   schema,

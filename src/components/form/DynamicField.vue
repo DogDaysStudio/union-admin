@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T">
 import {provide} from 'vue'
-import DynamicFieldCol from './src/DynamicFieldCol.vue'
-import type {DynamicFieldProps} from './src/form'
+import DynamicFieldCol from '@/components/form/components/DynamicFieldCol.vue'
+import type {DynamicFieldProps} from './types/form'
 
 const props = defineProps<
   DynamicFieldProps<T> & {
