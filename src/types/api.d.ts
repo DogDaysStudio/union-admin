@@ -69,6 +69,12 @@ interface ApiType {
   '/iam/common/file/id-to-path': {Res: FileModel[]}
 
   /* 【通用相关】
+  // 码表元信息
+  iamCommonDicMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/iam/common/dic/meta', payload)},
+  */
+  '/iam/common/dic/meta': {Req: Record<string, any>; Res: PairModel[]}
+
+  /* 【通用相关】
   // 树形码表 | object:{dicType:字典类型}
   iamCommonDicListTree(payload: Record<string, any>) {return http.post<Res<SysDicVO[]>>('/iam/common/dic/list-tree', payload)},
   */
@@ -385,6 +391,12 @@ interface ApiType {
   amsCommonFileIdToPath() {return http.post<Res<FileModel[]>>('/ams/common/file/id-to-path')},
   */
   '/ams/common/file/id-to-path': {Res: FileModel[]}
+
+  /* 【通用相关】
+  // 码表元信息
+  amsCommonDicMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/common/dic/meta', payload)},
+  */
+  '/ams/common/dic/meta': {Req: Record<string, any>; Res: PairModel[]}
 
   /* 【通用相关】
   // 树形码表 | object:{dicType:字典类型}
@@ -958,6 +970,11 @@ interface FileModel {
   md5: string // 文件MD5
 }
 
+interface PairModel {
+  k: string
+  v: string
+}
+
 interface SysDicVO {
   dicId: string // ID
   dicType: number // 字典类型
@@ -979,11 +996,6 @@ interface SysDicVO {
   updateBy: string // 记录更新操作人
   dicPname: string // 父级名称
   children: SysDicVO[] // 子级字典
-}
-
-interface PairModel {
-  k: string
-  v: string
 }
 
 interface TreeModel {

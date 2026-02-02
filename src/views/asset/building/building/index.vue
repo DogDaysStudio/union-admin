@@ -6,6 +6,15 @@ import {ElMessage, ElMessageBox} from 'element-plus'
 import {amsAsset} from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
 
+// 获取项目名称
+const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
+  throttleInterval: 500,
+})
+interface ProjectOptionVO {
+  projectId: string
+  projectName: string
+}
+const projectOptions = reactive<ProjectOptionVO[]>([])
 // 列表数据
 const buildingList = useRequest(amsAsset.amsAssetBuildingList, {
   throttleInterval: 500,
@@ -38,18 +47,19 @@ const formSchema = defineSchema({
     defineField.Select({
       label: '所属项目',
       prop: 'projectTypeCode',
-      options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
-      ],
+      options: projectOptions,
+      props: {
+        value: 'projectId',
+        label: 'projectName',
+      },
       clearable: true,
     }),
     defineField.Select({
-      label: '产权公司',
+      label: '产权单位',
       prop: 'ownershipUnitCode',
       options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
+        {value: '1', label: '南山公司'},
+        {value: '2', label: '福田公司'},
       ],
       clearable: true,
     }),
@@ -75,8 +85,15 @@ const total = ref<number>(0)
 const loading = ref<boolean>(false)
 
 onMounted(() => {
+  getOptions()
   getData()
 })
+
+// 获取下拉接口
+const getOptions = async (): Promise<void> => {
+  const {data: project} = await projectSelectAll.runAsync()
+  projectOptions.push(...Object.values(project))
+}
 
 const tableData = reactive<AssetBuildingVO[]>([])
 const getData = async (): Promise<void> => {
@@ -101,7 +118,7 @@ const handleCurrentChange = (val: number): void => {
 
 const router = useRouter()
 const addProject = () => {
-  router.push('/asset/management/add')
+  router.push('/asset/management/add-building')
 }
 
 // 修改状态
@@ -110,23 +127,11 @@ const toggleStatus = (buildingId: string, enable: number): void => {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
+  }).then(async () => {
+    await toggleStatusBuilding.runAsync({buildingId, enable: enable ? 0 : 1})
+    ElMessage.success('修改成功')
+    getData()
   })
-    .then(async () => {
-      const {code} = await toggleStatusBuilding.runAsync({buildingId, enable: enable ? 0 : 1})
-      if (code === 200) {
-        getData()
-        ElMessage({
-          type: 'success',
-          message: '修改成功',
-        })
-      }
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '已取消操作',
-      })
-    })
 }
 
 // 删除
@@ -135,23 +140,11 @@ const deleteData = (buildingId: string): void => {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
+  }).then(async () => {
+    await deleteBuilding.runAsync({buildingId})
+    ElMessage.success('删除成功')
+    getData()
   })
-    .then(async () => {
-      const {code} = await deleteBuilding.runAsync({buildingId})
-      if (code === 200) {
-        getData()
-        ElMessage({
-          type: 'success',
-          message: '删除成功',
-        })
-      }
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '已取消操作',
-      })
-    })
 }
 </script>
 
@@ -179,13 +172,13 @@ const deleteData = (buildingId: string): void => {
       <el-table-column label="楼栋名称" prop="buildingName" />
       <el-table-column label="所属项目" prop="projectName" />
       <el-table-column label="项目类型" prop="projectTypeName" />
-      <el-table-column label="产权公司" prop="ownershipUnitName" />
+      <el-table-column label="产权单位" prop="ownershipUnitName" />
       <el-table-column label="状态" prop="enable">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="185">
+      <el-table-column fixed="right" label="操作" min-width="105">
         <template #default="{row}">
           <el-button
             v-if="row.enable"

@@ -177,23 +177,11 @@ const toggleStatus = (projectId: string, enable: number): void => {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
+  }).then(async () => {
+    await toggleStatusProject.runAsync({projectId, enable: enable ? 0 : 1})
+    getData()
+    ElMessage.success('修改成功')
   })
-    .then(async () => {
-      const {code} = await toggleStatusProject.runAsync({projectId, enable: enable ? 0 : 1})
-      if (code === 200) {
-        getData()
-        ElMessage({
-          type: 'success',
-          message: '修改成功',
-        })
-      }
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '已取消操作',
-      })
-    })
 }
 
 // 删除
@@ -202,23 +190,11 @@ const deleteData = (projectId: string): void => {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
+  }).then(async () => {
+    await deleteProject.runAsync({projectId})
+    getData()
+    ElMessage.success('删除成功')
   })
-    .then(async () => {
-      const {code} = await deleteProject.runAsync({projectId})
-      if (code === 200) {
-        getData()
-        ElMessage({
-          type: 'success',
-          message: '删除成功',
-        })
-      }
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '已取消操作',
-      })
-    })
 }
 </script>
 

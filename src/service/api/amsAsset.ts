@@ -1,6 +1,10 @@
 import http from '../service'
 
 export const amsAsset = {
+  // 查询所有项目
+  amsAssetProjectSelectAll() {
+    return http.post<Res<Record<string, any>>>('/ams/asset-project/selectAll')
+  },
   // 项目列表
   amsAssetProjectList(payload: AssetProjectListDTO) {
     return http.post<Res<AssetProjectVO[]>>('/ams/asset-project/list', payload)
@@ -18,6 +22,10 @@ export const amsAsset = {
     return http.post<Res<Record<string, any>>>('/ams/asset-project/insert', payload)
   },
 
+  // 生成楼栋编码
+  amsAssetBuildingGenerateBuildingId(payload: Record<string, any>) {
+    return http.post<Res<string>>('/ams/asset-building/generate-building-id', payload)
+  },
   // 楼栋列表
   amsAssetBuildingList(payload: AssetBuildingListDTO) {
     return http.post<Res<AssetBuildingVO[]>>('/ams/asset-building/list', payload)
@@ -29,6 +37,10 @@ export const amsAsset = {
   // 删除楼栋
   amsAssetBuildingDelete(payload: Record<string, any>) {
     return http.post<Res<Record<string, any>>>('/ams/asset-building/delete', payload)
+  },
+  // 新增楼栋
+  amsAssetBuildingInsert(payload: AssetBuildingInsertDTO) {
+    return http.post<Res<Record<string, any>>>('/ams/asset-building/insert', payload)
   },
 
   // 楼层列表

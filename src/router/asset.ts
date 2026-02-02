@@ -42,6 +42,11 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '楼栋楼层管理'},
             component: () => import('@/views/asset/building/building-floor.vue'),
           },
+          {
+            path: 'add-building',
+            meta: {title: '楼栋-新增', hidden: true},
+            component: () => import('@/views/asset/building/building/add-building.vue'),
+          },
         ],
       },
       {
