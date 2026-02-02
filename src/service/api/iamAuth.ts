@@ -44,4 +44,17 @@ export const iamAuth = {
 
     return result
   },
+
+  // 组织列表
+  iamAuthOrgList(payload: AuthOrgListDTO) {
+    return http.post<Res<AuthOrgVO[]>>('/iam/auth-org/list', payload)
+  },
+  // 当前用户的组织树
+  iamAuthOrgTree(payload: Record<string, any>) {
+    return http.post<Res<AuthOrgVO[]>>('/iam/auth-org/tree', payload)
+  },
+  // 新增/修改组织
+  iamAuthOrgUpsert(payload: AuthOrgUpsertDTO) {
+    return http.post<Res<string>>('/iam/auth-org/upsert', payload)
+  },
 }

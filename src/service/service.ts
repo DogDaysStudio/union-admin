@@ -21,6 +21,9 @@ const http = enhance(instance, {
 
 http.interceptors.request.use(config => {
   Object.assign(config.headers, createHeaders())
+  if (config.method === 'post' && !config.data) {
+    config.data = {}
+  }
   return config
 })
 
