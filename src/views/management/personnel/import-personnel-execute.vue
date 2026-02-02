@@ -9,19 +9,31 @@
       <h2 class="text-lg font-medium mb-6">执行导入</h2>
 
       <!-- 步骤指示器 -->
-      <div class="flex items-center justify-between mb-8" style="max-width: 600px;">
+      <div class="flex items-center justify-between mb-8" style="max-width: 600px">
         <div class="flex flex-col items-center">
-          <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium mb-2">1</div>
+          <div
+            class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium mb-2"
+          >
+            1
+          </div>
           <span class="text-sm">上传文件</span>
         </div>
         <div class="flex-1 h-1 bg-blue-500 mx-2"></div>
         <div class="flex flex-col items-center">
-          <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium mb-2">2</div>
+          <div
+            class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium mb-2"
+          >
+            2
+          </div>
           <span class="text-sm">执行导入</span>
         </div>
         <div class="flex-1 h-1 bg-gray-200 mx-2"></div>
         <div class="flex flex-col items-center">
-          <div class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-medium mb-2">3</div>
+          <div
+            class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-medium mb-2"
+          >
+            3
+          </div>
           <span class="text-sm">导入完成</span>
         </div>
       </div>
@@ -53,7 +65,9 @@
       <!-- 操作按钮 -->
       <div class="flex justify-center space-x-4">
         <el-button @click="handleReturn">返回</el-button>
-        <el-button type="primary" @click="handleComplete" :disabled="importProgress < 100">完成</el-button>
+        <el-button type="primary" @click="handleComplete" :disabled="importProgress < 100">
+          完成
+        </el-button>
       </div>
     </div>
   </div>
@@ -76,7 +90,13 @@ const importMessage = ref('正在导入...')
 const importResult = ref([
   {name: '张小刚', account: 'zhangxg', phone: '18888888881', status: 'success', message: ''},
   {name: '李小花', account: 'lixf', phone: '18888888882', status: 'success', message: ''},
-  {name: '王小明', account: 'wangxm', phone: '18888888883', status: 'danger', message: '手机号格式不正确'},
+  {
+    name: '王小明',
+    account: 'wangxm',
+    phone: '18888888883',
+    status: 'danger',
+    message: '手机号格式不正确',
+  },
 ])
 
 // 模拟导入过程

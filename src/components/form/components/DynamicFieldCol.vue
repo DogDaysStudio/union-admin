@@ -13,7 +13,7 @@ defineProps<DynamicFieldProps<T>>()
   <template
     v-for="(
       {
-        // valuePropName = 'model-value',
+        valuePropName = 'modelValue',
         component,
         span, // default 8
         colProps,
@@ -49,14 +49,14 @@ defineProps<DynamicFieldProps<T>>()
           >
             <component
               :is="component"
-              :model-value="propMapping.map(prop => get(model, prop))"
-              @update:model-value="
+              :[valuePropName]="propMapping.map(prop => get(model, prop))"
+              @[`update:${valuePropName}`]="
                 $event => propMapping.forEach((prop, index) => set(model, prop, $event?.[index]))
               "
               v-bind="field"
             />
           </el-form-item>
-          <el-form-item v-else :prop="prop" :rules="rules" class="hidden!" />
+          <el-form-item v-else :prop="prop" :rules="rules" v-show="false" />
         </template>
       </template>
 
@@ -73,8 +73,8 @@ defineProps<DynamicFieldProps<T>>()
         <component
           v-else
           :is="component"
-          :model-value="prop ? get(model, prop) : undefined"
-          @update:model-value="$event => prop && set(model, prop, $event)"
+          :[valuePropName]="prop ? get(model, prop) : undefined"
+          @[`update:${valuePropName}`]="$event => prop && set(model, prop, $event)"
           v-bind="field"
         />
       </el-form-item>

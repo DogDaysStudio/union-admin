@@ -63,11 +63,13 @@ function parseSchema(schema) {
  * @returns {string} TypeScript 类型
  */
 function mapType(type) {
+  if (type?.startsWith('MapStringList'))
+    return `Record<string, ${mapType(type.replace('MapStringList', ''))}[]>`
+  if (type?.startsWith('MapString'))
+    return `Record<string, ${mapType(type.replace('MapString', ''))}>`
   return (
     {
       Map: 'Record<string, any>',
-      MapStringString: 'Record<string, string>',
-      MapStringListTreeModel: 'Record<string, TreeModel[]>',
       JSONObject: 'Record<string, any>',
       Object: 'Record<string, any>',
       object: 'Record<string, any>',

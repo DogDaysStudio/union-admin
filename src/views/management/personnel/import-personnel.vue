@@ -9,19 +9,31 @@
       <h2 class="text-lg font-medium mb-6">批量导入</h2>
 
       <!-- 步骤指示器 -->
-      <div class="flex items-center justify-between mb-8" style="max-width: 600px;">
+      <div class="flex items-center justify-between mb-8" style="max-width: 600px">
         <div class="flex flex-col items-center">
-          <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium mb-2">1</div>
+          <div
+            class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-medium mb-2"
+          >
+            1
+          </div>
           <span class="text-sm">上传文件</span>
         </div>
         <div class="flex-1 h-1 bg-blue-200 mx-2"></div>
         <div class="flex flex-col items-center">
-          <div class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-medium mb-2">2</div>
+          <div
+            class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-medium mb-2"
+          >
+            2
+          </div>
           <span class="text-sm">执行导入</span>
         </div>
         <div class="flex-1 h-1 bg-gray-200 mx-2"></div>
         <div class="flex flex-col items-center">
-          <div class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-medium mb-2">3</div>
+          <div
+            class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center font-medium mb-2"
+          >
+            3
+          </div>
           <span class="text-sm">导入完成</span>
         </div>
       </div>
@@ -29,14 +41,18 @@
       <!-- 模板下载区域 -->
       <div class="border border-gray-200 rounded-lg p-4 mb-4">
         <h3 class="font-medium mb-2">填写导入员工的信息</h3>
-        <p class="text-gray-600 mb-4">请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除</p>
+        <p class="text-gray-600 mb-4">
+          请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除
+        </p>
         <el-button type="primary" @click="handleDownloadTemplate">下载模板</el-button>
       </div>
 
       <!-- 文件上传区域 -->
       <div class="border border-gray-200 rounded-lg p-4 mb-6">
         <h3 class="font-medium mb-2">上传填好的员工信息表</h3>
-        <p class="text-gray-600 mb-4">文件后缀名必须为 xls 或 xlsx（即Excel格式），文件大小不得大于10M</p>
+        <p class="text-gray-600 mb-4">
+          文件后缀名必须为 xls 或 xlsx（即Excel格式），文件大小不得大于10M
+        </p>
         <el-upload
           class="upload-demo"
           action="#"
@@ -49,16 +65,16 @@
         >
           <el-button type="primary">上传文件</el-button>
           <template #tip>
-            <div class="text-xs text-gray-500 mt-2">
-              只能上传 Excel 文件，且不超过 10MB
-            </div>
+            <div class="text-xs text-gray-500 mt-2">只能上传 Excel 文件，且不超过 10MB</div>
           </template>
         </el-upload>
       </div>
 
       <!-- 下一步按钮 -->
       <div class="flex justify-center">
-        <el-button type="primary" size="large" @click="handleNextStep" :disabled="!fileList.length">下一步</el-button>
+        <el-button type="primary" size="large" @click="handleNextStep" :disabled="!fileList.length">
+          下一步
+        </el-button>
       </div>
     </div>
   </div>

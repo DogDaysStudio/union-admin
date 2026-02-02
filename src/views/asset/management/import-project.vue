@@ -7,7 +7,7 @@ const active = ref<number>(1)
 <template>
   <el-card>
     <template #header>导入项目</template>
-    
+
     <el-steps :active="active" align-center>
       <el-step title="上传文件" />
       <el-step title="执行导入" />

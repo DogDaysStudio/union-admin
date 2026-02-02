@@ -76,9 +76,9 @@ interface ApiType {
 
   /* 【通用相关】
   // 常规码表
-  iamCommonDicListAll(payload: Record<string, any>) {return http.post<Res<MapStringListSysDicVO>>('/iam/common/dic/list-all', payload)},
+  iamCommonDicListAll(payload: Record<string, any>) {return http.post<Res<Record<string, SysDicVO[]>>>('/iam/common/dic/list-all', payload)},
   */
-  '/iam/common/dic/list-all': {Req: Record<string, any>; Res: MapStringListSysDicVO}
+  '/iam/common/dic/list-all': {Req: Record<string, any>; Res: Record<string, SysDicVO[]>}
 
   /* 【通用相关】
   // 省_市_区_商圈 | object:{pid:上级ID}
@@ -394,9 +394,9 @@ interface ApiType {
 
   /* 【通用相关】
   // 常规码表
-  amsCommonDicListAll(payload: Record<string, any>) {return http.post<Res<MapStringListSysDicVO>>('/ams/common/dic/list-all', payload)},
+  amsCommonDicListAll(payload: Record<string, any>) {return http.post<Res<Record<string, SysDicVO[]>>>('/ams/common/dic/list-all', payload)},
   */
-  '/ams/common/dic/list-all': {Req: Record<string, any>; Res: MapStringListSysDicVO}
+  '/ams/common/dic/list-all': {Req: Record<string, any>; Res: Record<string, SysDicVO[]>}
 
   /* 【通用相关】
   // 省_市_区_商圈 | object:{pid:上级ID}
@@ -543,6 +543,12 @@ interface ApiType {
   '/ams/asset-project/update': {Req: AssetProjectUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-项目管理】
+  // 查询所有项目
+  amsAssetProjectSelectAll() {return http.post<Res<Record<string, any>>>('/ams/asset-project/selectAll')},
+  */
+  '/ams/asset-project/selectAll': {Res: Record<string, any>}
+
+  /* 【资产管理-项目管理】
   // 项目列表
   amsAssetProjectList(payload: AssetProjectListDTO) {return http.post<Res<AssetProjectVO[]>>('/ams/asset-project/list', payload)},
   */
@@ -589,6 +595,18 @@ interface ApiType {
   amsAssetParkingUpdate(payload: AssetParkingBaseDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/update', payload)},
   */
   '/ams/asset-parking/update': {Req: AssetParkingBaseDTO; Res: Record<string, any>}
+
+  /* 【资产管理-停车场管理】
+  // 根据项目id查询停车场 | object:{projectId:项目编码}
+  amsAssetParkingSelect(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/select', payload)},
+  */
+  '/ams/asset-parking/select': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-停车场管理】
+  // 根据停车场id查询停车场区域 | object:{parkingId:停车场编码}
+  amsAssetParkingSelectParkingRegion(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/select-parking-region', payload)},
+  */
+  '/ams/asset-parking/select-parking-region': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 停车场列表
@@ -667,6 +685,12 @@ interface ApiType {
   amsAssetFloorUpdate(payload: AssetFloorBaseDTO) {return http.post<Res<string>>('/ams/asset-floor/update', payload)},
   */
   '/ams/asset-floor/update': {Req: AssetFloorBaseDTO; Res: string}
+
+  /* 【资产管理-楼层管理】
+  // 根据资产编码和类型查询楼层 | object:{assetId:楼栋/围合/停车场编码,assetType:1:楼栋,2:围合,3:停车场}
+  amsAssetFloorSelect(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/select', payload)},
+  */
+  '/ams/asset-floor/select': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-楼层管理】
   // 楼层列表
@@ -777,6 +801,12 @@ interface ApiType {
   '/ams/asset-enclosure/update': {Req: AssetEnclosureUpdateDTO; Res: Record<string, any>}
 
   /* 【资产管理-围合管理】
+  // 根据项目id查询围合 | object:{projectId:项目编码}
+  amsAssetEnclosureSelect(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/select', payload)},
+  */
+  '/ams/asset-enclosure/select': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-围合管理】
   // 围合列表
   amsAssetEnclosureList(payload: AssetEnclosureListDTO) {return http.post<Res<AssetEnclosureVO[]>>('/ams/asset-enclosure/list', payload)},
   */
@@ -817,6 +847,12 @@ interface ApiType {
   amsAssetBuildingUpdate(payload: AssetBuildingUpdateDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-building/update', payload)},
   */
   '/ams/asset-building/update': {Req: AssetBuildingUpdateDTO; Res: Record<string, any>}
+
+  /* 【资产管理-楼栋管理】
+  // 根据项目id查询楼栋 | object:{projectId:项目编码}
+  amsAssetBuildingSelect(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-building/select', payload)},
+  */
+  '/ams/asset-building/select': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-楼栋管理】
   // 楼栋列表
@@ -1299,6 +1335,10 @@ interface AssetShopListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  shopId: string // 商铺编码
+  shopNumber: string // 商铺号
+  buildingArea: number // 建筑面积
+  usableArea: number // 实用面积
   projectName: string // 项目名称
   enclosureName: string // 围合名称
   floorName: string // 楼层名称
@@ -1379,6 +1419,9 @@ interface AssetRoomListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  roomId: string // 住宅编码
+  roomNumber: string // 房间号
+  roomLayoutCode: string // 户型编码
   projectName: string // 项目名称
   buildingName: string // 楼栋名称
   floorName: string // 楼层名称
@@ -1387,6 +1430,7 @@ interface AssetRoomListDTO {
   provinceCode: string // 所在区域-省 code
   cityCode: string // 所在区域-城市 code
   districtCode: string // 地址-区域 code
+  leaseType: string // 租赁方式 0-整租;1-合租
   enable: number // 0-禁用;1-启用
 }
 
@@ -1432,6 +1476,7 @@ interface AssetResourceUpsertDTO {
   resourceMediaType: string // 资源媒体类型
   resourceMediaTypeCode: string // 资源媒体类型编码
   resourceSpecs: string // 资源规格
+  resourceSpecsCode: string // 资源规格编码
   resourceArea: number // 资源面积
   resourceState: number // 资源状态，0-待租;1-已租
   locationTypeCode: string // 位置类型编码(Pz or NonPz)
@@ -1445,16 +1490,21 @@ interface AssetResourceListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  resourceId: string // 资源编码
+  resourceName: string // 资源名称
+  resourceNumber: string // 资源编号
   buildingName: string // 楼栋名称
   floorName: string // 楼层名称
   projectName: string // 项目名称
   resourceTypeCode: string // 资源类型
   resourceBusinessTypeCode: string // 资源业务类型
   resourceAdTypeCode: string // 资源广告类型
-  resourceName: string // 资源名称
   resourceMediaTypeCode: string // 资源媒体类型
   resourceState: number // 资源状态，0-待租;1-已租
-  resourceLocation: string // 资源位置
+  resourceSpecsCode: string // 资源规格编码
+  locationTypeCode: string // 位置类型编码(Pz or NonPz)
+  locationId: string // 位置编码(非公区为房间或商铺编码;公区为字典编码)
+  resourceArea: number // 资源面积
   enable: number // 0-禁用;1-启用
 }
 
@@ -1554,21 +1604,24 @@ interface AssetProjectUpsertDTO {
   contractBegin: string // 物业合同生效日期
   contractEnd: string // 物业合同终止日期
   enable: number // 0-禁用;1-启用
-  valid: number // 记录是否有效
 }
 
 interface AssetProjectListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  projectId: string // 项目编码
   projectName: string // 项目名称
+  projectShortName: string // 项目简称
   provinceCode: string // 所在区域-省 code
   cityCode: string // 所在区域-城市 code
   districtCode: string // 地址-区域 code
+  address: string // 详细地址
   collectWayCode: string // 筹集方式编码
   ownershipUnitCode: string // 产权单位编码
   ownershipPropertyCode: string // 产权性质编码
   businessModelCode: string // 经营模式编码
+  projectTypeCode: string // 项目类型编码
   enable: number // 状态
 }
 
@@ -1578,27 +1631,17 @@ interface AssetProjectVO {
   projectCoverImage: string // 封面照片
   projectName: string // 项目名称
   projectShortName: string // 项目简称
-  provinceCode: string // 所在区域-省 code
-  provinceName: string // 所在区域-省名称
-  cityCode: string // 所在区域-城市 code
-  cityName: string // 所在区域-城市名称
-  districtCode: string // 地址-区域 code
-  districtName: string // 地址-区域名称
-  address: string // 地址-详细地址
+  areaName: string // 所在省市区
+  address: string // 详细地址
   lng: number // 经度
   lat: number // 纬度
   landNumber: string // 宗地号
-  ownershipPropertyCode: string // 产权性质编码
   ownershipPropertyName: string // 产权性质名称
-  ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
-  collectWayCode: string // 筹集方式编码
   collectWayName: string // 筹集方式名称
   collectSubject: string // 筹集主体
   collectDate: string // 筹集日期
-  businessModelCode: string // 经营模式编码
   businessModelName: string // 经营模式名称
-  projectTypeCode: string // 项目类型编码
   projectTypeName: string // 项目类型名称
   projectPhone: string // 项目电话
   totalLandArea: number // 总占地面积
@@ -1696,8 +1739,13 @@ interface AssetParkingListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
-  projectName: string // 项目名称
+  parkingId: string // 停车场编码
   parkingName: string // 停车场名称
+  projectName: string // 项目名称
+  parkingMethodCode: string // 停车方式编码
+  parkingLocationCode: string // 停车场位置编码
+  parkingCategoryCode: string // 车位类别编码
+  regionCategoryCode: string // 区域类别编码
   enable: number // 是否启用;0-禁用;1-启用
 }
 

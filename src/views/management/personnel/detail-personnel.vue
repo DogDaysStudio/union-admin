@@ -16,7 +16,9 @@
             <h2 class="text-lg font-semibold mr-3">{{ personnelInfo.name }}</h2>
             <el-tag size="small" type="success">在线</el-tag>
           </div>
-          <p class="text-gray-600 mb-2">{{ personnelInfo.department }} / {{ personnelInfo.role }}</p>
+          <p class="text-gray-600 mb-2">
+            {{ personnelInfo.department }} / {{ personnelInfo.role }}
+          </p>
           <p class="text-gray-600">入职时间：{{ personnelInfo.entryDate }}</p>
         </div>
         <el-button type="primary" @click="handleEdit">编辑资料</el-button>
@@ -40,9 +42,7 @@
 
         <!-- 操作权限 -->
         <el-tab-pane label="操作权限" name="permission">
-          <div class="p-4 text-gray-500">
-            操作权限信息将在此显示
-          </div>
+          <div class="p-4 text-gray-500">操作权限信息将在此显示</div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -67,7 +67,7 @@ const personnelInfo = reactive({
   department: '销售部',
   role: '销售总监',
   entryDate: '2021-03-04',
-  online: true
+  online: true,
 })
 
 // 登录日志数据
@@ -80,8 +80,8 @@ const loginLogs = ref([
     deviceName: 'WindirPC',
     macAddress: 'EB-4E-06-51-3B-16',
     loginIp: '192.168.1.1',
-    location: '广东省深圳市'
-  }
+    location: '广东省深圳市',
+  },
 ])
 
 // 处理返回

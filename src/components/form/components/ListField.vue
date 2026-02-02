@@ -2,7 +2,7 @@
 import {computed, inject} from 'vue'
 import get from 'lodash.get'
 import set from 'lodash.set'
-import type {FieldConfig, FormSchema} from '../form-schema'
+import type {FieldConfig, FormSchema} from '../utils/form-schema'
 
 const props = defineProps<{
   prop: string

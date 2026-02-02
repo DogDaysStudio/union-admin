@@ -54,9 +54,9 @@ export type FieldConfig<T extends Component = Component> = {
   // 映射属性，用于组合并绑定组件的 model-value
   propMapping?: (string | string[])[]
   /**
-   * @default 'model-value'
+   * @default 'modelValue'
    */
-  // valuePropName?: string
+  valuePropName?: string
   // formItemProps?: Partial<FormItemProps>
   formItemProps?: FormItemPropsPublic
   colProps?: ColPropsPublic
