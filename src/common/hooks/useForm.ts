@@ -3,15 +3,15 @@ import {reactive, type TemplateRef} from 'vue'
 /**
  * @example
  * const modelFormRef = useTemplateRef('modelFormRef')
- * const [formModel, resetModel] = useModel(
+ * const [form, resetForm] = useForm(
  *   {dicType: 1001, dicLevel: 1} as SysDicUpsertDTO,
  *   modelFormRef
  * )
  *
  * // *重置表单状态
- * resetModel()
+ * resetForm()
  */
-export const useModel = <T extends Record<string, any>, R extends TemplateRef<any>>(
+export const useForm = <T extends Record<string, any>, R extends TemplateRef<any>>(
   initialState: T,
   formRef: R
 ) => {
@@ -19,13 +19,13 @@ export const useModel = <T extends Record<string, any>, R extends TemplateRef<an
   const originalState = JSON.parse(JSON.stringify(initialState))
   console.log('originalState', originalState)
 
-  const formModel = reactive(initialState)
+  const form = reactive(initialState)
 
-  const resetModel = () => {
+  const resetForm = () => {
     const emptyState = Object.fromEntries(
-      Object.entries(formModel).map(([key]) => [key, undefined])
+      Object.entries(form).map(([key]) => [key, undefined])
     )
-    const resetedState = Object.assign(formModel, emptyState, originalState)
+    const resetedState = Object.assign(form, emptyState, originalState)
 
     // formRef?.value?.setInitialValues(resetedState)
     // formRef?.value?.resetFields()
@@ -36,7 +36,7 @@ export const useModel = <T extends Record<string, any>, R extends TemplateRef<an
     console.log(
       'resetedState, formModel, emptyState, originalState, Object.keys(emptyState)',
       resetedState,
-      formModel,
+      form,
       emptyState,
       originalState,
       Object.keys(emptyState)
@@ -45,5 +45,5 @@ export const useModel = <T extends Record<string, any>, R extends TemplateRef<an
     return resetedState
   }
 
-  return [formModel, resetModel, originalState] as const
+  return [form, resetForm, originalState] as const
 }

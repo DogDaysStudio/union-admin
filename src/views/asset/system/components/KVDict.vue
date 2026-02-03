@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useModel} from '@/common/hooks'
+import {useForm} from '@/common/hooks'
 import {rules} from '@/common/rules'
 import {defineSchema, defineField} from '@/components'
 import {amsSysDic} from '@/service/api/amsSysDic'
@@ -19,10 +19,10 @@ const editDialogVisible = ref(false)
 
 const listQuery = reactive({dicType: props.dicType, pageable: false} as SysDicListDTO)
 
-const modelFormRef = useTemplateRef('modelFormRef')
-const [formModel, resetFormModel] = useModel({dicList: [{}] as SysDicUpsertDTO[]}, modelFormRef)
-const editModelRef = useTemplateRef('editModelRef')
-const [editModel, resetEditModel] = useModel({} as SysDicUpsertDTO, editModelRef)
+const formRef = useTemplateRef('formRef')
+const [form, resetForm] = useForm({dicList: [{}] as SysDicUpsertDTO[]}, formRef)
+const editFormRef = useTemplateRef('editFormRef')
+const [editForm, resetEditForm] = useForm({} as SysDicUpsertDTO, editFormRef)
 
 const {
   runAsync: amsSysDicList,
@@ -71,14 +71,14 @@ const {runAsync: deleteDic, loading: deleteLoading} = useRequest(amsSysDic.amsSy
 const {runAsync: enableDic, loading: enableLoading} = useRequest(amsSysDic.amsSysDicEnable)
 
 const handleEdit = (row: SysDicVO) => {
-  Object.assign(editModel, row)
+  Object.assign(editForm, row)
   editDialogVisible.value = true
 }
 
 const handleEditSubmit = async () => {
-  await editModelRef.value?.validate()
+  await editFormRef.value?.validate()
 
-  await upsertDic({...editModel, dicType: props.dicType})
+  await upsertDic({...editForm, dicType: props.dicType})
 
   ElMessage.success('修改成功')
   editDialogVisible.value = false
@@ -86,9 +86,9 @@ const handleEditSubmit = async () => {
 }
 
 const handleSubmit = async () => {
-  await modelFormRef.value?.validate()
+  await formRef.value?.validate()
 
-  for (const item of formModel.dicList) {
+  for (const item of form.dicList) {
     await upsertDic({...item, dicType: props.dicType})
   }
 
@@ -165,10 +165,10 @@ const handleAdd = () => {
     :title="`编辑${dicNameLabel}`"
     width="600px"
     destroy-on-close
-    @closed="resetEditModel"
+    @closed="resetEditForm"
   >
-    <el-form :model="editModel" ref="editModelRef">
-      <dynamic-field render-row :schema="editFormSchema" :model="editModel" />
+    <el-form :model="editForm" ref="editFormRef">
+      <dynamic-field render-row :schema="editFormSchema" :model="editForm" />
     </el-form>
     <template #footer>
       <el-button @click="editDialogVisible = false">取消</el-button>
@@ -181,10 +181,10 @@ const handleAdd = () => {
     :title="`新增${dicNameLabel}`"
     width="600px"
     destroy-on-close
-    @closed="resetFormModel"
+    @closed="resetForm"
   >
-    <el-form :model="formModel" ref="modelFormRef">
-      <dynamic-field render-row :schema="upsertFormSchema" :model="formModel" />
+    <el-form :model="form" ref="formRef">
+      <dynamic-field render-row :schema="upsertFormSchema" :model="form" />
     </el-form>
     <template #footer>
       <el-button @click="dialogVisible = false">取消</el-button>

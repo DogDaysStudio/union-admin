@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useModel} from '@/common/hooks'
+import {useForm} from '@/common/hooks'
 import {rules} from '@/common/rules'
 import {defineSchema, defineField} from '@/components'
 import {amsSysDic} from '@/service/api/amsSysDic'
@@ -32,7 +32,7 @@ const listQuery = reactive({
 } as SysDicListDTO)
 
 const modelFormRef = useTemplateRef('modelFormRef')
-const [formModel, resetModel] = useModel({} as SysDicUpsertDTO, modelFormRef)
+const [formModel, resetModel] = useForm({} as SysDicUpsertDTO, modelFormRef)
 
 const {
   runAsync: getList,
