@@ -44,11 +44,16 @@ const managementRoutes: RouteRecordRaw[] = [
           },
         ],
       },
-      // 部门管理
       {
         path: 'department',
         meta: {title: '部门管理'},
         component: () => import('@/views/management/department.vue'),
+      },
+      // 权限管理
+      {
+        path: 'permission',
+        meta: {title: '权限管理'},
+        component: () => import('@/views/management/permission.vue'),
       },
     ],
   },

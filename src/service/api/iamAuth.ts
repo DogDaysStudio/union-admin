@@ -61,4 +61,21 @@ export const iamAuth = {
   iamAuthOrgDelete(payload: Record<string, any>) {
     return http.post<Res<Record<string, any>>>('/iam/auth-org/delete', payload)
   },
+
+  // 权限列表
+  iamAuthPermissionList(payload: AuthPermissionListDTO) {
+    return http.post<Res<AuthPermissionVO[]>>('/iam/auth-permission/list', payload)
+  },
+  // 新增/更新权限
+  iamAuthPermissionUpsert(payload: AuthPermissionUpsertDTO) {
+    return http.post<Res<string>>('/iam/auth-permission/upsert', payload)
+  },
+  // 删除权限 | object:{permId:权限ID}
+  iamAuthPermissionDelete(payload: Record<string, any>) {
+    return http.post<Res<string>>('/iam/auth-permission/delete', payload)
+  },
+  // 启用/禁用权限 | object:{permId:权限ID,enable:bool}
+  iamAuthPermissionEnable(payload: Record<string, any>) {
+    return http.post<Res<Record<string, any>>>('/iam/auth-permission/enable', payload)
+  },
 }
