@@ -75,6 +75,7 @@ declare module 'vue' {
     SchemaForm: typeof import('./src/components/form/SchemaForm.vue')['default']
     SectionGroup: typeof import('./src/components/section/SectionGroup.vue')['default']
     SubField: typeof import('./src/components/form/components/SubField.vue')['default']
+    UniFormList: typeof import('./src/components/form/UniFormList.vue')['default']
     UploadFile: typeof import('./src/components/upload/UploadFile.vue')['default']
   }
   export interface GlobalDirectives {
@@ -147,5 +148,6 @@ declare global {
   const SchemaForm: typeof import('./src/components/form/SchemaForm.vue')['default']
   const SectionGroup: typeof import('./src/components/section/SectionGroup.vue')['default']
   const SubField: typeof import('./src/components/form/components/SubField.vue')['default']
+  const UniFormList: typeof import('./src/components/form/UniFormList.vue')['default']
   const UploadFile: typeof import('./src/components/upload/UploadFile.vue')['default']
 }
