@@ -12,14 +12,8 @@ const props = defineProps<{
   dicNames: Partial<Record<keyof SysDicVO, string>>
 }>()
 
-const {
-  dicName: dicNameLabel,
-  dicNameShort: dicNameShortLabel,
-  dicCode: dicCodeLabel,
-  dicCodeShort: dicCodeShortLabel,
-  dicPname: dicPnameLabel,
-  dicNotes: dicNotesLabel,
-} = props.dicNames || {}
+const {dicName, dicNameShort, dicCode, dicCodeShort, dicPcode, dicPname, dicNotes} =
+  props.dicNames || {}
 
 const dialogVisible = ref(false)
 
@@ -53,39 +47,39 @@ const upsertFormSchema = computed(() =>
     span: 24,
     fields: [
       defineField.Select({
-        show: !!dicPnameLabel,
-        label: dicPnameLabel,
+        show: !!dicPcode,
+        label: dicPcode,
         prop: 'dicPcode',
         options: data.value?.data.filter(item => item.enable === 1),
         props: {value: 'dicCode', label: 'dicName'},
       }),
       defineField.Input({
-        show: !!dicNameLabel,
-        label: dicNameLabel,
+        show: !!dicName,
+        label: dicName,
         prop: 'dicName',
         rules: [rules.required()],
       }),
       defineField.Input({
-        show: !!dicNameShortLabel,
-        label: dicNameShortLabel,
+        show: !!dicNameShort,
+        label: dicNameShort,
         prop: 'dicNameShort',
         rules: [rules.required()],
       }),
       defineField.Input({
-        show: !!dicCodeLabel,
-        label: dicCodeLabel,
+        show: !!dicCode,
+        label: dicCode,
         prop: 'dicCode',
         rules: [rules.required()],
       }),
       defineField.Input({
-        show: !!dicCodeShortLabel,
-        label: dicCodeShortLabel,
+        show: !!dicCodeShort,
+        label: dicCodeShort,
         prop: 'dicCodeShort',
         rules: [rules.required()],
       }),
       defineField.Input({
-        show: !!dicNotesLabel,
-        label: dicNotesLabel,
+        show: !!dicNotes,
+        label: dicNotes,
         prop: 'dicNotes',
         type: 'textarea',
         rows: 4,
@@ -131,6 +125,14 @@ const handleEnable = async (row: SysDicVO) => {
   ElMessage.success(row.enable === 1 ? '启用成功' : '禁用成功')
   getList(listQuery)
 }
+
+const fieldMap = {
+  dicName: {prop: 'dicName', label: dicName, minWidth: '150'},
+  dicNameShort: {prop: 'dicNameShort', label: dicNameShort, minWidth: '150'},
+  dicCode: {prop: 'dicCode', label: dicCode, minWidth: '120'},
+  dicCodeShort: {prop: 'dicCodeShort', label: dicCodeShort, minWidth: '120'},
+  dicPname: {prop: 'dicPname', label: dicPname, minWidth: '120'},
+}
 </script>
 
 <template>
@@ -143,26 +145,30 @@ const handleEnable = async (row: SysDicVO) => {
     </template>
     <!-- todo: 选完字典类型后，展示不同的字典列表 -->
     <el-table v-loading="listLoading" :data="data?.data" stripe border>
-      <el-table-column v-if="!!dicNameLabel" :label="dicNameLabel" prop="dicName" min-width="150" />
+      <!-- <el-table-column v-if="!!dicName" :label="dicName" prop="dicName" min-width="150" />
       <el-table-column
-        v-if="!!dicNameShortLabel"
-        :label="dicNameShortLabel"
+        v-if="!!dicNameShort"
+        :label="dicNameShort"
         prop="dicNameShort"
         min-width="150"
       />
-      <el-table-column v-if="!!dicCodeLabel" :label="dicCodeLabel" prop="dicCode" min-width="120" />
+      <el-table-column v-if="!!dicCode" :label="dicCode" prop="dicCode" min-width="120" />
       <el-table-column
-        v-if="!!dicCodeShortLabel"
-        :label="dicCodeShortLabel"
+        v-if="!!dicCodeShort"
+        :label="dicCodeShort"
         prop="dicCodeShort"
         min-width="120"
       />
       <el-table-column
-        v-if="!!dicPnameLabel"
-        :label="dicPnameLabel"
+        v-if="!!dicPname"
+        :label="dicPname"
         prop="dicPname"
         min-width="120"
-      />
+      /> -->
+      <template v-for="col in Object.keys(props.dicNames || {})" :key="col">
+        <el-table-column v-if="fieldMap[col]" v-bind="fieldMap[col]" />
+      </template>
+
       <el-table-column label="状态" prop="enable" width="100" align="center">
         <template #default="{row}">
           <el-tag :type="row.enable === 1 ? 'success' : 'danger'">
