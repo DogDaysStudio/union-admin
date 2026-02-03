@@ -117,9 +117,9 @@ const handleCurrentChange = (val: number): void => {
 }
 
 const router = useRouter()
-const addProject = () => {
-  router.push('/asset/management/add-building')
-}
+const addBuilding = () => router.push('/asset/management/add-building')
+const editBuilding = (buildingId:string) => router.push(`/asset/management/edit-building/${buildingId}/edit`)
+const detailBuilding = (buildingId:string) => router.push(`/asset/management/edit-building/${buildingId}/detail`)
 
 // 修改状态
 const toggleStatus = (buildingId: string, enable: number): void => {
@@ -159,7 +159,7 @@ const deleteData = (buildingId: string): void => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addProject">新增楼栋</el-button>
+          <el-button type="primary" size="default" @click="addBuilding">新增楼栋</el-button>
           <el-button type="primary" size="default">导入</el-button>
           <el-button type="primary" size="default">导出</el-button>
         </div>
@@ -196,8 +196,8 @@ const deleteData = (buildingId: string): void => {
           >
             启用
           </el-button>
-          <el-button link type="primary">查看详情</el-button>
-          <el-button link type="primary">编辑</el-button>
+          <el-button link type="primary" @click="detailBuilding(row.buildingId)">查看详情</el-button>
+          <el-button link type="primary" @click="editBuilding(row.buildingId)">编辑</el-button>
           <el-button link type="danger" @click="deleteData(row.buildingId)">删除</el-button>
         </template>
       </el-table-column>

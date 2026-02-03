@@ -30,29 +30,37 @@ export const amsAsset = {
   amsAssetBuildingList(payload: AssetBuildingListDTO) {
     return http.post<Res<AssetBuildingVO[]>>('/ams/asset-building/list', payload)
   },
-  // 启用/禁用项目 | object:{buildingId:楼栋编码,enable:bool}
-  amsAssetBuildingEnable(payload: Record<string, any>) {
-    return http.post<Res<Record<string, any>>>('/ams/asset-building/enable', payload)
+  // 新增楼栋
+  amsAssetBuildingInsert(payload: AssetBuildingInsertDTO) {
+    return http.post<Res<Record<string, any>>>('/ams/asset-building/insert', payload)
+  },
+  // 更新楼栋
+  amsAssetBuildingUpdate(payload: AssetBuildingUpdateDTO) {
+    return http.post<Res<Record<string, any>>>('/ams/asset-building/update', payload)
+  },
+  // 楼栋详情
+  amsAssetBuildingGet(payload: Record<string, any>) {
+    return http.post<Res<AssetBuildingVO>>('/ams/asset-building/get', payload)
   },
   // 删除楼栋
   amsAssetBuildingDelete(payload: Record<string, any>) {
     return http.post<Res<Record<string, any>>>('/ams/asset-building/delete', payload)
   },
-  // 新增楼栋
-  amsAssetBuildingInsert(payload: AssetBuildingInsertDTO) {
-    return http.post<Res<Record<string, any>>>('/ams/asset-building/insert', payload)
+  // 启用/禁用项目 | object:{buildingId:楼栋编码,enable:bool}
+  amsAssetBuildingEnable(payload: Record<string, any>) {
+    return http.post<Res<Record<string, any>>>('/ams/asset-building/enable', payload)
   },
 
   // 楼层列表
   amsAssetFloorList(payload: AssetFloorListDTO) {
     return http.post<Res<AssetFloorVO[]>>('/ams/asset-floor/list', payload)
   },
-  // 启用/禁用楼层 | object:{floorId:楼层编码,enable:bool}
-  amsAssetFloorEnable(payload: Record<string, any>) {
-    return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)
-  },
   // 删除楼层
   amsAssetFloorDelete(payload: Record<string, any>) {
     return http.post<Res<Record<string, any>>>('/ams/asset-floor/delete', payload)
+  },
+  // 启用/禁用楼层 | object:{floorId:楼层编码,enable:bool}
+  amsAssetFloorEnable(payload: Record<string, any>) {
+    return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)
   },
 }
