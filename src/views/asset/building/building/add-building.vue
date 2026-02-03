@@ -242,11 +242,11 @@ const handleSubmit = () => {
             building.ownershipUnitCode[building.ownershipUnitCode.length - 1]
         }
         building.floorList?.forEach((floor: Floor) => {
-          floor?.floorHeight ? '' : (Flag = false)
+          if (!floor?.floorHeight) Flag = false
           floor.roomList?.forEach((room: Room) => {
             room.projectId = building.projectId
             room.roomNumber = room.roomName
-            room?.roomHeight ? '' : (Flag = false)
+            if (!room?.roomHeight) Flag = false
             if (room.roomLayoutCode) {
               room.roomLayoutName =
                 findValueByCustomId(room.roomLayoutCode, 'dicId', 'dicName', roomOptions) || ''
@@ -258,8 +258,8 @@ const handleSubmit = () => {
       })
 
       if (Flag) {
-        const {code, msg} = await addBuilding.runAsync({...paramsData})
-        code == 200 ? ElMessage.success(msg) : ''
+        const {msg} = await addBuilding.runAsync({...paramsData})
+        ElMessage.success(msg)
       } else {
         ElMessage.warning('请填写层高、户型')
       }

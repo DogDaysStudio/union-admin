@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, reactive, onMounted, onActivated} from 'vue'
+import {ref, reactive, onMounted} from 'vue'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {useRouter, useRoute} from 'vue-router'
@@ -96,8 +96,8 @@ const handleSubmit = () => {
         paramsData.ownershipUnitCode =
           paramsData.ownershipUnitCode[paramsData.ownershipUnitCode.length - 1]
       }
-      const {code, msg} = await buildingUpdate.runAsync({...paramsData})
-      code == 200 ? ElMessage.success(msg) : ''
+      const {msg} = await buildingUpdate.runAsync({...paramsData})
+      ElMessage.success(msg)
       router.push('/asset/management/building-floor')
     } else {
       ElMessage.error('请填写完整信息')

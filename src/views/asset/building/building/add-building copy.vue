@@ -61,8 +61,8 @@ const formData = reactive({
       floorData: [], // 初始化floorData为空数组
     },
   ], // 楼栋数据
-  floorList: [], // 楼层数据
-  roomList: [], // 住宅数据
+  // floorList: [], // 楼层数据
+  // roomList: [], // 住宅数据
 } as AssetBuildingInsertDTO & {buildingList: AssetBuildingCompleteDTO[]})
 
 // 封装各字段的通用验证规则（按需扩展，与原有规则一致）
@@ -248,8 +248,8 @@ const handleSubmit = () => {
       const paramsData = JSON.parse(JSON.stringify(formData))
       console.log(paramsData)
 
-      const {code, msg} = await addBuilding.runAsync({...paramsData})
-      code == 200 ? ElMessage.success(msg) : ''
+      const {msg} = await addBuilding.runAsync({...paramsData})
+      ElMessage.success(msg)
     } else {
       // 验证失败：提示错误
       ElMessage.error('请填写完整信息')

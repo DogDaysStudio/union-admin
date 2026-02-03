@@ -118,8 +118,10 @@ const handleCurrentChange = (val: number): void => {
 
 const router = useRouter()
 const addBuilding = () => router.push('/asset/management/add-building')
-const editBuilding = (buildingId:string) => router.push(`/asset/management/edit-building/${buildingId}/edit`)
-const detailBuilding = (buildingId:string) => router.push(`/asset/management/edit-building/${buildingId}/detail`)
+const editBuilding = (buildingId: string) =>
+  router.push(`/asset/management/edit-building/${buildingId}/edit`)
+const detailBuilding = (buildingId: string) =>
+  router.push(`/asset/management/edit-building/${buildingId}/detail`)
 
 // 修改状态
 const toggleStatus = (buildingId: string, enable: number): void => {
@@ -196,7 +198,9 @@ const deleteData = (buildingId: string): void => {
           >
             启用
           </el-button>
-          <el-button link type="primary" @click="detailBuilding(row.buildingId)">查看详情</el-button>
+          <el-button link type="primary" @click="detailBuilding(row.buildingId)">
+            查看详情
+          </el-button>
           <el-button link type="primary" @click="editBuilding(row.buildingId)">编辑</el-button>
           <el-button link type="danger" @click="deleteData(row.buildingId)">删除</el-button>
         </template>

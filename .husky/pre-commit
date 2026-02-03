@@ -1,0 +1,11 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# 格式化代码
+pnpm run format
+
+# 代码检查（oxlint + eslint）
+pnpm run lint
+
+# 类型检查
+# pnpm run type-check
