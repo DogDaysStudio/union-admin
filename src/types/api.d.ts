@@ -1251,7 +1251,6 @@ interface AuthOrgUpsertDTO {
   orgPid: string // 上级部门ID
   orgName: string // 部门名称
   orgCode: string // 自定义部门编码
-  orgLevel: number // 部门级别
   orgRank: number // 部门排序
   notes: string // 部门描述
   enable: number // 启用状态（1：启用、0：禁用）
@@ -1827,6 +1826,7 @@ interface AssetFloorBaseDTO {
   floorHeight: number // 楼层层高
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
+  roomList: AssetRoomUpsertDTO[] // 住宅数据
 }
 
 // 资产管理-楼层管理
@@ -2096,10 +2096,9 @@ interface AssetBuildingDTO {
   ownershipUnitName: string // 产权单位名称
   totalFloor: number // 总层数
   totalRoom: number // 总房间
+  floorList: AssetFloorBaseDTO[] // 楼层数据
 }
 
 interface AssetBuildingInsertDTO {
   buildingList: AssetBuildingDTO[] // 楼栋数据
-  floorList: AssetFloorBaseDTO[] // 楼层数据
-  roomList: AssetRoomUpsertDTO[] // 住宅数据
 }

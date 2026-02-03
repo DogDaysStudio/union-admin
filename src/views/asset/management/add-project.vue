@@ -180,7 +180,6 @@ const props: CascaderProps = {
                 v-model="formData.provinceCode"
                 placeholder="请选择省/市/区"
                 :props="props"
-                ,
                 clearable
               />
             </el-form-item>

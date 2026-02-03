@@ -3,9 +3,7 @@ import {ref, reactive, onMounted} from 'vue'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {amsAsset} from '@/service/api/amsAsset'
-import {iamCommon} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
-import {findValueByCustomId} from '@/utils/array-util'
 
 // 获取项目名称
 const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
@@ -16,16 +14,10 @@ interface ProjectOptionVO {
   projectName: string
 }
 const projectOptions = reactive<ProjectOptionVO[]>([])
-// 字典 户型
-const roomListTree = useRequest(iamCommon.iamCommonDicListTree, {
+// 生成楼栋编码
+const buildingGenerateBuildingId = useRequest(amsAsset.amsAssetBuildingGenerateBuildingId, {
   throttleInterval: 500,
 })
-const roomOptions = reactive<SysDicVO[]>([])
-// 字典 产权单位（公司）
-const companyListTree = useRequest(iamCommon.iamCommonDicListTree, {
-  throttleInterval: 500,
-})
-const companyOptions = reactive<SysDicVO[]>([])
 // 新增项目
 const addBuilding = useRequest(amsAsset.amsAssetBuildingInsert, {
   throttleInterval: 500,
@@ -38,6 +30,15 @@ interface floorDTO {
   aboveground: number | null // 地面层
   underground: number | null // 地下层
   roomNumber: number | null // 每层房间数
+  floorData: FloorItemDTO[] // 新增楼层数据数组
+}
+
+// 定义floorData
+interface FloorItemDTO {
+  floorId: string
+  floorName: string
+  floorHeight: number | null
+  children?: FloorItemDTO[] // 若后续子节点有具体类型，可替换为：interface FloorChild {}; children: FloorChild[]
 }
 
 // 核心：定义楼栋完整类型 = 原有AssetBuildingDTO + 楼层扩展字段floorDTO
@@ -56,15 +57,18 @@ const formData = reactive({
       totalRoom: null, // 总房间
       aboveground: null, // 地面（层）
       underground: null, // 地下（层）
-      roomNumber: null, // 每层房间数
-      floorList: [],
+      roomNumber: null, //
+      floorData: [], // 初始化floorData为空数组
     },
   ], // 楼栋数据
+  floorList: [], // 楼层数据
+  roomList: [], // 住宅数据
 } as AssetBuildingInsertDTO & {buildingList: AssetBuildingCompleteDTO[]})
 
 // 封装各字段的通用验证规则（按需扩展，与原有规则一致）
 const getProjectIdRule = () => [{required: true, message: '请选择项目', trigger: 'change'}]
 const getBuildingNameRule = () => [{required: true, message: '请填写楼栋名称', trigger: 'blur'}]
+const getBuildingIdRule = () => [{required: true, message: '请填写楼栋编码', trigger: 'blur'}]
 const getTotalFloorRule = () => [{required: true, message: '请填写总层数', trigger: 'blur'}]
 const getTotalRoomRule = () => [{required: true, message: '请填写总房间', trigger: 'blur'}]
 const getOwnershipUnitCodeRule = () => [
@@ -83,6 +87,7 @@ const updateFormRules = () => {
     // 规则键与模板中:prop完全一致：`buildingList[${index}].字段名`
     formRules[`buildingList[${index}].projectId`] = getProjectIdRule()
     formRules[`buildingList[${index}].buildingName`] = getBuildingNameRule()
+    formRules[`buildingList[${index}].buildingId`] = getBuildingIdRule()
     formRules[`buildingList[${index}].totalFloor`] = getTotalFloorRule()
     formRules[`buildingList[${index}].totalRoom`] = getTotalRoomRule()
     formRules[`buildingList[${index}].ownershipUnitCode`] = getOwnershipUnitCodeRule()
@@ -104,10 +109,12 @@ onMounted(() => {
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectSelectAll.runAsync()
   projectOptions.push(...Object.values(project))
-  const {data: roomList} = await roomListTree.runAsync({dicType: 1024, pageable: false})
-  roomOptions.push(...Object.values(roomList))
-  const {data: companyList} = await companyListTree.runAsync({dicType: 1001, pageable: false})
-  companyOptions.push(...Object.values(companyList))
+}
+
+// 选择项目获取楼栋编码
+const handleChange = async (value: string, index: number): Promise<void> => {
+  const {data} = await buildingGenerateBuildingId.runAsync({projectId: value})
+  formData.buildingList[index].buildingId = data
 }
 
 // 新增楼栋
@@ -115,7 +122,8 @@ const addBuildingItem = (index: number) => {
   const lastBuilding = formData.buildingList[index]
   if (!lastBuilding) return
   const newBuilding: AssetBuildingCompleteDTO = JSON.parse(JSON.stringify(lastBuilding))
-  newBuilding.floorList = [] // 楼层数据清空，全新空数组，无任何引用
+  newBuilding.buildingId = '' // 楼栋编码清空（系统自动生成）
+  newBuilding.floorData = [] // 楼层数据清空，全新空数组，无任何引用
   formData.buildingList.push(newBuilding)
   updateFormRules() // 新增后更新规则，生成新楼栋的所有字段规则
   ElMessage.success('已新增楼栋，继承上一楼栋信息')
@@ -140,6 +148,11 @@ const generateFloorAndRoom = (index: number) => {
   const currentBuilding = formData.buildingList[index]
   const {aboveground, underground, roomNumber} = currentBuilding
 
+  if (!formData.buildingList[index].buildingId) {
+    ElMessage.warning('请选择项目')
+    return
+  }
+
   // 1. 输入值校验：非空、非负整数
   if (
     aboveground === null ||
@@ -153,77 +166,58 @@ const generateFloorAndRoom = (index: number) => {
     return
   }
 
-  const floorData = []
-  const defaultHeight = null // 房间默认层高3米
+  const floorData: FloorItemDTO[] = []
+  const defaultHeight = 3 // 房间默认层高3米
 
   // 2. 生成地上楼层（倒序：如2层→1层，符合示例要求）
   for (let f = aboveground; f >= 1; f--) {
-    const roomChildren = []
+    const floorId = formData.buildingList[index].buildingId // 前缀为楼层数，语义化
+    const roomChildren: FloorItemDTO[] = []
     // 生成当前楼层的房间
     for (let r = 1; r <= roomNumber; r++) {
       roomChildren.push({
-        assetType: '1',
-        roomName: `${f}${r.toString().padStart(2, '0')}`, // 房间号：楼层+两位房间数（如101、202）
-        roomHeight: defaultHeight,
-        roomList: undefined, // 房间无子节点
+        floorId: formData.buildingList[index].buildingId, // 前缀：楼层-房间号
+        floorName: `${f}${r.toString().padStart(2, '0')}`, // 房间号：楼层+两位房间数（如101、202）
+        floorHeight: defaultHeight,
+        children: undefined, // 房间无子节点
       })
     }
     // 推入地上楼层
     floorData.push({
-      assetType: '1',
+      floorId,
       floorName: `${f}层`,
       floorHeight: defaultHeight, // 父楼层不设置层高，仅房间设置
-      roomList: roomChildren,
+      children: roomChildren,
     })
   }
 
   // 3. 生成地下楼层（正序：B1层→B2层，符合示例要求）
   for (let f = 1; f <= underground; f++) {
-    const roomChildren = []
+    const floorId = formData.buildingList[index].buildingId // 前缀为B+地下楼层数，语义化
+    const roomChildren: FloorItemDTO[] = []
     // 生成当前地下楼层的房间
     for (let r = 1; r <= roomNumber; r++) {
       roomChildren.push({
-        assetType: '1',
-        roomName: `B${f}-${r.toString().padStart(3, '0')}`, // 房间号：B楼层-三位房间数（如B1-101、B2-202）
-        roomHeight: defaultHeight,
-        roomList: undefined,
+        floorId: formData.buildingList[index].buildingId, // 前缀：B楼层-房间号
+        floorName: `B${f}-${r.toString().padStart(3, '0')}`, // 房间号：B楼层-三位房间数（如B1-101、B2-202）
+        floorHeight: defaultHeight,
+        children: undefined,
       })
     }
     // 推入地下楼层
     floorData.push({
-      assetType: '1',
+      floorId,
       floorName: `B${f}层`,
       floorHeight: defaultHeight,
-      roomList: roomChildren,
+      children: roomChildren,
     })
   }
 
   // 4. 更新当前楼栋的floorData，ElTree会自动重新渲染
-  currentBuilding.floorList = floorData
+  currentBuilding.floorData = floorData
   // 自动计算总房间数（可选，同步到表单总房间字段）
   currentBuilding.totalRoom = (aboveground + underground) * roomNumber
   ElMessage.success('楼层房间数据生成成功！')
-}
-
-interface Room {
-  projectId: string
-  roomNumber: string
-  roomName: string
-  roomHeight: number
-  roomLayoutName: string
-  roomLayoutCode: string | number
-}
-
-interface Floor {
-  floorHeight: number
-  roomList: Room[] // 楼层下的房间列表，关联Room接口
-}
-
-interface Building {
-  ownershipUnitCode: []
-  ownershipUnitName: string
-  projectId: string
-  floorList: Floor[] // 楼栋下的楼层列表，关联Floor接口
 }
 
 // 提交表单：先验证，通过后处理数据
@@ -231,39 +225,33 @@ const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
     if (valid) {
-      let Flag = true
-      const paramsData = JSON.parse(JSON.stringify(formData))
-      paramsData.buildingList?.forEach((building: Building) => {
-        if (Array.isArray(building?.ownershipUnitCode)) {
-          const targetCode = building.ownershipUnitCode[building.ownershipUnitCode.length - 1] ?? ''
-          building.ownershipUnitName =
-            findValueByCustomId(targetCode, 'dicId', 'dicName', companyOptions) || ''
-          building.ownershipUnitCode =
-            building.ownershipUnitCode[building.ownershipUnitCode.length - 1]
-        }
-        building.floorList?.forEach((floor: Floor) => {
-          floor?.floorHeight ? '' : (Flag = false)
-          floor.roomList?.forEach((room: Room) => {
-            room.projectId = building.projectId
-            room.roomNumber = room.roomName
-            room?.roomHeight ? '' : (Flag = false)
-            if (room.roomLayoutCode) {
-              room.roomLayoutName =
-                findValueByCustomId(room.roomLayoutCode, 'dicId', 'dicName', roomOptions) || ''
-            } else {
-              Flag = false
-            }
-          })
-        })
-      })
+      // 验证通过：处理表单提交逻辑（如接口请求）
+      console.log('表单提交数据：', {...formData})
+      console.log()
+      //          {
+      //       buildingId: '', // 楼栋编码
+      //       buildingName: '', // 楼栋名称
+      //       projectId: '', // 项目编码
+      //       ownershipUnitCode: '', // 产权单位编码
+      //       ownershipUnitName: '', // 产权单位名称
+      //       totalFloor: null, // 总层数
+      //       totalRoom: null, // 总房间
+      //       aboveground: null, // 地面（层）
+      //       underground: null, // 地下（层）
+      //       roomNumber: null, //
+      //       floorData: [], // 初始化floorData为空数组
+      //     },
+      //   ], // 楼栋数据
+      //   floorList: [{}], // 楼层数据
+      //   roomList: [], // 住宅数据
 
-      if (Flag) {
-        const {code, msg} = await addBuilding.runAsync({...paramsData})
-        code == 200 ? ElMessage.success(msg) : ''
-      } else {
-        ElMessage.warning('请填写层高、户型')
-      }
+      const paramsData = JSON.parse(JSON.stringify(formData))
+      console.log(paramsData)
+
+      const {code, msg} = await addBuilding.runAsync({...paramsData})
+      code == 200 ? ElMessage.success(msg) : ''
     } else {
+      // 验证失败：提示错误
       ElMessage.error('请填写完整信息')
     }
   })
@@ -274,10 +262,6 @@ const handleReset = () => {
   if (!formRef.value) return
   formRef.value.resetFields()
   ElMessage.info('表单已重置')
-}
-
-const treeProps = {
-  children: 'roomList', // 替换默认children为roomList（必配）
 }
 </script>
 
@@ -316,7 +300,12 @@ const treeProps = {
           <el-row :gutter="24">
             <el-col :span="8">
               <el-form-item label="项目名称" :prop="`buildingList[${index}].projectId`" required>
-                <el-select v-model="item.projectId" placeholder="请填写项目名称">
+                <el-select
+                  v-model="item.projectId"
+                  placeholder="请填写项目名称"
+                  :options="projectOptions"
+                  @change="handleChange($event, index)"
+                >
                   <el-option
                     v-for="item in projectOptions"
                     :key="item.projectId"
@@ -332,22 +321,8 @@ const treeProps = {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item
-                label="产权单位"
-                :prop="`buildingList[${index}].ownershipUnitCode`"
-                required
-              >
-                <el-cascader
-                  v-model="item.ownershipUnitCode"
-                  placeholder="请选择产权单位"
-                  :options="companyOptions"
-                  :props="{
-                    checkStrictly: true,
-                    value: 'dicId',
-                    label: 'dicName',
-                  }"
-                  clearable
-                />
+              <el-form-item label="楼栋编码" :prop="`buildingList[${index}].buildingId`" required>
+                <el-input v-model="item.buildingId" placeholder="系统自动生成" disabled />
               </el-form-item>
             </el-col>
           </el-row>
@@ -361,6 +336,18 @@ const treeProps = {
             <el-col :span="8">
               <el-form-item label="总房间数" :prop="`buildingList[${index}].totalRoom`" required>
                 <el-input v-model="item.totalRoom" placeholder="请填写总房间数" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item
+                label="产权单位"
+                :prop="`buildingList[${index}].ownershipUnitCode`"
+                required
+              >
+                <el-select v-model="item.ownershipUnitCode" placeholder="请选择产权单位">
+                  <el-option label="南山公司" value="1" />
+                  <el-option label="福田公司" value="2" />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -403,41 +390,19 @@ const treeProps = {
 
             <el-tree
               ref="treeRef"
-              :data="item.floorList"
+              :data="item.floorData"
               node-key="floorId"
               default-expand-all
-              :props="treeProps"
               :expand-on-click-node="false"
             >
               <template #default="{data}">
                 <div>
-                  <span v-if="data.roomList">{{ data.floorName }}</span>
+                  <span>{{ data.floorName }}</span>
                   <el-input-number
-                    v-if="data.roomList"
-                    class="ml-4 w-50!"
+                    class="ml-4"
                     v-model="data.floorHeight"
                     placeholder="请输入层高"
                   />
-                  <span v-if="!data.roomList">{{ data.roomName }}</span>
-                  <el-input-number
-                    v-if="!data.roomList"
-                    class="ml-4 w-50!"
-                    v-model="data.roomHeight"
-                    placeholder="请输入层高"
-                  />
-                  <el-select
-                    v-if="!data.roomList"
-                    class="ml-4 w-50!"
-                    v-model="data.roomLayoutCode"
-                    placeholder="请选择户型"
-                  >
-                    <el-option
-                      v-for="item in roomOptions"
-                      :key="item.dicId"
-                      :label="item.dicName"
-                      :value="item.dicId"
-                    />
-                  </el-select>
                 </div>
               </template>
             </el-tree>

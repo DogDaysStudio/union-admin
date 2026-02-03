@@ -5,4 +5,8 @@ export const iamCommon = {
   iamCommonAreaList(payload: Record<string, any>) {
     return http.post<Res<PairModel[]>>('/iam/common/area/list', payload)
   },
+  // 树形码表 | object:{dicType:字典类型}
+  iamCommonDicListTree(payload: Record<string, any>) {
+    return http.post<Res<SysDicVO[]>>('/iam/common/dic/list-tree', payload)
+  },
 }
