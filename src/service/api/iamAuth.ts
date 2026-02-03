@@ -57,4 +57,8 @@ export const iamAuth = {
   iamAuthOrgUpsert(payload: AuthOrgUpsertDTO) {
     return http.post<Res<string>>('/iam/auth-org/upsert', payload)
   },
+  // 删除组织 | object:{orgId:组织ID}
+  iamAuthOrgDelete(payload: Record<string, any>) {
+    return http.post<Res<Record<string, any>>>('/iam/auth-org/delete', payload)
+  },
 }

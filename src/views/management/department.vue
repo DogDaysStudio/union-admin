@@ -30,6 +30,11 @@ const {
 const {data: orgTree, runAsync: runOrgTree} = useRequest(iamAuth.iamAuthOrgTree)
 
 const {runAsync: runUpsertOrg, loading: upsertLoading} = useRequest(iamAuth.iamAuthOrgUpsert)
+const {
+  runAsync: runDeleteOrg,
+  loading: deleteLoading,
+  params: deleteParams,
+} = useRequest(iamAuth.iamAuthOrgDelete)
 
 watchEffect(() => {
   console.log('orgList', orgList)
@@ -91,9 +96,11 @@ const handleEdit = (row: AuthOrgVO) => {
 }
 
 // 处理删除
-const handleDelete = (id: number) => {
-  console.log('删除部门', id)
-  // 这里可以添加删除部门的逻辑
+const handleDelete = async (id: number) => {
+  await ElMessageBox.confirm('确认删除部门吗？', '删除确认')
+  await runDeleteOrg({orgId: id})
+  ElMessage.success('删除部门成功')
+  refreshOrgList()
 }
 
 const schema = defineSchema({
@@ -140,9 +147,15 @@ const schema = defineSchema({
         </template>
       </el-table-column>
       <el-table-column label="操作" width="130">
-        <template #default="scope">
-          <el-button link size="small" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button link size="small" type="danger" @click="handleDelete(scope.row.id)">
+        <template #default="{row}">
+          <el-button link size="small" @click="handleEdit(row)">编辑</el-button>
+          <el-button
+            link
+            size="small"
+            type="danger"
+            @click="handleDelete(row.orgId)"
+            :loading="deleteParams?.[0]?.orgId === row.orgId && deleteLoading"
+          >
             删除
           </el-button>
         </template>
