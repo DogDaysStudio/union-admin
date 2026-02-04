@@ -11,11 +11,7 @@ import {useRequest} from 'vue-request'
 const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
   throttleInterval: 500,
 })
-interface ProjectOptionVO {
-  projectId: string
-  projectName: string
-}
-const projectOptions = reactive<ProjectOptionVO[]>([])
+const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 产权单位（公司）
 const companyListTree = useRequest(iamCommon.iamCommonDicListTree, {
   throttleInterval: 500,
@@ -133,9 +129,9 @@ const handleCurrentChange = (val: number): void => {
 const router = useRouter()
 const addBuilding = () => router.push('/asset/management/add-building')
 const editBuilding = (buildingId: string) =>
-  router.push(`/asset/management/edit-building/${buildingId}/edit`)
+  router.push(`/asset/management/edit-building/${buildingId}`)
 const detailBuilding = (buildingId: string) =>
-  router.push(`/asset/management/edit-building/${buildingId}/detail`)
+  router.push(`/asset/management/detail-building/${buildingId}`)
 
 // 修改状态
 const toggleStatus = (buildingId: string, enable: number): void => {

@@ -134,6 +134,7 @@ const toggleStatus = (floorId: string, enable: number): void => {
   }).then(async () => {
     await toggleStatusFloor.runAsync({floorId, enable: enable ? 0 : 1})
     ElMessage.success('修改成功')
+    getData()
   })
 }
 
@@ -145,8 +146,8 @@ const deleteData = (floorId: string): void => {
     type: 'warning',
   }).then(async () => {
     await deleteFloor.runAsync({floorId})
-    getData()
     ElMessage.success('删除成功')
+    getData()
   })
 }
 </script>
@@ -199,7 +200,7 @@ const deleteData = (floorId: string): void => {
           >
             启用
           </el-button>
-          <el-button link type="primary"  @click="detailFloor(row.floorId)">查看详情</el-button>
+          <el-button link type="primary" @click="detailFloor(row.floorId)">查看详情</el-button>
           <el-button link type="primary" @click="editFloor(row.floorId)">编辑</el-button>
           <el-button link type="danger" @click="deleteData(row.floorId)">删除</el-button>
         </template>

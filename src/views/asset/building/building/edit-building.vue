@@ -10,17 +10,12 @@ import {findValueByCustomId} from '@/utils/array-util'
 
 const router = useRouter()
 const route = useRoute()
-const routeType = route.params.type
 
 // 获取项目名称
-interface ProjectOptionVO {
-  projectId: string
-  projectName: string
-}
 const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
   throttleInterval: 500,
 })
-const projectOptions = reactive<ProjectOptionVO[]>([])
+const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 产权单位（公司）
 const companyListTree = useRequest(iamCommon.iamCommonDicListTree, {
   throttleInterval: 500,
@@ -78,10 +73,6 @@ const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
     if (valid) {
-      if (routeType === 'detail') {
-        router.push('/asset/management/building-floor')
-        return
-      }
       const paramsData = JSON.parse(JSON.stringify(formData))
       if (Array.isArray(paramsData?.ownershipUnitCode)) {
         const targetCode =
@@ -101,18 +92,14 @@ const handleSubmit = () => {
 }
 
 // 重置表单：重置数据+清除验证状态
-const handleReset = () => {
-  if (!formRef.value) return
-  formRef.value.resetFields()
-  ElMessage.info('表单已重置')
-}
+const handleReset = () => router.push('/asset/management/building-floor')
 </script>
 
 <template>
   <el-card>
     <template #header>
       <div class="flex justify-between">
-        {{ routeType === 'edit' ? '编辑楼栋' : '楼栋详情' }}
+        编辑楼栋
         <p class="text-red-600">
           <span>*</span>
           为必填项
@@ -130,61 +117,55 @@ const handleReset = () => {
         :validate-on-rule-change="false"
         :validate-on-init="false"
       >
-        <el-card class="mb-4">
-          <template #header>
-            <div class="flex justify-between">楼栋信息</div>
-          </template>
-          <el-row :gutter="24">
-            <el-col :span="8">
-              <el-form-item label="楼栋名称" prop="buildingName" required>
-                <el-input v-model="formData.buildingName" placeholder="请填写楼栋名称" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="楼栋编码" required>
-                <el-input v-model="formData.buildingId" placeholder="请填写楼栋编码" disabled />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="项目名称" required>
-                <el-select v-model="formData.projectId" placeholder="请填写项目名称" disabled>
-                  <el-option
-                    v-for="item in projectOptions"
-                    :key="item.projectId"
-                    :label="item.projectName"
-                    :value="item.projectId"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-          <el-row :gutter="24">
-            <el-col :span="8">
-              <el-form-item label="项目编码" required>
-                <el-input v-model="formData.projectId" placeholder="请填写项目编码" disabled />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="产权单位" prop="ownershipUnitCode" required>
-                <el-cascader
-                  v-model="formData.ownershipUnitCode"
-                  placeholder="请选择产权单位"
-                  :options="companyOptions"
-                  :props="{
-                    checkStrictly: true,
-                    value: 'dicId',
-                    label: 'dicName',
-                  }"
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="楼栋名称" prop="buildingName" required>
+              <el-input v-model="formData.buildingName" placeholder="请填写楼栋名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="楼栋编码" required>
+              <el-input v-model="formData.buildingId" placeholder="请填写楼栋编码" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="项目名称" required>
+              <el-select v-model="formData.projectId" placeholder="请填写项目名称" disabled>
+                <el-option
+                  v-for="item in projectOptions"
+                  :key="item.projectId"
+                  :label="item.projectName"
+                  :value="item.projectId"
                 />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-card>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <!-- 表单操作按钮：居中、间距 -->
+        <el-row :gutter="24">
+          <el-col :span="8">
+            <el-form-item label="项目编码" required>
+              <el-input v-model="formData.projectId" placeholder="请填写项目编码" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="产权单位" prop="ownershipUnitCode" required>
+              <el-cascader
+                v-model="formData.ownershipUnitCode"
+                placeholder="请选择产权单位"
+                :options="companyOptions"
+                :props="{
+                  checkStrictly: true,
+                  value: 'dicId',
+                  label: 'dicName',
+                }"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <div class="flex justify-center mt-6">
-          <el-button v-if="routeType === 'edit'" @click="handleReset">取消</el-button>
+          <el-button @click="handleReset">取消</el-button>
           <el-button type="primary" @click="handleSubmit">确定</el-button>
         </div>
       </el-form>

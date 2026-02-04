@@ -271,7 +271,7 @@ const handleReset = () => router.push('/asset/management/building-floor')
             node-key="roomId"
             default-expand-all
             :props="{
-              children: 'roomList'
+              children: 'roomList',
             }"
             :expand-on-click-node="false"
           >

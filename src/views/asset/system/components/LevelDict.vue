@@ -107,7 +107,7 @@ const handleSubmit = async () => {
 }
 
 const handleAdd = () => {
-  resetModel() 
+  resetModel()
   dialogVisible.value = true
 }
 
