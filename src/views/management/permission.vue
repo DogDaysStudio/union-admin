@@ -73,6 +73,7 @@ const [editForm, resetEditForm] = useForm(
 
 // 处理添加
 const handleAdd = () => {
+  Object.keys(editForm).forEach(key => (editForm as Record<string, any>)[key] = undefined);
   dialogVisible.value = true
 }
 

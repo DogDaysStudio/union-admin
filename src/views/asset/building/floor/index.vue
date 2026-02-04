@@ -121,7 +121,9 @@ const handleCurrentChange = (val: number): void => {
 }
 
 const router = useRouter()
-const addProject = () => router.push('/asset/management/add-floor')
+const addFloor = () => router.push('/asset/management/add-floor')
+const editFloor = (floorId: string) => router.push(`/asset/management/edit-floor/${floorId}`)
+const detailFloor = (floorId: string) => router.push(`/asset/management/detail-floor/${floorId}`)
 
 // 修改状态
 const toggleStatus = (floorId: string, enable: number): void => {
@@ -160,7 +162,7 @@ const deleteData = (floorId: string): void => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addProject">新增楼层</el-button>
+          <el-button type="primary" size="default" @click="addFloor">新增楼层</el-button>
           <el-button type="primary" size="default">导入</el-button>
           <el-button type="primary" size="default">导出</el-button>
         </div>
@@ -171,7 +173,7 @@ const deleteData = (floorId: string): void => {
       <el-table-column label="序号" type="index" width="60" />
       <el-table-column label="楼层编码" prop="floorId" />
       <el-table-column label="楼层名称" prop="floorName" />
-      <el-table-column label="所属楼栋" prop="assetType" />
+      <el-table-column label="所属楼栋" prop="assetName" />
       <el-table-column label="所属项目" prop="projectName" />
       <el-table-column label="产权单位" prop="ownershipUnitName" />
       <el-table-column label="状态" prop="enable">
@@ -197,8 +199,8 @@ const deleteData = (floorId: string): void => {
           >
             启用
           </el-button>
-          <el-button link type="primary">查看详情</el-button>
-          <el-button link type="primary">编辑</el-button>
+          <el-button link type="primary"  @click="detailFloor(row.floorId)">查看详情</el-button>
+          <el-button link type="primary" @click="editFloor(row.floorId)">编辑</el-button>
           <el-button link type="danger" @click="deleteData(row.floorId)">删除</el-button>
         </template>
       </el-table-column>

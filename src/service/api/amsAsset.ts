@@ -59,6 +59,14 @@ export const amsAsset = {
   amsAssetFloorInsert(payload: AssetFloorBaseDTO) {
     return http.post<Res<string>>('/ams/asset-floor/insert', payload)
   },
+  // 更新楼层
+  amsAssetFloorUpdate(payload: AssetFloorBaseDTO) {
+    return http.post<Res<string>>('/ams/asset-floor/update', payload)
+  },
+  // 楼层详情
+  amsAssetFloorGet(payload: Record<string, any>) {
+    return http.post<Res<AssetFloorVO>>('/ams/asset-floor/get', payload)
+  },
   // 删除楼层
   amsAssetFloorDelete(payload: Record<string, any>) {
     return http.post<Res<Record<string, any>>>('/ams/asset-floor/delete', payload)

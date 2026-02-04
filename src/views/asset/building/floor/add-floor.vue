@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {ref, reactive, onMounted} from 'vue'
+import {useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {amsAsset} from '@/service/api/amsAsset'
@@ -7,15 +8,13 @@ import {iamCommon} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
 
+const router = useRouter()
+
 // 获取项目名称
 const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
   throttleInterval: 500,
 })
-interface ProjectOptionVO {
-  projectId: string
-  projectName: string
-}
-const projectOptions = reactive<ProjectOptionVO[]>([])
+const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 户型
 const roomListTree = useRequest(iamCommon.iamCommonDicListTree, {
   throttleInterval: 500,
@@ -58,9 +57,7 @@ const formRules = reactive<FormRules>({
   ownershipUnitCode: {required: true, message: '请选择产权单位', trigger: 'change'},
 })
 
-onMounted(() => {
-  getOptions()
-})
+onMounted(() => getOptions())
 
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
@@ -162,11 +159,10 @@ const handleSubmit = () => {
           room.ownershipUnitCode = room.ownershipUnitCode[room.ownershipUnitCode.length - 1]
         }
       })
-      console.log(paramsData, 'paramsData')
-
       if (Flag) {
         const {msg} = await addFloor.runAsync({...paramsData})
         ElMessage.success(msg)
+        router.push('/asset/management/building-floor')
       } else {
         ElMessage.warning('请填写层高、户型')
       }
@@ -176,16 +172,7 @@ const handleSubmit = () => {
   })
 }
 
-// 重置表单：重置数据+清除验证状态
-const handleReset = () => {
-  if (!formRef.value) return
-  formRef.value.resetFields()
-  ElMessage.info('表单已重置')
-}
-
-const treeProps = {
-  children: 'roomList', // 替换默认children为roomList（必配）
-}
+const handleReset = () => router.push('/asset/management/building-floor')
 </script>
 
 <template>
@@ -210,10 +197,7 @@ const treeProps = {
         :validate-on-rule-change="false"
         :validate-on-init="false"
       >
-        <el-card class="mb-4">
-          <template #header>
-            <div class="flex justify-between">楼层信息</div>
-          </template>
+        <section-group title="楼层信息" inline>
           <el-row :gutter="24">
             <el-col :span="8">
               <el-form-item label="楼层名称" prop="floorName" required>
@@ -265,73 +249,75 @@ const treeProps = {
               </el-form-item>
             </el-col>
           </el-row>
+        </section-group>
 
-          <section-group title="房间信息" inline>
-            <el-row :gutter="24">
-              <el-col :span="8">
-                <el-form-item label="每层房间数">
-                  <div class="flex w-full">
-                    <el-input-number v-model="formData.roomNumber" placeholder="请填写每层房间数" />
-                    <el-button type="primary" class="ml-4" @click="handleGenerateRooms">
-                      生成
-                    </el-button>
-                  </div>
-                </el-form-item>
-              </el-col>
-            </el-row>
+        <section-group title="房间信息" inline>
+          <el-row :gutter="24">
+            <el-col :span="8">
+              <el-form-item label="每层房间数">
+                <div class="flex w-full">
+                  <el-input-number v-model="formData.roomNumber" placeholder="请填写每层房间数" />
+                  <el-button type="primary" class="ml-4" @click="handleGenerateRooms">
+                    生成
+                  </el-button>
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-            <el-tree
-              ref="treeRef"
-              :data="formData.roomList"
-              node-key="roomId"
-              default-expand-all
-              :props="treeProps"
-              :expand-on-click-node="false"
-            >
-              <template #default="{data}">
-                <el-row :gutter="24">
-                  <el-col :span="6">
-                    房间：
-                    <el-input class="w-50!" v-model="data.roomNumber" />
-                  </el-col>
-                  <el-col :span="6">
-                    层高：
-                    <el-input-number
-                      class="w-50!"
-                      v-model="data.roomHeight"
-                      placeholder="请输入层高"
+          <el-tree
+            ref="treeRef"
+            :data="formData.roomList"
+            node-key="roomId"
+            default-expand-all
+            :props="{
+              children: 'roomList'
+            }"
+            :expand-on-click-node="false"
+          >
+            <template #default="{data}">
+              <el-row :gutter="24">
+                <el-col :span="6">
+                  房间：
+                  <el-input class="w-50!" v-model="data.roomNumber" />
+                </el-col>
+                <el-col :span="6">
+                  层高：
+                  <el-input-number
+                    class="w-50!"
+                    v-model="data.roomHeight"
+                    placeholder="请输入层高"
+                  />
+                </el-col>
+                <el-col :span="6">
+                  户型：
+                  <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
+                    <el-option
+                      v-for="item in roomOptions"
+                      :key="item.dicId"
+                      :label="item.dicName"
+                      :value="item.dicId"
                     />
-                  </el-col>
-                  <el-col :span="6">
-                    户型：
-                    <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
-                      <el-option
-                        v-for="item in roomOptions"
-                        :key="item.dicId"
-                        :label="item.dicName"
-                        :value="item.dicId"
-                      />
-                    </el-select>
-                  </el-col>
-                  <el-col :span="6">
-                    产权单位：
-                    <el-cascader
-                      v-model="data.ownershipUnitCode"
-                      placeholder="请选择产权单位"
-                      :options="companyOptions"
-                      :props="{
-                        checkStrictly: true,
-                        value: 'dicId',
-                        label: 'dicName',
-                      }"
-                      clearable
-                    />
-                  </el-col>
-                </el-row>
-              </template>
-            </el-tree>
-          </section-group>
-        </el-card>
+                  </el-select>
+                </el-col>
+                <el-col :span="6">
+                  产权单位：
+                  <el-cascader
+                    v-model="data.ownershipUnitCode"
+                    placeholder="请选择产权单位"
+                    :options="companyOptions"
+                    :props="{
+                      checkStrictly: true,
+                      value: 'dicId',
+                      label: 'dicName',
+                    }"
+                    clearable
+                  />
+                </el-col>
+              </el-row>
+            </template>
+          </el-tree>
+        </section-group>
 
         <!-- 表单操作按钮：居中、间距 -->
         <div class="flex justify-center mt-6">

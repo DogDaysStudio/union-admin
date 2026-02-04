@@ -57,6 +57,16 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '楼层-新增', hidden: true},
             component: () => import('@/views/asset/building/floor/add-floor.vue'),
           },
+          {
+            path: 'edit-floor/:id',
+            meta: {title: '楼层-编辑', hidden: true},
+            component: () => import('@/views/asset/building/floor/edit-floor.vue'),
+          },
+          {
+            path: 'detail-floor/:id',
+            meta: {title: '楼层-详情', hidden: true},
+            component: () => import('@/views/asset/building/floor/detail-floor.vue'),
+          },
         ],
       },
       {

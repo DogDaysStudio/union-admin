@@ -1821,10 +1821,8 @@ interface AssetFloorVO {
   floorId: string // 楼层编码
   projectId: string // 项目编码
   projectName: string // 项目名称
-  buildingId: string // 楼栋编码
-  buildingName: string // 楼栋名称
-  enclosureId: string // 围合编码
-  enclosureName: string // 围合名称
+  assetId: string // 楼栋/围合/停车场编码
+  assetName: string // 楼栋/围合/停车场名称
   enclosureTypeCode: string // 围合类型编码
   enclosureTypeName: string // 围合类型
   floorName: string // 楼层名称
