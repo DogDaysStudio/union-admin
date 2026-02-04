@@ -4,8 +4,19 @@ import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {amsAsset} from '@/service/api/amsAsset'
+import {iamCommon} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
+// 字典 产权单位（公司）
+const companyListTree = useRequest(iamCommon.iamCommonDicListTree, {
+  throttleInterval: 500,
+})
+const companyOptions = reactive<SysDicVO[]>([])
+// 楼栋下拉列表
+const buildingList = useRequest(amsAsset.amsAssetBuildingList, {
+  throttleInterval: 500,
+})
+const buildingOptions = reactive<AssetBuildingVO[]>([])
 // 列表数据
 const floorList = useRequest(amsAsset.amsAssetFloorList, {
   throttleInterval: 500,
@@ -20,15 +31,9 @@ const deleteFloor = useRequest(amsAsset.amsAssetFloorDelete, {
 })
 
 const formState = reactive({
-  pageable: false,
   pageNum: 1,
   pageSize: 10,
-  floorId: '', // 楼层编码
-  floorName: '', // 楼层名称
-  projectId: '', // 项目编码
-  assetId: '', // 楼层编码
-  ownershipUnitCode: '', // 产权单位编码
-  enable: null, // 0-禁用;1-启用
+  assetType: '1',
 } as AssetFloorListDTO)
 
 const formSchema = defineSchema({
@@ -36,22 +41,25 @@ const formSchema = defineSchema({
     defineField.Input({label: '楼层名称', prop: 'floorName', clearable: true}),
     defineField.Input({label: '楼层编码', prop: 'floorId', clearable: true}),
     defineField.Select({
-      label: '所属楼层',
+      label: '所属楼栋',
       prop: 'assetId',
-      options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
-      ],
+      options: buildingOptions,
       clearable: true,
+      props: {
+        value: 'buildingId',
+        label: 'buildingName',
+      },
     }),
-    defineField.Select({
-      label: '产权公司',
+    defineField.Cascader({
+      label: '产权单位',
       prop: 'ownershipUnitCode',
-      options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
-      ],
+      options: companyOptions,
       clearable: true,
+      props: {
+        checkStrictly: true,
+        value: 'dicId',
+        label: 'dicName',
+      },
     }),
     defineField.Select({
       label: '状态',
@@ -75,13 +83,26 @@ const total = ref<number>(0)
 const loading = ref<boolean>(false)
 
 onMounted(() => {
+  getOptions()
   getData()
 })
+
+// 获取下拉接口
+const getOptions = async (): Promise<void> => {
+  const {data: companyList} = await companyListTree.runAsync({dicType: 1001, pageable: false})
+  companyOptions.push(...Object.values(companyList))
+  const {data: building} = await buildingList.runAsync({pageable: false} as AssetBuildingListDTO)
+  buildingOptions.push(...Object.values(building))
+}
 
 const tableData = reactive<AssetFloorVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
   const cloneformState = {...formState}
+  if (cloneformState.ownershipUnitCode?.length) {
+    cloneformState.ownershipUnitCode =
+      cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
+  }
   const {total: resTotal, data} = await floorList.runAsync({...cloneformState})
   total.value = resTotal
   tableData.length = 0
@@ -100,9 +121,7 @@ const handleCurrentChange = (val: number): void => {
 }
 
 const router = useRouter()
-const addProject = () => {
-  router.push('/asset/management/add')
-}
+const addProject = () => router.push('/asset/management/add-floor')
 
 // 修改状态
 const toggleStatus = (floorId: string, enable: number): void => {
@@ -110,23 +129,10 @@ const toggleStatus = (floorId: string, enable: number): void => {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
+  }).then(async () => {
+    await toggleStatusFloor.runAsync({floorId, enable: enable ? 0 : 1})
+    ElMessage.success('修改成功')
   })
-    .then(async () => {
-      const {code} = await toggleStatusFloor.runAsync({floorId, enable: enable ? 0 : 1})
-      if (code === 200) {
-        getData()
-        ElMessage({
-          type: 'success',
-          message: '修改成功',
-        })
-      }
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '已取消操作',
-      })
-    })
 }
 
 // 删除
@@ -135,23 +141,11 @@ const deleteData = (floorId: string): void => {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
+  }).then(async () => {
+    await deleteFloor.runAsync({floorId})
+    getData()
+    ElMessage.success('删除成功')
   })
-    .then(async () => {
-      const {code} = await deleteFloor.runAsync({floorId})
-      if (code === 200) {
-        getData()
-        ElMessage({
-          type: 'success',
-          message: '删除成功',
-        })
-      }
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '已取消操作',
-      })
-    })
 }
 </script>
 
@@ -179,13 +173,13 @@ const deleteData = (floorId: string): void => {
       <el-table-column label="楼层名称" prop="floorName" />
       <el-table-column label="所属楼栋" prop="assetType" />
       <el-table-column label="所属项目" prop="projectName" />
-      <el-table-column label="产权公司" prop="ownershipUnitName" />
+      <el-table-column label="产权单位" prop="ownershipUnitName" />
       <el-table-column label="状态" prop="enable">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="185">
+      <el-table-column fixed="right" label="操作" min-width="105">
         <template #default="{row}">
           <el-button
             v-if="row.enable"

@@ -70,12 +70,7 @@ const getOptions = async (): Promise<void> => {
 // 获取详情
 const getDetail = async (): Promise<void> => {
   const {data} = await buildingGet.runAsync({buildingId: route.params.id})
-  formData.buildingName = data.buildingName
-  formData.buildingId = data.buildingId
-  formData.projectId = data.projectId
-  formData.projectName = data.projectName
-  formData.ownershipUnitName = data.ownershipUnitName
-  formData.ownershipUnitCode = data.ownershipUnitCode
+  Object.assign(formData, data)
 }
 
 // 提交表单：先验证，通过后处理数据

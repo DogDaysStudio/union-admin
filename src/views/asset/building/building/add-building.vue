@@ -138,7 +138,7 @@ const deleteBuildingItem = (index: number) => {
  */
 const generateFloorAndRoom = (index: number) => {
   const currentBuilding = formData.buildingList[index]
-  const {aboveground, underground, roomNumber} = currentBuilding
+  const {aboveground, underground, roomNumber, ownershipUnitCode} = currentBuilding
 
   // 1. 输入值校验：非空、非负整数
   if (
@@ -154,76 +154,87 @@ const generateFloorAndRoom = (index: number) => {
   }
 
   const floorData = []
-  const defaultHeight = null // 房间默认层高3米
+  const defaultHeight = null // 房间默认层高（保持原有逻辑）
 
-  // 2. 生成地上楼层（倒序：如2层→1层，符合示例要求）
+  // 3. 生成地上楼层（倒序：如2层→1层，符合示例要求）
   for (let f = aboveground; f >= 1; f--) {
     const roomChildren = []
     // 生成当前楼层的房间
     for (let r = 1; r <= roomNumber; r++) {
       roomChildren.push({
         assetType: '1',
-        roomName: `${f}${r.toString().padStart(2, '0')}`, // 房间号：楼层+两位房间数（如101、202）
+        roomName: `${f}${r.toString().padStart(2, '0')}`,
         roomHeight: defaultHeight,
-        roomList: undefined, // 房间无子节点
+        roomList: undefined,
+        ownershipUnitCode, // 赋值：房间继承楼栋的产权单位编码
       })
     }
-    // 推入地上楼层
+    // 推入地上楼层（新增ownershipUnitCode赋值）
     floorData.push({
       assetType: '1',
       floorName: `${f}层`,
-      floorHeight: defaultHeight, // 父楼层不设置层高，仅房间设置
+      floorHeight: defaultHeight,
       roomList: roomChildren,
+      ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
     })
   }
 
-  // 3. 生成地下楼层（正序：B1层→B2层，符合示例要求）
+  // 4. 生成地下楼层（正序：B1层→B2层，符合示例要求）
   for (let f = 1; f <= underground; f++) {
     const roomChildren = []
     // 生成当前地下楼层的房间
     for (let r = 1; r <= roomNumber; r++) {
       roomChildren.push({
         assetType: '1',
-        roomName: `B${f}-${r.toString().padStart(3, '0')}`, // 房间号：B楼层-三位房间数（如B1-101、B2-202）
+        roomName: `B${f}-${r.toString().padStart(3, '0')}`,
         roomHeight: defaultHeight,
         roomList: undefined,
+        ownershipUnitCode, // 赋值：房间继承楼栋的产权单位编码
       })
     }
-    // 推入地下楼层
+    // 推入地下楼层（新增ownershipUnitCode赋值）
     floorData.push({
       assetType: '1',
       floorName: `B${f}层`,
       floorHeight: defaultHeight,
       roomList: roomChildren,
+      ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
     })
   }
 
-  // 4. 更新当前楼栋的floorData，ElTree会自动重新渲染
+  // 5. 更新当前楼栋的floorData，ElTree会自动重新渲染并回显产权单位
   currentBuilding.floorList = floorData
-  // 自动计算总房间数（可选，同步到表单总房间字段）
   currentBuilding.totalRoom = (aboveground + underground) * roomNumber
-  ElMessage.success('楼层房间数据生成成功！')
+  ElMessage.success('楼层房间数据生成成功，已继承楼栋产权单位！')
 }
 
+// 先完善TS接口：补全Floor、Room的产权单位相关字段，保证类型匹配
 interface Room {
   projectId: string
   roomNumber: string
   roomName: string
-  roomHeight: number
+  roomHeight: number | null
   roomLayoutName: string
-  roomLayoutCode: string | number
+  roomLayoutCode: string | number | undefined
+  ownershipUnitCode: string | any[] // 支持数组（前端绑定）/字符串（提交后端）
+  ownershipUnitName: string // 产权单位中文名称
 }
 
 interface Floor {
-  floorHeight: number
+  floorHeight: number | null
   roomList: Room[] // 楼层下的房间列表，关联Room接口
+  ownershipUnitCode: string | any[] // 支持数组（前端绑定）/字符串（提交后端）
+  ownershipUnitName: string // 产权单位中文名称
+  floorName?: string // 兼容楼层名称字段
 }
 
 interface Building {
-  ownershipUnitCode: []
+  ownershipUnitCode: string | any[]
   ownershipUnitName: string
   projectId: string
   floorList: Floor[] // 楼栋下的楼层列表，关联Floor接口
+  buildingName?: string
+  totalFloor?: number | null
 }
 
 // 提交表单：先验证，通过后处理数据
@@ -233,20 +244,35 @@ const handleSubmit = () => {
     if (valid) {
       let Flag = true
       const paramsData = JSON.parse(JSON.stringify(formData))
-      paramsData.buildingList?.forEach((building: Building) => {
-        if (Array.isArray(building?.ownershipUnitCode)) {
-          const targetCode = building.ownershipUnitCode[building.ownershipUnitCode.length - 1] ?? ''
-          building.ownershipUnitName =
+
+      // 【核心】抽离通用函数：处理产权单位（楼栋/楼层/房间通用）
+      // 入参：target-待处理对象（楼栋/楼层/房间），Flag-提交状态标识（直接修改外部值）
+      const processOwnershipUnit = (target: {
+        ownershipUnitCode: string | any[]
+        ownershipUnitName: string
+      }) => {
+        if (Array.isArray(target.ownershipUnitCode)) {
+          const targetCode = target.ownershipUnitCode[target.ownershipUnitCode.length - 1] ?? ''
+          if (!targetCode) Flag = false
+          target.ownershipUnitName =
             findValueByCustomId(targetCode, 'dicId', 'dicName', companyOptions) || ''
-          building.ownershipUnitCode =
-            building.ownershipUnitCode[building.ownershipUnitCode.length - 1]
+          target.ownershipUnitCode = targetCode
         }
+      }
+
+      paramsData.buildingList?.forEach((building: Building) => {
+        // 1. 处理楼栋产权单位 → 调用通用函数（替代原重复代码）
+        processOwnershipUnit(building)
+        // 2. 处理楼层数据
         building.floorList?.forEach((floor: Floor) => {
           if (!floor?.floorHeight) Flag = false
+          processOwnershipUnit(floor)
+          // 3. 处理房间数据
           floor.roomList?.forEach((room: Room) => {
             room.projectId = building.projectId
             room.roomNumber = room.roomName
-            if (!room?.roomHeight) Flag = false
+            if (!room.roomHeight) Flag = false
+            processOwnershipUnit(room)
             if (room.roomLayoutCode) {
               room.roomLayoutName =
                 findValueByCustomId(room.roomLayoutCode, 'dicId', 'dicName', roomOptions) || ''
@@ -261,10 +287,10 @@ const handleSubmit = () => {
         const {msg} = await addBuilding.runAsync({...paramsData})
         ElMessage.success(msg)
       } else {
-        ElMessage.warning('请填写层高、户型')
+        ElMessage.warning('请填写完整信息：层高、户型、产权单位为必填项')
       }
     } else {
-      ElMessage.error('请填写完整信息')
+      ElMessage.error('请填写完整楼栋基础信息')
     }
   })
 }
@@ -410,35 +436,75 @@ const treeProps = {
               :expand-on-click-node="false"
             >
               <template #default="{data}">
-                <div>
-                  <span v-if="data.roomList">{{ data.floorName }}</span>
-                  <el-input-number
-                    v-if="data.roomList"
-                    class="ml-4 w-50!"
-                    v-model="data.floorHeight"
-                    placeholder="请输入层高"
-                  />
-                  <span v-if="!data.roomList">{{ data.roomName }}</span>
-                  <el-input-number
-                    v-if="!data.roomList"
-                    class="ml-4 w-50!"
-                    v-model="data.roomHeight"
-                    placeholder="请输入层高"
-                  />
-                  <el-select
-                    v-if="!data.roomList"
-                    class="ml-4 w-50!"
-                    v-model="data.roomLayoutCode"
-                    placeholder="请选择户型"
-                  >
-                    <el-option
-                      v-for="item in roomOptions"
-                      :key="item.dicId"
-                      :label="item.dicName"
-                      :value="item.dicId"
+                <el-row v-if="data.roomList" :gutter="24">
+                  <el-col :span="8">
+                    楼层：
+                    <el-input class="w-50!" v-model="data.floorName" />
+                  </el-col>
+                  <el-col :span="8">
+                    层高：
+                    <el-input-number
+                      class="w-50!"
+                      v-model="data.floorHeight"
+                      placeholder="请输入层高"
                     />
-                  </el-select>
-                </div>
+                  </el-col>
+                  <el-col :span="8">
+                    产权单位：
+                    <el-cascader
+                      class="w-50!"
+                      v-model="data.ownershipUnitCode"
+                      placeholder="请选择产权单位"
+                      :options="companyOptions"
+                      :props="{
+                        checkStrictly: true,
+                        value: 'dicId',
+                        label: 'dicName',
+                      }"
+                      clearable
+                    />
+                  </el-col>
+                </el-row>
+                <el-row v-else :gutter="24">
+                  <el-col :span="6">
+                    房间：
+                    <el-input class="w-50!" v-model="data.roomName" />
+                  </el-col>
+                  <el-col :span="6">
+                    层高：
+                    <el-input-number
+                      class="w-50!"
+                      v-model="data.roomHeight"
+                      placeholder="请输入层高"
+                    />
+                  </el-col>
+                  <el-col :span="6">
+                    户型：
+                    <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
+                      <el-option
+                        v-for="item in roomOptions"
+                        :key="item.dicId"
+                        :label="item.dicName"
+                        :value="item.dicId"
+                      />
+                    </el-select>
+                  </el-col>
+                  <el-col :span="6">
+                    产权单位：
+                    <el-cascader
+                      class="w-50!"
+                      v-model="data.ownershipUnitCode"
+                      placeholder="请选择产权单位"
+                      :options="companyOptions"
+                      :props="{
+                        checkStrictly: true,
+                        value: 'dicId',
+                        label: 'dicName',
+                      }"
+                      clearable
+                    />
+                  </el-col>
+                </el-row>
               </template>
             </el-tree>
           </section-group>

@@ -4,6 +4,7 @@ import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {amsAsset} from '@/service/api/amsAsset'
+import {iamCommon} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
 // 获取项目名称
@@ -15,6 +16,11 @@ interface ProjectOptionVO {
   projectName: string
 }
 const projectOptions = reactive<ProjectOptionVO[]>([])
+// 字典 产权单位（公司）
+const companyListTree = useRequest(iamCommon.iamCommonDicListTree, {
+  throttleInterval: 500,
+})
+const companyOptions = reactive<SysDicVO[]>([])
 // 列表数据
 const buildingList = useRequest(amsAsset.amsAssetBuildingList, {
   throttleInterval: 500,
@@ -54,14 +60,16 @@ const formSchema = defineSchema({
       },
       clearable: true,
     }),
-    defineField.Select({
+    defineField.Cascader({
       label: '产权单位',
       prop: 'ownershipUnitCode',
-      options: [
-        {value: '1', label: '南山公司'},
-        {value: '2', label: '福田公司'},
-      ],
+      options: companyOptions,
       clearable: true,
+      props: {
+        checkStrictly: true,
+        value: 'dicId',
+        label: 'dicName',
+      },
     }),
     defineField.Select({
       label: '状态',
@@ -93,12 +101,18 @@ onMounted(() => {
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectSelectAll.runAsync()
   projectOptions.push(...Object.values(project))
+  const {data: companyList} = await companyListTree.runAsync({dicType: 1001, pageable: false})
+  companyOptions.push(...Object.values(companyList))
 }
 
 const tableData = reactive<AssetBuildingVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
   const cloneformState = {...formState}
+  if (cloneformState.ownershipUnitCode?.length) {
+    cloneformState.ownershipUnitCode =
+      cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
+  }
   const {total: resTotal, data} = await buildingList.runAsync({...cloneformState})
   total.value = resTotal
   tableData.length = 0

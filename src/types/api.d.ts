@@ -699,6 +699,12 @@ interface ApiType {
   '/ams/asset-floor/list': {Req: AssetFloorListDTO; Res: AssetFloorVO[]}
 
   /* 【资产管理-楼层管理】
+  // 新增楼层
+  amsAssetFloorInsert(payload: AssetFloorBaseDTO) {return http.post<Res<string>>('/ams/asset-floor/insert', payload)},
+  */
+  '/ams/asset-floor/insert': {Req: AssetFloorBaseDTO; Res: string}
+
+  /* 【资产管理-楼层管理】
   // 楼层详情
   amsAssetFloorGet(payload: Record<string, any>) {return http.post<Res<AssetFloorVO>>('/ams/asset-floor/get', payload)},
   */
@@ -711,12 +717,6 @@ interface ApiType {
   '/ams/asset-floor/generate-floor-id': {Req: Record<string, any>; Res: string}
 
   /* 【资产管理-楼层管理】
-  // 围合新增楼层
-  amsAssetFloorEnclosureInsert(payload: AssetEnclosureFloorSaveDTO) {return http.post<Res<string>>('/ams/asset-floor/enclosure-insert', payload)},
-  */
-  '/ams/asset-floor/enclosure-insert': {Req: AssetEnclosureFloorSaveDTO; Res: string}
-
-  /* 【资产管理-楼层管理】
   // 启用/禁用楼层 | object:{floorId:楼层编码,enable:bool}
   amsAssetFloorEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)},
   */
@@ -727,12 +727,6 @@ interface ApiType {
   amsAssetFloorDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/delete', payload)},
   */
   '/ams/asset-floor/delete': {Req: Record<string, any>; Res: Record<string, any>}
-
-  /* 【资产管理-楼层管理】
-  // 楼栋新增楼层
-  amsAssetFloorBuildingInsert(payload: AssetBuildingFloorSaveDTO) {return http.post<Res<string>>('/ams/asset-floor/building-insert', payload)},
-  */
-  '/ams/asset-floor/building-insert': {Req: AssetBuildingFloorSaveDTO; Res: string}
 
   /* 【资产管理-固定资产管理】
   // 更新固定资产
@@ -1813,34 +1807,31 @@ interface AssetFloorListDTO {
   pageSize: number
   floorId: string // 楼层编码
   floorName: string // 楼层名称
-  projectId: string // 项目编码
-  assetId: string // 楼栋编码
+  projectName: string // 项目名称
+  buildingName: string // 楼栋名称
+  enclosureName: string // 围合名称
+  enclosureTypeCode: string // 围合类型编码
   ownershipUnitCode: string // 产权单位编码
   enable: number // 0-禁用;1-启用
+  assetType: string // 资产类型
 }
 
 // 资产管理-楼层
 interface AssetFloorVO {
   floorId: string // 楼层编码
   projectId: string // 项目编码
-  assetId: string // 楼栋/围合/停车场编码
-  assetType: string // 楼栋/围合/停车场
+  projectName: string // 项目名称
+  buildingId: string // 楼栋编码
+  buildingName: string // 楼栋名称
+  enclosureId: string // 围合编码
+  enclosureName: string // 围合名称
+  enclosureTypeCode: string // 围合类型编码
+  enclosureTypeName: string // 围合类型
   floorName: string // 楼层名称
   floorHeight: number // 楼层层高
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
   enable: number // 0-禁用;1-启用
-  valid: number // 记录是否有效
-}
-
-interface AssetEnclosureFloorSaveDTO {
-  floor: AssetFloorBaseDTO // 楼层信息
-  shopList: AssetShopUpsertDTO[] // 商铺信息
-}
-
-interface AssetBuildingFloorSaveDTO {
-  floor: AssetFloorBaseDTO // 楼层信息
-  roomList: AssetRoomUpsertDTO[] // 住宅信息
 }
 
 // 资产管理-固定资产
@@ -2014,7 +2005,9 @@ interface AssetEnclosureVO {
   enclosureId: string // 围合编码
   enclosureName: string // 围合名称
   enclosureTypeName: string // 围合类型
+  projectId: string // 项目编码
   projectName: string // 项目名称
+  ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
   enable: number // 0-禁用;1-启用
 }
