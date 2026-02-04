@@ -106,6 +106,11 @@ const handleSubmit = async () => {
   getList(listQuery)
 }
 
+const handleAdd = () => {
+  resetModel() 
+  dialogVisible.value = true
+}
+
 const handleDelete = async (row: SysDicVO) => {
   await ElMessageBox.confirm(`是否确定删除${row.dicName}？`, {title: '确认提示'})
 
@@ -140,7 +145,7 @@ const fieldMap = {
     <template #header>
       <div class="flex justify-between items-center">
         <span>数据列表</span>
-        <el-button type="primary" @click="dialogVisible = true">新增字典</el-button>
+        <el-button type="primary" @click="handleAdd">新增字典</el-button>
       </div>
     </template>
     <!-- todo: 选完字典类型后，展示不同的字典列表 -->
