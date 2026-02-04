@@ -24,6 +24,13 @@
     "format": "prettier --write --experimental-cli src/",
     "prepare": "husky"
   },
+  "lint-staged": {
+    "*.{vue,ts,js,tsx,jsx}": [
+      "prettier --write --experimental-cli",
+      "eslint --fix --cache",
+      "oxlint --fix"
+    ]
+  },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
     "axios": "^1.13.2",
@@ -39,8 +46,6 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.4.1",
-    "@commitlint/config-conventional": "^20.4.1",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/vite": "^4.1.18",
     "@tsconfig/node24": "^24.0.3",
@@ -60,6 +65,7 @@
     "husky": "^9.1.7",
     "jiti": "^2.6.1",
     "jsdom": "^27.4.0",
+    "lint-staged": "^16.2.7",
     "npm-run-all2": "^8.0.4",
     "oxlint": "~1.38.0",
     "prettier": "3.7.4",
