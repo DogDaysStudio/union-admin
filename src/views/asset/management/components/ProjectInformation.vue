@@ -1,155 +1,87 @@
 <script lang="ts" setup>
 import {ref, reactive} from 'vue'
-import type {FormInstance, FormRules} from 'element-plus'
+import type {FormInstance} from 'element-plus'
 
 // 表单Ref：用于调用表单内置方法（验证、重置）
 const formRef = ref<FormInstance>()
 
 // 初始化表单数据：响应式对象，与表单双向绑定
 const formData = reactive({
-  projectName: '', // 项目名称
-  projectId: '', // 项目编码
-  projectShortName: '', // 项目简称
-  provinceCode: '', // 所在区域-省 code
-  provinceName: '', // 所在区域-省名称
-  cityCode: '', // 所在区域-城市 code
-  cityName: '', // 所在区域-城市名称
-  districtCode: '', // 地址-区域 code
-  districtName: '', // 地址-区域名称
-  address: '', // 地址-详细地址
-  lng: null, // 经度
-  lat: null, // 纬度
-  landNumber: '', // 宗地号
-  ownershipPropertyCode: '', // 产权性质编码
-  ownershipPropertyName: '', // 产权性质名称
-  ownershipUnitCode: '', // 产权单位编码
-  ownershipUnitName: '', // 产权单位名称
-  collectWayCode: '', // 筹集方式编码
-  collectWayName: '', // 筹集方式名称
-  collectSubject: '', // 筹集主体
-  collectDate: '', // 筹集日期
-  businessModelCode: '', // 经营模式编码
-  businessModelName: '', // 经营模式名称
-  projectTypeCode: '', // 项目类型编码
-  projectTypeName: '', // 项目类型名称
-  projectPhone: '', // 项目电话
-
-  buildingCount: null, // 楼栋数
-  floorCount: null, // 楼层数
-  roomCount: null, // 房间（住宅）数
-  enclosureCount: null, // 围合数
-  shopCount: null, // 房间（商业）数
-  parkingCount: null, // 停车场数
-  parkingSpaceCount: null, // 停车位数
-  resourceCount: null, // 空间点位数
-
-  totalArea: null, // 总建筑面积
-  groundArea: null, // 地上建筑面积
-  undergroundArea: null, // 地下建筑面积
-  roomArea: null, // 住宅建筑面积
-  roomUtilityArea: null, // 住宅实用面积
-  shopArea: null, // 商业建筑面积
-  shopUtilityArea: null, // 商业实用面积
-  manageRoomArea: null, // 管理用房面积
-  deviceRoomArea: null, // 设备用房面积
-  greenArea: null, // 绿化面积
-  propertyFeeArea: null, // 物业费收费面积
-  roadArea: null, // 道路面积
-  plotRatio: '', // 容积率
-  completeDate: '', // 竣工时间
-  prepareDate: '', // 竣备时间
-
-  totalHouseholds: null, // 总户数
-  groundParkingSpace: null, // 地上车位数量
-  undergroundParkingSpace: null, // 地下车位数量
-  machineryParkingSpace: null, // 机械车位数量
-  parkingSpaceRatio: '', // 车位配比
-  staffEntrance: null, // 人行出入口数量
-  carEntrance: null, // 车辆出入口数量
-  customElevator: null, // 客梯数量
-  goodsElevator: null, // 货梯数量
-  firefightElevator: null, // 消防梯数量
-  checkInDate: '', // 入伙时间
-  contractBegin: '', // 物业合同生效日期
-  contractEnd: '', // 物业合同终止日期
-  propertyFeeModel: '', // 物业费收费模式
-  roomStandard: '', // 住宅物业收费标准
-  shopStandard: '', // 底商物业收费标准
-  independentShopStandard: '', // 独立商业物业收费标准
-  groundParkingStandard: '', // 地上车位收费标准
-  undergroundParkingStandard: '', // 地下车位收费标准
+  // projectName: '', // 项目名称
+  // projectId: '', // 项目编码
+  // projectShortName: '', // 项目简称
+  // provinceCode: '', // 所在区域-省 code
+  // provinceName: '', // 所在区域-省名称
+  // cityCode: '', // 所在区域-城市 code
+  // cityName: '', // 所在区域-城市名称
+  // districtCode: '', // 地址-区域 code
+  // districtName: '', // 地址-区域名称
+  // address: '', // 地址-详细地址
+  // lng: null, // 经度
+  // lat: null, // 纬度
+  // landNumber: '', // 宗地号
+  // ownershipPropertyCode: '', // 产权性质编码
+  // ownershipPropertyName: '', // 产权性质名称
+  // ownershipUnitCode: '', // 产权单位编码
+  // ownershipUnitName: '', // 产权单位名称
+  // collectWayCode: '', // 筹集方式编码
+  // collectWayName: '', // 筹集方式名称
+  // collectSubject: '', // 筹集主体
+  // collectDate: '', // 筹集日期
+  // businessModelCode: '', // 经营模式编码
+  // businessModelName: '', // 经营模式名称
+  // projectTypeCode: '', // 项目类型编码
+  // projectTypeName: '', // 项目类型名称
+  // projectPhone: '', // 项目电话
+  // buildingCount: null, // 楼栋数
+  // floorCount: null, // 楼层数
+  // roomCount: null, // 房间（住宅）数
+  // enclosureCount: null, // 围合数
+  // shopCount: null, // 房间（商业）数
+  // parkingCount: null, // 停车场数
+  // parkingSpaceCount: null, // 停车位数
+  // resourceCount: null, // 空间点位数
+  // totalArea: null, // 总建筑面积
+  // groundArea: null, // 地上建筑面积
+  // undergroundArea: null, // 地下建筑面积
+  // roomArea: null, // 住宅建筑面积
+  // roomUtilityArea: null, // 住宅实用面积
+  // shopArea: null, // 商业建筑面积
+  // shopUtilityArea: null, // 商业实用面积
+  // manageRoomArea: null, // 管理用房面积
+  // deviceRoomArea: null, // 设备用房面积
+  // greenArea: null, // 绿化面积
+  // propertyFeeArea: null, // 物业费收费面积
+  // roadArea: null, // 道路面积
+  // plotRatio: '', // 容积率
+  // completeDate: '', // 竣工时间
+  // prepareDate: '', // 竣备时间
+  // totalHouseholds: null, // 总户数
+  // groundParkingSpace: null, // 地上车位数量
+  // undergroundParkingSpace: null, // 地下车位数量
+  // machineryParkingSpace: null, // 机械车位数量
+  // parkingSpaceRatio: '', // 车位配比
+  // staffEntrance: null, // 人行出入口数量
+  // carEntrance: null, // 车辆出入口数量
+  // customElevator: null, // 客梯数量
+  // goodsElevator: null, // 货梯数量
+  // firefightElevator: null, // 消防梯数量
+  // checkInDate: '', // 入伙时间
+  // contractBegin: '', // 物业合同生效日期
+  // contractEnd: '', // 物业合同终止日期
+  // propertyFeeModel: '', // 物业费收费模式
+  // roomStandard: '', // 住宅物业收费标准
+  // shopStandard: '', // 底商物业收费标准
+  // independentShopStandard: '', // 独立商业物业收费标准
+  // groundParkingStandard: '', // 地上车位收费标准
+  // undergroundParkingStandard: '', // 地下车位收费标准
 } as AssetProjectVO)
-
-// 表单验证规则：对应prop字段，实现必填/格式校验
-const formRules = reactive<FormRules<AssetProjectVO>>({
-  projectName: [{required: true, message: '请填写项目名称', trigger: 'blur'}],
-  projectId: [{required: true, message: '请填写项目编码', trigger: 'blur'}],
-  provinceCode: [{required: true, message: '请选择省市区', trigger: 'change'}],
-  address: [{required: true, message: '请填写详细地址', trigger: 'blur'}],
-  landNumber: [{required: true, message: '请填写宗地号', trigger: 'blur'}],
-  ownershipPropertyCode: [{required: true, message: '请选择产权性质', trigger: 'change'}],
-  ownershipUnitCode: [{required: true, message: '请选择产权单位', trigger: 'change'}],
-  collectWayCode: [{required: true, message: '请选择筹集方式', trigger: 'change'}],
-  collectSubject: [{required: true, message: '请选择筹集主体', trigger: 'change'}],
-  collectDate: [{required: true, message: '请选择筹集日期', trigger: 'change'}],
-  businessModelCode: [{required: true, message: '请选择经营模式', trigger: 'change'}],
-  projectTypeCode: [{required: true, message: '请选择项目类型', trigger: 'change'}],
-  projectPhone: [
-    {required: true, message: '请填写项目联系电话', trigger: 'blur'},
-    {pattern: /^1[3-9]\d{9}$/, message: '请填写正确的11位手机号', trigger: 'blur'},
-  ],
-  totalLandArea: [{required: true, message: '请填写总占地面积', trigger: 'blur'}],
-  totalArea: [{required: true, message: '请填写总建筑面积', trigger: 'blur'}],
-  groundArea: [{required: true, message: '请填写地上建筑面积', trigger: 'blur'}],
-  undergroundArea: [{required: true, message: '请填写地下建筑面积', trigger: 'blur'}],
-  roomArea: [{required: true, message: '请填写住宅建筑面积', trigger: 'blur'}],
-  roomUtilityArea: [{required: true, message: '请填写住宅实用面积', trigger: 'blur'}],
-  shopArea: [{required: true, message: '请填写商业建筑面积', trigger: 'blur'}],
-  shopUtilityArea: [{required: true, message: '请填写商业实用面积', trigger: 'blur'}],
-  manageRoomArea: [{required: true, message: '请填写管理用房面积', trigger: 'blur'}],
-  deviceRoomArea: [{required: true, message: '请填写设备用房面积', trigger: 'blur'}],
-  greenArea: [{required: true, message: '请填写绿化面积', trigger: 'blur'}],
-  propertyFeeArea: [{required: true, message: '请填写物业费收费面积', trigger: 'blur'}],
-  roadArea: [{required: true, message: '请填写道路面积', trigger: 'blur'}],
-  plotRatio: [{required: true, message: '请填写容积率', trigger: 'blur'}],
-  completeDate: [{required: true, message: '请选择竣工时间', trigger: 'change'}],
-  prepareDate: [{required: true, message: '请选择竣备时间', trigger: 'change'}],
-  totalHouseholds: [{required: true, message: '请填写总户数', trigger: 'blur'}],
-  groundParkingSpace: [{required: true, message: '请填写地上车位数量', trigger: 'blur'}],
-  undergroundParkingSpace: [{required: true, message: '请填写地下车位数量', trigger: 'blur'}],
-  machineryParkingSpace: [{required: true, message: '请填写机械车位数量', trigger: 'blur'}],
-  parkingSpaceRatio: [{required: true, message: '请填写车位配比', trigger: 'blur'}],
-  staffEntrance: [{required: true, message: '请填写人行出入口数量', trigger: 'blur'}],
-  carEntrance: [{required: true, message: '请填写车辆出入口数量', trigger: 'blur'}],
-  customElevator: [{required: true, message: '请填写客梯数量', trigger: 'blur'}],
-  goodsElevator: [{required: true, message: '请填写货梯数量', trigger: 'blur'}],
-  firefightElevator: [{required: true, message: '请填写消防梯数量', trigger: 'blur'}],
-  checkInDate: [{required: true, message: '请选择入伙时间', trigger: 'change'}],
-  contractBegin: [{required: true, message: '请选择物业合同生效日期', trigger: 'change'}],
-  contractEnd: [{required: true, message: '请选择物业合同终止日期', trigger: 'change'}],
-  propertyFeeModel: [{required: true, message: '请选择物业费收费模式', trigger: 'change'}],
-  roomStandard: [{required: true, message: '请填写住宅物业收费标准', trigger: 'blur'}],
-  shopStandard: [{required: true, message: '请填写底商物业收费标准', trigger: 'blur'}],
-  independentShopStandard: [
-    {required: true, message: '请填写独立商业物业收费标准', trigger: 'blur'},
-  ],
-  groundParkingStandard: [{required: true, message: '请填写地上车位收费标准', trigger: 'blur'}],
-  undergroundParkingStandard: [
-    {required: true, message: '请填写地下车位收费标准', trigger: 'blur'},
-  ],
-})
 </script>
 
 <template>
   <el-tabs tab-position="left">
     <el-tab-pane label="基本信息">
-      <el-form
-        :model="formData"
-        :rules="formRules"
-        ref="formRef"
-        label-width="80px"
-        label-position="top"
-      >
+      <el-form :model="formData" ref="formRef" label-width="80px" label-position="top">
         <section-group title="基本信息" inline>
           <!-- 项目名称、编码、简称 -->
           <el-row :gutter="24">
@@ -174,7 +106,7 @@ const formRules = reactive<FormRules<AssetProjectVO>>({
           <el-row :gutter="24">
             <el-col :span="8">
               <el-form-item label="省市区" prop="provinceCode">
-                <span class="ml-4">{{ formData?.provinceCode || '-' }}</span>
+                <span class="ml-4">{{ formData?.areaName || '-' }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -205,12 +137,12 @@ const formRules = reactive<FormRules<AssetProjectVO>>({
             </el-col>
             <el-col :span="8">
               <el-form-item label="产权性质" prop="ownershipPropertyCode">
-                <span class="ml-4">{{ formData?.ownershipPropertyCode || '-' }}</span>
+                <span class="ml-4">{{ formData?.ownershipPropertyName || '-' }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="产权单位" prop="ownershipUnitCode">
-                <span class="ml-4">{{ formData?.ownershipUnitCode || '-' }}</span>
+                <span class="ml-4">{{ formData?.ownershipUnitName || '-' }}</span>
               </el-form-item>
             </el-col>
           </el-row>
@@ -219,7 +151,7 @@ const formRules = reactive<FormRules<AssetProjectVO>>({
           <el-row :gutter="24">
             <el-col :span="8">
               <el-form-item label="筹集方式" prop="collectWayCode">
-                <span class="ml-4">{{ formData?.collectWayCode || '-' }}</span>
+                <span class="ml-4">{{ formData?.collectWayName || '-' }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -238,12 +170,12 @@ const formRules = reactive<FormRules<AssetProjectVO>>({
           <el-row :gutter="24">
             <el-col :span="8">
               <el-form-item label="经营模式" prop="businessModelCode">
-                <span class="ml-4">{{ formData?.businessModelCode || '-' }}</span>
+                <span class="ml-4">{{ formData?.businessModelName || '-' }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="项目类型" prop="projectTypeCode">
-                <span class="ml-4">{{ formData?.projectTypeCode || '-' }}</span>
+                <span class="ml-4">{{ formData?.projectTypeName || '-' }}</span>
               </el-form-item>
             </el-col>
             <el-col :span="8">
