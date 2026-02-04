@@ -7,6 +7,7 @@ import lease from './lease'
 import property from './property'
 import iot from './iot'
 import management from './management'
+import {joinPath, walkRoute} from '@/utils/router'
 // import {useUserStore} from '@/stores/user'
 
 const businessRoutes = [...data, ...asset, ...lease, ...property, ...iot, ...management]
@@ -33,6 +34,17 @@ export const routes: RouteRecordRaw[] = [
   // 404 路由重定向
   {path: '/:pathMatch(.*)*', redirect: '/404'},
 ]
+
+// 确保每个路由有 name 属性，优先与最终的 path 一致，其次设置为 title
+walkRoute(routes, (route, parentPath) => {
+  if (!route.name) {
+    if (route.path) {
+      route.name = joinPath(route.path, parentPath)
+    } else {
+      route.name = route.meta?.title
+    }
+  }
+})
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,5 +74,19 @@ router.afterEach(to => {
 //     return {path: '/'}
 //   }
 // })
+
+// 监听 Vite 插件发送的消息
+if (import.meta.hot) {
+  import.meta.hot.on('router:changed', () => {
+    // console.log('[Router Watcher] Received router:changed message from Vite')
+    // 发送更新后的路由对象回 Vite
+    import.meta.hot.send('router:updated', {routes})
+    // console.log('[Router Watcher] Sent updated routes to Vite')
+  })
+
+  // 初始化时发送一次路由对象
+  // console.log('[Router Watcher] Sending initial routes to Vite')
+  import.meta.hot.send('router:updated', {routes})
+}
 
 export default router

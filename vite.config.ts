@@ -9,6 +9,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 import GenerateComponentName from 'unplugin-generate-component-name/vite'
+import routerNamedMapPlugin from './plugins/vite-plugin-router-named-map'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -34,6 +35,7 @@ export default defineConfig({
         },
       ],
     }),
+    routerNamedMapPlugin(),
   ],
   resolve: {
     alias: {

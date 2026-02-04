@@ -3,11 +3,12 @@ import {computed, ref, onMounted, onUnmounted} from 'vue'
 import {useRouter} from 'vue-router'
 import {useModuleStore} from '@/stores/module'
 import {routes} from '@/router'
+import {joinPath} from '@/utils/router'
 
 interface MenuItem {
   hidden?: boolean
-  label: string
-  key: string
+  title: string
+  key: string // 完整路径或路由name
   children?: MenuItem[]
 }
 
@@ -26,12 +27,12 @@ const generateMenuFromRoutes = (modulePath: string): MenuItem[] => {
   // 递归转换路由为菜单，确保生成完整路径
   const convertRouteToMenu = (route: any, parentPath: string = ''): MenuItem => {
     // 生成完整路径
-    const fullPath = parentPath ? `${parentPath}/${route.path}` : route.path
+    const fullPath = joinPath(route.path, parentPath)
 
     const menuItem: MenuItem = {
       hidden: route.meta?.hidden || false,
-      label: route.meta?.title || '',
-      key: fullPath,
+      title: route.meta?.title || '',
+      key: route.path ? fullPath : route.name,
     }
 
     if (route.children && route.children.length > 0) {
@@ -103,29 +104,27 @@ onUnmounted(() => {
       <template v-for="item in sidebarItems" :key="item.key">
         <el-sub-menu v-if="item.children" :index="item.key">
           <template #title>
-            <span>{{ item.label }}</span>
+            <span>{{ item.title }}</span>
           </template>
           <template v-for="child in item.children" :key="child.key">
             <el-sub-menu v-if="child.children" :index="child.key">
               <template #title>
-                <span>{{ child.label }}</span>
+                <span>{{ child.title }}</span>
               </template>
               <el-menu-item
                 v-for="grandChild in child.children"
                 :key="grandChild.key"
                 :index="grandChild.key"
               >
-                {{ grandChild.label }}
+                {{ grandChild.title }}
               </el-menu-item>
             </el-sub-menu>
             <el-menu-item v-else-if="!child.children && !child.hidden" :index="child.key">
-              {{ child.label }}
+              {{ child.title }}
             </el-menu-item>
           </template>
         </el-sub-menu>
-        <el-menu-item v-else :index="item.key">
-          {{ item.label }}
-        </el-menu-item>
+        <el-menu-item v-else :index="item.key">{{ item.title }}</el-menu-item>
       </template>
     </el-menu>
   </div>

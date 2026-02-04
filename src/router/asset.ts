@@ -4,46 +4,45 @@ import MainLayout from '@/layouts/MainLayout.vue'
 const assetRoutes: RouteRecordRaw[] = [
   {
     path: '/asset',
-    // redirect: '/asset/management/project',
+    meta: {rootTitle: '资产管理'},
     component: MainLayout,
     children: [
       {
-        path: 'management',
+        path: '',
         meta: {title: '资产管理'},
-        // component: () => import('@/views/asset/project-management.vue'),
         children: [
           {
-            path: 'project',
+            path: '/asset/management/project',
             meta: {title: '项目管理'},
             component: () => import('@/views/asset/management/project.vue'),
           },
           {
-            path: 'add',
+            path: '/asset/management/add',
             meta: {title: '项目管理-新增', hidden: true},
             component: () => import('@/views/asset/management/add-project.vue'),
           },
           {
-            path: 'edit',
+            path: '/asset/management/edit',
             meta: {title: '项目管理-编辑', hidden: true},
             component: () => import('@/views/asset/management/edit-project.vue'),
           },
           {
-            path: 'import',
+            path: '/asset/management/import',
             meta: {title: '项目管理-导入', hidden: true},
             component: () => import('@/views/asset/management/import-project.vue'),
           },
           {
-            path: 'detail',
+            path: '/asset/management/detail',
             meta: {title: '项目管理-详情', hidden: true},
             component: () => import('@/views/asset/management/detail-project.vue'),
           },
           {
-            path: 'building-floor',
+            path: '/asset/management/building-floor',
             meta: {title: '楼栋楼层管理'},
             component: () => import('@/views/asset/building/building-floor.vue'),
           },
           {
-            path: 'add-building',
+            path: '/asset/management/add-building',
             meta: {title: '楼栋-新增', hidden: true},
             component: () => import('@/views/asset/building/building/add-building.vue'),
           },
@@ -75,17 +74,17 @@ const assetRoutes: RouteRecordRaw[] = [
         ],
       },
       {
-        path: 'statistics',
+        path: '/asset/statistics',
         meta: {title: '资产统计'},
         component: () => import('@/views/home-view.vue'),
       },
       // 系统管理
       {
-        path: 'system',
+        path: '',
         meta: {title: '系统管理'},
         children: [
           {
-            path: 'dictionary',
+            path: '/asset/system/dictionary',
             meta: {title: '数据字典管理'},
             component: () => import('@/views/asset/system/dictionary.vue'),
           },
