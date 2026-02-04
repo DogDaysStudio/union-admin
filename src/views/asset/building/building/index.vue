@@ -97,7 +97,7 @@ onMounted(() => {
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectSelectAll.runAsync()
   projectOptions.push(...Object.values(project))
-  const {data: companyList} = await companyListTree.runAsync({dicType: 1001, pageable: false})
+  const {data: companyList} = await companyListTree.runAsync({dicType: 1001})
   companyOptions.push(...Object.values(companyList))
 }
 
@@ -140,7 +140,7 @@ const toggleStatus = (buildingId: string, enable: number): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await toggleStatusBuilding.runAsync({buildingId, enable: enable ? 0 : 1})
+    await toggleStatusBuilding.runAsync({buildingId, enable: !enable})
     ElMessage.success('修改成功')
     getData()
   })

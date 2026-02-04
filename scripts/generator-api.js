@@ -83,6 +83,7 @@ function mapType(type) {
       long: 'number',
       Long: 'number',
       Boolean: 'boolean',
+      bool: 'boolean',
       String: 'string',
       undefined: 'any',
     }[type] || type
@@ -132,6 +133,44 @@ function parseComponents(openApiSpec) {
 }
 
 /**
+ * 是否是 object:{}
+ * @param {string} type
+ * @returns {boolean}
+ */
+function isObjectDesc(type) {
+  return /^object:{.*}$/.test(type)
+}
+
+/**
+ * 将 object:{orgId:组织ID,enable:bool,enableNotes:原因} 解析成 {orgId:string;enable:boolean;enableNotes:string}
+ * @param {string} type
+ * @returns
+ */
+function parseObjectType(type) {
+  if (isObjectDesc(type)) {
+    try {
+      // 尝试转换成json
+      const obj = JSON.parse(type.replace(/^object:({.*})$/, '$1'))
+      return `{${Object.entries(obj)
+        .map(
+          ([key, value]) =>
+            `${key}: ${value === 'bool' ? 'boolean' : 'any'}${Array.isArray(value) ? '[]' : ''}`
+        )
+        .join('; ')}}`
+    } catch {
+      const obj = type.replace(/^object:{(.*)}$/, '$1')
+      return `{${obj
+        .split(',')
+        .map(item => item.trim())
+        .map(item => item.split(':'))
+        .map(([key, value]) => `${key}: ${value === 'bool' ? 'boolean' : 'any'}`)
+        .join('; ')}}`
+    }
+  }
+  return null
+}
+
+/**
  * 解析 OpenAPI 规范中的路径
  * @param {Object} openApiSpec OpenAPI 规范
  * @returns {PathSchema[]}
@@ -152,7 +191,10 @@ function parsePaths(openApiSpec, prefix = '') {
             summary: operation.summary,
             description: operation.description,
             tags: operation.tags || [],
-            reqType: req.name,
+            reqType:
+              req.name.startsWith('Record<') && isObjectDesc(operation.description)
+                ? (parseObjectType(operation.description) ?? req.name)
+                : req.name,
             reqTypeIsArray: req.isArray,
             resType: res.name,
             resTypeIsArray: res.isArray,

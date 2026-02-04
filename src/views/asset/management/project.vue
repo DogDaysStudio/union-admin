@@ -178,7 +178,7 @@ const toggleStatus = (projectId: string, enable: number): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await toggleStatusProject.runAsync({projectId, enable: enable ? 0 : 1})
+    await toggleStatusProject.runAsync({projectId, enable: !enable})
     getData()
     ElMessage.success('修改成功')
   })

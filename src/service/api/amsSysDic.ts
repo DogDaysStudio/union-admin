@@ -12,17 +12,17 @@ export const amsSysDic = {
   },
 
   // 字典详情 | object:{dicId:字典ID}
-  amsSysDicGet(payload: Record<string, any>) {
+  amsSysDicGet(payload: {dicId: any}) {
     return http.post<Res<SysDicVO>>('/ams/sys-dic/get', payload)
   },
 
   // 启用/禁用字典 | object:{dicId:字典ID,enable:bool}
-  amsSysDicEnable(payload: Record<string, any>) {
+  amsSysDicEnable(payload: {dicId: any; enable: boolean}) {
     return http.post<Res<Record<string, any>>>('/ams/sys-dic/enable', payload)
   },
 
   // 删除字典 | object:{dicId:字典ID}
-  amsSysDicDelete(payload: Record<string, any>) {
+  amsSysDicDelete(payload: {dicId: any}) {
     return http.post<Res<Record<string, any>>>('/ams/sys-dic/delete', payload)
   },
 }

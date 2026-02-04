@@ -22,33 +22,36 @@ interface ApiType {
 
   /* 【开放平台应用】
   // 应用详情 | object:{appId:应用ID}
-  iamOpenAppGet(payload: Record<string, any>) {return http.post<Res<OpenAppVO>>('/iam/open-app/get', payload)},
+  iamOpenAppGet(payload: {appId: any}) {return http.post<Res<OpenAppVO>>('/iam/open-app/get', payload)},
   */
-  '/iam/open-app/get': {Req: Record<string, any>; Res: OpenAppVO}
+  '/iam/open-app/get': {Req: {appId: any}; Res: OpenAppVO}
 
   /* 【开放平台应用】
   // 启用/禁用应用 | object:{appId:应用ID,enable:bool,enableNotes:原因}
-  iamOpenAppEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/open-app/enable', payload)},
+  iamOpenAppEnable(payload: {appId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/open-app/enable', payload)},
   */
-  '/iam/open-app/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/open-app/enable': {
+    Req: {appId: any; enable: boolean; enableNotes: any}
+    Res: Record<string, any>
+  }
 
   /* 【开放平台应用】
   // 删除应用 | object:{appId:应用ID}
-  iamOpenAppDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/open-app/delete', payload)},
+  iamOpenAppDelete(payload: {appId: any}) {return http.post<Res<Record<string, any>>>('/iam/open-app/delete', payload)},
   */
-  '/iam/open-app/delete': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/open-app/delete': {Req: {appId: any}; Res: Record<string, any>}
 
   /* 【通用相关】
   // 中文转拼音 | object:{key:中文}
-  iamCommonFuncZhToPinyin(payload: Record<string, any>) {return http.post<Res<string>>('/iam/common/func/zh-to-pinyin', payload)},
+  iamCommonFuncZhToPinyin(payload: {key: any}) {return http.post<Res<string>>('/iam/common/func/zh-to-pinyin', payload)},
   */
-  '/iam/common/func/zh-to-pinyin': {Req: Record<string, any>; Res: string}
+  '/iam/common/func/zh-to-pinyin': {Req: {key: any}; Res: string}
 
   /* 【通用相关】
   // 身份证判断男女 | object:{certNo:身份证}
-  iamCommonFuncCertNoToGender(payload: Record<string, any>) {return http.post<Res<string>>('/iam/common/func/certNo-to-gender', payload)},
+  iamCommonFuncCertNoToGender(payload: {certNo: any}) {return http.post<Res<string>>('/iam/common/func/certNo-to-gender', payload)},
   */
-  '/iam/common/func/certNo-to-gender': {Req: Record<string, any>; Res: string}
+  '/iam/common/func/certNo-to-gender': {Req: {certNo: any}; Res: string}
 
   /* 【通用相关】
   // 文件上传(type,file)
@@ -76,9 +79,9 @@ interface ApiType {
 
   /* 【通用相关】
   // 树形码表 | object:{dicType:字典类型}
-  iamCommonDicListTree(payload: Record<string, any>) {return http.post<Res<SysDicVO[]>>('/iam/common/dic/list-tree', payload)},
+  iamCommonDicListTree(payload: {dicType: any}) {return http.post<Res<SysDicVO[]>>('/iam/common/dic/list-tree', payload)},
   */
-  '/iam/common/dic/list-tree': {Req: Record<string, any>; Res: SysDicVO[]}
+  '/iam/common/dic/list-tree': {Req: {dicType: any}; Res: SysDicVO[]}
 
   /* 【通用相关】
   // 常规码表
@@ -88,39 +91,39 @@ interface ApiType {
 
   /* 【通用相关】
   // 省_市_区_商圈 | object:{pid:上级ID}
-  iamCommonAreaList(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/iam/common/area/list', payload)},
+  iamCommonAreaList(payload: {pid: any}) {return http.post<Res<PairModel[]>>('/iam/common/area/list', payload)},
   */
-  '/iam/common/area/list': {Req: Record<string, any>; Res: PairModel[]}
+  '/iam/common/area/list': {Req: {pid: any}; Res: PairModel[]}
 
   /* 【通用相关】
   // 根据城市查询区和街道(树) | object:{cityCode:城市CODE}
-  iamCommonAreaCityInfo(payload: Record<string, any>) {return http.post<Res<Record<string, TreeModel[]>>>('/iam/common/area/city-info', payload)},
+  iamCommonAreaCityInfo(payload: {cityCode: any}) {return http.post<Res<Record<string, TreeModel[]>>>('/iam/common/area/city-info', payload)},
   */
-  '/iam/common/area/city-info': {Req: Record<string, any>; Res: Record<string, TreeModel[]>}
+  '/iam/common/area/city-info': {Req: {cityCode: any}; Res: Record<string, TreeModel[]>}
 
   /* 【登录认证】
   // 设置密码 | object:{loginPwdOrigin:原登录密码,loginPwd:新登录密码}
-  iamAuthUpdatePwd(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth/update-pwd', payload)},
+  iamAuthUpdatePwd(payload: {loginPwdOrigin: any; loginPwd: any}) {return http.post<Res<Record<string, any>>>('/iam/auth/update-pwd', payload)},
   */
-  '/iam/auth/update-pwd': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth/update-pwd': {Req: {loginPwdOrigin: any; loginPwd: any}; Res: Record<string, any>}
 
   /* 【登录认证】
   // 初次设置密码 | object:{loginPwd:登录密码}
-  iamAuthUpdatePwdInit(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth/update-pwd-init', payload)},
+  iamAuthUpdatePwdInit(payload: {loginPwd: any}) {return http.post<Res<Record<string, any>>>('/iam/auth/update-pwd-init', payload)},
   */
-  '/iam/auth/update-pwd-init': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth/update-pwd-init': {Req: {loginPwd: any}; Res: Record<string, any>}
 
   /* 【登录认证】
   // 获取SSO票据 | object:{appId:应用Id}
-  iamAuthSsoTicket(payload: Record<string, any>) {return http.post<Res<string>>('/iam/auth/sso-ticket', payload)},
+  iamAuthSsoTicket(payload: {appId: any}) {return http.post<Res<string>>('/iam/auth/sso-ticket', payload)},
   */
-  '/iam/auth/sso-ticket': {Req: Record<string, any>; Res: string}
+  '/iam/auth/sso-ticket': {Req: {appId: any}; Res: string}
 
   /* 【登录认证】
   // 发送验证码 | object:{mobile:手机号}
-  iamAuthSendVerifyCode(payload: Record<string, any>) {return http.post<Res<string>>('/iam/auth/send-verifyCode', payload)},
+  iamAuthSendVerifyCode(payload: {mobile: any}) {return http.post<Res<string>>('/iam/auth/send-verifyCode', payload)},
   */
-  '/iam/auth/send-verifyCode': {Req: Record<string, any>; Res: string}
+  '/iam/auth/send-verifyCode': {Req: {mobile: any}; Res: string}
 
   /* 【登录认证】
   // 登出
@@ -148,21 +151,21 @@ interface ApiType {
 
   /* 【登录认证】
   // 校验验证码 | object:{mobile:手机号,verifyCode:验证码}
-  iamAuthCheckVerifyCode(payload: Record<string, any>) {return http.post<Res<boolean>>('/iam/auth/check-verifyCode', payload)},
+  iamAuthCheckVerifyCode(payload: {mobile: any; verifyCode: any}) {return http.post<Res<boolean>>('/iam/auth/check-verifyCode', payload)},
   */
-  '/iam/auth/check-verifyCode': {Req: Record<string, any>; Res: boolean}
+  '/iam/auth/check-verifyCode': {Req: {mobile: any; verifyCode: any}; Res: boolean}
 
   /* 【登录认证】
   // 校验图片验证码 | object:{imgId:图片验证码Id,imgCode:图片验证码}
-  iamAuthCheckImgCode(payload: Record<string, any>) {return http.post<Res<boolean>>('/iam/auth/check-imgCode', payload)},
+  iamAuthCheckImgCode(payload: {imgId: any; imgCode: any}) {return http.post<Res<boolean>>('/iam/auth/check-imgCode', payload)},
   */
-  '/iam/auth/check-imgCode': {Req: Record<string, any>; Res: boolean}
+  '/iam/auth/check-imgCode': {Req: {imgId: any; imgCode: any}; Res: boolean}
 
   /* 【登录认证】
   // 绑定企业微信 | object:{code:企业微信code}
-  iamAuthBindWework(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth/bind-wework', payload)},
+  iamAuthBindWework(payload: {code: any}) {return http.post<Res<Record<string, any>>>('/iam/auth/bind-wework', payload)},
   */
-  '/iam/auth/bind-wework': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth/bind-wework': {Req: {code: any}; Res: Record<string, any>}
 
   /* 【人员管理】
   // 新增/更新人员
@@ -184,9 +187,9 @@ interface ApiType {
 
   /* 【人员管理】
   // 重置密码 | object:{userId:人员ID}
-  iamAuthUserResetPassword(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth-user/reset-password', payload)},
+  iamAuthUserResetPassword(payload: {userId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/reset-password', payload)},
   */
-  '/iam/auth-user/reset-password': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth-user/reset-password': {Req: {userId: any}; Res: Record<string, any>}
 
   /* 【人员管理】
   // 人员列表
@@ -202,33 +205,33 @@ interface ApiType {
 
   /* 【人员管理】
   // 是否当前手机号已存在 | object:{mobile:手机号}
-  iamAuthUserIsMobileExist(payload: Record<string, any>) {return http.post<Res<boolean>>('/iam/auth-user/is-mobile-exist', payload)},
+  iamAuthUserIsMobileExist(payload: {mobile: any}) {return http.post<Res<boolean>>('/iam/auth-user/is-mobile-exist', payload)},
   */
-  '/iam/auth-user/is-mobile-exist': {Req: Record<string, any>; Res: boolean}
+  '/iam/auth-user/is-mobile-exist': {Req: {mobile: any}; Res: boolean}
 
   /* 【人员管理】
   // 是否当前登录账号已存在 | object:{loginAccount:登录账号}
-  iamAuthUserIsLoginAccountExist(payload: Record<string, any>) {return http.post<Res<boolean>>('/iam/auth-user/is-loginAccount-exist', payload)},
+  iamAuthUserIsLoginAccountExist(payload: {loginAccount: any}) {return http.post<Res<boolean>>('/iam/auth-user/is-loginAccount-exist', payload)},
   */
-  '/iam/auth-user/is-loginAccount-exist': {Req: Record<string, any>; Res: boolean}
+  '/iam/auth-user/is-loginAccount-exist': {Req: {loginAccount: any}; Res: boolean}
 
   /* 【人员管理】
   // 是否当前邮箱已存在 | object:{email:邮箱}
-  iamAuthUserIsEmailExist(payload: Record<string, any>) {return http.post<Res<boolean>>('/iam/auth-user/is-email-exist', payload)},
+  iamAuthUserIsEmailExist(payload: {email: any}) {return http.post<Res<boolean>>('/iam/auth-user/is-email-exist', payload)},
   */
-  '/iam/auth-user/is-email-exist': {Req: Record<string, any>; Res: boolean}
+  '/iam/auth-user/is-email-exist': {Req: {email: any}; Res: boolean}
 
   /* 【人员管理】
   // 人员详情 | object:{userId:人员ID}
-  iamAuthUserGet(payload: Record<string, any>) {return http.post<Res<AuthUserVO>>('/iam/auth-user/get', payload)},
+  iamAuthUserGet(payload: {userId: any}) {return http.post<Res<AuthUserVO>>('/iam/auth-user/get', payload)},
   */
-  '/iam/auth-user/get': {Req: Record<string, any>; Res: AuthUserVO}
+  '/iam/auth-user/get': {Req: {userId: any}; Res: AuthUserVO}
 
   /* 【人员管理】
   // 启用/禁用人员 | object:{userId:人员ID,enable:bool}
-  iamAuthUserEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth-user/enable', payload)},
+  iamAuthUserEnable(payload: {userId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/enable', payload)},
   */
-  '/iam/auth-user/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth-user/enable': {Req: {userId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【角色管理】
   // 新增/修改角色
@@ -244,21 +247,24 @@ interface ApiType {
 
   /* 【角色管理】
   // 角色详情 | object:{roleId:角色ID}
-  iamAuthRoleGet(payload: Record<string, any>) {return http.post<Res<AuthRoleVO>>('/iam/auth-role/get', payload)},
+  iamAuthRoleGet(payload: {roleId: any}) {return http.post<Res<AuthRoleVO>>('/iam/auth-role/get', payload)},
   */
-  '/iam/auth-role/get': {Req: Record<string, any>; Res: AuthRoleVO}
+  '/iam/auth-role/get': {Req: {roleId: any}; Res: AuthRoleVO}
 
   /* 【角色管理】
   // 启用/禁用角色 | object:{roleId:角色ID,enable:bool,enableNotes:原因}
-  iamAuthRoleEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth-role/enable', payload)},
+  iamAuthRoleEnable(payload: {roleId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-role/enable', payload)},
   */
-  '/iam/auth-role/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth-role/enable': {
+    Req: {roleId: any; enable: boolean; enableNotes: any}
+    Res: Record<string, any>
+  }
 
   /* 【角色管理】
   // 删除角色 | object:{roleId:角色ID}
-  iamAuthRoleDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth-role/delete', payload)},
+  iamAuthRoleDelete(payload: {roleId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-role/delete', payload)},
   */
-  '/iam/auth-role/delete': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth-role/delete': {Req: {roleId: any}; Res: Record<string, any>}
 
   /* 【权限管理】
   // 新增/更新权限
@@ -274,15 +280,15 @@ interface ApiType {
 
   /* 【权限管理】
   // 权限详情 | object:{permId:权限ID}
-  iamAuthPermissionGet(payload: Record<string, any>) {return http.post<Res<AuthPermissionVO>>('/iam/auth-permission/get', payload)},
+  iamAuthPermissionGet(payload: {permId: any}) {return http.post<Res<AuthPermissionVO>>('/iam/auth-permission/get', payload)},
   */
-  '/iam/auth-permission/get': {Req: Record<string, any>; Res: AuthPermissionVO}
+  '/iam/auth-permission/get': {Req: {permId: any}; Res: AuthPermissionVO}
 
   /* 【权限管理】
   // 启用/禁用权限 | object:{permId:权限ID,enable:bool}
-  iamAuthPermissionEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth-permission/enable', payload)},
+  iamAuthPermissionEnable(payload: {permId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/iam/auth-permission/enable', payload)},
   */
-  '/iam/auth-permission/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth-permission/enable': {Req: {permId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【权限管理】
   // 删除权限
@@ -310,21 +316,24 @@ interface ApiType {
 
   /* 【组织管理】
   // 组织详情 | object:{orgId:组织ID}
-  iamAuthOrgGet(payload: Record<string, any>) {return http.post<Res<AuthOrgVO>>('/iam/auth-org/get', payload)},
+  iamAuthOrgGet(payload: {orgId: any}) {return http.post<Res<AuthOrgVO>>('/iam/auth-org/get', payload)},
   */
-  '/iam/auth-org/get': {Req: Record<string, any>; Res: AuthOrgVO}
+  '/iam/auth-org/get': {Req: {orgId: any}; Res: AuthOrgVO}
 
   /* 【组织管理】
   // 启用/禁用组织 | object:{orgId:组织ID,enable:bool,enableNotes:原因}
-  iamAuthOrgEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth-org/enable', payload)},
+  iamAuthOrgEnable(payload: {orgId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-org/enable', payload)},
   */
-  '/iam/auth-org/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth-org/enable': {
+    Req: {orgId: any; enable: boolean; enableNotes: any}
+    Res: Record<string, any>
+  }
 
   /* 【组织管理】
   // 删除组织 | object:{orgId:组织ID}
-  iamAuthOrgDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth-org/delete', payload)},
+  iamAuthOrgDelete(payload: {orgId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-org/delete', payload)},
   */
-  '/iam/auth-org/delete': {Req: Record<string, any>; Res: Record<string, any>}
+  '/iam/auth-org/delete': {Req: {orgId: any}; Res: Record<string, any>}
 
   /* 【字典管理】
   // 新增/修改字典
@@ -346,33 +355,33 @@ interface ApiType {
 
   /* 【字典管理】
   // 字典详情 | object:{dicId:字典ID}
-  amsSysDicGet(payload: Record<string, any>) {return http.post<Res<SysDicVO>>('/ams/sys-dic/get', payload)},
+  amsSysDicGet(payload: {dicId: any}) {return http.post<Res<SysDicVO>>('/ams/sys-dic/get', payload)},
   */
-  '/ams/sys-dic/get': {Req: Record<string, any>; Res: SysDicVO}
+  '/ams/sys-dic/get': {Req: {dicId: any}; Res: SysDicVO}
 
   /* 【字典管理】
   // 启用/禁用字典 | object:{dicId:字典ID,enable:bool}
-  amsSysDicEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/sys-dic/enable', payload)},
+  amsSysDicEnable(payload: {dicId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/sys-dic/enable', payload)},
   */
-  '/ams/sys-dic/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/sys-dic/enable': {Req: {dicId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【字典管理】
   // 删除字典 | object:{dicId:字典ID}
-  amsSysDicDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/sys-dic/delete', payload)},
+  amsSysDicDelete(payload: {dicId: any}) {return http.post<Res<Record<string, any>>>('/ams/sys-dic/delete', payload)},
   */
-  '/ams/sys-dic/delete': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/sys-dic/delete': {Req: {dicId: any}; Res: Record<string, any>}
 
   /* 【通用相关】
   // 中文转拼音 | object:{key:中文}
-  amsCommonFuncZhToPinyin(payload: Record<string, any>) {return http.post<Res<string>>('/ams/common/func/zh-to-pinyin', payload)},
+  amsCommonFuncZhToPinyin(payload: {key: any}) {return http.post<Res<string>>('/ams/common/func/zh-to-pinyin', payload)},
   */
-  '/ams/common/func/zh-to-pinyin': {Req: Record<string, any>; Res: string}
+  '/ams/common/func/zh-to-pinyin': {Req: {key: any}; Res: string}
 
   /* 【通用相关】
   // 身份证判断男女 | object:{certNo:身份证}
-  amsCommonFuncCertNoToGender(payload: Record<string, any>) {return http.post<Res<string>>('/ams/common/func/certNo-to-gender', payload)},
+  amsCommonFuncCertNoToGender(payload: {certNo: any}) {return http.post<Res<string>>('/ams/common/func/certNo-to-gender', payload)},
   */
-  '/ams/common/func/certNo-to-gender': {Req: Record<string, any>; Res: string}
+  '/ams/common/func/certNo-to-gender': {Req: {certNo: any}; Res: string}
 
   /* 【通用相关】
   // 文件上传(type,file)
@@ -400,9 +409,9 @@ interface ApiType {
 
   /* 【通用相关】
   // 树形码表 | object:{dicType:字典类型}
-  amsCommonDicListTree(payload: Record<string, any>) {return http.post<Res<SysDicVO[]>>('/ams/common/dic/list-tree', payload)},
+  amsCommonDicListTree(payload: {dicType: any}) {return http.post<Res<SysDicVO[]>>('/ams/common/dic/list-tree', payload)},
   */
-  '/ams/common/dic/list-tree': {Req: Record<string, any>; Res: SysDicVO[]}
+  '/ams/common/dic/list-tree': {Req: {dicType: any}; Res: SysDicVO[]}
 
   /* 【通用相关】
   // 常规码表
@@ -412,15 +421,15 @@ interface ApiType {
 
   /* 【通用相关】
   // 省_市_区_商圈 | object:{pid:上级ID}
-  amsCommonAreaList(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/common/area/list', payload)},
+  amsCommonAreaList(payload: {pid: any}) {return http.post<Res<PairModel[]>>('/ams/common/area/list', payload)},
   */
-  '/ams/common/area/list': {Req: Record<string, any>; Res: PairModel[]}
+  '/ams/common/area/list': {Req: {pid: any}; Res: PairModel[]}
 
   /* 【通用相关】
   // 根据城市查询区和街道(树) | object:{cityCode:城市CODE}
-  amsCommonAreaCityInfo(payload: Record<string, any>) {return http.post<Res<Record<string, TreeModel[]>>>('/ams/common/area/city-info', payload)},
+  amsCommonAreaCityInfo(payload: {cityCode: any}) {return http.post<Res<Record<string, TreeModel[]>>>('/ams/common/area/city-info', payload)},
   */
-  '/ams/common/area/city-info': {Req: Record<string, any>; Res: Record<string, TreeModel[]>}
+  '/ams/common/area/city-info': {Req: {cityCode: any}; Res: Record<string, TreeModel[]>}
 
   /* 【资产管理-商业管理】
   // 更新商铺
@@ -454,9 +463,9 @@ interface ApiType {
 
   /* 【资产管理-商业管理】
   // 启用/禁用商业 | object:{shopId:住宅编码,enable:bool}
-  amsAssetShopEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/enable', payload)},
+  amsAssetShopEnable(payload: {shopId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/enable', payload)},
   */
-  '/ams/asset-shop/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-shop/enable': {Req: {shopId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-商业管理】
   // 删除商铺
@@ -490,9 +499,9 @@ interface ApiType {
 
   /* 【资产管理-住宅管理】
   // 启用/禁用住宅 | object:{roomId:住宅编码,enable:bool}
-  amsAssetRoomEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-room/enable', payload)},
+  amsAssetRoomEnable(payload: {roomId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-room/enable', payload)},
   */
-  '/ams/asset-room/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-room/enable': {Req: {roomId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-住宅管理】
   // 删除住宅
@@ -532,9 +541,9 @@ interface ApiType {
 
   /* 【资产管理-资源管理】
   // 启用/禁用资源 | object:{resourceId:资源编码,enable:bool}
-  amsAssetResourceEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/enable', payload)},
+  amsAssetResourceEnable(payload: {resourceId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/enable', payload)},
   */
-  '/ams/asset-resource/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-resource/enable': {Req: {resourceId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
   // 删除资源
@@ -586,9 +595,9 @@ interface ApiType {
 
   /* 【资产管理-项目管理】
   // 启用/禁用项目 | object:{projectId:项目编码,enable:bool}
-  amsAssetProjectEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-project/enable', payload)},
+  amsAssetProjectEnable(payload: {projectId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-project/enable', payload)},
   */
-  '/ams/asset-project/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-project/enable': {Req: {projectId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-项目管理】
   // 删除项目
@@ -610,9 +619,9 @@ interface ApiType {
 
   /* 【资产管理-停车场管理】
   // 根据停车场id查询停车场区域 | object:{parkingId:停车场编码}
-  amsAssetParkingSelectParkingRegion(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/select-parking-region', payload)},
+  amsAssetParkingSelectParkingRegion(payload: {parkingId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/select-parking-region', payload)},
   */
-  '/ams/asset-parking/select-parking-region': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-parking/select-parking-region': {Req: {parkingId: any}; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 停车场列表
@@ -622,33 +631,36 @@ interface ApiType {
 
   /* 【资产管理-停车场管理】
   // 停车场详情 | object:{parkingId:停车场编码}
-  amsAssetParkingGet(payload: Record<string, any>) {return http.post<Res<AssetParkingVO>>('/ams/asset-parking/get', payload)},
+  amsAssetParkingGet(payload: {parkingId: any}) {return http.post<Res<AssetParkingVO>>('/ams/asset-parking/get', payload)},
   */
-  '/ams/asset-parking/get': {Req: Record<string, any>; Res: AssetParkingVO}
+  '/ams/asset-parking/get': {Req: {parkingId: any}; Res: AssetParkingVO}
 
   /* 【资产管理-停车场管理】
   // 生成车位区域编码 | object:{"parkingId":"P0001_plt001","regionJson":[{"regionId":"P0001_plt001_pa001","regionName":"负一楼B区"}]}
-  amsAssetParkingGenerateParkingRegionId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-region-id', payload)},
+  amsAssetParkingGenerateParkingRegionId(payload: {parkingId: any; regionJson: any[]}) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-region-id', payload)},
   */
-  '/ams/asset-parking/generate-parking-region-id': {Req: Record<string, any>; Res: string}
+  '/ams/asset-parking/generate-parking-region-id': {
+    Req: {parkingId: any; regionJson: any[]}
+    Res: string
+  }
 
   /* 【资产管理-停车场管理】
   // 生成停车场编码 | object:{projectId:项目编码}
-  amsAssetParkingGenerateParkingId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-id', payload)},
+  amsAssetParkingGenerateParkingId(payload: {projectId: any}) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-id', payload)},
   */
-  '/ams/asset-parking/generate-parking-id': {Req: Record<string, any>; Res: string}
+  '/ams/asset-parking/generate-parking-id': {Req: {projectId: any}; Res: string}
 
   /* 【资产管理-停车场管理】
   // 启用/禁用停车场 | object:{parkingId:停车场编码,enable:bool}
-  amsAssetParkingEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/enable', payload)},
+  amsAssetParkingEnable(payload: {parkingId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/enable', payload)},
   */
-  '/ams/asset-parking/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-parking/enable': {Req: {parkingId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 删除停车场 | object:{parkingId:停车场编码}
-  amsAssetParkingDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/delete', payload)},
+  amsAssetParkingDelete(payload: {parkingId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/delete', payload)},
   */
-  '/ams/asset-parking/delete': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-parking/delete': {Req: {parkingId: any}; Res: Record<string, any>}
 
   /* 【资产管理-停车位管理】
   // 更新停车位
@@ -676,15 +688,15 @@ interface ApiType {
 
   /* 【资产管理-停车位管理】
   // 生成停车位编码 | object:{parkingRegionId:车位区域编码}
-  amsAssetParkingSpaceGenerateParkingSpaceId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-parking-space/generate-parking-space-id', payload)},
+  amsAssetParkingSpaceGenerateParkingSpaceId(payload: {parkingRegionId: any}) {return http.post<Res<string>>('/ams/asset-parking-space/generate-parking-space-id', payload)},
   */
-  '/ams/asset-parking-space/generate-parking-space-id': {Req: Record<string, any>; Res: string}
+  '/ams/asset-parking-space/generate-parking-space-id': {Req: {parkingRegionId: any}; Res: string}
 
   /* 【资产管理-停车位管理】
   // 删除停车位 | object:{parkingSpaceId:停车位编码}
-  amsAssetParkingSpaceDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/delete', payload)},
+  amsAssetParkingSpaceDelete(payload: {parkingSpaceId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/delete', payload)},
   */
-  '/ams/asset-parking-space/delete': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-parking-space/delete': {Req: {parkingSpaceId: any}; Res: Record<string, any>}
 
   /* 【资产管理-楼层管理】
   // 更新楼层
@@ -712,15 +724,15 @@ interface ApiType {
 
   /* 【资产管理-楼层管理】
   // 生成楼层编码 | object:{assetId:资产编码(楼栋或围合的编码)}
-  amsAssetFloorGenerateFloorId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-floor/generate-floor-id', payload)},
+  amsAssetFloorGenerateFloorId(payload: {assetId: any}) {return http.post<Res<string>>('/ams/asset-floor/generate-floor-id', payload)},
   */
-  '/ams/asset-floor/generate-floor-id': {Req: Record<string, any>; Res: string}
+  '/ams/asset-floor/generate-floor-id': {Req: {assetId: any}; Res: string}
 
   /* 【资产管理-楼层管理】
   // 启用/禁用楼层 | object:{floorId:楼层编码,enable:bool}
-  amsAssetFloorEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)},
+  amsAssetFloorEnable(payload: {floorId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)},
   */
-  '/ams/asset-floor/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-floor/enable': {Req: {floorId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-楼层管理】
   // 删除楼层
@@ -760,9 +772,9 @@ interface ApiType {
 
   /* 【资产管理-固定资产管理】
   // 启用/禁用固定资产 | object:{fixedId:固定资产编码,enable:bool}
-  amsAssetFixedEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/enable', payload)},
+  amsAssetFixedEnable(payload: {fixedId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/enable', payload)},
   */
-  '/ams/asset-fixed/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-fixed/enable': {Req: {fixedId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 删除固定资产
@@ -820,9 +832,12 @@ interface ApiType {
 
   /* 【资产管理-围合管理】
   // 启用/禁用项目 | object:{enclosureId:围合编码,enable:bool}
-  amsAssetEnclosureEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/enable', payload)},
+  amsAssetEnclosureEnable(payload: {enclosureId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/enable', payload)},
   */
-  '/ams/asset-enclosure/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-enclosure/enable': {
+    Req: {enclosureId: any; enable: boolean}
+    Res: Record<string, any>
+  }
 
   /* 【资产管理-围合管理】
   // 删除围合
@@ -862,9 +877,9 @@ interface ApiType {
 
   /* 【资产管理-楼栋管理】
   // 启用/禁用项目 | object:{buildingId:楼栋编码,enable:bool}
-  amsAssetBuildingEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-building/enable', payload)},
+  amsAssetBuildingEnable(payload: {buildingId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-building/enable', payload)},
   */
-  '/ams/asset-building/enable': {Req: Record<string, any>; Res: Record<string, any>}
+  '/ams/asset-building/enable': {Req: {buildingId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-楼栋管理】
   // 删除楼栋

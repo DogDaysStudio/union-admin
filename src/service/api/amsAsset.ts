@@ -10,7 +10,7 @@ export const amsAsset = {
     return http.post<Res<AssetProjectVO[]>>('/ams/asset-project/list', payload)
   },
   // 启用/禁用项目 | object:{projectId:项目编码,enable:bool}
-  amsAssetProjectEnable(payload: Record<string, any>) {
+  amsAssetProjectEnable(payload: {projectId: any; enable: boolean}) {
     return http.post<Res<Record<string, any>>>('/ams/asset-project/enable', payload)
   },
   // 删除项目
@@ -47,7 +47,7 @@ export const amsAsset = {
     return http.post<Res<Record<string, any>>>('/ams/asset-building/delete', payload)
   },
   // 启用/禁用项目 | object:{buildingId:楼栋编码,enable:bool}
-  amsAssetBuildingEnable(payload: Record<string, any>) {
+  amsAssetBuildingEnable(payload: {buildingId: any; enable: boolean}) {
     return http.post<Res<Record<string, any>>>('/ams/asset-building/enable', payload)
   },
 

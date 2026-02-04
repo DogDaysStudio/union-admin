@@ -8,7 +8,7 @@ export const iamAuth = {
   },
 
   // 发送验证码 | object:{mobile:手机号}
-  iamAuthSendVerifyCode(payload: Record<string, any>) {
+  iamAuthSendVerifyCode(payload: {mobile: any}) {
     return http.post<Res<string>>('/iam/auth/send-verifyCode', payload)
   },
 
@@ -33,7 +33,7 @@ export const iamAuth = {
   },
 
   // 获取SSO票据 | object:{appId:应用Id}
-  iamAuthSsoTicket(payload: Record<string, any>) {
+  iamAuthSsoTicket(payload: {appId: any}) {
     return http.post<Res<string>>('/iam/auth/sso-ticket', payload)
   },
 
@@ -58,7 +58,7 @@ export const iamAuth = {
     return http.post<Res<string>>('/iam/auth-org/upsert', payload)
   },
   // 删除组织 | object:{orgId:组织ID}
-  iamAuthOrgDelete(payload: Record<string, any>) {
+  iamAuthOrgDelete(payload: {orgId: any}) {
     return http.post<Res<Record<string, any>>>('/iam/auth-org/delete', payload)
   },
 
@@ -75,7 +75,7 @@ export const iamAuth = {
     return http.post<Res<string>>('/iam/auth-permission/delete', payload)
   },
   // 启用/禁用权限 | object:{permId:权限ID,enable:bool}
-  iamAuthPermissionEnable(payload: Record<string, any>) {
+  iamAuthPermissionEnable(payload: {permId: any; enable: boolean}) {
     return http.post<Res<Record<string, any>>>('/iam/auth-permission/enable', payload)
   },
 }
