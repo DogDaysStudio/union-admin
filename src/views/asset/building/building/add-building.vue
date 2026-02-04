@@ -11,11 +11,7 @@ import {findValueByCustomId} from '@/utils/array-util'
 const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
   throttleInterval: 500,
 })
-interface ProjectOptionVO {
-  projectId: string
-  projectName: string
-}
-const projectOptions = reactive<ProjectOptionVO[]>([])
+const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 户型
 const roomListTree = useRequest(iamCommon.iamCommonDicListTree, {
   throttleInterval: 500,
@@ -301,10 +297,6 @@ const handleReset = () => {
   formRef.value.resetFields()
   ElMessage.info('表单已重置')
 }
-
-const treeProps = {
-  children: 'roomList', // 替换默认children为roomList（必配）
-}
 </script>
 
 <template>
@@ -432,7 +424,9 @@ const treeProps = {
               :data="item.floorList"
               node-key="floorId"
               default-expand-all
-              :props="treeProps"
+              :props="{
+                children: 'roomList',
+              }"
               :expand-on-click-node="false"
             >
               <template #default="{data}">
