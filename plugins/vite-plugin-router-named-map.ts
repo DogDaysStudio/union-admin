@@ -57,8 +57,8 @@ function generateRouteRecordInfo(route: Route): string {
   const escapedName = name.replace(/\\/g, '\\\\')
 
   return `  '${escapedPath}': RouteRecordInfo<
-    '${escapedName}',
-    '${escapedPath}',
+    '${escapedName}', // name
+    '${escapedPath}', // path
     ${paramsRawType},
     ${paramsType},
     never
