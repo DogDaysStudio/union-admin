@@ -30,10 +30,7 @@ interface ApiType {
   // 启用/禁用应用 | object:{appId:应用ID,enable:bool,enableNotes:原因}
   export function iamOpenAppEnable(payload: {appId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/open-app/enable', payload)}
   */
-  '/iam/open-app/enable': {
-    Req: {appId: any; enable: boolean; enableNotes: any}
-    Res: Record<string, any>
-  }
+  '/iam/open-app/enable': {Req: {appId: any; enable: boolean; enableNotes: any}; Res: Record<string, any>}
 
   /* 【开放平台应用】
   // 删除应用 | object:{appId:应用ID}
@@ -255,10 +252,7 @@ interface ApiType {
   // 启用/禁用角色 | object:{roleId:角色ID,enable:bool,enableNotes:原因}
   export function iamAuthRoleEnable(payload: {roleId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-role/enable', payload)}
   */
-  '/iam/auth-role/enable': {
-    Req: {roleId: any; enable: boolean; enableNotes: any}
-    Res: Record<string, any>
-  }
+  '/iam/auth-role/enable': {Req: {roleId: any; enable: boolean; enableNotes: any}; Res: Record<string, any>}
 
   /* 【角色管理】
   // 删除角色 | object:{roleId:角色ID}
@@ -330,10 +324,7 @@ interface ApiType {
   // 启用/禁用组织 | object:{orgId:组织ID,enable:bool,enableNotes:原因}
   export function iamAuthOrgEnable(payload: {orgId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-org/enable', payload)}
   */
-  '/iam/auth-org/enable': {
-    Req: {orgId: any; enable: boolean; enableNotes: any}
-    Res: Record<string, any>
-  }
+  '/iam/auth-org/enable': {Req: {orgId: any; enable: boolean; enableNotes: any}; Res: Record<string, any>}
 
   /* 【组织管理】
   // 删除组织 | object:{orgId:组织ID}
@@ -645,10 +636,7 @@ interface ApiType {
   // 生成车位区域编码 | object:{"parkingId":"P0001_plt001","regionJson":[{"regionId":"P0001_plt001_pa001","regionName":"负一楼B区"}]}
   export function amsAssetParkingGenerateParkingRegionId(payload: {parkingId: any; regionJson: any[]}) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-region-id', payload)}
   */
-  '/ams/asset-parking/generate-parking-region-id': {
-    Req: {parkingId: any; regionJson: any[]}
-    Res: string
-  }
+  '/ams/asset-parking/generate-parking-region-id': {Req: {parkingId: any; regionJson: any[]}; Res: string}
 
   /* 【资产管理-停车场管理】
   // 生成停车场编码 | object:{projectId:项目编码}
@@ -840,10 +828,7 @@ interface ApiType {
   // 启用/禁用项目 | object:{enclosureId:围合编码,enable:bool}
   export function amsAssetEnclosureEnable(payload: {enclosureId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/enable', payload)}
   */
-  '/ams/asset-enclosure/enable': {
-    Req: {enclosureId: any; enable: boolean}
-    Res: Record<string, any>
-  }
+  '/ams/asset-enclosure/enable': {Req: {enclosureId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-围合管理】
   // 删除围合
