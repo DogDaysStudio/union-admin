@@ -89,39 +89,53 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/asset/edit-building/:id': RouteRecordInfo<
-    '/asset/edit-building/:id',
-    '/asset/edit-building/:id',
+  '/asset/management/edit-building/:id': RouteRecordInfo<
+    '/asset/management/edit-building/:id',
+    '/asset/management/edit-building/:id',
     {id: ParamValue<true>},
     {id: ParamValue<false>},
     never
   >
-  '/asset/detail-building/:id': RouteRecordInfo<
-    '/asset/detail-building/:id',
-    '/asset/detail-building/:id',
+  '/asset/management/detail-building/:id': RouteRecordInfo<
+    '/asset/management/detail-building/:id',
+    '/asset/management/detail-building/:id',
     {id: ParamValue<true>},
     {id: ParamValue<false>},
     never
   >
-  '/asset/add-floor': RouteRecordInfo<
-    '/asset/add-floor',
-    '/asset/add-floor',
+  '/asset/management/add-floor': RouteRecordInfo<
+    '/asset/management/add-floor',
+    '/asset/management/add-floor',
     any,
     any,
     never
   >
-  '/asset/edit-floor/:id': RouteRecordInfo<
-    '/asset/edit-floor/:id',
-    '/asset/edit-floor/:id',
+  '/asset/management/edit-floor/:id': RouteRecordInfo<
+    '/asset/management/edit-floor/:id',
+    '/asset/management/edit-floor/:id',
     {id: ParamValue<true>},
     {id: ParamValue<false>},
     never
   >
-  '/asset/detail-floor/:id': RouteRecordInfo<
-    '/asset/detail-floor/:id',
-    '/asset/detail-floor/:id',
+  '/asset/management/detail-floor/:id': RouteRecordInfo<
+    '/asset/management/detail-floor/:id',
+    '/asset/management/detail-floor/:id',
     {id: ParamValue<true>},
     {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/enclosure-floor': RouteRecordInfo<
+    '/asset/management/enclosure-floor',
+    '/asset/management/enclosure-floor',
+    any,
+    any,
+    never
+  >
+  '/asset/management/add-enclosure': RouteRecordInfo<
+    '/asset/management/add-enclosure',
+    '/asset/management/add-enclosure',
+    any,
+    any,
     never
   >
   '/asset/statistics': RouteRecordInfo<

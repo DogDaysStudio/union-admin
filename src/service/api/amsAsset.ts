@@ -10,7 +10,7 @@ export const amsAsset = {
     return http.post<Res<AssetProjectVO[]>>('/ams/asset-project/list', payload)
   },
   // 启用/禁用项目 | object:{projectId:项目编码,enable:bool}
-  amsAssetProjectEnable(payload: {projectId: any; enable: boolean}) {
+  amsAssetProjectEnable(payload: Record<string, any>) {
     return http.post<Res<Record<string, any>>>('/ams/asset-project/enable', payload)
   },
   // 删除项目
@@ -22,10 +22,6 @@ export const amsAsset = {
     return http.post<Res<Record<string, any>>>('/ams/asset-project/insert', payload)
   },
 
-  // 生成楼栋编码
-  amsAssetBuildingGenerateBuildingId(payload: Record<string, any>) {
-    return http.post<Res<string>>('/ams/asset-building/generate-building-id', payload)
-  },
   // 楼栋列表
   amsAssetBuildingList(payload: AssetBuildingListDTO) {
     return http.post<Res<AssetBuildingVO[]>>('/ams/asset-building/list', payload)
@@ -47,7 +43,7 @@ export const amsAsset = {
     return http.post<Res<Record<string, any>>>('/ams/asset-building/delete', payload)
   },
   // 启用/禁用项目 | object:{buildingId:楼栋编码,enable:bool}
-  amsAssetBuildingEnable(payload: {buildingId: any; enable: boolean}) {
+  amsAssetBuildingEnable(payload: Record<string, any>) {
     return http.post<Res<Record<string, any>>>('/ams/asset-building/enable', payload)
   },
 
@@ -74,5 +70,14 @@ export const amsAsset = {
   // 启用/禁用楼层 | object:{floorId:楼层编码,enable:bool}
   amsAssetFloorEnable(payload: Record<string, any>) {
     return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)
+  },
+
+  // 围合列表
+  amsAssetEnclosureList(payload: AssetEnclosureListDTO) {
+    return http.post<Res<AssetEnclosureVO[]>>('/ams/asset-enclosure/list', payload)
+  },
+  // 新增围合
+  amsAssetEnclosureInsert(payload: AssetEnclosureInsertDTO) {
+    return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/insert', payload)
   },
 }
