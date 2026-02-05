@@ -2,7 +2,12 @@
 import {useForm} from '@/common/hooks'
 import {rules} from '@/common/rules'
 import {defineSchema, defineField} from '@/components'
-import {amsSysDic} from '@/service/api/amsSysDic'
+import {
+  amsSysDicDelete,
+  amsSysDicEnable,
+  amsSysDicList,
+  amsSysDicUpsert,
+} from '@/service/api/amsSysDic'
 import {ElMessageBox} from 'element-plus'
 import {reactive, useTemplateRef, computed, ref} from 'vue'
 import {usePagination, useRequest} from 'vue-request'
@@ -37,7 +42,7 @@ const {
   total,
   changeCurrent,
   changePageSize,
-} = usePagination(amsSysDic.amsSysDicList, {
+} = usePagination(amsSysDicList, {
   manual: false,
   defaultParams: [listQuery],
 })
@@ -88,9 +93,9 @@ const upsertFormSchema = computed(() =>
   })
 )
 
-const {runAsync: upsertDic, loading: submitLoading} = useRequest(amsSysDic.amsSysDicUpsert)
-const {runAsync: deleteDic, loading: deleteLoading} = useRequest(amsSysDic.amsSysDicDelete)
-const {runAsync: enableDic, loading: enableLoading} = useRequest(amsSysDic.amsSysDicEnable)
+const {runAsync: upsertDic, loading: submitLoading} = useRequest(amsSysDicUpsert)
+const {runAsync: deleteDic, loading: deleteLoading} = useRequest(amsSysDicDelete)
+const {runAsync: enableDic, loading: enableLoading} = useRequest(amsSysDicEnable)
 
 const handleEdit = (row: SysDicVO) => {
   Object.assign(formModel, row)

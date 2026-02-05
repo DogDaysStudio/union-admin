@@ -2,11 +2,17 @@
 import {reactive, ref, useTemplateRef} from 'vue'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {usePagination, useRequest} from 'vue-request'
-import {iamAuth} from '@/service/api/iamAuth'
+import {
+  iamAuthRoleDelete,
+  iamAuthRoleEnable,
+  iamAuthRoleGet,
+  iamAuthRoleList,
+  iamAuthRoleUpsert,
+} from '@/service/api/iamAuth'
 import {useForm} from '@/common/hooks'
 import {defineField, defineSchema} from '@/components'
-import {iamAuthUser} from '@/service/api/imaAuthUser'
 import {rules} from '@/common/rules'
+import {iamAuthUserList} from '@/service/api/imaAuthUser'
 
 const searchForm = reactive({
   pageable: true,
@@ -24,14 +30,14 @@ const {
   total,
   changePageSize,
   changeCurrent,
-} = usePagination(iamAuth.iamAuthRoleList, {
+} = usePagination(iamAuthRoleList, {
   manual: false,
   defaultParams: [searchForm],
 })
 
-const upsertRole = useRequest(iamAuth.iamAuthRoleUpsert)
-const deleteRole = useRequest(iamAuth.iamAuthRoleDelete)
-const enableRole = useRequest(iamAuth.iamAuthRoleEnable)
+const upsertRole = useRequest(iamAuthRoleUpsert)
+const deleteRole = useRequest(iamAuthRoleDelete)
+const enableRole = useRequest(iamAuthRoleEnable)
 
 // 添加/编辑表单
 const dialogVisible = ref(false)
@@ -98,7 +104,7 @@ const addUserFormRef = useTemplateRef('addUserFormRef')
 const [addUserForm, resetAddUserForm] = useForm({} as AuthRoleUpsertDTO, addUserFormRef)
 
 // 人员列表数据
-const {data: employeeList, runAsync: runEmployeeList} = useRequest(iamAuthUser.iamAuthUserList)
+const {data: employeeList, runAsync: runEmployeeList} = useRequest(iamAuthUserList)
 
 // 处理添加人员
 const handleAddUser = async (row: AuthRoleVO) => {
@@ -106,7 +112,7 @@ const handleAddUser = async (row: AuthRoleVO) => {
 
   runEmployeeList({pageable: false} as AuthUserListDTO)
 
-  const {data: roleDetail} = await iamAuth.iamAuthRoleGet({roleId: row.roleId})
+  const {data: roleDetail} = await iamAuthRoleGet({roleId: row.roleId})
   addUserForm.roleId = row.roleId
   addUserForm.roleName = row.roleName
   addUserForm.userIdList = roleDetail?.userList.map(item => item.userId)

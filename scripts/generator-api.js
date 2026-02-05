@@ -229,10 +229,9 @@ function pathToCamelCase(path) {
 function generateApiTypeRowsFromPathSchemas(pathSchemas) {
   return pathSchemas
     .map(
-      path =>
-        `  /*${path.tags?.length ? ` 【${path.tags.join(', ')}】` : ''}
+      path => `  /*${path.tags?.length ? ` 【${path.tags.join(', ')}】` : ''}
   // ${[path.summary, path.description].filter(Boolean).join(' | ')}
-  ${pathToCamelCase(path.prefix + path.path)}(${path.reqType ? `payload: ${path.reqType}${path.reqTypeIsArray ? '[]' : ''}` : ''}) {return http.${path.method}<Res<${path.resType}${path.resTypeIsArray ? '[]' : ''}>>('${path.prefix}${path.path}'${path.reqType ? ', payload' : ''})},
+  export function ${pathToCamelCase(path.prefix + path.path)}(${path.reqType ? `payload: ${path.reqType}${path.reqTypeIsArray ? '[]' : ''}` : ''}) {return http.${path.method}<Res<${path.resType}${path.resTypeIsArray ? '[]' : ''}>>('${path.prefix}${path.path}'${path.reqType ? ', payload' : ''})}
   */
   '${path.prefix}${path.path}': {${[path.reqType ? `Req: ${path.reqType}${path.reqTypeIsArray ? '[]' : ''}` : '', path.resType ? `Res: ${path.resType}${path.resTypeIsArray ? '[]' : ''}` : ''].filter(Boolean).join('; ')}}`
     )

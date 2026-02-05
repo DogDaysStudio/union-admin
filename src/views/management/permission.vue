@@ -2,11 +2,16 @@
 import {reactive, ref, useTemplateRef} from 'vue'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {usePagination, useRequest} from 'vue-request'
-import {iamAuth} from '@/service/api/iamAuth'
 import {useForm} from '@/common/hooks'
 import {defineField, defineSchema} from '@/components'
-import {amsSysDic} from '@/service/api/amsSysDic'
 import {rules} from '@/common/rules'
+import {
+  iamAuthPermissionDelete,
+  iamAuthPermissionEnable,
+  iamAuthPermissionList,
+  iamAuthPermissionUpsert,
+} from '@/service/api/iamAuth'
+import {amsSysDicList} from '@/service/api/amsSysDic'
 
 // 搜索表单
 const searchForm = reactive({
@@ -25,25 +30,19 @@ const {
   total,
   changePageSize,
   changeCurrent,
-} = usePagination(iamAuth.iamAuthPermissionList, {
+} = usePagination(iamAuthPermissionList, {
   manual: false,
   defaultParams: [searchForm],
 })
 
-const {runAsync: runUpsertPermission, loading: upsertLoading} = useRequest(
-  iamAuth.iamAuthPermissionUpsert
-)
-const {runAsync: runDeletePermission, loading: deleteLoading} = useRequest(
-  iamAuth.iamAuthPermissionDelete
-)
-const {runAsync: runEnablePermission, loading: enableLoading} = useRequest(
-  iamAuth.iamAuthPermissionEnable
-)
-const {data: dicList} = useRequest(amsSysDic.amsSysDicList, {
+const {runAsync: runUpsertPermission, loading: upsertLoading} = useRequest(iamAuthPermissionUpsert)
+const {runAsync: runDeletePermission, loading: deleteLoading} = useRequest(iamAuthPermissionDelete)
+const {runAsync: runEnablePermission, loading: enableLoading} = useRequest(iamAuthPermissionEnable)
+const {data: dicList} = useRequest(amsSysDicList, {
   manual: false,
   defaultParams: [{dicType: 9001} as SysDicListDTO],
 })
-const {data: sysDictList} = useRequest(amsSysDic.amsSysDicList, {
+const {data: sysDictList} = useRequest(amsSysDicList, {
   manual: false,
   defaultParams: [{dicType: 9000} as SysDicListDTO],
 })

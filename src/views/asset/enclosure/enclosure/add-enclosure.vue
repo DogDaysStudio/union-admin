@@ -3,27 +3,27 @@ import {ref, reactive, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
-import {amsAsset} from '@/service/api/amsAsset'
-import {iamCommon} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
+import {amsAssetEnclosureInsert, amsAssetProjectSelectAll} from '@/service/api/amsAsset'
+import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 const router = useRouter()
 
 // 获取项目名称
-const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
+const projectSelectAll = useRequest(amsAssetProjectSelectAll, {
   throttleInterval: 500,
 })
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 户型 产权单位（公司） 围合类型
-const dicListTree = useRequest(iamCommon.iamCommonDicListTree, {
+const dicListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
 })
 const roomOptions = reactive<SysDicVO[]>([])
 const companyOptions = reactive<SysDicVO[]>([])
 const enclosureOptions = reactive<SysDicVO[]>([])
 // 新增围合
-const addEncloseure = useRequest(amsAsset.amsAssetEnclosureInsert, {
+const addEncloseure = useRequest(amsAssetEnclosureInsert, {
   throttleInterval: 500,
 })
 

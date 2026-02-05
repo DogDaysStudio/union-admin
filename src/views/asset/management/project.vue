@@ -3,12 +3,16 @@ import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
-import {iamCommon} from '@/service/api/iamCommon'
-import {amsAsset} from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
+import {
+  amsAssetProjectDelete,
+  amsAssetProjectEnable,
+  amsAssetProjectList,
+} from '@/service/api/amsAsset'
+import {iamCommonAreaList} from '@/service/api/iamCommon'
 
 // 所属省市区
-const areaList = useRequest(iamCommon.iamCommonAreaList, {
+const areaList = useRequest(iamCommonAreaList, {
   throttleInterval: 500,
 })
 const cityOptions = reactive<PairModel[]>([])
@@ -16,15 +20,15 @@ const cityOptions = reactive<PairModel[]>([])
 // 产权单位
 
 // 列表数据
-const projectList = useRequest(amsAsset.amsAssetProjectList, {
+const projectList = useRequest(amsAssetProjectList, {
   throttleInterval: 500,
 })
 // 修改数据状态
-const toggleStatusProject = useRequest(amsAsset.amsAssetProjectEnable, {
+const toggleStatusProject = useRequest(amsAssetProjectEnable, {
   throttleInterval: 500,
 })
 // 删除数据
-const deleteProject = useRequest(amsAsset.amsAssetProjectDelete, {
+const deleteProject = useRequest(amsAssetProjectDelete, {
   throttleInterval: 500,
 })
 

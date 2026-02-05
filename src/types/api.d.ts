@@ -10,25 +10,25 @@ interface Res<T = any> {
 interface ApiType {
   /* 【开放平台应用】
   // 新增/修改应用
-  iamOpenAppUpsert(payload: OpenAppUpsertDTO) {return http.post<Res<string>>('/iam/open-app/upsert', payload)},
+  export function iamOpenAppUpsert(payload: OpenAppUpsertDTO) {return http.post<Res<string>>('/iam/open-app/upsert', payload)}
   */
   '/iam/open-app/upsert': {Req: OpenAppUpsertDTO; Res: string}
 
   /* 【开放平台应用】
   // 应用列表
-  iamOpenAppList(payload: OpenAppListDTO) {return http.post<Res<OpenAppVO[]>>('/iam/open-app/list', payload)},
+  export function iamOpenAppList(payload: OpenAppListDTO) {return http.post<Res<OpenAppVO[]>>('/iam/open-app/list', payload)}
   */
   '/iam/open-app/list': {Req: OpenAppListDTO; Res: OpenAppVO[]}
 
   /* 【开放平台应用】
   // 应用详情 | object:{appId:应用ID}
-  iamOpenAppGet(payload: {appId: any}) {return http.post<Res<OpenAppVO>>('/iam/open-app/get', payload)},
+  export function iamOpenAppGet(payload: {appId: any}) {return http.post<Res<OpenAppVO>>('/iam/open-app/get', payload)}
   */
   '/iam/open-app/get': {Req: {appId: any}; Res: OpenAppVO}
 
   /* 【开放平台应用】
   // 启用/禁用应用 | object:{appId:应用ID,enable:bool,enableNotes:原因}
-  iamOpenAppEnable(payload: {appId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/open-app/enable', payload)},
+  export function iamOpenAppEnable(payload: {appId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/open-app/enable', payload)}
   */
   '/iam/open-app/enable': {
     Req: {appId: any; enable: boolean; enableNotes: any}
@@ -37,223 +37,223 @@ interface ApiType {
 
   /* 【开放平台应用】
   // 删除应用 | object:{appId:应用ID}
-  iamOpenAppDelete(payload: {appId: any}) {return http.post<Res<Record<string, any>>>('/iam/open-app/delete', payload)},
+  export function iamOpenAppDelete(payload: {appId: any}) {return http.post<Res<Record<string, any>>>('/iam/open-app/delete', payload)}
   */
   '/iam/open-app/delete': {Req: {appId: any}; Res: Record<string, any>}
 
   /* 【通用相关】
   // 中文转拼音 | object:{key:中文}
-  iamCommonFuncZhToPinyin(payload: {key: any}) {return http.post<Res<string>>('/iam/common/func/zh-to-pinyin', payload)},
+  export function iamCommonFuncZhToPinyin(payload: {key: any}) {return http.post<Res<string>>('/iam/common/func/zh-to-pinyin', payload)}
   */
   '/iam/common/func/zh-to-pinyin': {Req: {key: any}; Res: string}
 
   /* 【通用相关】
   // 身份证判断男女 | object:{certNo:身份证}
-  iamCommonFuncCertNoToGender(payload: {certNo: any}) {return http.post<Res<string>>('/iam/common/func/certNo-to-gender', payload)},
+  export function iamCommonFuncCertNoToGender(payload: {certNo: any}) {return http.post<Res<string>>('/iam/common/func/certNo-to-gender', payload)}
   */
   '/iam/common/func/certNo-to-gender': {Req: {certNo: any}; Res: string}
 
   /* 【通用相关】
   // 文件上传(type,file)
-  iamCommonFileUpload() {return http.post<Res<FileModel>>('/iam/common/file/upload')},
+  export function iamCommonFileUpload() {return http.post<Res<FileModel>>('/iam/common/file/upload')}
   */
   '/iam/common/file/upload': {Res: FileModel}
 
   /* 【通用相关】
   // 文件上传(type,file,filename)
-  iamCommonFileUploadBase64() {return http.post<Res<FileModel>>('/iam/common/file/upload-base64')},
+  export function iamCommonFileUploadBase64() {return http.post<Res<FileModel>>('/iam/common/file/upload-base64')}
   */
   '/iam/common/file/upload-base64': {Res: FileModel}
 
   /* 【通用相关】
   // 文件ID转文件Model,入参[id1,id2]
-  iamCommonFileIdToPath() {return http.post<Res<FileModel[]>>('/iam/common/file/id-to-path')},
+  export function iamCommonFileIdToPath() {return http.post<Res<FileModel[]>>('/iam/common/file/id-to-path')}
   */
   '/iam/common/file/id-to-path': {Res: FileModel[]}
 
   /* 【通用相关】
   // 码表元信息
-  iamCommonDicMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/iam/common/dic/meta', payload)},
+  export function iamCommonDicMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/iam/common/dic/meta', payload)}
   */
   '/iam/common/dic/meta': {Req: Record<string, any>; Res: PairModel[]}
 
   /* 【通用相关】
   // 树形码表 | object:{dicType:字典类型}
-  iamCommonDicListTree(payload: {dicType: any}) {return http.post<Res<SysDicVO[]>>('/iam/common/dic/list-tree', payload)},
+  export function iamCommonDicListTree(payload: {dicType: any}) {return http.post<Res<SysDicVO[]>>('/iam/common/dic/list-tree', payload)}
   */
   '/iam/common/dic/list-tree': {Req: {dicType: any}; Res: SysDicVO[]}
 
   /* 【通用相关】
   // 常规码表
-  iamCommonDicListAll(payload: Record<string, any>) {return http.post<Res<Record<string, SysDicVO[]>>>('/iam/common/dic/list-all', payload)},
+  export function iamCommonDicListAll(payload: Record<string, any>) {return http.post<Res<Record<string, SysDicVO[]>>>('/iam/common/dic/list-all', payload)}
   */
   '/iam/common/dic/list-all': {Req: Record<string, any>; Res: Record<string, SysDicVO[]>}
 
   /* 【通用相关】
   // 省_市_区_商圈 | object:{pid:上级ID}
-  iamCommonAreaList(payload: {pid: any}) {return http.post<Res<PairModel[]>>('/iam/common/area/list', payload)},
+  export function iamCommonAreaList(payload: {pid: any}) {return http.post<Res<PairModel[]>>('/iam/common/area/list', payload)}
   */
   '/iam/common/area/list': {Req: {pid: any}; Res: PairModel[]}
 
   /* 【通用相关】
   // 根据城市查询区和街道(树) | object:{cityCode:城市CODE}
-  iamCommonAreaCityInfo(payload: {cityCode: any}) {return http.post<Res<Record<string, TreeModel[]>>>('/iam/common/area/city-info', payload)},
+  export function iamCommonAreaCityInfo(payload: {cityCode: any}) {return http.post<Res<Record<string, TreeModel[]>>>('/iam/common/area/city-info', payload)}
   */
   '/iam/common/area/city-info': {Req: {cityCode: any}; Res: Record<string, TreeModel[]>}
 
   /* 【登录认证】
   // 设置密码 | object:{loginPwdOrigin:原登录密码,loginPwd:新登录密码}
-  iamAuthUpdatePwd(payload: {loginPwdOrigin: any; loginPwd: any}) {return http.post<Res<Record<string, any>>>('/iam/auth/update-pwd', payload)},
+  export function iamAuthUpdatePwd(payload: {loginPwdOrigin: any; loginPwd: any}) {return http.post<Res<Record<string, any>>>('/iam/auth/update-pwd', payload)}
   */
   '/iam/auth/update-pwd': {Req: {loginPwdOrigin: any; loginPwd: any}; Res: Record<string, any>}
 
   /* 【登录认证】
   // 初次设置密码 | object:{loginPwd:登录密码}
-  iamAuthUpdatePwdInit(payload: {loginPwd: any}) {return http.post<Res<Record<string, any>>>('/iam/auth/update-pwd-init', payload)},
+  export function iamAuthUpdatePwdInit(payload: {loginPwd: any}) {return http.post<Res<Record<string, any>>>('/iam/auth/update-pwd-init', payload)}
   */
   '/iam/auth/update-pwd-init': {Req: {loginPwd: any}; Res: Record<string, any>}
 
   /* 【登录认证】
   // 获取SSO票据 | object:{appId:应用Id}
-  iamAuthSsoTicket(payload: {appId: any}) {return http.post<Res<string>>('/iam/auth/sso-ticket', payload)},
+  export function iamAuthSsoTicket(payload: {appId: any}) {return http.post<Res<string>>('/iam/auth/sso-ticket', payload)}
   */
   '/iam/auth/sso-ticket': {Req: {appId: any}; Res: string}
 
   /* 【登录认证】
   // 发送验证码 | object:{mobile:手机号}
-  iamAuthSendVerifyCode(payload: {mobile: any}) {return http.post<Res<string>>('/iam/auth/send-verifyCode', payload)},
+  export function iamAuthSendVerifyCode(payload: {mobile: any}) {return http.post<Res<string>>('/iam/auth/send-verifyCode', payload)}
   */
   '/iam/auth/send-verifyCode': {Req: {mobile: any}; Res: string}
 
   /* 【登录认证】
   // 登出
-  iamAuthLogout(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth/logout', payload)},
+  export function iamAuthLogout(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/iam/auth/logout', payload)}
   */
   '/iam/auth/logout': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【登录认证】
   // 登录
-  iamAuthLogin(payload: AuthLoginDTO) {return http.post<Res<string>>('/iam/auth/login', payload)},
+  export function iamAuthLogin(payload: AuthLoginDTO) {return http.post<Res<string>>('/iam/auth/login', payload)}
   */
   '/iam/auth/login': {Req: AuthLoginDTO; Res: string}
 
   /* 【登录认证】
   // 获取用户信息
-  iamAuthInfo() {return http.post<Res<AuthUserModelVO>>('/iam/auth/info')},
+  export function iamAuthInfo() {return http.post<Res<AuthUserModelVO>>('/iam/auth/info')}
   */
   '/iam/auth/info': {Res: AuthUserModelVO}
 
   /* 【登录认证】
   // 获取图片验证码
-  iamAuthGetImgCode() {return http.post<Res<Record<string, string>>>('/iam/auth/get-imgCode')},
+  export function iamAuthGetImgCode() {return http.post<Res<Record<string, string>>>('/iam/auth/get-imgCode')}
   */
   '/iam/auth/get-imgCode': {Res: Record<string, string>}
 
   /* 【登录认证】
   // 校验验证码 | object:{mobile:手机号,verifyCode:验证码}
-  iamAuthCheckVerifyCode(payload: {mobile: any; verifyCode: any}) {return http.post<Res<boolean>>('/iam/auth/check-verifyCode', payload)},
+  export function iamAuthCheckVerifyCode(payload: {mobile: any; verifyCode: any}) {return http.post<Res<boolean>>('/iam/auth/check-verifyCode', payload)}
   */
   '/iam/auth/check-verifyCode': {Req: {mobile: any; verifyCode: any}; Res: boolean}
 
   /* 【登录认证】
   // 校验图片验证码 | object:{imgId:图片验证码Id,imgCode:图片验证码}
-  iamAuthCheckImgCode(payload: {imgId: any; imgCode: any}) {return http.post<Res<boolean>>('/iam/auth/check-imgCode', payload)},
+  export function iamAuthCheckImgCode(payload: {imgId: any; imgCode: any}) {return http.post<Res<boolean>>('/iam/auth/check-imgCode', payload)}
   */
   '/iam/auth/check-imgCode': {Req: {imgId: any; imgCode: any}; Res: boolean}
 
   /* 【登录认证】
   // 绑定企业微信 | object:{code:企业微信code}
-  iamAuthBindWework(payload: {code: any}) {return http.post<Res<Record<string, any>>>('/iam/auth/bind-wework', payload)},
+  export function iamAuthBindWework(payload: {code: any}) {return http.post<Res<Record<string, any>>>('/iam/auth/bind-wework', payload)}
   */
   '/iam/auth/bind-wework': {Req: {code: any}; Res: Record<string, any>}
 
   /* 【人员管理】
   // 新增/更新人员
-  iamAuthUserUpsert(payload: AuthUserUpsertDTO) {return http.post<Res<string>>('/iam/auth-user/upsert', payload)},
+  export function iamAuthUserUpsert(payload: AuthUserUpsertDTO) {return http.post<Res<string>>('/iam/auth-user/upsert', payload)}
   */
   '/iam/auth-user/upsert': {Req: AuthUserUpsertDTO; Res: string}
 
   /* 【人员管理】
   // 修改角色
-  iamAuthUserUpdateRole(payload: AuthUserUpdateRoleDTO) {return http.post<Res<Record<string, any>>>('/iam/auth-user/update-role', payload)},
+  export function iamAuthUserUpdateRole(payload: AuthUserUpdateRoleDTO) {return http.post<Res<Record<string, any>>>('/iam/auth-user/update-role', payload)}
   */
   '/iam/auth-user/update-role': {Req: AuthUserUpdateRoleDTO; Res: Record<string, any>}
 
   /* 【人员管理】
   // 修改部门
-  iamAuthUserUpdateOrg(payload: AuthUserUpdateOrgDTO) {return http.post<Res<Record<string, any>>>('/iam/auth-user/update-org', payload)},
+  export function iamAuthUserUpdateOrg(payload: AuthUserUpdateOrgDTO) {return http.post<Res<Record<string, any>>>('/iam/auth-user/update-org', payload)}
   */
   '/iam/auth-user/update-org': {Req: AuthUserUpdateOrgDTO; Res: Record<string, any>}
 
   /* 【人员管理】
   // 重置密码 | object:{userId:人员ID}
-  iamAuthUserResetPassword(payload: {userId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/reset-password', payload)},
+  export function iamAuthUserResetPassword(payload: {userId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/reset-password', payload)}
   */
   '/iam/auth-user/reset-password': {Req: {userId: any}; Res: Record<string, any>}
 
   /* 【人员管理】
   // 人员列表
-  iamAuthUserList(payload: AuthUserListDTO) {return http.post<Res<AuthUserVO[]>>('/iam/auth-user/list', payload)},
+  export function iamAuthUserList(payload: AuthUserListDTO) {return http.post<Res<AuthUserVO[]>>('/iam/auth-user/list', payload)}
   */
   '/iam/auth-user/list': {Req: AuthUserListDTO; Res: AuthUserVO[]}
 
   /* 【人员管理】
   // 登录日志列表
-  iamAuthUserListLoginLog(payload: AuthUserLoginLogListDTO) {return http.post<Res<AuthUserLoginLogVO[]>>('/iam/auth-user/list-login-log', payload)},
+  export function iamAuthUserListLoginLog(payload: AuthUserLoginLogListDTO) {return http.post<Res<AuthUserLoginLogVO[]>>('/iam/auth-user/list-login-log', payload)}
   */
   '/iam/auth-user/list-login-log': {Req: AuthUserLoginLogListDTO; Res: AuthUserLoginLogVO[]}
 
   /* 【人员管理】
   // 是否当前手机号已存在 | object:{mobile:手机号}
-  iamAuthUserIsMobileExist(payload: {mobile: any}) {return http.post<Res<boolean>>('/iam/auth-user/is-mobile-exist', payload)},
+  export function iamAuthUserIsMobileExist(payload: {mobile: any}) {return http.post<Res<boolean>>('/iam/auth-user/is-mobile-exist', payload)}
   */
   '/iam/auth-user/is-mobile-exist': {Req: {mobile: any}; Res: boolean}
 
   /* 【人员管理】
   // 是否当前登录账号已存在 | object:{loginAccount:登录账号}
-  iamAuthUserIsLoginAccountExist(payload: {loginAccount: any}) {return http.post<Res<boolean>>('/iam/auth-user/is-loginAccount-exist', payload)},
+  export function iamAuthUserIsLoginAccountExist(payload: {loginAccount: any}) {return http.post<Res<boolean>>('/iam/auth-user/is-loginAccount-exist', payload)}
   */
   '/iam/auth-user/is-loginAccount-exist': {Req: {loginAccount: any}; Res: boolean}
 
   /* 【人员管理】
   // 是否当前邮箱已存在 | object:{email:邮箱}
-  iamAuthUserIsEmailExist(payload: {email: any}) {return http.post<Res<boolean>>('/iam/auth-user/is-email-exist', payload)},
+  export function iamAuthUserIsEmailExist(payload: {email: any}) {return http.post<Res<boolean>>('/iam/auth-user/is-email-exist', payload)}
   */
   '/iam/auth-user/is-email-exist': {Req: {email: any}; Res: boolean}
 
   /* 【人员管理】
   // 人员详情 | object:{userId:人员ID}
-  iamAuthUserGet(payload: {userId: any}) {return http.post<Res<AuthUserVO>>('/iam/auth-user/get', payload)},
+  export function iamAuthUserGet(payload: {userId: any}) {return http.post<Res<AuthUserVO>>('/iam/auth-user/get', payload)}
   */
   '/iam/auth-user/get': {Req: {userId: any}; Res: AuthUserVO}
 
   /* 【人员管理】
   // 启用/禁用人员 | object:{userId:人员ID,enable:bool}
-  iamAuthUserEnable(payload: {userId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/enable', payload)},
+  export function iamAuthUserEnable(payload: {userId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/enable', payload)}
   */
   '/iam/auth-user/enable': {Req: {userId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【角色管理】
   // 新增/修改角色
-  iamAuthRoleUpsert(payload: AuthRoleUpsertDTO) {return http.post<Res<string>>('/iam/auth-role/upsert', payload)},
+  export function iamAuthRoleUpsert(payload: AuthRoleUpsertDTO) {return http.post<Res<string>>('/iam/auth-role/upsert', payload)}
   */
   '/iam/auth-role/upsert': {Req: AuthRoleUpsertDTO; Res: string}
 
   /* 【角色管理】
   // 角色列表
-  iamAuthRoleList(payload: AuthRoleListDTO) {return http.post<Res<AuthRoleVO[]>>('/iam/auth-role/list', payload)},
+  export function iamAuthRoleList(payload: AuthRoleListDTO) {return http.post<Res<AuthRoleVO[]>>('/iam/auth-role/list', payload)}
   */
   '/iam/auth-role/list': {Req: AuthRoleListDTO; Res: AuthRoleVO[]}
 
   /* 【角色管理】
   // 角色详情 | object:{roleId:角色ID}
-  iamAuthRoleGet(payload: {roleId: any}) {return http.post<Res<AuthRoleVO>>('/iam/auth-role/get', payload)},
+  export function iamAuthRoleGet(payload: {roleId: any}) {return http.post<Res<AuthRoleVO>>('/iam/auth-role/get', payload)}
   */
   '/iam/auth-role/get': {Req: {roleId: any}; Res: AuthRoleVO}
 
   /* 【角色管理】
   // 启用/禁用角色 | object:{roleId:角色ID,enable:bool,enableNotes:原因}
-  iamAuthRoleEnable(payload: {roleId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-role/enable', payload)},
+  export function iamAuthRoleEnable(payload: {roleId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-role/enable', payload)}
   */
   '/iam/auth-role/enable': {
     Req: {roleId: any; enable: boolean; enableNotes: any}
@@ -262,67 +262,67 @@ interface ApiType {
 
   /* 【角色管理】
   // 删除角色 | object:{roleId:角色ID}
-  iamAuthRoleDelete(payload: {roleId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-role/delete', payload)},
+  export function iamAuthRoleDelete(payload: {roleId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-role/delete', payload)}
   */
   '/iam/auth-role/delete': {Req: {roleId: any}; Res: Record<string, any>}
 
   /* 【权限管理】
   // 新增/更新权限
-  iamAuthPermissionUpsert(payload: AuthPermissionUpsertDTO) {return http.post<Res<string>>('/iam/auth-permission/upsert', payload)},
+  export function iamAuthPermissionUpsert(payload: AuthPermissionUpsertDTO) {return http.post<Res<string>>('/iam/auth-permission/upsert', payload)}
   */
   '/iam/auth-permission/upsert': {Req: AuthPermissionUpsertDTO; Res: string}
 
   /* 【权限管理】
   // 权限列表
-  iamAuthPermissionList(payload: AuthPermissionListDTO) {return http.post<Res<AuthPermissionVO[]>>('/iam/auth-permission/list', payload)},
+  export function iamAuthPermissionList(payload: AuthPermissionListDTO) {return http.post<Res<AuthPermissionVO[]>>('/iam/auth-permission/list', payload)}
   */
   '/iam/auth-permission/list': {Req: AuthPermissionListDTO; Res: AuthPermissionVO[]}
 
   /* 【权限管理】
   // 权限详情 | object:{permId:权限ID}
-  iamAuthPermissionGet(payload: {permId: any}) {return http.post<Res<AuthPermissionVO>>('/iam/auth-permission/get', payload)},
+  export function iamAuthPermissionGet(payload: {permId: any}) {return http.post<Res<AuthPermissionVO>>('/iam/auth-permission/get', payload)}
   */
   '/iam/auth-permission/get': {Req: {permId: any}; Res: AuthPermissionVO}
 
   /* 【权限管理】
   // 启用/禁用权限 | object:{permId:权限ID,enable:bool}
-  iamAuthPermissionEnable(payload: {permId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/iam/auth-permission/enable', payload)},
+  export function iamAuthPermissionEnable(payload: {permId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/iam/auth-permission/enable', payload)}
   */
   '/iam/auth-permission/enable': {Req: {permId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【权限管理】
   // 删除权限
-  iamAuthPermissionDelete(payload: Record<string, any>) {return http.post<Res<string>>('/iam/auth-permission/delete', payload)},
+  export function iamAuthPermissionDelete(payload: Record<string, any>) {return http.post<Res<string>>('/iam/auth-permission/delete', payload)}
   */
   '/iam/auth-permission/delete': {Req: Record<string, any>; Res: string}
 
   /* 【组织管理】
   // 新增/修改组织
-  iamAuthOrgUpsert(payload: AuthOrgUpsertDTO) {return http.post<Res<string>>('/iam/auth-org/upsert', payload)},
+  export function iamAuthOrgUpsert(payload: AuthOrgUpsertDTO) {return http.post<Res<string>>('/iam/auth-org/upsert', payload)}
   */
   '/iam/auth-org/upsert': {Req: AuthOrgUpsertDTO; Res: string}
 
   /* 【组织管理】
   // 当前用户的组织树
-  iamAuthOrgTree(payload: Record<string, any>) {return http.post<Res<AuthOrgVO[]>>('/iam/auth-org/tree', payload)},
+  export function iamAuthOrgTree(payload: Record<string, any>) {return http.post<Res<AuthOrgVO[]>>('/iam/auth-org/tree', payload)}
   */
   '/iam/auth-org/tree': {Req: Record<string, any>; Res: AuthOrgVO[]}
 
   /* 【组织管理】
   // 组织列表
-  iamAuthOrgList(payload: AuthOrgListDTO) {return http.post<Res<AuthOrgVO[]>>('/iam/auth-org/list', payload)},
+  export function iamAuthOrgList(payload: AuthOrgListDTO) {return http.post<Res<AuthOrgVO[]>>('/iam/auth-org/list', payload)}
   */
   '/iam/auth-org/list': {Req: AuthOrgListDTO; Res: AuthOrgVO[]}
 
   /* 【组织管理】
   // 组织详情 | object:{orgId:组织ID}
-  iamAuthOrgGet(payload: {orgId: any}) {return http.post<Res<AuthOrgVO>>('/iam/auth-org/get', payload)},
+  export function iamAuthOrgGet(payload: {orgId: any}) {return http.post<Res<AuthOrgVO>>('/iam/auth-org/get', payload)}
   */
   '/iam/auth-org/get': {Req: {orgId: any}; Res: AuthOrgVO}
 
   /* 【组织管理】
   // 启用/禁用组织 | object:{orgId:组织ID,enable:bool,enableNotes:原因}
-  iamAuthOrgEnable(payload: {orgId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-org/enable', payload)},
+  export function iamAuthOrgEnable(payload: {orgId: any; enable: boolean; enableNotes: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-org/enable', payload)}
   */
   '/iam/auth-org/enable': {
     Req: {orgId: any; enable: boolean; enableNotes: any}
@@ -331,313 +331,313 @@ interface ApiType {
 
   /* 【组织管理】
   // 删除组织 | object:{orgId:组织ID}
-  iamAuthOrgDelete(payload: {orgId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-org/delete', payload)},
+  export function iamAuthOrgDelete(payload: {orgId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-org/delete', payload)}
   */
   '/iam/auth-org/delete': {Req: {orgId: any}; Res: Record<string, any>}
 
   /* 【字典管理】
   // 新增/修改字典
-  amsSysDicUpsert(payload: SysDicUpsertDTO) {return http.post<Res<string>>('/ams/sys-dic/upsert', payload)},
+  export function amsSysDicUpsert(payload: SysDicUpsertDTO) {return http.post<Res<string>>('/ams/sys-dic/upsert', payload)}
   */
   '/ams/sys-dic/upsert': {Req: SysDicUpsertDTO; Res: string}
 
   /* 【字典管理】
   // 新增/修改字典(批量)
-  amsSysDicUpsertBatch(payload: SysDicUpsertDTO) {return http.post<Res<string>>('/ams/sys-dic/upsert-batch', payload)},
+  export function amsSysDicUpsertBatch(payload: SysDicUpsertDTO) {return http.post<Res<string>>('/ams/sys-dic/upsert-batch', payload)}
   */
   '/ams/sys-dic/upsert-batch': {Req: SysDicUpsertDTO; Res: string}
 
   /* 【字典管理】
   // 字典列表
-  amsSysDicList(payload: SysDicListDTO) {return http.post<Res<SysDicVO[]>>('/ams/sys-dic/list', payload)},
+  export function amsSysDicList(payload: SysDicListDTO) {return http.post<Res<SysDicVO[]>>('/ams/sys-dic/list', payload)}
   */
   '/ams/sys-dic/list': {Req: SysDicListDTO; Res: SysDicVO[]}
 
   /* 【字典管理】
   // 字典详情 | object:{dicId:字典ID}
-  amsSysDicGet(payload: {dicId: any}) {return http.post<Res<SysDicVO>>('/ams/sys-dic/get', payload)},
+  export function amsSysDicGet(payload: {dicId: any}) {return http.post<Res<SysDicVO>>('/ams/sys-dic/get', payload)}
   */
   '/ams/sys-dic/get': {Req: {dicId: any}; Res: SysDicVO}
 
   /* 【字典管理】
   // 启用/禁用字典 | object:{dicId:字典ID,enable:bool}
-  amsSysDicEnable(payload: {dicId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/sys-dic/enable', payload)},
+  export function amsSysDicEnable(payload: {dicId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/sys-dic/enable', payload)}
   */
   '/ams/sys-dic/enable': {Req: {dicId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【字典管理】
   // 删除字典 | object:{dicId:字典ID}
-  amsSysDicDelete(payload: {dicId: any}) {return http.post<Res<Record<string, any>>>('/ams/sys-dic/delete', payload)},
+  export function amsSysDicDelete(payload: {dicId: any}) {return http.post<Res<Record<string, any>>>('/ams/sys-dic/delete', payload)}
   */
   '/ams/sys-dic/delete': {Req: {dicId: any}; Res: Record<string, any>}
 
   /* 【通用相关】
   // 中文转拼音 | object:{key:中文}
-  amsCommonFuncZhToPinyin(payload: {key: any}) {return http.post<Res<string>>('/ams/common/func/zh-to-pinyin', payload)},
+  export function amsCommonFuncZhToPinyin(payload: {key: any}) {return http.post<Res<string>>('/ams/common/func/zh-to-pinyin', payload)}
   */
   '/ams/common/func/zh-to-pinyin': {Req: {key: any}; Res: string}
 
   /* 【通用相关】
   // 身份证判断男女 | object:{certNo:身份证}
-  amsCommonFuncCertNoToGender(payload: {certNo: any}) {return http.post<Res<string>>('/ams/common/func/certNo-to-gender', payload)},
+  export function amsCommonFuncCertNoToGender(payload: {certNo: any}) {return http.post<Res<string>>('/ams/common/func/certNo-to-gender', payload)}
   */
   '/ams/common/func/certNo-to-gender': {Req: {certNo: any}; Res: string}
 
   /* 【通用相关】
   // 文件上传(type,file)
-  amsCommonFileUpload() {return http.post<Res<FileModel>>('/ams/common/file/upload')},
+  export function amsCommonFileUpload() {return http.post<Res<FileModel>>('/ams/common/file/upload')}
   */
   '/ams/common/file/upload': {Res: FileModel}
 
   /* 【通用相关】
   // 文件上传(type,file,filename)
-  amsCommonFileUploadBase64() {return http.post<Res<FileModel>>('/ams/common/file/upload-base64')},
+  export function amsCommonFileUploadBase64() {return http.post<Res<FileModel>>('/ams/common/file/upload-base64')}
   */
   '/ams/common/file/upload-base64': {Res: FileModel}
 
   /* 【通用相关】
   // 文件ID转文件Model,入参[id1,id2]
-  amsCommonFileIdToPath() {return http.post<Res<FileModel[]>>('/ams/common/file/id-to-path')},
+  export function amsCommonFileIdToPath() {return http.post<Res<FileModel[]>>('/ams/common/file/id-to-path')}
   */
   '/ams/common/file/id-to-path': {Res: FileModel[]}
 
   /* 【通用相关】
   // 码表元信息
-  amsCommonDicMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/common/dic/meta', payload)},
+  export function amsCommonDicMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/common/dic/meta', payload)}
   */
   '/ams/common/dic/meta': {Req: Record<string, any>; Res: PairModel[]}
 
   /* 【通用相关】
   // 树形码表 | object:{dicType:字典类型}
-  amsCommonDicListTree(payload: {dicType: any}) {return http.post<Res<SysDicVO[]>>('/ams/common/dic/list-tree', payload)},
+  export function amsCommonDicListTree(payload: {dicType: any}) {return http.post<Res<SysDicVO[]>>('/ams/common/dic/list-tree', payload)}
   */
   '/ams/common/dic/list-tree': {Req: {dicType: any}; Res: SysDicVO[]}
 
   /* 【通用相关】
   // 常规码表
-  amsCommonDicListAll(payload: Record<string, any>) {return http.post<Res<Record<string, SysDicVO[]>>>('/ams/common/dic/list-all', payload)},
+  export function amsCommonDicListAll(payload: Record<string, any>) {return http.post<Res<Record<string, SysDicVO[]>>>('/ams/common/dic/list-all', payload)}
   */
   '/ams/common/dic/list-all': {Req: Record<string, any>; Res: Record<string, SysDicVO[]>}
 
   /* 【通用相关】
   // 省_市_区_商圈 | object:{pid:上级ID}
-  amsCommonAreaList(payload: {pid: any}) {return http.post<Res<PairModel[]>>('/ams/common/area/list', payload)},
+  export function amsCommonAreaList(payload: {pid: any}) {return http.post<Res<PairModel[]>>('/ams/common/area/list', payload)}
   */
   '/ams/common/area/list': {Req: {pid: any}; Res: PairModel[]}
 
   /* 【通用相关】
   // 根据城市查询区和街道(树) | object:{cityCode:城市CODE}
-  amsCommonAreaCityInfo(payload: {cityCode: any}) {return http.post<Res<Record<string, TreeModel[]>>>('/ams/common/area/city-info', payload)},
+  export function amsCommonAreaCityInfo(payload: {cityCode: any}) {return http.post<Res<Record<string, TreeModel[]>>>('/ams/common/area/city-info', payload)}
   */
   '/ams/common/area/city-info': {Req: {cityCode: any}; Res: Record<string, TreeModel[]>}
 
   /* 【资产管理-商业管理】
   // 更新商铺
-  amsAssetShopUpdate(payload: AssetShopUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/update', payload)},
+  export function amsAssetShopUpdate(payload: AssetShopUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/update', payload)}
   */
   '/ams/asset-shop/update': {Req: AssetShopUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-商业管理】
   // 拆分商铺
-  amsAssetShopSplit(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-shop/split', payload)},
+  export function amsAssetShopSplit(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-shop/split', payload)}
   */
   '/ams/asset-shop/split': {Req: Record<string, any>; Res: string}
 
   /* 【资产管理-商业管理】
   // 商铺列表
-  amsAssetShopList(payload: AssetShopListDTO) {return http.post<Res<AssetShopVO[]>>('/ams/asset-shop/list', payload)},
+  export function amsAssetShopList(payload: AssetShopListDTO) {return http.post<Res<AssetShopVO[]>>('/ams/asset-shop/list', payload)}
   */
   '/ams/asset-shop/list': {Req: AssetShopListDTO; Res: AssetShopVO[]}
 
   /* 【资产管理-商业管理】
   // 新增商铺
-  amsAssetShopInsert(payload: AssetShopUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/insert', payload)},
+  export function amsAssetShopInsert(payload: AssetShopUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/insert', payload)}
   */
   '/ams/asset-shop/insert': {Req: AssetShopUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-商业管理】
   // 商铺详情
-  amsAssetShopGet(payload: Record<string, any>) {return http.post<Res<AssetShopVO>>('/ams/asset-shop/get', payload)},
+  export function amsAssetShopGet(payload: Record<string, any>) {return http.post<Res<AssetShopVO>>('/ams/asset-shop/get', payload)}
   */
   '/ams/asset-shop/get': {Req: Record<string, any>; Res: AssetShopVO}
 
   /* 【资产管理-商业管理】
   // 启用/禁用商业 | object:{shopId:住宅编码,enable:bool}
-  amsAssetShopEnable(payload: {shopId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/enable', payload)},
+  export function amsAssetShopEnable(payload: {shopId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/enable', payload)}
   */
   '/ams/asset-shop/enable': {Req: {shopId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-商业管理】
   // 删除商铺
-  amsAssetShopDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/delete', payload)},
+  export function amsAssetShopDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/delete', payload)}
   */
   '/ams/asset-shop/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-住宅管理】
   // 新增/更新住宅
-  amsAssetRoomUpdate(payload: AssetRoomUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-room/update', payload)},
+  export function amsAssetRoomUpdate(payload: AssetRoomUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-room/update', payload)}
   */
   '/ams/asset-room/update': {Req: AssetRoomUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-住宅管理】
   // 住宅列表
-  amsAssetRoomList(payload: AssetRoomListDTO) {return http.post<Res<AssetRoomVO[]>>('/ams/asset-room/list', payload)},
+  export function amsAssetRoomList(payload: AssetRoomListDTO) {return http.post<Res<AssetRoomVO[]>>('/ams/asset-room/list', payload)}
   */
   '/ams/asset-room/list': {Req: AssetRoomListDTO; Res: AssetRoomVO[]}
 
   /* 【资产管理-住宅管理】
   // 新增/更新住宅
-  amsAssetRoomInsert(payload: AssetRoomUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-room/insert', payload)},
+  export function amsAssetRoomInsert(payload: AssetRoomUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-room/insert', payload)}
   */
   '/ams/asset-room/insert': {Req: AssetRoomUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-住宅管理】
   // 住宅详情
-  amsAssetRoomGet(payload: Record<string, any>) {return http.post<Res<AssetRoomVO>>('/ams/asset-room/get', payload)},
+  export function amsAssetRoomGet(payload: Record<string, any>) {return http.post<Res<AssetRoomVO>>('/ams/asset-room/get', payload)}
   */
   '/ams/asset-room/get': {Req: Record<string, any>; Res: AssetRoomVO}
 
   /* 【资产管理-住宅管理】
   // 启用/禁用住宅 | object:{roomId:住宅编码,enable:bool}
-  amsAssetRoomEnable(payload: {roomId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-room/enable', payload)},
+  export function amsAssetRoomEnable(payload: {roomId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-room/enable', payload)}
   */
   '/ams/asset-room/enable': {Req: {roomId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-住宅管理】
   // 删除住宅
-  amsAssetRoomDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-room/delete', payload)},
+  export function amsAssetRoomDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-room/delete', payload)}
   */
   '/ams/asset-room/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
   // 新增/更新资源
-  amsAssetResourceUpdate(payload: AssetResourceUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/update', payload)},
+  export function amsAssetResourceUpdate(payload: AssetResourceUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/update', payload)}
   */
   '/ams/asset-resource/update': {Req: AssetResourceUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
   // 资源列表
-  amsAssetResourceList(payload: AssetResourceListDTO) {return http.post<Res<AssetResourceVO[]>>('/ams/asset-resource/list', payload)},
+  export function amsAssetResourceList(payload: AssetResourceListDTO) {return http.post<Res<AssetResourceVO[]>>('/ams/asset-resource/list', payload)}
   */
   '/ams/asset-resource/list': {Req: AssetResourceListDTO; Res: AssetResourceVO[]}
 
   /* 【资产管理-资源管理】
   // 新增/更新资源
-  amsAssetResourceInsert(payload: AssetResourceUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/insert', payload)},
+  export function amsAssetResourceInsert(payload: AssetResourceUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/insert', payload)}
   */
   '/ams/asset-resource/insert': {Req: AssetResourceUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
   // 资源详情
-  amsAssetResourceGet(payload: Record<string, any>) {return http.post<Res<AssetResourceVO>>('/ams/asset-resource/get', payload)},
+  export function amsAssetResourceGet(payload: Record<string, any>) {return http.post<Res<AssetResourceVO>>('/ams/asset-resource/get', payload)}
   */
   '/ams/asset-resource/get': {Req: Record<string, any>; Res: AssetResourceVO}
 
   /* 【资产管理-资源管理】
   // 生成资源编码
-  amsAssetResourceGenerateResourceId(payload: AssetResourceIdGenerateDTO) {return http.post<Res<string>>('/ams/asset-resource/generate-resource-id', payload)},
+  export function amsAssetResourceGenerateResourceId(payload: AssetResourceIdGenerateDTO) {return http.post<Res<string>>('/ams/asset-resource/generate-resource-id', payload)}
   */
   '/ams/asset-resource/generate-resource-id': {Req: AssetResourceIdGenerateDTO; Res: string}
 
   /* 【资产管理-资源管理】
   // 启用/禁用资源 | object:{resourceId:资源编码,enable:bool}
-  amsAssetResourceEnable(payload: {resourceId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/enable', payload)},
+  export function amsAssetResourceEnable(payload: {resourceId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/enable', payload)}
   */
   '/ams/asset-resource/enable': {Req: {resourceId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
   // 删除资源
-  amsAssetResourceDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/delete', payload)},
+  export function amsAssetResourceDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/delete', payload)}
   */
   '/ams/asset-resource/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
   // 批量启用/禁用资源
-  amsAssetResourceBatchEnable(payload: AssetResourceBatchEnableDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/batch-enable', payload)},
+  export function amsAssetResourceBatchEnable(payload: AssetResourceBatchEnableDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/batch-enable', payload)}
   */
   '/ams/asset-resource/batch-enable': {Req: AssetResourceBatchEnableDTO; Res: Record<string, any>}
 
   /* 【资产管理-项目管理】
   // 更新项目
-  amsAssetProjectUpdate(payload: AssetProjectUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-project/update', payload)},
+  export function amsAssetProjectUpdate(payload: AssetProjectUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-project/update', payload)}
   */
   '/ams/asset-project/update': {Req: AssetProjectUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-项目管理】
   // 查询所有项目
-  amsAssetProjectSelectAll() {return http.post<Res<Record<string, any>>>('/ams/asset-project/selectAll')},
+  export function amsAssetProjectSelectAll() {return http.post<Res<Record<string, any>>>('/ams/asset-project/selectAll')}
   */
   '/ams/asset-project/selectAll': {Res: Record<string, any>}
 
   /* 【资产管理-项目管理】
   // 项目列表
-  amsAssetProjectList(payload: AssetProjectListDTO) {return http.post<Res<AssetProjectVO[]>>('/ams/asset-project/list', payload)},
+  export function amsAssetProjectList(payload: AssetProjectListDTO) {return http.post<Res<AssetProjectVO[]>>('/ams/asset-project/list', payload)}
   */
   '/ams/asset-project/list': {Req: AssetProjectListDTO; Res: AssetProjectVO[]}
 
   /* 【资产管理-项目管理】
   // 新增项目
-  amsAssetProjectInsert(payload: AssetProjectUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-project/insert', payload)},
+  export function amsAssetProjectInsert(payload: AssetProjectUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-project/insert', payload)}
   */
   '/ams/asset-project/insert': {Req: AssetProjectUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-项目管理】
   // 项目详情
-  amsAssetProjectGet(payload: Record<string, any>) {return http.post<Res<AssetProjectVO>>('/ams/asset-project/get', payload)},
+  export function amsAssetProjectGet(payload: Record<string, any>) {return http.post<Res<AssetProjectVO>>('/ams/asset-project/get', payload)}
   */
   '/ams/asset-project/get': {Req: Record<string, any>; Res: AssetProjectVO}
 
   /* 【资产管理-项目管理】
   // 生成项目编码
-  amsAssetProjectGenerateProjectId() {return http.post<Res<string>>('/ams/asset-project/generate-project-id')},
+  export function amsAssetProjectGenerateProjectId() {return http.post<Res<string>>('/ams/asset-project/generate-project-id')}
   */
   '/ams/asset-project/generate-project-id': {Res: string}
 
   /* 【资产管理-项目管理】
   // 启用/禁用项目 | object:{projectId:项目编码,enable:bool}
-  amsAssetProjectEnable(payload: {projectId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-project/enable', payload)},
+  export function amsAssetProjectEnable(payload: {projectId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-project/enable', payload)}
   */
   '/ams/asset-project/enable': {Req: {projectId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-项目管理】
   // 删除项目
-  amsAssetProjectDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-project/delete', payload)},
+  export function amsAssetProjectDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-project/delete', payload)}
   */
   '/ams/asset-project/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 新增停车场
-  amsAssetParkingUpsert(payload: AssetParkingInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/upsert', payload)},
+  export function amsAssetParkingUpsert(payload: AssetParkingInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/upsert', payload)}
   */
   '/ams/asset-parking/upsert': {Req: AssetParkingInsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 更新停车场
-  amsAssetParkingUpdate(payload: AssetParkingBaseDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/update', payload)},
+  export function amsAssetParkingUpdate(payload: AssetParkingBaseDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/update', payload)}
   */
   '/ams/asset-parking/update': {Req: AssetParkingBaseDTO; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 根据停车场id查询停车场区域 | object:{parkingId:停车场编码}
-  amsAssetParkingSelectParkingRegion(payload: {parkingId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/select-parking-region', payload)},
+  export function amsAssetParkingSelectParkingRegion(payload: {parkingId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/select-parking-region', payload)}
   */
   '/ams/asset-parking/select-parking-region': {Req: {parkingId: any}; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 停车场列表
-  amsAssetParkingList(payload: AssetParkingListDTO) {return http.post<Res<AssetParkingVO[]>>('/ams/asset-parking/list', payload)},
+  export function amsAssetParkingList(payload: AssetParkingListDTO) {return http.post<Res<AssetParkingVO[]>>('/ams/asset-parking/list', payload)}
   */
   '/ams/asset-parking/list': {Req: AssetParkingListDTO; Res: AssetParkingVO[]}
 
   /* 【资产管理-停车场管理】
   // 停车场详情 | object:{parkingId:停车场编码}
-  amsAssetParkingGet(payload: {parkingId: any}) {return http.post<Res<AssetParkingVO>>('/ams/asset-parking/get', payload)},
+  export function amsAssetParkingGet(payload: {parkingId: any}) {return http.post<Res<AssetParkingVO>>('/ams/asset-parking/get', payload)}
   */
   '/ams/asset-parking/get': {Req: {parkingId: any}; Res: AssetParkingVO}
 
   /* 【资产管理-停车场管理】
   // 生成车位区域编码 | object:{"parkingId":"P0001_plt001","regionJson":[{"regionId":"P0001_plt001_pa001","regionName":"负一楼B区"}]}
-  amsAssetParkingGenerateParkingRegionId(payload: {parkingId: any; regionJson: any[]}) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-region-id', payload)},
+  export function amsAssetParkingGenerateParkingRegionId(payload: {parkingId: any; regionJson: any[]}) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-region-id', payload)}
   */
   '/ams/asset-parking/generate-parking-region-id': {
     Req: {parkingId: any; regionJson: any[]}
@@ -646,193 +646,193 @@ interface ApiType {
 
   /* 【资产管理-停车场管理】
   // 生成停车场编码 | object:{projectId:项目编码}
-  amsAssetParkingGenerateParkingId(payload: {projectId: any}) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-id', payload)},
+  export function amsAssetParkingGenerateParkingId(payload: {projectId: any}) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-id', payload)}
   */
   '/ams/asset-parking/generate-parking-id': {Req: {projectId: any}; Res: string}
 
   /* 【资产管理-停车场管理】
   // 启用/禁用停车场 | object:{parkingId:停车场编码,enable:bool}
-  amsAssetParkingEnable(payload: {parkingId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/enable', payload)},
+  export function amsAssetParkingEnable(payload: {parkingId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/enable', payload)}
   */
   '/ams/asset-parking/enable': {Req: {parkingId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 删除停车场 | object:{parkingId:停车场编码}
-  amsAssetParkingDelete(payload: {parkingId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/delete', payload)},
+  export function amsAssetParkingDelete(payload: {parkingId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/delete', payload)}
   */
   '/ams/asset-parking/delete': {Req: {parkingId: any}; Res: Record<string, any>}
 
   /* 【资产管理-停车位管理】
   // 更新停车位
-  amsAssetParkingSpaceUpdate(payload: AssetParkingSpaceBaseDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/update', payload)},
+  export function amsAssetParkingSpaceUpdate(payload: AssetParkingSpaceBaseDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/update', payload)}
   */
   '/ams/asset-parking-space/update': {Req: AssetParkingSpaceBaseDTO; Res: Record<string, any>}
 
   /* 【资产管理-停车位管理】
   // 停车位列表
-  amsAssetParkingSpaceList(payload: AssetParkingSpaceListDTO) {return http.post<Res<AssetParkingSpaceVO[]>>('/ams/asset-parking-space/list', payload)},
+  export function amsAssetParkingSpaceList(payload: AssetParkingSpaceListDTO) {return http.post<Res<AssetParkingSpaceVO[]>>('/ams/asset-parking-space/list', payload)}
   */
   '/ams/asset-parking-space/list': {Req: AssetParkingSpaceListDTO; Res: AssetParkingSpaceVO[]}
 
   /* 【资产管理-停车位管理】
   // 新增停车位
-  amsAssetParkingSpaceInsert(payload: AssetParkingSpaceBaseDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/insert', payload)},
+  export function amsAssetParkingSpaceInsert(payload: AssetParkingSpaceBaseDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/insert', payload)}
   */
   '/ams/asset-parking-space/insert': {Req: AssetParkingSpaceBaseDTO; Res: Record<string, any>}
 
   /* 【资产管理-停车位管理】
   // 停车位详情
-  amsAssetParkingSpaceGet(payload: Record<string, any>) {return http.post<Res<AssetParkingSpaceVO>>('/ams/asset-parking-space/get', payload)},
+  export function amsAssetParkingSpaceGet(payload: Record<string, any>) {return http.post<Res<AssetParkingSpaceVO>>('/ams/asset-parking-space/get', payload)}
   */
   '/ams/asset-parking-space/get': {Req: Record<string, any>; Res: AssetParkingSpaceVO}
 
   /* 【资产管理-停车位管理】
   // 生成停车位编码 | object:{parkingRegionId:车位区域编码}
-  amsAssetParkingSpaceGenerateParkingSpaceId(payload: {parkingRegionId: any}) {return http.post<Res<string>>('/ams/asset-parking-space/generate-parking-space-id', payload)},
+  export function amsAssetParkingSpaceGenerateParkingSpaceId(payload: {parkingRegionId: any}) {return http.post<Res<string>>('/ams/asset-parking-space/generate-parking-space-id', payload)}
   */
   '/ams/asset-parking-space/generate-parking-space-id': {Req: {parkingRegionId: any}; Res: string}
 
   /* 【资产管理-停车位管理】
   // 删除停车位 | object:{parkingSpaceId:停车位编码}
-  amsAssetParkingSpaceDelete(payload: {parkingSpaceId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/delete', payload)},
+  export function amsAssetParkingSpaceDelete(payload: {parkingSpaceId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/delete', payload)}
   */
   '/ams/asset-parking-space/delete': {Req: {parkingSpaceId: any}; Res: Record<string, any>}
 
   /* 【资产管理-楼层管理】
   // 更新楼层
-  amsAssetFloorUpdate(payload: AssetFloorBaseDTO) {return http.post<Res<string>>('/ams/asset-floor/update', payload)},
+  export function amsAssetFloorUpdate(payload: AssetFloorBaseDTO) {return http.post<Res<string>>('/ams/asset-floor/update', payload)}
   */
   '/ams/asset-floor/update': {Req: AssetFloorBaseDTO; Res: string}
 
   /* 【资产管理-楼层管理】
   // 楼层列表
-  amsAssetFloorList(payload: AssetFloorListDTO) {return http.post<Res<AssetFloorVO[]>>('/ams/asset-floor/list', payload)},
+  export function amsAssetFloorList(payload: AssetFloorListDTO) {return http.post<Res<AssetFloorVO[]>>('/ams/asset-floor/list', payload)}
   */
   '/ams/asset-floor/list': {Req: AssetFloorListDTO; Res: AssetFloorVO[]}
 
   /* 【资产管理-楼层管理】
   // 新增楼层
-  amsAssetFloorInsert(payload: AssetFloorBaseDTO) {return http.post<Res<string>>('/ams/asset-floor/insert', payload)},
+  export function amsAssetFloorInsert(payload: AssetFloorBaseDTO) {return http.post<Res<string>>('/ams/asset-floor/insert', payload)}
   */
   '/ams/asset-floor/insert': {Req: AssetFloorBaseDTO; Res: string}
 
   /* 【资产管理-楼层管理】
   // 楼层详情
-  amsAssetFloorGet(payload: Record<string, any>) {return http.post<Res<AssetFloorVO>>('/ams/asset-floor/get', payload)},
+  export function amsAssetFloorGet(payload: Record<string, any>) {return http.post<Res<AssetFloorVO>>('/ams/asset-floor/get', payload)}
   */
   '/ams/asset-floor/get': {Req: Record<string, any>; Res: AssetFloorVO}
 
   /* 【资产管理-楼层管理】
   // 生成楼层编码 | object:{assetId:资产编码(楼栋或围合的编码)}
-  amsAssetFloorGenerateFloorId(payload: {assetId: any}) {return http.post<Res<string>>('/ams/asset-floor/generate-floor-id', payload)},
+  export function amsAssetFloorGenerateFloorId(payload: {assetId: any}) {return http.post<Res<string>>('/ams/asset-floor/generate-floor-id', payload)}
   */
   '/ams/asset-floor/generate-floor-id': {Req: {assetId: any}; Res: string}
 
   /* 【资产管理-楼层管理】
   // 启用/禁用楼层 | object:{floorId:楼层编码,enable:bool}
-  amsAssetFloorEnable(payload: {floorId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)},
+  export function amsAssetFloorEnable(payload: {floorId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)}
   */
   '/ams/asset-floor/enable': {Req: {floorId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-楼层管理】
   // 删除楼层
-  amsAssetFloorDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/delete', payload)},
+  export function amsAssetFloorDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/delete', payload)}
   */
   '/ams/asset-floor/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 更新固定资产
-  amsAssetFixedUpdate(payload: AssetFixedUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/update', payload)},
+  export function amsAssetFixedUpdate(payload: AssetFixedUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/update', payload)}
   */
   '/ams/asset-fixed/update': {Req: AssetFixedUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 固定资产列表
-  amsAssetFixedList(payload: AssetFixedListDTO) {return http.post<Res<AssetFixedVO[]>>('/ams/asset-fixed/list', payload)},
+  export function amsAssetFixedList(payload: AssetFixedListDTO) {return http.post<Res<AssetFixedVO[]>>('/ams/asset-fixed/list', payload)}
   */
   '/ams/asset-fixed/list': {Req: AssetFixedListDTO; Res: AssetFixedVO[]}
 
   /* 【资产管理-固定资产管理】
   // 新增固定资产
-  amsAssetFixedInsert(payload: AssetFixedUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/insert', payload)},
+  export function amsAssetFixedInsert(payload: AssetFixedUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/insert', payload)}
   */
   '/ams/asset-fixed/insert': {Req: AssetFixedUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 固定资产详情
-  amsAssetFixedGet(payload: Record<string, any>) {return http.post<Res<AssetFixedVO>>('/ams/asset-fixed/get', payload)},
+  export function amsAssetFixedGet(payload: Record<string, any>) {return http.post<Res<AssetFixedVO>>('/ams/asset-fixed/get', payload)}
   */
   '/ams/asset-fixed/get': {Req: Record<string, any>; Res: AssetFixedVO}
 
   /* 【资产管理-固定资产管理】
   // 生成固定资产编码
-  amsAssetFixedGenerateFixedId(payload: AssetFixedIdGenerateDTO) {return http.post<Res<string>>('/ams/asset-fixed/generate-fixed-id', payload)},
+  export function amsAssetFixedGenerateFixedId(payload: AssetFixedIdGenerateDTO) {return http.post<Res<string>>('/ams/asset-fixed/generate-fixed-id', payload)}
   */
   '/ams/asset-fixed/generate-fixed-id': {Req: AssetFixedIdGenerateDTO; Res: string}
 
   /* 【资产管理-固定资产管理】
   // 启用/禁用固定资产 | object:{fixedId:固定资产编码,enable:bool}
-  amsAssetFixedEnable(payload: {fixedId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/enable', payload)},
+  export function amsAssetFixedEnable(payload: {fixedId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/enable', payload)}
   */
   '/ams/asset-fixed/enable': {Req: {fixedId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 删除固定资产
-  amsAssetFixedDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/delete', payload)},
+  export function amsAssetFixedDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/delete', payload)}
   */
   '/ams/asset-fixed/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 批量维护质保信息
-  amsAssetFixedBatchWarranty(payload: AssetFixedBatchWarrantyDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-warranty', payload)},
+  export function amsAssetFixedBatchWarranty(payload: AssetFixedBatchWarrantyDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-warranty', payload)}
   */
   '/ams/asset-fixed/batch-warranty': {Req: AssetFixedBatchWarrantyDTO; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 批量更新固定资产
-  amsAssetFixedBatchUpdate(payload: AssetFixedBatchUpdateDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-update', payload)},
+  export function amsAssetFixedBatchUpdate(payload: AssetFixedBatchUpdateDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-update', payload)}
   */
   '/ams/asset-fixed/batch-update': {Req: AssetFixedBatchUpdateDTO; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 批量启用/禁用固定资产
-  amsAssetFixedBatchEnable(payload: AssetFixedBatchEnableDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-enable', payload)},
+  export function amsAssetFixedBatchEnable(payload: AssetFixedBatchEnableDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-enable', payload)}
   */
   '/ams/asset-fixed/batch-enable': {Req: AssetFixedBatchEnableDTO; Res: Record<string, any>}
 
   /* 【资产管理-围合管理】
   // 更新围合
-  amsAssetEnclosureUpdate(payload: AssetEnclosureUpdateDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/update', payload)},
+  export function amsAssetEnclosureUpdate(payload: AssetEnclosureUpdateDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/update', payload)}
   */
   '/ams/asset-enclosure/update': {Req: AssetEnclosureUpdateDTO; Res: Record<string, any>}
 
   /* 【资产管理-围合管理】
   // 围合列表
-  amsAssetEnclosureList(payload: AssetEnclosureListDTO) {return http.post<Res<AssetEnclosureVO[]>>('/ams/asset-enclosure/list', payload)},
+  export function amsAssetEnclosureList(payload: AssetEnclosureListDTO) {return http.post<Res<AssetEnclosureVO[]>>('/ams/asset-enclosure/list', payload)}
   */
   '/ams/asset-enclosure/list': {Req: AssetEnclosureListDTO; Res: AssetEnclosureVO[]}
 
   /* 【资产管理-围合管理】
   // 新增围合
-  amsAssetEnclosureInsert(payload: AssetEnclosureInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/insert', payload)},
+  export function amsAssetEnclosureInsert(payload: AssetEnclosureInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/insert', payload)}
   */
   '/ams/asset-enclosure/insert': {Req: AssetEnclosureInsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-围合管理】
   // 围合详情
-  amsAssetEnclosureGet(payload: Record<string, any>) {return http.post<Res<AssetEnclosureVO>>('/ams/asset-enclosure/get', payload)},
+  export function amsAssetEnclosureGet(payload: Record<string, any>) {return http.post<Res<AssetEnclosureVO>>('/ams/asset-enclosure/get', payload)}
   */
   '/ams/asset-enclosure/get': {Req: Record<string, any>; Res: AssetEnclosureVO}
 
   /* 【资产管理-围合管理】
   // 生成围合编码
-  amsAssetEnclosureGenerateEnclosureId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-enclosure/generate-enclosure-id', payload)},
+  export function amsAssetEnclosureGenerateEnclosureId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-enclosure/generate-enclosure-id', payload)}
   */
   '/ams/asset-enclosure/generate-enclosure-id': {Req: Record<string, any>; Res: string}
 
   /* 【资产管理-围合管理】
   // 启用/禁用项目 | object:{enclosureId:围合编码,enable:bool}
-  amsAssetEnclosureEnable(payload: {enclosureId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/enable', payload)},
+  export function amsAssetEnclosureEnable(payload: {enclosureId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/enable', payload)}
   */
   '/ams/asset-enclosure/enable': {
     Req: {enclosureId: any; enable: boolean}
@@ -841,49 +841,49 @@ interface ApiType {
 
   /* 【资产管理-围合管理】
   // 删除围合
-  amsAssetEnclosureDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/delete', payload)},
+  export function amsAssetEnclosureDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/delete', payload)}
   */
   '/ams/asset-enclosure/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-楼栋管理】
   // 更新楼栋
-  amsAssetBuildingUpdate(payload: AssetBuildingUpdateDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-building/update', payload)},
+  export function amsAssetBuildingUpdate(payload: AssetBuildingUpdateDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-building/update', payload)}
   */
   '/ams/asset-building/update': {Req: AssetBuildingUpdateDTO; Res: Record<string, any>}
 
   /* 【资产管理-楼栋管理】
   // 楼栋列表
-  amsAssetBuildingList(payload: AssetBuildingListDTO) {return http.post<Res<AssetBuildingVO[]>>('/ams/asset-building/list', payload)},
+  export function amsAssetBuildingList(payload: AssetBuildingListDTO) {return http.post<Res<AssetBuildingVO[]>>('/ams/asset-building/list', payload)}
   */
   '/ams/asset-building/list': {Req: AssetBuildingListDTO; Res: AssetBuildingVO[]}
 
   /* 【资产管理-楼栋管理】
   // 新增楼栋
-  amsAssetBuildingInsert(payload: AssetBuildingInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-building/insert', payload)},
+  export function amsAssetBuildingInsert(payload: AssetBuildingInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-building/insert', payload)}
   */
   '/ams/asset-building/insert': {Req: AssetBuildingInsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-楼栋管理】
   // 楼栋详情
-  amsAssetBuildingGet(payload: Record<string, any>) {return http.post<Res<AssetBuildingVO>>('/ams/asset-building/get', payload)},
+  export function amsAssetBuildingGet(payload: Record<string, any>) {return http.post<Res<AssetBuildingVO>>('/ams/asset-building/get', payload)}
   */
   '/ams/asset-building/get': {Req: Record<string, any>; Res: AssetBuildingVO}
 
   /* 【资产管理-楼栋管理】
   // 生成楼栋编码
-  amsAssetBuildingGenerateBuildingId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-building/generate-building-id', payload)},
+  export function amsAssetBuildingGenerateBuildingId(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-building/generate-building-id', payload)}
   */
   '/ams/asset-building/generate-building-id': {Req: Record<string, any>; Res: string}
 
   /* 【资产管理-楼栋管理】
   // 启用/禁用项目 | object:{buildingId:楼栋编码,enable:bool}
-  amsAssetBuildingEnable(payload: {buildingId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-building/enable', payload)},
+  export function amsAssetBuildingEnable(payload: {buildingId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-building/enable', payload)}
   */
   '/ams/asset-building/enable': {Req: {buildingId: any; enable: boolean}; Res: Record<string, any>}
 
   /* 【资产管理-楼栋管理】
   // 删除楼栋
-  amsAssetBuildingDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-building/delete', payload)},
+  export function amsAssetBuildingDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-building/delete', payload)}
   */
   '/ams/asset-building/delete': {Req: Record<string, any>; Res: Record<string, any>}
 }

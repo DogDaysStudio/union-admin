@@ -3,30 +3,34 @@ import {ref, reactive, onMounted} from 'vue'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {useRouter, useRoute} from 'vue-router'
-import {amsAsset} from '@/service/api/amsAsset'
-import {iamCommon} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
+import {
+  amsAssetBuildingGet,
+  amsAssetBuildingUpdate,
+  amsAssetProjectSelectAll,
+} from '@/service/api/amsAsset'
+import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 const router = useRouter()
 const route = useRoute()
 
 // 获取项目名称
-const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
+const projectSelectAll = useRequest(amsAssetProjectSelectAll, {
   throttleInterval: 500,
 })
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 产权单位（公司）
-const companyListTree = useRequest(iamCommon.iamCommonDicListTree, {
+const companyListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
 })
 const companyOptions = reactive<SysDicVO[]>([])
 // 楼栋详情
-const buildingGet = useRequest(amsAsset.amsAssetBuildingGet, {
+const buildingGet = useRequest(amsAssetBuildingGet, {
   throttleInterval: 500,
 })
 // 新增项目
-const buildingUpdate = useRequest(amsAsset.amsAssetBuildingUpdate, {
+const buildingUpdate = useRequest(amsAssetBuildingUpdate, {
   throttleInterval: 500,
 })
 

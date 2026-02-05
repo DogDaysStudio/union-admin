@@ -2,7 +2,12 @@
 import {useForm} from '@/common/hooks'
 import {rules} from '@/common/rules'
 import {defineSchema, defineField} from '@/components'
-import {amsSysDic} from '@/service/api/amsSysDic'
+import {
+  amsSysDicDelete,
+  amsSysDicEnable,
+  amsSysDicList,
+  amsSysDicUpsert,
+} from '@/service/api/amsSysDic'
 import {ElMessageBox, ElMessage} from 'element-plus'
 import {reactive, useTemplateRef, computed, ref} from 'vue'
 import {usePagination, useRequest} from 'vue-request'
@@ -25,10 +30,10 @@ const editFormRef = useTemplateRef('editFormRef')
 const [editForm, resetEditForm] = useForm({} as SysDicUpsertDTO, editFormRef)
 
 const {
-  runAsync: amsSysDicList,
+  runAsync: runAmsSysDicList,
   loading: amsSysDicListLoading,
   data,
-} = usePagination(amsSysDic.amsSysDicList, {
+} = usePagination(amsSysDicList, {
   manual: false,
   defaultParams: [listQuery],
 })
@@ -66,9 +71,9 @@ const editFormSchema = defineSchema({
   ],
 })
 
-const {runAsync: upsertDic, loading: submitLoading} = useRequest(amsSysDic.amsSysDicUpsert)
-const {runAsync: deleteDic, loading: deleteLoading} = useRequest(amsSysDic.amsSysDicDelete)
-const {runAsync: enableDic, loading: enableLoading} = useRequest(amsSysDic.amsSysDicEnable)
+const {runAsync: upsertDic, loading: submitLoading} = useRequest(amsSysDicUpsert)
+const {runAsync: deleteDic, loading: deleteLoading} = useRequest(amsSysDicDelete)
+const {runAsync: enableDic, loading: enableLoading} = useRequest(amsSysDicEnable)
 
 const handleEdit = (row: SysDicVO) => {
   Object.assign(editForm, row)
@@ -82,7 +87,7 @@ const handleEditSubmit = async () => {
 
   ElMessage.success('修改成功')
   editDialogVisible.value = false
-  amsSysDicList(listQuery)
+  runAmsSysDicList(listQuery)
 }
 
 const handleSubmit = async () => {
@@ -94,7 +99,7 @@ const handleSubmit = async () => {
 
   ElMessage.success('新增成功')
   dialogVisible.value = false
-  amsSysDicList(listQuery)
+  runAmsSysDicList(listQuery)
 }
 
 const handleDelete = async (row: SysDicVO) => {
@@ -102,7 +107,7 @@ const handleDelete = async (row: SysDicVO) => {
 
   await deleteDic({dicId: row.dicId})
   ElMessage.success('删除成功')
-  amsSysDicList(listQuery)
+  runAmsSysDicList(listQuery)
 }
 
 const handleEnable = async (row: SysDicVO) => {
@@ -114,7 +119,7 @@ const handleEnable = async (row: SysDicVO) => {
   await enableDic({dicId: row.dicId, enable: !row.enable})
 
   ElMessage.success(row.enable === 1 ? '禁用成功' : '启用成功')
-  amsSysDicList(listQuery)
+  runAmsSysDicList(listQuery)
 }
 
 const handleAdd = () => {

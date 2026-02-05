@@ -3,31 +3,36 @@ import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
-import {amsAsset} from '@/service/api/amsAsset'
-import {iamCommon} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
+import {
+  amsAssetBuildingDelete,
+  amsAssetBuildingEnable,
+  amsAssetEnclosureList,
+  amsAssetProjectSelectAll,
+} from '@/service/api/amsAsset'
+import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 // 项目列表
-const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
+const projectSelectAll = useRequest(amsAssetProjectSelectAll, {
   throttleInterval: 500,
 })
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 产权单位/公司 围合类型
-const companyListTree = useRequest(iamCommon.iamCommonDicListTree, {
+const companyListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
 })
 const companyOptions = reactive<SysDicVO[]>([])
 const enclosureOptions = reactive<SysDicVO[]>([])
 // 列表数据
-const enclosureList = useRequest(amsAsset.amsAssetEnclosureList, {
+const enclosureList = useRequest(amsAssetEnclosureList, {
   throttleInterval: 500,
 })
 // 修改数据状态
-const toggleStatusBuilding = useRequest(amsAsset.amsAssetBuildingEnable, {
+const toggleStatusBuilding = useRequest(amsAssetBuildingEnable, {
   throttleInterval: 500,
 })
 // 删除数据
-const deleteBuilding = useRequest(amsAsset.amsAssetBuildingDelete, {
+const deleteBuilding = useRequest(amsAssetBuildingDelete, {
   throttleInterval: 500,
 })
 

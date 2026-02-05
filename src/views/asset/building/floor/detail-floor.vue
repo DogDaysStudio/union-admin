@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {reactive, onMounted} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {amsAsset} from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
+import {amsAssetFloorGet} from '@/service/api/amsAsset'
 
 const route = useRoute()
 const router = useRouter()
 
-const getFloor = useRequest(amsAsset.amsAssetFloorGet, {
+const getFloor = useRequest(amsAssetFloorGet, {
   throttleInterval: 500,
 })
 

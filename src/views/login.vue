@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import {ref, reactive, onMounted, onUnmounted, useTemplateRef} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {iamAuth} from '@/service/api/iamAuth'
 import {ElMessage} from 'element-plus'
 import {useRequest} from 'vue-request'
 import {useUserStore} from '@/stores/user'
+import {
+  iamAuthGetImgCode,
+  iamAuthInfo,
+  iamAuthLogin,
+  iamAuthSendVerifyCode,
+  iamAuthSsoTicket,
+} from '@/service/api/iamAuth'
 
 const router = useRouter()
 const route = useRoute()
@@ -100,7 +106,7 @@ const imgSrc = ref('')
 // const loading = ref(false)
 const formRef = useTemplateRef('formRef')
 
-const reqImgCode = useRequest(iamAuth.iamAuthGetImgCode, {
+const reqImgCode = useRequest(iamAuthGetImgCode, {
   throttleInterval: 500,
 })
 // 生成图片验证码
@@ -116,10 +122,10 @@ const generateCaptcha = async () => {
 }
 
 const {runAsync, loading} = useRequest(
-  async (payload: Parameters<typeof iamAuth.iamAuthLogin>[0]) => {
-    await iamAuth.iamAuthLogin(payload)
+  async (payload: Parameters<typeof iamAuthLogin>[0]) => {
+    await iamAuthLogin(payload)
 
-    await iamAuth.iamAuthInfo()
+    await iamAuthInfo()
   },
   {
     onError: () => {
@@ -130,7 +136,7 @@ const {runAsync, loading} = useRequest(
 
 // 附带 ticket 跳转至指定页面
 const redirectWithTicket = async (appId: string, redirectUrl: string) => {
-  const {data} = await iamAuth.iamAuthSsoTicket({appId})
+  const {data} = await iamAuthSsoTicket({appId})
   const url = new URL(redirectUrl)
   url.searchParams.set('ticket', data)
   location.href = url.toString()
@@ -181,7 +187,7 @@ const getVerifyCode = async () => {
   }
 
   // 调用发送验证码API
-  await iamAuth.iamAuthSendVerifyCode({mobile: formData.loginAccount})
+  await iamAuthSendVerifyCode({mobile: formData.loginAccount})
   ElMessage.success('验证码发送成功')
 
   // 开始倒计时

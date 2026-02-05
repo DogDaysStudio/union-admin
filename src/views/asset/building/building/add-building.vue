@@ -2,28 +2,28 @@
 import {ref, reactive, onMounted} from 'vue'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
-import {amsAsset} from '@/service/api/amsAsset'
-import {iamCommon} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
+import {amsAssetBuildingInsert, amsAssetProjectSelectAll} from '@/service/api/amsAsset'
+import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 // 获取项目名称
-const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
+const projectSelectAll = useRequest(amsAssetProjectSelectAll, {
   throttleInterval: 500,
 })
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 户型
-const roomListTree = useRequest(iamCommon.iamCommonDicListTree, {
+const roomListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
 })
 const roomOptions = reactive<SysDicVO[]>([])
 // 字典 产权单位（公司）
-const companyListTree = useRequest(iamCommon.iamCommonDicListTree, {
+const companyListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
 })
 const companyOptions = reactive<SysDicVO[]>([])
 // 新增项目
-const addBuilding = useRequest(amsAsset.amsAssetBuildingInsert, {
+const addBuilding = useRequest(amsAssetBuildingInsert, {
   throttleInterval: 500,
 })
 

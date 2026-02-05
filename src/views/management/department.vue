@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import {rules} from '@/common/rules'
 import {defineField, defineSchema} from '@/components'
-import {iamAuth} from '@/service/api/iamAuth'
+import {
+  iamAuthOrgDelete,
+  iamAuthOrgList,
+  iamAuthOrgTree,
+  iamAuthOrgUpsert,
+} from '@/service/api/iamAuth'
 import {ref, reactive, watchEffect, useTemplateRef} from 'vue'
 import {usePagination, useRequest} from 'vue-request'
 
@@ -22,19 +27,19 @@ const {
   total,
   changePageSize,
   changeCurrent,
-} = usePagination(iamAuth.iamAuthOrgList, {
+} = usePagination(iamAuthOrgList, {
   manual: false,
   defaultParams: [searchForm],
 })
 
-const {data: orgTree, runAsync: runOrgTree} = useRequest(iamAuth.iamAuthOrgTree)
+const {data: orgTree, runAsync: runOrgTree} = useRequest(iamAuthOrgTree)
 
-const {runAsync: runUpsertOrg, loading: upsertLoading} = useRequest(iamAuth.iamAuthOrgUpsert)
+const {runAsync: runUpsertOrg, loading: upsertLoading} = useRequest(iamAuthOrgUpsert)
 const {
   runAsync: runDeleteOrg,
   loading: deleteLoading,
   params: deleteParams,
-} = useRequest(iamAuth.iamAuthOrgDelete)
+} = useRequest(iamAuthOrgDelete)
 
 watchEffect(() => {
   console.log('orgList', orgList)

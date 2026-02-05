@@ -37,8 +37,8 @@
 import {computed} from 'vue'
 import {Compass, User, ArrowDown} from '@element-plus/icons-vue'
 import {useModuleStore} from '@/stores/module'
-import {iamAuth} from '@/service/api/iamAuth'
 import {ElMessage} from 'element-plus'
+import {iamAuthLogout} from '@/service/api/iamAuth'
 
 const moduleStore = useModuleStore()
 
@@ -65,7 +65,7 @@ const handleMenuSelect = (key: string) => {
 }
 
 const handleLogout = async () => {
-  await iamAuth.iamAuthLogout({})
+  await iamAuthLogout({})
   ElMessage.success('退出登录成功')
 }
 </script>

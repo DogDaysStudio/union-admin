@@ -4,8 +4,8 @@ import {defineField, defineSchema} from '@/components'
 import {computed} from 'vue'
 import {useRouter} from 'vue-router'
 import {usePagination, useRequest} from 'vue-request'
-import {iamAuthUser} from '@/service/api/imaAuthUser'
-import {iamAuth} from '@/service/api/iamAuth'
+import {iamAuthOrgList, iamAuthRoleList} from '@/service/api/iamAuth'
+import {iamAuthUserList} from '@/service/api/imaAuthUser'
 
 const router = useRouter()
 
@@ -26,18 +26,18 @@ const {
   total,
   changePageSize,
   changeCurrent,
-} = usePagination(iamAuthUser.iamAuthUserList, {
+} = usePagination(iamAuthUserList, {
   manual: false,
   defaultParams: [searchForm],
 })
 
 // 角色列表
-const {data: roleList} = useRequest(iamAuth.iamAuthRoleList, {
+const {data: roleList} = useRequest(iamAuthRoleList, {
   manual: false,
   defaultParams: [{pageable: false} as AuthRoleListDTO],
 })
 // 部门列表
-const {data: orgList} = useRequest(iamAuth.iamAuthOrgList, {
+const {data: orgList} = useRequest(iamAuthOrgList, {
   manual: false,
   defaultParams: [{pageable: false} as AuthOrgListDTO],
 })

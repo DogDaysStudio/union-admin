@@ -3,30 +3,35 @@ import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
-import {amsAsset} from '@/service/api/amsAsset'
-import {iamCommon} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
+import {
+  amsAssetBuildingList,
+  amsAssetFloorDelete,
+  amsAssetFloorEnable,
+  amsAssetFloorList,
+} from '@/service/api/amsAsset'
+import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 // 字典 产权单位（公司）
-const companyListTree = useRequest(iamCommon.iamCommonDicListTree, {
+const companyListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
 })
 const companyOptions = reactive<SysDicVO[]>([])
 // 楼栋下拉列表
-const buildingList = useRequest(amsAsset.amsAssetBuildingList, {
+const buildingList = useRequest(amsAssetBuildingList, {
   throttleInterval: 500,
 })
 const buildingOptions = reactive<AssetBuildingVO[]>([])
 // 列表数据
-const floorList = useRequest(amsAsset.amsAssetFloorList, {
+const floorList = useRequest(amsAssetFloorList, {
   throttleInterval: 500,
 })
 // 修改数据状态
-const toggleStatusFloor = useRequest(amsAsset.amsAssetFloorEnable, {
+const toggleStatusFloor = useRequest(amsAssetFloorEnable, {
   throttleInterval: 500,
 })
 // 删除数据
-const deleteFloor = useRequest(amsAsset.amsAssetFloorDelete, {
+const deleteFloor = useRequest(amsAssetFloorDelete, {
   throttleInterval: 500,
 })
 

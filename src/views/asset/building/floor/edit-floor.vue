@@ -3,35 +3,40 @@ import {ref, reactive, onMounted} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
-import {amsAsset} from '@/service/api/amsAsset'
-import {iamCommon} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
+import {
+  amsAssetBuildingList,
+  amsAssetFloorGet,
+  amsAssetFloorUpdate,
+  amsAssetProjectSelectAll,
+} from '@/service/api/amsAsset'
+import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 const route = useRoute()
 const router = useRouter()
 
 // 获取项目名称
-const projectSelectAll = useRequest(amsAsset.amsAssetProjectSelectAll, {
+const projectSelectAll = useRequest(amsAssetProjectSelectAll, {
   throttleInterval: 500,
 })
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 楼栋下拉列表
-const buildingList = useRequest(amsAsset.amsAssetBuildingList, {
+const buildingList = useRequest(amsAssetBuildingList, {
   throttleInterval: 500,
 })
 const buildingOptions = reactive<AssetBuildingVO[]>([])
 // 字典 产权单位（公司）
-const companyListTree = useRequest(iamCommon.iamCommonDicListTree, {
+const companyListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
 })
 const companyOptions = reactive<SysDicVO[]>([])
 // 新增楼层
-const updateFloor = useRequest(amsAsset.amsAssetFloorUpdate, {
+const updateFloor = useRequest(amsAssetFloorUpdate, {
   throttleInterval: 500,
 })
 // 楼层详情
-const getFloor = useRequest(amsAsset.amsAssetFloorGet, {
+const getFloor = useRequest(amsAssetFloorGet, {
   throttleInterval: 500,
 })
 
