@@ -4,48 +4,53 @@ import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {
-  amsAssetProjectSelectAll,
   amsAssetEnclosureList,
-  amsAssetEnclosureEnable,
-  amsAssetEnclosureDelete,
+  amsAssetProjectSelectAll,
+  amsAssetFloorList,
+  amsAssetFloorEnable,
+  amsAssetFloorDelete,
 } from '@/service/api/amsAsset'
 import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
+// 字典 产权单位（公司）
+const companyListTree = useRequest(iamCommonDicListTree, {
+  throttleInterval: 500,
+})
+const companyOptions = reactive<SysDicVO[]>([])
+// 围合下拉列表
+const enclosureList = useRequest(amsAssetEnclosureList, {
+  throttleInterval: 500,
+})
+const enclosureOptions = reactive<AssetEnclosureVO[]>([])
 // 项目列表
 const projectSelectAll = useRequest(amsAssetProjectSelectAll, {
   throttleInterval: 500,
 })
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 字典 产权单位/公司 围合类型
-const companyListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
-const companyOptions = reactive<SysDicVO[]>([])
-const enclosureOptions = reactive<SysDicVO[]>([])
 // 列表数据
-const enclosureList = useRequest(amsAssetEnclosureList, {
+const floorList = useRequest(amsAssetFloorList, {
   throttleInterval: 500,
 })
 // 修改数据状态
-const enclosureEnable = useRequest(amsAssetEnclosureEnable, {
+const toggleStatusFloor = useRequest(amsAssetFloorEnable, {
   throttleInterval: 500,
 })
 // 删除数据
-const enclosureDelete = useRequest(amsAssetEnclosureDelete, {
+const deleteFloor = useRequest(amsAssetFloorDelete, {
   throttleInterval: 500,
 })
 
 const formState = reactive({
-  pageable: false,
   pageNum: 1,
   pageSize: 10,
-} as AssetEnclosureListDTO)
+  assetType: '2',
+} as AssetFloorListDTO)
 
 const formSchema = defineSchema({
   fields: [
-    defineField.Input({label: '围合名称', prop: 'enclosureName', clearable: true}),
-    defineField.Input({label: '围合编码', prop: 'enclosureId', clearable: true}),
+    defineField.Input({label: '楼层名称', prop: 'floorName', clearable: true}),
+    defineField.Input({label: '楼层编码', prop: 'floorId', clearable: true}),
     defineField.Select({
       label: '所属项目',
       prop: 'projectTypeCode',
@@ -57,14 +62,14 @@ const formSchema = defineSchema({
       clearable: true,
     }),
     defineField.Select({
-      label: '围合类型',
-      prop: 'enclosureTypeCode',
+      label: '所属围合',
+      prop: 'assetId',
       options: enclosureOptions,
-      props: {
-        value: 'dicId',
-        label: 'dicName',
-      },
       clearable: true,
+      props: {
+        value: 'enclosureId',
+        label: 'enclosureName',
+      },
     }),
     defineField.Cascader({
       label: '产权单位',
@@ -112,14 +117,11 @@ const getOptions = async (): Promise<void> => {
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
-  const {data: enclosureList} = await companyListTree.runAsync({
-    dicType: 1023,
-    pageable: false,
-  } as SysDicListDTO)
-  enclosureOptions.push(...Object.values(enclosureList))
+  const {data: enclosure} = await enclosureList.runAsync({pageable: false} as AssetEnclosureListDTO)
+  enclosureOptions.push(...Object.values(enclosure))
 }
 
-const tableData = reactive<AssetEnclosureVO[]>([])
+const tableData = reactive<AssetFloorVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
   const cloneformState = {...formState}
@@ -127,7 +129,7 @@ const getData = async (): Promise<void> => {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await enclosureList.runAsync({...cloneformState})
+  const {total: resTotal, data} = await floorList.runAsync({...cloneformState})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
@@ -145,33 +147,33 @@ const handleCurrentChange = (val: number): void => {
 }
 
 const router = useRouter()
-const addEnclosure = () => router.push('/asset/management/add-enclosure')
-const editEnclosure = (enclosureId: string) =>
-  router.push(`/asset/management/edit-enclosure/${enclosureId}`)
-const detailEnclosure = (enclosureId: string) =>
-  router.push(`/asset/management/detail-enclosure/${enclosureId}`)
+const addFloor = () => router.push('/asset/management/add-enclosure-floor')
+const editFloor = (floorId: string) =>
+  router.push(`/asset/management/edit-enclosure-floor/${floorId}`)
+const detailFloor = (floorId: string) =>
+  router.push(`/asset/management/detail-enclosure-floor/${floorId}`)
 
 // 修改状态
-const toggleStatus = (enclosureId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}围合?`, '确认提示', {
+const toggleStatus = (floorId: string, enable: number): void => {
+  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}楼层?`, '确认提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await enclosureEnable.runAsync({enclosureId, enable: enable ? false : true})
+    await toggleStatusFloor.runAsync({floorId, enable: enable ? 0 : 1})
     ElMessage.success('修改成功')
     getData()
   })
 }
 
 // 删除
-const deleteEnclosure = (enclosureId: string): void => {
-  ElMessageBox.confirm(`是否确定删除围合?`, '确认提示', {
+const deleteData = (floorId: string): void => {
+  ElMessageBox.confirm(`是否确定删除楼层?`, '确认提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await enclosureDelete.runAsync({enclosureId})
+    await deleteFloor.runAsync({floorId})
     ElMessage.success('删除成功')
     getData()
   })
@@ -189,17 +191,18 @@ const deleteEnclosure = (enclosureId: string): void => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addEnclosure">新增围合</el-button>
+          <el-button type="primary" size="default" @click="addFloor">新增楼层</el-button>
           <el-button type="primary" size="default">导入</el-button>
           <el-button type="primary" size="default">导出</el-button>
         </div>
       </div>
     </template>
+
     <el-table v-loading="loading" :data="tableData" border>
       <el-table-column label="序号" type="index" width="60" />
-      <el-table-column label="围合编码" prop="enclosureId" />
-      <el-table-column label="围合名称" prop="enclosureName" />
-      <el-table-column label="围合类型" prop="enclosureTypeName" />
+      <el-table-column label="楼层编码" prop="floorId" />
+      <el-table-column label="楼层名称" prop="floorName" />
+      <el-table-column label="所属围合" prop="assetName" />
       <el-table-column label="所属项目" prop="projectName" />
       <el-table-column label="产权单位" prop="ownershipUnitName" />
       <el-table-column label="状态" prop="enable">
@@ -213,7 +216,7 @@ const deleteEnclosure = (enclosureId: string): void => {
             v-if="row.enable"
             link
             type="danger"
-            @click="toggleStatus(row.enclosureId, row.enable)"
+            @click="toggleStatus(row.floorId, row.enable)"
           >
             停用
           </el-button>
@@ -221,15 +224,13 @@ const deleteEnclosure = (enclosureId: string): void => {
             v-if="!row.enable"
             link
             type="primary"
-            @click="toggleStatus(row.enclosureId, row.enable)"
+            @click="toggleStatus(row.floorId, row.enable)"
           >
             启用
           </el-button>
-          <el-button link type="primary" @click="detailEnclosure(row.enclosureId)">
-            查看详情
-          </el-button>
-          <el-button link type="primary" @click="editEnclosure(row.enclosureId)">编辑</el-button>
-          <el-button link type="danger" @click="deleteEnclosure(row.enclosureId)">删除</el-button>
+          <el-button link type="primary" @click="detailFloor(row.floorId)">查看详情</el-button>
+          <el-button link type="primary" @click="editFloor(row.floorId)">编辑</el-button>
+          <el-button link type="danger" @click="deleteData(row.floorId)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

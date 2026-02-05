@@ -138,6 +138,41 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/asset/management/edit-enclosure/:id': RouteRecordInfo<
+    '/asset/management/edit-enclosure/:id', // name
+    '/asset/management/edit-enclosure/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/detail-enclosure/:id': RouteRecordInfo<
+    '/asset/management/detail-enclosure/:id', // name
+    '/asset/management/detail-enclosure/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/add-enclosure-floor': RouteRecordInfo<
+    '/asset/management/add-enclosure-floor', // name
+    '/asset/management/add-enclosure-floor', // path
+    any,
+    any,
+    never
+  >
+  '/asset/management/edit-enclosure-floor/:id': RouteRecordInfo<
+    '/asset/management/edit-enclosure-floor/:id', // name
+    '/asset/management/edit-enclosure-floor/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/detail-enclosure-floor/:id': RouteRecordInfo<
+    '/asset/management/detail-enclosure-floor/:id', // name
+    '/asset/management/detail-enclosure-floor/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
   '/asset/statistics': RouteRecordInfo<
     '/asset/statistics', // name
     '/asset/statistics', // path

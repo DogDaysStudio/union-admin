@@ -79,3 +79,19 @@ export function amsAssetEnclosureList(payload: AssetEnclosureListDTO) {
 export function amsAssetEnclosureInsert(payload: AssetEnclosureInsertDTO) {
   return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/insert', payload)
 }
+// 更新围合
+export function amsAssetEnclosureUpdate(payload: AssetEnclosureUpdateDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/update', payload)
+}
+// 围合详情
+export function amsAssetEnclosureGet(payload: Record<string, any>) {
+  return http.post<Res<AssetEnclosureVO>>('/ams/asset-enclosure/get', payload)
+}
+// 删除围合
+export function amsAssetEnclosureDelete(payload: Record<string, any>) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/delete', payload)
+}
+// 启用/禁用项目 | object:{enclosureId:围合编码,enable:bool}
+export function amsAssetEnclosureEnable(payload: {enclosureId: any; enable: boolean}) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/enable', payload)
+}

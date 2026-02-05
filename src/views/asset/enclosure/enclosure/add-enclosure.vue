@@ -3,10 +3,10 @@ import {ref, reactive, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
+import {amsAssetProjectSelectAll, amsAssetEnclosureInsert} from '@/service/api/amsAsset'
+import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
-import {amsAssetEnclosureInsert, amsAssetProjectSelectAll} from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 const router = useRouter()
 
@@ -19,7 +19,7 @@ const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 const dicListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
 })
-const roomOptions = reactive<SysDicVO[]>([])
+const shopOptions = reactive<SysDicVO[]>([])
 const companyOptions = reactive<SysDicVO[]>([])
 const enclosureOptions = reactive<SysDicVO[]>([])
 // 新增围合
@@ -33,7 +33,7 @@ const formRef = ref<FormInstance>()
 interface floorDTO {
   aboveground: number | null // 地面层
   underground: number | null // 地下层
-  roomNumber: number | null // 每层商铺数
+  shopNumber: number | null // 每层商铺数
 }
 
 type AssetEnclosureCompleteDTO = AssetEnclosureInsertDTO & floorDTO
@@ -43,10 +43,9 @@ const formData = reactive({} as AssetEnclosureInsertDTO & AssetEnclosureComplete
 
 // 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({
-  floorName: {required: true, message: '请填写楼层名称', trigger: 'blur'},
-  floorHeight: {required: true, message: '请填写层高（m）', trigger: 'blur'},
+  enclosureName: {required: true, message: '请填写围合名称', trigger: 'blur'},
   projectId: {required: true, message: '请选择所属项目', trigger: 'change'},
-  assetId: {required: true, message: '请选择所属楼栋', trigger: 'change'},
+  enclosureTypeCode: {required: true, message: '请选择围合类型', trigger: 'change'},
   ownershipUnitCode: {required: true, message: '请选择产权单位', trigger: 'change'},
 })
 
@@ -56,11 +55,11 @@ onMounted(() => getOptions())
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectSelectAll.runAsync()
   projectOptions.push(...Object.values(project))
-  const {data: roomList} = await dicListTree.runAsync({
+  const {data: shopList} = await dicListTree.runAsync({
     dicType: 1024,
     pageable: false,
   } as SysDicListDTO)
-  roomOptions.push(...Object.values(roomList))
+  shopOptions.push(...Object.values(shopList))
   const {data: companyList} = await dicListTree.runAsync({
     dicType: 1001,
     pageable: false,
@@ -77,9 +76,9 @@ const getOptions = async (): Promise<void> => {
  * 生成楼层商铺数据核心方法
  * @param index 当前楼栋在buildingList中的索引
  */
-const generateFloorAndRoom = () => {
+const generateFloorAndShop = () => {
   const currentBuilding = formData
-  const {aboveground, underground, roomNumber, ownershipUnitCode} = currentBuilding
+  const {aboveground, underground, shopNumber, ownershipUnitCode} = currentBuilding
 
   // 1. 输入值校验：非空、非负整数
   if (
@@ -87,8 +86,8 @@ const generateFloorAndRoom = () => {
     aboveground < 0 ||
     underground === null ||
     underground < 0 ||
-    roomNumber === null ||
-    roomNumber < 1
+    shopNumber === null ||
+    shopNumber < 1
   ) {
     ElMessage.warning('请填写有效的数值：地上层/地下层≥0，每层商铺数≥1')
     return
@@ -99,10 +98,10 @@ const generateFloorAndRoom = () => {
 
   // 3. 生成地上楼层（倒序：如2层→1层，符合示例要求）
   for (let f = aboveground; f >= 1; f--) {
-    const roomChildren = []
+    const shopChildren = []
     // 生成当前楼层的商铺
-    for (let r = 1; r <= roomNumber; r++) {
-      roomChildren.push({
+    for (let r = 1; r <= shopNumber; r++) {
+      shopChildren.push({
         assetType: '2',
         shopNumber: `${f}${r.toString().padStart(2, '0')}`,
         shopHeight: defaultHeight,
@@ -115,17 +114,17 @@ const generateFloorAndRoom = () => {
       assetType: '2',
       floorName: `${f}层`,
       floorHeight: defaultHeight,
-      shopList: roomChildren,
+      shopList: shopChildren,
       ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
     })
   }
 
   // 4. 生成地下楼层（正序：B1层→B2层，符合示例要求）
   for (let f = 1; f <= underground; f++) {
-    const roomChildren = []
+    const shopChildren = []
     // 生成当前地下楼层的商铺
-    for (let r = 1; r <= roomNumber; r++) {
-      roomChildren.push({
+    for (let r = 1; r <= shopNumber; r++) {
+      shopChildren.push({
         assetType: '2',
         shopNumber: `B${f}-${r.toString().padStart(3, '0')}`,
         shopHeight: defaultHeight,
@@ -138,7 +137,7 @@ const generateFloorAndRoom = () => {
       assetType: '2',
       floorName: `B${f}层`,
       floorHeight: defaultHeight,
-      shopList: roomChildren,
+      shopList: shopChildren,
       ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
     })
   }
@@ -148,19 +147,18 @@ const generateFloorAndRoom = () => {
   ElMessage.success('生成成功！')
 }
 
-// 先完善TS接口：补全Floor、Room的产权单位相关字段，保证类型匹配
+// 先完善TS接口：补全Floor、Shop的产权单位相关字段，保证类型匹配
 interface Shop {
   projectId: string
-  roomNumber: string
+  shopNumber: string
   shopHeight: number | null
-  roomLayoutName: string
   ownershipUnitCode: string | any[] // 支持数组（前端绑定）/字符串（提交后端）
   ownershipUnitName: string // 产权单位中文名称
 }
 
 interface Floor {
   floorHeight: number | null
-  shopList: Shop[] // 楼层下的商铺列表，关联Room接口
+  shopList: Shop[] // 楼层下的商铺列表，关联Shop接口
   ownershipUnitCode: string | any[] // 支持数组（前端绑定）/字符串（提交后端）
   ownershipUnitName: string // 产权单位中文名称
   floorName?: string // 兼容楼层名称字段
@@ -187,6 +185,9 @@ const handleSubmit = () => {
         }
       }
       processOwnershipUnit(paramsData)
+      paramsData.enclosureTypeName =
+        findValueByCustomId(paramsData.enclosureTypeCode, 'dicId', 'dicName', enclosureOptions) ||
+        ''
       // 1. 处理楼层数据
       paramsData.floorList?.forEach((floor: Floor) => {
         if (!floor?.floorHeight) Flag = false
@@ -305,8 +306,8 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
             <el-col :span="8">
               <el-form-item label="每层商铺数">
                 <div class="flex w-full">
-                  <el-input-number v-model="formData.roomNumber" placeholder="请填写每层商铺数" />
-                  <el-button type="primary" class="ml-4" @click="generateFloorAndRoom">
+                  <el-input-number v-model="formData.shopNumber" placeholder="请填写每层商铺数" />
+                  <el-button type="primary" class="ml-4" @click="generateFloorAndShop">
                     生成
                   </el-button>
                 </div>
@@ -317,7 +318,7 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
           <el-tree
             ref="treeRef"
             :data="formData.floorList"
-            node-key="roomId"
+            node-key="shopId"
             default-expand-all
             :props="{
               children: 'shopList',
