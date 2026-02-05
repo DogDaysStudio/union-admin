@@ -8,37 +8,37 @@ const managementRoutes: RouteRecordRaw[] = [
     component: MainLayout,
     children: [
       {
-        path: 'personnel',
+        path: '',
         meta: {title: '人员管理'},
         // component: () => import('@/views/management/personnel/personnel.vue'),
         children: [
           {
-            path: 'list',
+            path: '/management/personnel/list',
             meta: {title: '人员管理'},
             component: () => import('@/views/management/personnel/personnel.vue'),
           },
           {
-            path: 'add',
+            path: '/management/personnel/add',
             meta: {title: '添加人员'},
             component: () => import('@/views/management/personnel/add-personnel.vue'),
           },
           {
-            path: 'detail/:id',
+            path: '/management/personnel/detail/:id',
             meta: {title: '人员详情'},
             component: () => import('@/views/management/personnel/detail-personnel.vue'),
           },
           {
-            path: 'import',
+            path: '/management/personnel/import',
             meta: {title: '批量导入'},
             component: () => import('@/views/management/personnel/import-personnel.vue'),
           },
           {
-            path: 'execute',
+            path: '/management/personnel/execute',
             meta: {title: '执行导入'},
             component: () => import('@/views/management/personnel/import-personnel-execute.vue'),
           },
           {
-            path: 'complete',
+            path: '/management/personnel/complete',
             meta: {title: '导入完成'},
             component: () => import('@/views/management/personnel/import-personnel-complete.vue'),
           },
@@ -49,7 +49,11 @@ const managementRoutes: RouteRecordRaw[] = [
         meta: {title: '部门管理'},
         component: () => import('@/views/management/department.vue'),
       },
-      // 权限管理
+      {
+        path: 'role',
+        meta: {title: '角色管理'},
+        component: () => import('@/views/management/role/index.vue'),
+      },
       {
         path: 'permission',
         meta: {title: '权限管理'},

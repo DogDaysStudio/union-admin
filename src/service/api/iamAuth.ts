@@ -78,4 +78,21 @@ export const iamAuth = {
   iamAuthPermissionEnable(payload: {permId: any; enable: boolean}) {
     return http.post<Res<Record<string, any>>>('/iam/auth-permission/enable', payload)
   },
+
+  // 角色列表
+  iamAuthRoleList(payload: AuthRoleListDTO) {
+    return http.post<Res<AuthRoleVO[]>>('/iam/auth-role/list', payload)
+  },
+  // 新增/修改角色
+  iamAuthRoleUpsert(payload: AuthRoleUpsertDTO) {
+    return http.post<Res<string>>('/iam/auth-role/upsert', payload)
+  },
+  // 删除角色 | object:{roleId:角色ID}
+  iamAuthRoleDelete(payload: {roleId: any}) {
+    return http.post<Res<Record<string, any>>>('/iam/auth-role/delete', payload)
+  },
+  // 启用/禁用角色 | object:{roleId:角色ID,enable:bool,enableNotes:原因}
+  iamAuthRoleEnable(payload: {roleId: any; enable: boolean; enableNotes: any}) {
+    return http.post<Res<Record<string, any>>>('/iam/auth-role/enable', payload)
+  },
 }

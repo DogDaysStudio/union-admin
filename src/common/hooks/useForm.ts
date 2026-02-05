@@ -13,7 +13,7 @@ import {reactive, type TemplateRef} from 'vue'
  */
 export const useForm = <T extends Record<string, any>, R extends TemplateRef<any>>(
   initialState: T,
-  formRef: R
+  formRef?: R
 ) => {
   // const originalState = {...initialState}
   const originalState = JSON.parse(JSON.stringify(initialState))

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, useTemplateRef} from 'vue'
+import {reactive, ref, useTemplateRef} from 'vue'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {usePagination, useRequest} from 'vue-request'
 import {iamAuth} from '@/service/api/iamAuth'
@@ -8,12 +8,12 @@ import {defineField, defineSchema} from '@/components'
 import {amsSysDic} from '@/service/api/amsSysDic'
 import {rules} from '@/common/rules'
 
-const searchFormRef = useTemplateRef('searchFormRef')
 // 搜索表单
-const [searchForm] = useForm(
-  {pageable: true, pageNum: 1, pageSize: 10} as AuthPermissionListDTO,
-  searchFormRef
-)
+const searchForm = reactive({
+  pageable: true,
+  pageNum: 1,
+  pageSize: 10,
+} as AuthPermissionListDTO)
 
 const {
   data: permissionList,
@@ -123,9 +123,12 @@ const searchFormSchema = defineSchema({
 <template>
   <!-- 数据筛选区域 -->
   <section-group title="数据筛选">
-    <el-form :model="searchForm" ref="searchFormRef">
-      <schema-form :schema="searchFormSchema" :model="searchForm"></schema-form>
-    </el-form>
+    <schema-form
+      :schema="searchFormSchema"
+      :model="searchForm"
+      @finish="runPermissionList(searchForm)"
+      @reset="runPermissionList(searchForm)"
+    ></schema-form>
   </section-group>
 
   <!-- 数据列表区域 -->

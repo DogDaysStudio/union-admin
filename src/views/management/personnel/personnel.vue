@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {useForm} from '@/common/hooks'
 import {defineField, defineSchema} from '@/components'
 import {ref, reactive} from 'vue'
 import {useRouter} from 'vue-router'
@@ -6,7 +7,7 @@ import {useRouter} from 'vue-router'
 const router = useRouter()
 
 // 搜索表单
-const searchForm = reactive({
+const [searchForm] = useForm({
   keyword: '',
   role: '',
   department: '',
