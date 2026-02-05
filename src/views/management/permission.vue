@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive, ref, useTemplateRef} from 'vue'
+import {reactive, ref, useTemplateRef, watch} from 'vue'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {usePagination, useRequest} from 'vue-request'
 import {useForm} from '@/common/hooks'
@@ -12,6 +12,7 @@ import {
   iamAuthPermissionUpsert,
 } from '@/service/api/iamAuth'
 import {amsSysDicList} from '@/service/api/amsSysDic'
+import {iamAuthPermissionTree} from '@/service/api/iamAuthPermission'
 
 // 搜索表单
 const searchForm = reactive({
@@ -34,6 +35,9 @@ const {
   manual: false,
   defaultParams: [searchForm],
 })
+
+// 权限树
+const permissionTree = useRequest(iamAuthPermissionTree)
 
 const {runAsync: runUpsertPermission, loading: upsertLoading} = useRequest(iamAuthPermissionUpsert)
 const {runAsync: runDeletePermission, loading: deleteLoading} = useRequest(iamAuthPermissionDelete)
@@ -58,6 +62,8 @@ const [editForm, resetEditForm] = useForm(
     // permName: '运营管理平台',
     // permPath: '/oms-opt/project/create',
     // permType: 'MENU',
+    // sysId: 'OMS',
+    // permTypeName: '菜单',
   } as AuthPermissionUpsertDTO,
   editFormRef
 )
@@ -74,6 +80,12 @@ const [editForm, resetEditForm] = useForm(
 const handleAdd = () => {
   dialogVisible.value = true
 }
+
+watch(dialogVisible, visible => {
+  if (visible) {
+    permissionTree.runAsync({pageable: false} as AuthPermissionListDTO)
+  }
+})
 
 // 处理编辑
 const handleEdit = (row: AuthPermissionVO) => {
@@ -141,11 +153,11 @@ const searchFormSchema = defineSchema({
       v-loading="permissionListLoading || deleteLoading || enableLoading"
     >
       <el-table-column type="index" label="序号" width="60" />
-      <el-table-column prop="permCode" label="功能编码" />
+      <el-table-column prop="permCode" label="功能编码" width="150" />
       <el-table-column prop="permName" label="功能名称" width="120" />
       <el-table-column prop="permTypeName" label="功能类型" />
       <el-table-column prop="permLevel" label="功能级别"></el-table-column>
-      <el-table-column prop="permPname" label="父级名称" />
+      <el-table-column prop="permPname" label="父级名称" width="150" />
       <el-table-column prop="sysId" label="所属平台" />
       <el-table-column prop="clientType" label="所属端" width="120"></el-table-column>
       <el-table-column prop="serviceId" label="所属服务" width="120">
@@ -205,14 +217,7 @@ const searchFormSchema = defineSchema({
       <!-- <el-form-item label="功能级别">
         <el-input v-model="editForm.permLevel" placeholder="请输入" type="number" />
       </el-form-item> -->
-      <el-form-item label="父级名称">
-        <el-select
-          v-model="editForm.permPid"
-          placeholder="请选择"
-          :options="permissionList?.data"
-          :props="{label: 'permName', value: 'permCode'}"
-        />
-      </el-form-item>
+
       <el-form-item label="所属平台" prop="sysId">
         <el-select
           v-model="editForm.sysId"
@@ -221,6 +226,20 @@ const searchFormSchema = defineSchema({
           :props="{label: 'dicName', value: 'dicCode'}"
         ></el-select>
       </el-form-item>
+      <el-form-item label="父级名称">
+        <el-tree-select
+          :disabled="!editForm.sysId"
+          v-model="editForm.permPid"
+          :placeholder="editForm.sysId ? '请选择父级名称' : '请先选择所属平台'"
+          :data="permissionTree.data.value?.data?.[editForm.sysId]"
+          :props="{label: 'permName'}"
+          node-key="permId"
+          check-strictly
+          default-expand-all
+          filterable
+        />
+      </el-form-item>
+
       <!-- <el-form-item label="所属端">
         <el-select v-model="editForm.clientType" placeholder="请选择">
           <el-option label="Web端" value="WEB" />
