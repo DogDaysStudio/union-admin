@@ -5,6 +5,8 @@ import {usePagination, useRequest} from 'vue-request'
 import {iamAuth} from '@/service/api/iamAuth'
 import {useForm} from '@/common/hooks'
 import {defineField, defineSchema} from '@/components'
+import {iamAuthUser} from '@/service/api/imaAuthUser'
+import {rules} from '@/common/rules'
 
 const searchForm = reactive({
   pageable: true,
@@ -27,14 +29,14 @@ const {
   defaultParams: [searchForm],
 })
 
-const {runAsync: runUpsertRole, loading: upsertLoading} = useRequest(iamAuth.iamAuthRoleUpsert)
-const {runAsync: runDeleteRole, loading: deleteLoading} = useRequest(iamAuth.iamAuthRoleDelete)
-const {runAsync: runEnableRole, loading: enableLoading} = useRequest(iamAuth.iamAuthRoleEnable)
+const upsertRole = useRequest(iamAuth.iamAuthRoleUpsert)
+const deleteRole = useRequest(iamAuth.iamAuthRoleDelete)
+const enableRole = useRequest(iamAuth.iamAuthRoleEnable)
 
 // 添加/编辑表单
 const dialogVisible = ref(false)
 
-// 表单引用
+// 编辑表单引用
 const editFormRef = useTemplateRef('editFormRef')
 const [editForm, resetEditForm] = useForm(
   {
@@ -59,7 +61,7 @@ const handleEdit = (row: AuthRoleVO) => {
 // 处理删除
 const handleDelete = async (row: AuthRoleVO) => {
   await ElMessageBox.confirm('是否确定删除角色', '确认提示')
-  await runDeleteRole({roleId: row.roleId})
+  await deleteRole.runAsync({roleId: row.roleId})
   ElMessage.success('删除成功')
   await refreshRoleList()
 }
@@ -68,7 +70,7 @@ const handleDelete = async (row: AuthRoleVO) => {
 const handleStatusChange = async (row: AuthRoleVO) => {
   const nextEnable = !row.enable
   await ElMessageBox.confirm(`是否确定${nextEnable ? '启用' : '禁用'}该角色`, '确认提示')
-  await runEnableRole({roleId: row.roleId, enable: nextEnable, enableNotes: ''})
+  await enableRole.runAsync({roleId: row.roleId, enable: nextEnable, enableNotes: ''})
   ElMessage.success(`${nextEnable ? '启用' : '禁用'}成功`)
   await refreshRoleList()
 }
@@ -78,7 +80,7 @@ const handleSubmit = async () => {
   if (!editFormRef.value) return
   await editFormRef.value.validate()
 
-  await runUpsertRole(editForm)
+  await upsertRole.runAsync(editForm)
   ElMessage.success(`${editForm.roleId ? '编辑' : '新增'}成功`)
   dialogVisible.value = false
   await refreshRoleList()
@@ -89,6 +91,43 @@ const handlePermissionSet = () => {
   // 权限设置先占位，不实现
   ElMessage.info('权限设置功能暂未实现')
 }
+
+// 添加人员弹窗
+const addUserDialogVisible = ref(false)
+const addUserFormRef = useTemplateRef('addUserFormRef')
+const [addUserForm, resetAddUserForm] = useForm({} as AuthRoleUpsertDTO, addUserFormRef)
+
+// 人员列表数据
+const {data: employeeList, runAsync: runEmployeeList} = useRequest(iamAuthUser.iamAuthUserList)
+
+// 处理添加人员
+const handleAddUser = async (row: AuthRoleVO) => {
+  addUserDialogVisible.value = true
+
+  runEmployeeList({pageable: false} as AuthUserListDTO)
+
+  const {data: roleDetail} = await iamAuth.iamAuthRoleGet({roleId: row.roleId})
+  addUserForm.roleId = row.roleId
+  addUserForm.roleName = row.roleName
+  addUserForm.userIdList = roleDetail?.userList.map(item => item.userId)
+}
+
+// 处理添加人员提交
+const handleAddUserSubmit = async () => {
+  if (!addUserFormRef.value) return
+  await addUserFormRef.value.validate()
+
+  await upsertRole.runAsync(addUserForm)
+  // 这里需要调用 API 来添加人员到角色
+  ElMessage.success('添加人员成功')
+  addUserDialogVisible.value = false
+  await refreshRoleList()
+}
+
+// // 清空已选员工
+// const handleClearSelected = () => {
+//   selectedEmployees.value = []
+// }
 
 const searchFormSchema = defineSchema({
   fields: [
@@ -122,11 +161,14 @@ const searchFormSchema = defineSchema({
       <el-button type="primary" @click="handleAdd">添加</el-button>
     </template>
 
-    <el-table :data="roleList?.data" v-loading="roleListLoading || deleteLoading || enableLoading">
+    <el-table
+      :data="roleList?.data"
+      v-loading="roleListLoading || deleteRole.loading.value || enableRole.loading.value"
+    >
       <el-table-column prop="roleName" label="角色名称" width="120" />
       <el-table-column label="人员" width="80">
         <template #default="{row}">
-          {{ row.userIdList?.length || 0 }}
+          {{ row.userIdCount || 0 }}
         </template>
       </el-table-column>
       <el-table-column prop="notes" label="描述" />
@@ -138,7 +180,7 @@ const searchFormSchema = defineSchema({
       </el-table-column>
       <el-table-column label="操作" width="300" fixed="right">
         <template #default="{row}">
-          <el-button link size="small">添加人员</el-button>
+          <el-button link size="small" @click="handleAddUser(row)">添加人员</el-button>
           <el-button link size="small" @click="handlePermissionSet()">设置权限</el-button>
           <el-button link size="small" @click="handleEdit(row)">编辑</el-button>
           <el-button link size="small" type="danger" @click="handleDelete(row)">删除</el-button>
@@ -179,7 +221,39 @@ const searchFormSchema = defineSchema({
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="upsertLoading" @click="handleSubmit">确定</el-button>
+        <el-button type="primary" :loading="upsertRole.loading.value" @click="handleSubmit">
+          确定
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+  <!-- 添加人员弹窗 -->
+  <el-dialog v-model="addUserDialogVisible" title="添加人员" @closed="resetAddUserForm">
+    <el-form ref="addUserFormRef" :model="addUserForm">
+      <el-form-item prop="roleName">
+        <el-input v-model="addUserForm.roleName" placeholder="请输入" disabled />
+      </el-form-item>
+
+      <el-form-item prop="userIdList" :rules="[rules.must]">
+        <el-transfer
+          class="full"
+          v-model="addUserForm.userIdList"
+          :data="employeeList?.data"
+          :titles="['选择员工', '已选员工']"
+          :props="{label: 'certName', key: 'userId'}"
+          filterable
+          :filter-method="(query, item) => item.certName.includes(query)"
+        ></el-transfer>
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="addUserDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleAddUserSubmit" :loading="upsertRole.loading.value">
+          确定
+        </el-button>
       </span>
     </template>
   </el-dialog>

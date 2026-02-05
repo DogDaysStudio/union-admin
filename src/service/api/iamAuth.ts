@@ -95,4 +95,8 @@ export const iamAuth = {
   iamAuthRoleEnable(payload: {roleId: any; enable: boolean; enableNotes: any}) {
     return http.post<Res<Record<string, any>>>('/iam/auth-role/enable', payload)
   },
+  // 角色详情 | object:{roleId:角色ID}
+  iamAuthRoleGet(payload: {roleId: any}) {
+    return http.post<Res<AuthRoleVO>>('/iam/auth-role/get', payload)
+  },
 }

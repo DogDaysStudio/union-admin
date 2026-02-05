@@ -55,7 +55,7 @@ const managementRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/management/role/index.vue'),
       },
       {
-        path: 'permission',
+        path: '/management/permission',
         meta: {title: '权限管理'},
         component: () => import('@/views/management/permission.vue'),
       },

@@ -89,39 +89,53 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/asset/edit-building/:id': RouteRecordInfo<
-    '/asset/edit-building/:id', // name
-    '/asset/edit-building/:id', // path
+  '/asset/management/edit-building/:id': RouteRecordInfo<
+    '/asset/management/edit-building/:id', // name
+    '/asset/management/edit-building/:id', // path
     {id: ParamValue<true>},
     {id: ParamValue<false>},
     never
   >
-  '/asset/detail-building/:id': RouteRecordInfo<
-    '/asset/detail-building/:id', // name
-    '/asset/detail-building/:id', // path
+  '/asset/management/detail-building/:id': RouteRecordInfo<
+    '/asset/management/detail-building/:id', // name
+    '/asset/management/detail-building/:id', // path
     {id: ParamValue<true>},
     {id: ParamValue<false>},
     never
   >
-  '/asset/add-floor': RouteRecordInfo<
-    '/asset/add-floor', // name
-    '/asset/add-floor', // path
+  '/asset/management/add-floor': RouteRecordInfo<
+    '/asset/management/add-floor', // name
+    '/asset/management/add-floor', // path
     any,
     any,
     never
   >
-  '/asset/edit-floor/:id': RouteRecordInfo<
-    '/asset/edit-floor/:id', // name
-    '/asset/edit-floor/:id', // path
+  '/asset/management/edit-floor/:id': RouteRecordInfo<
+    '/asset/management/edit-floor/:id', // name
+    '/asset/management/edit-floor/:id', // path
     {id: ParamValue<true>},
     {id: ParamValue<false>},
     never
   >
-  '/asset/detail-floor/:id': RouteRecordInfo<
-    '/asset/detail-floor/:id', // name
-    '/asset/detail-floor/:id', // path
+  '/asset/management/detail-floor/:id': RouteRecordInfo<
+    '/asset/management/detail-floor/:id', // name
+    '/asset/management/detail-floor/:id', // path
     {id: ParamValue<true>},
     {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/enclosure-floor': RouteRecordInfo<
+    '/asset/management/enclosure-floor', // name
+    '/asset/management/enclosure-floor', // path
+    any,
+    any,
+    never
+  >
+  '/asset/management/add-enclosure': RouteRecordInfo<
+    '/asset/management/add-enclosure', // name
+    '/asset/management/add-enclosure', // path
+    any,
+    any,
     never
   >
   '/asset/statistics': RouteRecordInfo<
