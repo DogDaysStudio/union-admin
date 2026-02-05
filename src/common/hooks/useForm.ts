@@ -17,7 +17,6 @@ export const useForm = <T extends Record<string, any>, R extends TemplateRef<any
 ) => {
   // const originalState = {...initialState}
   const originalState = JSON.parse(JSON.stringify(initialState))
-  console.log('originalState', originalState)
 
   const form = reactive(initialState)
 
@@ -25,20 +24,8 @@ export const useForm = <T extends Record<string, any>, R extends TemplateRef<any
     const emptyState = Object.fromEntries(Object.entries(form).map(([key]) => [key, undefined]))
     const resetedState = Object.assign(form, emptyState, originalState)
 
-    // formRef?.value?.setInitialValues(resetedState)
+    formRef?.value?.setInitialValues(resetedState)
     formRef?.value?.resetFields()
-    // formRef?.value?.resetFields(Object.keys(emptyState))
-    // todo: delete resetedState.children...
-    // formRef?.value?.clearValidate()
-
-    console.log(
-      'resetedState, formModel, emptyState, originalState, Object.keys(emptyState)',
-      resetedState,
-      form,
-      emptyState,
-      originalState,
-      Object.keys(emptyState)
-    )
 
     return resetedState
   }
