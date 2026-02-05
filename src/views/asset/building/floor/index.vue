@@ -89,7 +89,10 @@ onMounted(() => {
 
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: companyList} = await companyListTree.runAsync({dicType: 1001, pageable: false})
+  const {data: companyList} = await companyListTree.runAsync({
+    dicType: 1001,
+    pageable: false,
+  } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
   const {data: building} = await buildingList.runAsync({pageable: false} as AssetBuildingListDTO)
   buildingOptions.push(...Object.values(building))

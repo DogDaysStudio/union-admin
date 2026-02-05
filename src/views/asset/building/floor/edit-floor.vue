@@ -56,7 +56,10 @@ onMounted(() => getOptions())
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectSelectAll.runAsync()
   projectOptions.push(...Object.values(project))
-  const {data: companyList} = await companyListTree.runAsync({dicType: 1001, pageable: false})
+  const {data: companyList} = await companyListTree.runAsync({
+    dicType: 1001,
+    pageable: false,
+  } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
   const {data: building} = await buildingList.runAsync({pageable: false} as AssetBuildingListDTO)
   buildingOptions.push(...Object.values(building))
