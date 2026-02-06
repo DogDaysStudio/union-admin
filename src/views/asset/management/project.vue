@@ -9,16 +9,21 @@ import {
   amsAssetProjectEnable,
   amsAssetProjectList,
 } from '@/service/api/amsAsset'
-import {iamCommonAreaList} from '@/service/api/iamCommon'
+import {iamCommonAreaList, iamCommonDicListTree} from '@/service/api/iamCommon'
 
 // 所属省市区
 const areaList = useRequest(iamCommonAreaList, {
   throttleInterval: 500,
 })
 const cityOptions = reactive<PairModel[]>([])
-// 项目来源
-// 产权单位
-
+// 字典 [筹集方式 产权单位 产权性质 经营模式]
+const dicListTree = useRequest(iamCommonDicListTree, {
+  throttleInterval: 500,
+})
+const collectWayOptions = reactive<SysDicVO[]>([])
+const companyOptions = reactive<SysDicVO[]>([])
+const ownershipPropertyOptions = reactive<SysDicVO[]>([])
+const businessModelOptions = reactive<SysDicVO[]>([])
 // 列表数据
 const projectList = useRequest(amsAssetProjectList, {
   throttleInterval: 500,
@@ -33,18 +38,8 @@ const deleteProject = useRequest(amsAssetProjectDelete, {
 })
 
 const formState = reactive({
-  pageable: false,
   pageNum: 1,
   pageSize: 10,
-  projectName: '', // 项目名称
-  provinceCode: '', // 所在区域-省 code
-  cityCode: '', // 所在区域-城市 code
-  districtCode: '', // 地址-区域 code
-  collectWayCode: '', // 筹集方式编码
-  ownershipUnitCode: '', // 产权单位编码
-  ownershipPropertyCode: '', // 产权性质编码
-  businessModelCode: '', // 经营模式编码
-  enable: null, // 状态
 } as AssetProjectListDTO)
 
 const formSchema = defineSchema({
@@ -80,40 +75,45 @@ const formSchema = defineSchema({
       clearable: true,
     }),
     defineField.Select({
-      label: '项目来源',
+      label: '筹集方式',
       prop: 'collectWayCode',
-      options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
-      ],
+      options: collectWayOptions,
+      props: {
+        value: 'dicId',
+        label: 'dicName',
+      },
       clearable: true,
     }),
-    defineField.Select({
+    defineField.Cascader({
       label: '产权单位',
       prop: 'ownershipUnitCode',
-      options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
-      ],
+      options: companyOptions,
       clearable: true,
+      props: {
+        checkStrictly: true,
+        value: 'dicId',
+        label: 'dicName',
+      },
     }),
     defineField.Select({
       label: '产权性质',
       prop: 'ownershipPropertyCode',
-      options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
-      ],
+      options: ownershipPropertyOptions,
       clearable: true,
+      props: {
+        value: 'dicId',
+        label: 'dicName',
+      },
     }),
     defineField.Select({
-      label: '运营模式',
+      label: '经营模式',
       prop: 'businessModelCode',
-      options: [
-        {value: 'option1', label: 'option1'},
-        {value: 'option2', label: 'option2'},
-      ],
+      options: businessModelOptions,
       clearable: true,
+      props: {
+        value: 'dicId',
+        label: 'dicName',
+      },
     }),
     defineField.Select({
       label: '状态',
@@ -144,6 +144,14 @@ onMounted(() => {
 const getOptions = async (): Promise<void> => {
   const {data: cityOption} = await areaList.runAsync({pid: ''})
   cityOptions.push(...cityOption)
+  const {data: collectWay} = await dicListTree.runAsync({dicType: 1021})
+  collectWayOptions.push(...Object.values(collectWay))
+  const {data: companyList} = await dicListTree.runAsync({dicType: 1001})
+  companyOptions.push(...Object.values(companyList))
+  const {data: ownershipProperty} = await dicListTree.runAsync({dicType: 1022})
+  ownershipPropertyOptions.push(...Object.values(ownershipProperty))
+  const {data: businessModel} = await dicListTree.runAsync({dicType: 1020})
+  businessModelOptions.push(...Object.values(businessModel))
 }
 
 const tableData = reactive<AssetProjectVO[]>([])
@@ -153,6 +161,10 @@ const getData = async (): Promise<void> => {
   cloneformState.cityCode = cloneformState?.provinceCode?.[1]
   cloneformState.districtCode = cloneformState?.provinceCode?.[2]
   cloneformState.provinceCode = cloneformState?.provinceCode?.[0]
+  if (cloneformState.ownershipUnitCode?.length) {
+    cloneformState.ownershipUnitCode =
+      cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
+  }
   const {total: resTotal, data} = await projectList.runAsync({...cloneformState})
   total.value = resTotal
   tableData.length = 0
@@ -171,9 +183,7 @@ const handleCurrentChange = (val: number): void => {
 }
 
 const router = useRouter()
-const addProject = () => {
-  router.push('/asset/management/add')
-}
+const addProject = () => router.push('/asset/management/add')
 
 // 修改状态
 const toggleStatus = (projectId: string, enable: number): void => {
@@ -225,18 +235,12 @@ const deleteData = (projectId: string): void => {
       <el-table-column label="项目编码" prop="projectId" />
       <el-table-column label="项目名称" prop="projectName" />
       <el-table-column label="项目简称" prop="projectShortName" />
-      <el-table-column label="项目来源" prop="collectWayName" />
+      <el-table-column label="筹集方式" prop="collectWayName" />
       <el-table-column label="项目类型" prop="projectTypeName" />
       <el-table-column label="产权单位" prop="ownershipUnitName" />
       <el-table-column label="产权性质" prop="ownershipPropertyName" />
       <el-table-column label="经营模式" prop="businessModelName" />
-      <el-table-column label="所属省市区">
-        <template #default="scope">
-          <div>
-            {{ scope?.row?.provinceName + scope?.row?.cityName + scope?.row?.districtName }}
-          </div>
-        </template>
-      </el-table-column>
+      <el-table-column label="所属省市区" prop="areaName" />
       <el-table-column label="详细地址" prop="address" />
       <el-table-column label="状态" prop="enable">
         <template #default="scope">
@@ -246,20 +250,11 @@ const deleteData = (projectId: string): void => {
       <el-table-column fixed="right" label="操作" min-width="185">
         <template #default="{row}">
           <el-button
-            v-if="row.enable"
             link
-            type="danger"
+            :type="row.enable ? 'danger' : 'primary'"
             @click="toggleStatus(row.projectId, row.enable)"
           >
-            停用
-          </el-button>
-          <el-button
-            v-if="!row.enable"
-            link
-            type="primary"
-            @click="toggleStatus(row.projectId, row.enable)"
-          >
-            启用
+            {{ row.enable ? '停用' : '启用' }}
           </el-button>
           <el-button link type="primary">查看详情</el-button>
           <el-button link type="primary">编辑</el-button>

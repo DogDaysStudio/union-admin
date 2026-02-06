@@ -1564,7 +1564,8 @@ interface AssetProjectUpsertDTO {
   ownershipUnitName: string // 产权单位名称
   collectWayCode: string // 筹集方式编码
   collectWayName: string // 筹集方式名称
-  collectSubject: string // 筹集主体
+  collectSubjectCode: string // 筹集主体编码
+  collectSubjectName: string // 筹集主体名称
   collectDate: string // 筹集日期
   businessModelCode: string // 经营模式编码
   businessModelName: string // 经营模式名称
@@ -1642,7 +1643,8 @@ interface AssetProjectVO {
   ownershipPropertyName: string // 产权性质名称
   ownershipUnitName: string // 产权单位名称
   collectWayName: string // 筹集方式名称
-  collectSubject: string // 筹集主体
+  collectSubjectCode: string // 筹集主体编码
+  collectSubjectName: string // 筹集主体名称
   collectDate: string // 筹集日期
   businessModelName: string // 经营模式名称
   projectTypeName: string // 项目类型名称

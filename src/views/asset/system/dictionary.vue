@@ -20,7 +20,7 @@ const sysDict = [
 const dict = [
   {label: '公司', value: 1001},
   {label: '资产分类', value: 1002},
-  {label: '业态', value: 1003},
+  {label: '项目类型', value: 1003},
   {label: '位置', value: 1004},
   {label: '房间类型', value: 1005},
   {label: '客户来源', value: 1006},
