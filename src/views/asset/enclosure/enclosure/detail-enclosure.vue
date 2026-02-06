@@ -11,7 +11,7 @@ const enclosureGet = useRequest(amsAssetEnclosureGet, {
   throttleInterval: 500,
 })
 
-const formData = reactive({} as AssetEnclosureUpdateDTO)
+const formData = reactive({} as AssetEnclosureVO)
 
 onMounted(() => getOptions())
 
@@ -49,17 +49,17 @@ const handleSubmit = () => () => router.push('/asset/management/enclosure-floor'
           </el-col>
           <el-col :span="8">
             <el-form-item label="所属项目" required>
-              <!-- {{ formData.projectName }} -->
+              {{ formData.projectName }}
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="项目编码" required>
-              <!-- {{ formData.projectId }} -->
+              {{ formData.projectId }}
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="围合类型" required>
-              <!-- {{ formData.enclosureTypeName }} -->
+              {{ formData.enclosureTypeName }}
             </el-form-item>
           </el-col>
           <el-col :span="8">

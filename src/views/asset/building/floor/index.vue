@@ -9,6 +9,7 @@ import {
   amsAssetFloorDelete,
   amsAssetFloorEnable,
   amsAssetFloorList,
+  amsAssetProjectSelectAll,
 } from '@/service/api/amsAsset'
 import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
@@ -22,6 +23,11 @@ const buildingList = useRequest(amsAssetBuildingList, {
   throttleInterval: 500,
 })
 const buildingOptions = reactive<AssetBuildingVO[]>([])
+// 项目列表
+const projectSelectAll = useRequest(amsAssetProjectSelectAll, {
+  throttleInterval: 500,
+})
+const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 列表数据
 const floorList = useRequest(amsAssetFloorList, {
   throttleInterval: 500,
@@ -45,6 +51,16 @@ const formSchema = defineSchema({
   fields: [
     defineField.Input({label: '楼层名称', prop: 'floorName', clearable: true}),
     defineField.Input({label: '楼层编码', prop: 'floorId', clearable: true}),
+    defineField.Select({
+      label: '所属项目',
+      prop: 'projectTypeCode',
+      options: projectOptions,
+      props: {
+        value: 'projectId',
+        label: 'projectName',
+      },
+      clearable: true,
+    }),
     defineField.Select({
       label: '所属楼栋',
       prop: 'assetId',
@@ -94,6 +110,8 @@ onMounted(() => {
 
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
+  const {data: project} = await projectSelectAll.runAsync()
+  projectOptions.push(...Object.values(project))
   const {data: companyList} = await companyListTree.runAsync({
     dicType: 1001,
     pageable: false,

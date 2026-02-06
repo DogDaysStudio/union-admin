@@ -273,6 +273,12 @@ interface ApiType {
   '/iam/auth-permission/upsert': {Req: AuthPermissionUpsertDTO; Res: string}
 
   /* 【权限管理】
+  // 权限树
+  export function iamAuthPermissionTree(payload: AuthPermissionListDTO) {return http.post<Res<Record<string, AuthPermissionVO[]>>>('/iam/auth-permission/tree', payload)}
+  */
+  '/iam/auth-permission/tree': {Req: AuthPermissionListDTO; Res: Record<string, AuthPermissionVO[]>}
+
+  /* 【权限管理】
   // 权限列表
   export function iamAuthPermissionList(payload: AuthPermissionListDTO) {return http.post<Res<AuthPermissionVO[]>>('/iam/auth-permission/list', payload)}
   */
@@ -1038,6 +1044,7 @@ interface AuthPermissionVO {
   sysName: string // 系统名称
   permPname: string // 上级权限名称
   permTypeName: string // 权限类型名称
+  children: AuthPermissionVO[] // 子列表
 }
 
 interface AuthRoleVO {
@@ -1997,6 +2004,10 @@ interface AssetFixedBatchEnableDTO {
 interface AssetEnclosureUpdateDTO {
   enclosureId: string // 楼栋编码
   enclosureName: string // 楼栋名称
+  projectId: string // 项目编码
+  projectName: string // 项目名称
+  enclosureTypeCode: string // 围合类型编码
+  enclosureTypeName: string // 围合类型名称
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
 }

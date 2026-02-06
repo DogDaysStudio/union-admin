@@ -135,31 +135,31 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
           </el-col>
           <el-col :span="8">
             <el-form-item label="所属项目" prop="projectId" required>
-              <!-- <el-select v-model="formData.projectId" placeholder="请选择所属项目" disabled>
+              <el-select v-model="formData.projectId" placeholder="请选择所属项目" disabled>
                 <el-option
                   v-for="item in projectOptions"
                   :key="item.projectId"
                   :label="item.projectName"
                   :value="item.projectId"
                 />
-              </el-select> -->
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="项目编码" prop="projectId" required>
-              <!-- <el-input v-model="formData.projectId" placeholder="请填写项目编码" disabled /> -->
+              <el-input v-model="formData.projectId" placeholder="请填写项目编码" disabled />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="围合类型" prop="enclosureTypeCode" required>
-              <!-- <el-select v-model="formData.enclosureTypeCode" placeholder="请选择围合类型">
+              <el-select v-model="formData.enclosureTypeCode" placeholder="请选择围合类型">
                 <el-option
                   v-for="item in enclosureOptions"
                   :key="item.dicId"
                   :label="item.dicName"
                   :value="item.dicId"
                 />
-              </el-select> -->
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
