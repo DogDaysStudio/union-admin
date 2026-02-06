@@ -15,7 +15,9 @@ const router = useRouter()
 const areaList = useRequest(iamCommonAreaList, {
   throttleInterval: 500,
 })
+const provinceOptions = reactive<PairModel[]>([])
 const cityOptions = reactive<PairModel[]>([])
+const districtOptions = reactive<PairModel[]>([])
 // 字典 [筹集方式 产权单位 产权性质 经营模式 筹集主体 项目类型]
 const dicListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
@@ -30,38 +32,9 @@ const projectInsert = useRequest(amsAssetProjectInsert, {
   throttleInterval: 500,
 })
 
-// 表单Ref：用于调用表单内置方法（验证、重置）
 const formRef = ref<FormInstance>()
 
-// 初始化表单数据：响应式对象，与表单双向绑定
-const formData = reactive({
-  // projectName: '', // 项目名称
-  // projectId: '', // 项目编码
-  // projectShortName: '', // 项目简称
-  // provinceCode: '', // 所在区域-省 code
-  // provinceName: '', // 所在区域-省名称
-  // cityCode: '', // 所在区域-城市 code
-  // cityName: '', // 所在区域-城市名称
-  // districtCode: '', // 地址-区域 code
-  // districtName: '', // 地址-区域名称
-  // address: '', // 地址-详细地址
-  // lng: null, // 经度
-  // lat: null, // 纬度
-  // landNumber: '', // 宗地号
-  // ownershipPropertyCode: '', // 产权性质编码
-  // ownershipPropertyName: '', // 产权性质名称
-  // ownershipUnitCode: '', // 产权单位编码
-  // ownershipUnitName: '', // 产权单位名称
-  // collectWayCode: '', // 筹集方式编码
-  // collectWayName: '', // 筹集方式名称
-  // collectSubjectCode: '', // 筹集主体
-  // collectDate: '', // 筹集日期
-  // businessModelCode: '', // 经营模式编码
-  // businessModelName: '', // 经营模式名称
-  // projectTypeCode: '', // 项目类型编码
-  // projectTypeName: '', // 项目类型名称
-  // projectPhone: '', // 项目电话
-} as AssetProjectUpsertDTO)
+const formData = reactive({} as AssetProjectUpsertDTO)
 
 const formRules = reactive<FormRules<AssetProjectUpsertDTO>>({
   projectName: [{required: true, message: '请填写项目名称', trigger: 'blur'}],
@@ -85,7 +58,7 @@ onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
   const {data: cityOption} = await areaList.runAsync({pid: ''})
-  cityOptions.push(...cityOption)
+  provinceOptions.push(...cityOption)
   const {data: collectWay} = await dicListTree.runAsync({dicType: 1021})
   collectWayOptions.push(...Object.values(collectWay))
   const {data: companyList} = await dicListTree.runAsync({dicType: 1001})
@@ -111,39 +84,64 @@ const handleSubmit = () => {
       cloneForm.cityCode = cloneForm?.provinceCode?.[1]
       cloneForm.districtCode = cloneForm?.provinceCode?.[2]
       cloneForm.provinceCode = cloneForm?.provinceCode?.[0]
+      cloneForm.provinceName = findValueByCustomId(
+        cloneForm.provinceCode,
+        'k',
+        'v',
+        provinceOptions
+      )
+      cloneForm.cityName = findValueByCustomId(cloneForm.cityCode, 'k', 'v', cityOptions)
+      cloneForm.districtName = findValueByCustomId(
+        cloneForm.districtCode,
+        'k',
+        'v',
+        districtOptions
+      )
+
       if (cloneForm.ownershipUnitCode?.length) {
         cloneForm.ownershipUnitCode =
           cloneForm.ownershipUnitCode[cloneForm.ownershipUnitCode.length - 1]
-        cloneForm.ownershipUnitName =
-          findValueByCustomId(cloneForm.ownershipUnitCode, 'dicId', 'dicName', companyOptions) || ''
+        cloneForm.ownershipUnitName = findValueByCustomId(
+          cloneForm.ownershipUnitCode,
+          'dicId',
+          'dicName',
+          companyOptions
+        )
       }
       if (cloneForm.collectSubjectCode?.length) {
         cloneForm.collectSubjectCode =
           cloneForm.collectSubjectCode[cloneForm.collectSubjectCode.length - 1]
-        cloneForm.collectSubjectName =
-          findValueByCustomId(cloneForm.collectSubjectCode, 'dicId', 'dicName', companyOptions) ||
-          ''
+        cloneForm.collectSubjectName = findValueByCustomId(
+          cloneForm.collectSubjectCode,
+          'dicId',
+          'dicName',
+          companyOptions
+        )
       }
-      cloneForm.ownershipPropertyName =
-        findValueByCustomId(
-          cloneForm.ownershipPropertyCode,
-          'dicId',
-          'dicName',
-          ownershipPropertyOptions
-        ) || ''
-      cloneForm.collectWayName =
-        findValueByCustomId(cloneForm.collectWayCode, 'dicId', 'dicName', collectWayOptions) || ''
-      cloneForm.businessModelName =
-        findValueByCustomId(
-          cloneForm.businessModelCode,
-          'dicId',
-          'dicName',
-          businessModelOptions
-        ) || ''
-      cloneForm.projectTypeName =
-        findValueByCustomId(cloneForm.projectTypeCode, 'dicId', 'dicName', projectTypeOption) || ''
-
-      console.log('表单提交数据：', {...cloneForm})
+      cloneForm.ownershipPropertyName = findValueByCustomId(
+        cloneForm.ownershipPropertyCode,
+        'dicId',
+        'dicName',
+        ownershipPropertyOptions
+      )
+      cloneForm.collectWayName = findValueByCustomId(
+        cloneForm.collectWayCode,
+        'dicId',
+        'dicName',
+        collectWayOptions
+      )
+      cloneForm.businessModelName = findValueByCustomId(
+        cloneForm.businessModelCode,
+        'dicId',
+        'dicName',
+        businessModelOptions
+      )
+      cloneForm.projectTypeName = findValueByCustomId(
+        cloneForm.projectTypeCode,
+        'dicId',
+        'dicName',
+        projectTypeOption
+      )
 
       await projectInsert.runAsync({...cloneForm})
       router.push('/asset/management/project')
@@ -173,12 +171,17 @@ const props: CascaderProps = {
       let nodes: {k: string; v: string; leaf?: boolean}[] = []
       switch (level) {
         case 0:
-          nodes = cityOptions
+          nodes = provinceOptions
           break
         case 1:
+          const {data: city} = await areaList.runAsync({pid: value})
+          cityOptions.push(...city)
+          nodes = city
+          break
         case 2:
-          const {data} = await areaList.runAsync({pid: value})
-          nodes = data
+          const {data: district} = await areaList.runAsync({pid: value})
+          districtOptions.push(...district)
+          nodes = district
           break
       }
       nodes.forEach(item => (level >= 2 ? (item.leaf = true) : ''))
