@@ -4,7 +4,7 @@ import {useRouter, useRoute} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {
-  amsAssetProjectSelectAll,
+  amsAssetProjectList,
   amsAssetEnclosureUpdate,
   amsAssetEnclosureGet,
 } from '@/service/api/amsAsset'
@@ -15,8 +15,8 @@ import {findValueByCustomId} from '@/utils/array-util'
 const router = useRouter()
 const route = useRoute()
 
-// 获取项目名称
-const projectSelectAll = useRequest(amsAssetProjectSelectAll, {
+// 获取项目列表
+const projectList = useRequest(amsAssetProjectList, {
   throttleInterval: 500,
 })
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
@@ -51,7 +51,7 @@ onMounted(() => getOptions())
 
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectSelectAll.runAsync()
+  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
   const {data: companyList} = await dicListTree.runAsync({
     dicType: 1001,

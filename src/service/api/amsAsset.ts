@@ -1,9 +1,5 @@
 import http from '../service'
 
-// 查询所有项目
-export function amsAssetProjectSelectAll() {
-  return http.post<Res<Record<string, any>>>('/ams/asset-project/selectAll')
-}
 // 项目列表
 export function amsAssetProjectList(payload: AssetProjectListDTO) {
   return http.post<Res<AssetProjectVO[]>>('/ams/asset-project/list', payload)
