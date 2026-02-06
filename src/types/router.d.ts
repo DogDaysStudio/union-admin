@@ -334,11 +334,18 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/management/role': RouteRecordInfo<
-    '/management/role', // name
-    '/management/role', // path
+  '/management/role/list': RouteRecordInfo<
+    '/management/role/list', // name
+    '/management/role/list', // path
     any,
     any,
+    never
+  >
+  '/management/role/permission/:roleId': RouteRecordInfo<
+    '/management/role/permission/:roleId', // name
+    '/management/role/permission/:roleId', // path
+    {roleId: ParamValue<true>},
+    {roleId: ParamValue<false>},
     never
   >
   '/management/permission': RouteRecordInfo<

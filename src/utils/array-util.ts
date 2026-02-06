@@ -49,3 +49,27 @@ export function findValueByCustomId(
 
   return recursiveFind(dataSource)
 }
+
+/**
+ * 数组和树的交集，返回树中存在的数组中的元素
+ * @param keys 数组
+ * @param tree 树
+ * @param props 树的属性
+ */
+export function keysInTree<T>(
+  keys: (string | number)[] = [],
+  tree: T[] = [],
+  props?: {children?: keyof T; key?: keyof T}
+) {
+  const {children = 'children' as any, key = 'key' as any} = props || {}
+  const result: (string | number)[] = []
+  for (const item of tree) {
+    if (keys.includes(item[key])) {
+      result.push(item[key])
+    }
+    if (item[children]) {
+      result.push(...keysInTree(keys, item[children], props))
+    }
+  }
+  return result
+}

@@ -50,9 +50,21 @@ const managementRoutes: RouteRecordRaw[] = [
         component: () => import('@/views/management/department.vue'),
       },
       {
-        path: 'role',
+        path: '',
         meta: {title: '角色管理'},
-        component: () => import('@/views/management/role/index.vue'),
+        children: [
+          {
+            path: '/management/role/list',
+            meta: {title: '角色管理'},
+            component: () => import('@/views/management/role/index.vue'),
+          },
+          {
+            path: '/management/role/permission/:roleId',
+            props: true,
+            meta: {title: '设置权限'},
+            component: () => import('@/views/management/role/permission.vue'),
+          },
+        ],
       },
       {
         path: '/management/permission',

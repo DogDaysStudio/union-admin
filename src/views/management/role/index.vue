@@ -11,8 +11,11 @@ import {
 } from '@/service/api/iamAuth'
 import {useForm} from '@/common/hooks'
 import {defineField, defineSchema} from '@/components'
-import {rules} from '@/common/rules'
 import {iamAuthUserList} from '@/service/api/imaAuthUser'
+import {useRouter} from 'vue-router'
+import RoleTable from './components/RoleTable.vue'
+
+const router = useRouter()
 
 const searchForm = reactive({
   pageable: true,
@@ -38,6 +41,7 @@ const {
 const upsertRole = useRequest(iamAuthRoleUpsert)
 const deleteRole = useRequest(iamAuthRoleDelete)
 const enableRole = useRequest(iamAuthRoleEnable)
+const getRole = useRequest(iamAuthRoleGet)
 
 // 添加/编辑表单
 const dialogVisible = ref(false)
@@ -58,10 +62,16 @@ const handleAdd = () => {
 }
 
 // 处理编辑
-const handleEdit = (row: AuthRoleVO) => {
+const handleEdit = async (row: AuthRoleVO) => {
   dialogVisible.value = true
+  // 查询角色详情（其实不需要查的）
+  const {data: roleDetail} = await getRole.runAsync({roleId: row.roleId})
   // 填充表单数据
-  Object.assign(editForm, row)
+  Object.assign(editForm, {
+    ...roleDetail,
+    userIdList: roleDetail?.userList.map(item => item.userId),
+    permList: roleDetail?.permList.map(item => item.permId),
+  })
 }
 
 // 处理删除
@@ -93,9 +103,8 @@ const handleSubmit = async () => {
 }
 
 // 处理权限设置
-const handlePermissionSet = () => {
-  // 权限设置先占位，不实现
-  ElMessage.info('权限设置功能暂未实现')
+const handlePermissionSet = (row: AuthRoleVO) => {
+  router.push({name: '/management/role/permission/:roleId', params: {roleId: row.roleId}})
 }
 
 // 添加人员弹窗
@@ -112,7 +121,7 @@ const handleAddUser = async (row: AuthRoleVO) => {
 
   runEmployeeList({pageable: false} as AuthUserListDTO)
 
-  const {data: roleDetail} = await iamAuthRoleGet({roleId: row.roleId})
+  const {data: roleDetail} = await getRole.runAsync({roleId: row.roleId})
   addUserForm.roleId = row.roleId
   addUserForm.roleName = row.roleName
   addUserForm.userIdList = roleDetail?.userList.map(item => item.userId)
@@ -148,6 +157,9 @@ const searchFormSchema = defineSchema({
     }),
   ],
 })
+
+// 当前选中的角色ID
+const currentRoleId = ref('')
 </script>
 
 <template>
@@ -174,7 +186,17 @@ const searchFormSchema = defineSchema({
       <el-table-column prop="roleName" label="角色名称" width="120" />
       <el-table-column label="人员" width="80">
         <template #default="{row}">
-          {{ row.userIdCount || 0 }}
+          <!-- {{ row.userIdCount || 0 }} -->
+          <el-button
+            v-if="row.userIdCount > 0"
+            link
+            type="primary"
+            size="small"
+            @click="currentRoleId = row.roleId"
+          >
+            {{ row.userIdCount }}
+          </el-button>
+          <span v-else>{{ row.userIdCount || 0 }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="notes" label="描述" />
@@ -187,7 +209,7 @@ const searchFormSchema = defineSchema({
       <el-table-column label="操作" width="300" fixed="right">
         <template #default="{row}">
           <el-button link size="small" @click="handleAddUser(row)">添加人员</el-button>
-          <el-button link size="small" @click="handlePermissionSet()">设置权限</el-button>
+          <el-button link size="small" @click="handlePermissionSet(row)">设置权限</el-button>
           <el-button link size="small" @click="handleEdit(row)">编辑</el-button>
           <el-button link size="small" type="danger" @click="handleDelete(row)">删除</el-button>
         </template>
@@ -241,8 +263,9 @@ const searchFormSchema = defineSchema({
         <el-input v-model="addUserForm.roleName" placeholder="请输入" disabled />
       </el-form-item>
 
-      <el-form-item prop="userIdList" :rules="[rules.must]">
+      <el-form-item prop="userIdList">
         <el-transfer
+          v-loading="getRole.loading.value"
           class="full"
           v-model="addUserForm.userIdList"
           :data="employeeList?.data"
@@ -262,6 +285,10 @@ const searchFormSchema = defineSchema({
         </el-button>
       </span>
     </template>
+  </el-dialog>
+
+  <el-dialog :model-value="!!currentRoleId" title="职务人员" @closed="currentRoleId = ''">
+    <role-table :role-id="currentRoleId" />
   </el-dialog>
 </template>
 
