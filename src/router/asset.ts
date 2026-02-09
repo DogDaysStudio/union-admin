@@ -22,7 +22,7 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/management/add-project.vue'),
           },
           {
-            path: '/asset/management/edit',
+            path: '/asset/management/edit/:id',
             meta: {title: '项目管理-编辑', hidden: true},
             component: () => import('@/views/asset/management/edit-project.vue'),
           },

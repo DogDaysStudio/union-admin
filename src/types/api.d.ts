@@ -561,12 +561,6 @@ interface ApiType {
   '/ams/asset-project/update': {Req: AssetProjectUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-项目管理】
-  // 查询所有项目
-  export function amsAssetProjectSelectAll() {return http.post<Res<Record<string, any>>>('/ams/asset-project/selectAll')}
-  */
-  '/ams/asset-project/selectAll': {Res: Record<string, any>}
-
-  /* 【资产管理-项目管理】
   // 项目列表
   export function amsAssetProjectList(payload: AssetProjectListDTO) {return http.post<Res<AssetProjectVO[]>>('/ams/asset-project/list', payload)}
   */
@@ -1556,6 +1550,7 @@ interface AssetProjectUpsertDTO {
   businessModelName: string // 经营模式名称
   projectTypeCode: string // 项目类型编码
   projectTypeName: string // 项目类型名称
+  projectManager: string // 项目负责人
   projectPhone: string // 项目电话
   totalLandArea: number // 总占地面积
   totalArea: number // 总建筑面积
@@ -1592,6 +1587,9 @@ interface AssetProjectUpsertDTO {
   checkInDate: string // 入伙时间
   contractBegin: string // 物业合同生效日期
   contractEnd: string // 物业合同终止日期
+  propertyCompany: string // 物业公司名称
+  warrantyContractBegin: string // 质保合同生效日期
+  warrantyContractEnd: string // 质保合同终止日期
   enable: number // 0-禁用;1-启用
 }
 
@@ -1621,18 +1619,30 @@ interface AssetProjectVO {
   projectName: string // 项目名称
   projectShortName: string // 项目简称
   areaName: string // 所在省市区
+  provinceCode: string // 所在区域-省 code
+  provinceName: string // 所在区域-省名称
+  cityCode: string // 所在区域-城市 code
+  cityName: string // 所在区域-城市名称
+  districtCode: string // 地址-区域 code
+  districtName: string // 地址-区域名称
   address: string // 详细地址
   lng: number // 经度
   lat: number // 纬度
   landNumber: string // 宗地号
+  ownershipPropertyCode: string // 产权性质编码
   ownershipPropertyName: string // 产权性质名称
+  ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
+  collectWayCode: string // 筹集方式编码
   collectWayName: string // 筹集方式名称
   collectSubjectCode: string // 筹集主体编码
   collectSubjectName: string // 筹集主体名称
   collectDate: string // 筹集日期
+  businessModelCode: string // 经营模式编码
   businessModelName: string // 经营模式名称
+  projectTypeCode: string // 项目类型编码
   projectTypeName: string // 项目类型名称
+  projectManager: string // 项目负责人
   projectPhone: string // 项目电话
   totalLandArea: number // 总占地面积
   totalArea: number // 总建筑面积
@@ -1669,6 +1679,9 @@ interface AssetProjectVO {
   checkInDate: string // 入伙时间
   contractBegin: string // 物业合同生效日期
   contractEnd: string // 物业合同终止日期
+  propertyCompany: string // 物业公司名称
+  warrantyContractBegin: string // 质保合同生效日期
+  warrantyContractEnd: string // 质保合同终止日期
   enable: number // 0-禁用;1-启用
   buildingCount: number // 楼栋数量
   floorCount: number // 楼层数量

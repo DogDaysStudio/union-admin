@@ -33,7 +33,7 @@ const toggleStatusProject = useRequest(amsAssetProjectEnable, {
   throttleInterval: 500,
 })
 // 删除数据
-const deleteProject = useRequest(amsAssetProjectDelete, {
+const projectDelete = useRequest(amsAssetProjectDelete, {
   throttleInterval: 500,
 })
 
@@ -184,6 +184,20 @@ const handleCurrentChange = (val: number): void => {
 
 const router = useRouter()
 const addProject = () => router.push('/asset/management/add')
+const editProject = (projectId: string) => router.push(`/asset/management/edit/${projectId}`)
+
+// 删除
+const deleteProject = (projectId: string): void => {
+  ElMessageBox.confirm(`是否确定删除项目?`, '确认提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(async () => {
+    await projectDelete.runAsync({projectId})
+    getData()
+    ElMessage.success('删除成功')
+  })
+}
 
 // 修改状态
 const toggleStatus = (projectId: string, enable: number): void => {
@@ -195,19 +209,6 @@ const toggleStatus = (projectId: string, enable: number): void => {
     await toggleStatusProject.runAsync({projectId, enable: !enable})
     getData()
     ElMessage.success('修改成功')
-  })
-}
-
-// 删除
-const deleteData = (projectId: string): void => {
-  ElMessageBox.confirm(`是否确定删除项目?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await deleteProject.runAsync({projectId})
-    getData()
-    ElMessage.success('删除成功')
   })
 }
 </script>
@@ -257,8 +258,8 @@ const deleteData = (projectId: string): void => {
             {{ row.enable ? '停用' : '启用' }}
           </el-button>
           <el-button link type="primary">查看详情</el-button>
-          <el-button link type="primary">编辑</el-button>
-          <el-button link type="danger" @click="deleteData(row.projectId)">删除</el-button>
+          <el-button link type="primary" @click="editProject(row.projectId)">编辑</el-button>
+          <el-button link type="danger" @click="deleteProject(row.projectId)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

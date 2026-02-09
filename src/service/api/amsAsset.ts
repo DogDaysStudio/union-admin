@@ -4,17 +4,25 @@ import http from '../service'
 export function amsAssetProjectList(payload: AssetProjectListDTO) {
   return http.post<Res<AssetProjectVO[]>>('/ams/asset-project/list', payload)
 }
-// 启用/禁用项目 | object:{projectId:项目编码,enable:bool}
-export function amsAssetProjectEnable(payload: Record<string, any>) {
-  return http.post<Res<Record<string, any>>>('/ams/asset-project/enable', payload)
+// 新增项目
+export function amsAssetProjectInsert(payload: AssetProjectUpsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-project/insert', payload)
+}
+// 更新项目
+export function amsAssetProjectUpdate(payload: AssetProjectUpsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-project/update', payload)
+}
+// 项目详情
+export function amsAssetProjectGet(payload: Record<string, any>) {
+  return http.post<Res<AssetProjectVO>>('/ams/asset-project/get', payload)
 }
 // 删除项目
 export function amsAssetProjectDelete(payload: Record<string, any>) {
   return http.post<Res<Record<string, any>>>('/ams/asset-project/delete', payload)
 }
-// 新增项目
-export function amsAssetProjectInsert(payload: AssetProjectUpsertDTO) {
-  return http.post<Res<Record<string, any>>>('/ams/asset-project/insert', payload)
+// 启用/禁用项目 | object:{projectId:项目编码,enable:bool}
+export function amsAssetProjectEnable(payload: Record<string, any>) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-project/enable', payload)
 }
 
 // 楼栋列表

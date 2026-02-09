@@ -54,11 +54,11 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/asset/management/edit': RouteRecordInfo<
-    '/asset/management/edit', // name
-    '/asset/management/edit', // path
-    any,
-    any,
+  '/asset/management/edit/:id': RouteRecordInfo<
+    '/asset/management/edit/:id', // name
+    '/asset/management/edit/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
     never
   >
   '/asset/management/import': RouteRecordInfo<
