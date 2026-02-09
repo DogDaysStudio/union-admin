@@ -61,16 +61,16 @@ export interface RouteNamedMap {
     {id: ParamValue<false>},
     never
   >
+  '/asset/management/detail/:id': RouteRecordInfo<
+    '/asset/management/detail/:id', // name
+    '/asset/management/detail/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
   '/asset/management/import': RouteRecordInfo<
     '/asset/management/import', // name
     '/asset/management/import', // path
-    any,
-    any,
-    never
-  >
-  '/asset/management/detail': RouteRecordInfo<
-    '/asset/management/detail', // name
-    '/asset/management/detail', // path
     any,
     any,
     never

@@ -27,14 +27,14 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/management/edit-project.vue'),
           },
           {
+            path: '/asset/management/detail/:id',
+            meta: {title: '项目管理-详情', hidden: true},
+            component: () => import('@/views/asset/management/detail-project.vue'),
+          },
+          {
             path: '/asset/management/import',
             meta: {title: '项目管理-导入', hidden: true},
             component: () => import('@/views/asset/management/import-project.vue'),
-          },
-          {
-            path: '/asset/management/detail',
-            meta: {title: '项目管理-详情', hidden: true},
-            component: () => import('@/views/asset/management/detail-project.vue'),
           },
           {
             path: '/asset/management/building-floor',

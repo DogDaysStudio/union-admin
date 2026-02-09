@@ -185,8 +185,8 @@ const handleCurrentChange = (val: number): void => {
 const router = useRouter()
 const addProject = () => router.push('/asset/management/add')
 const editProject = (projectId: string) => router.push(`/asset/management/edit/${projectId}`)
+const detailProject = (projectId: string) => router.push(`/asset/management/detail/${projectId}`)
 
-// 删除
 const deleteProject = (projectId: string): void => {
   ElMessageBox.confirm(`是否确定删除项目?`, '确认提示', {
     confirmButtonText: '确定',
@@ -199,7 +199,6 @@ const deleteProject = (projectId: string): void => {
   })
 }
 
-// 修改状态
 const toggleStatus = (projectId: string, enable: number): void => {
   ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}项目?`, '确认提示', {
     confirmButtonText: '确定',
@@ -257,7 +256,7 @@ const toggleStatus = (projectId: string, enable: number): void => {
           >
             {{ row.enable ? '停用' : '启用' }}
           </el-button>
-          <el-button link type="primary">查看详情</el-button>
+          <el-button link type="primary" @click="detailProject(row.projectId)">查看详情</el-button>
           <el-button link type="primary" @click="editProject(row.projectId)">编辑</el-button>
           <el-button link type="danger" @click="deleteProject(row.projectId)">删除</el-button>
         </template>
