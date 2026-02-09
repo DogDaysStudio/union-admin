@@ -4,17 +4,16 @@ import MainLayout from '@/layouts/MainLayout.vue'
 const managementRoutes: RouteRecordRaw[] = [
   {
     path: '/management',
-    // redirect: '/management/personnel',
+    meta: {title: '管理', root: true},
     component: MainLayout,
     children: [
       {
         path: '',
         meta: {title: '人员管理'},
-        // component: () => import('@/views/management/personnel/personnel.vue'),
         children: [
           {
             path: '/management/personnel/list',
-            meta: {title: '人员管理'},
+            meta: {title: '人员管理', menu: true},
             component: () => import('@/views/management/personnel/personnel.vue'),
           },
           {
@@ -46,7 +45,7 @@ const managementRoutes: RouteRecordRaw[] = [
       },
       {
         path: 'department',
-        meta: {title: '部门管理'},
+        meta: {title: '部门管理', menu: true},
         component: () => import('@/views/management/department.vue'),
       },
       {
@@ -55,7 +54,7 @@ const managementRoutes: RouteRecordRaw[] = [
         children: [
           {
             path: '/management/role/list',
-            meta: {title: '角色管理'},
+            meta: {title: '角色管理', menu: true},
             component: () => import('@/views/management/role/index.vue'),
           },
           {
@@ -68,7 +67,7 @@ const managementRoutes: RouteRecordRaw[] = [
       },
       {
         path: '/management/permission',
-        meta: {title: '权限管理'},
+        meta: {title: '权限管理', menu: true},
         component: () => import('@/views/management/permission.vue'),
       },
     ],

@@ -14,6 +14,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppHeader: typeof import('./src/components/layout/AppHeader.vue')['default']
     AppSidebar: typeof import('./src/components/layout/AppSidebar.vue')['default']
+    AppSidebarMenu: typeof import('./src/components/layout/AppSidebarMenu.vue')['default']
     DynamicField: typeof import('./src/components/form/DynamicField.vue')['default']
     DynamicFieldCol: typeof import('./src/components/form/components/DynamicFieldCol.vue')['default']
     DynamicForm: typeof import('./src/components/form/DynamicForm.vue')['default']
@@ -92,6 +93,7 @@ declare module 'vue' {
 declare global {
   const AppHeader: typeof import('./src/components/layout/AppHeader.vue')['default']
   const AppSidebar: typeof import('./src/components/layout/AppSidebar.vue')['default']
+  const AppSidebarMenu: typeof import('./src/components/layout/AppSidebarMenu.vue')['default']
   const DynamicField: typeof import('./src/components/form/DynamicField.vue')['default']
   const DynamicFieldCol: typeof import('./src/components/form/components/DynamicFieldCol.vue')['default']
   const DynamicForm: typeof import('./src/components/form/DynamicForm.vue')['default']

@@ -7,7 +7,21 @@ export {}
 
 declare module 'vue-router' {
   interface RouteMeta {
-    // 是可选的
+    /**
+     * 路由标题
+     */
     title?: string
+
+    /**
+     * 是否显示在菜单中，最后一级才需要标记，带 children 的层级不需要配置
+     * @default false
+     */
+    menu?: boolean
+
+    /**
+     * 根菜单，标记顶级菜单
+     * @default false
+     */
+    root?: boolean
   }
 }

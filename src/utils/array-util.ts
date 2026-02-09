@@ -73,3 +73,29 @@ export function keysInTree<T>(
   }
   return result
 }
+
+/**
+ * 查找 id 所在的项
+ * @param id id
+ * @param tree 树
+ * @param props 树的属性
+ */
+export function findItemById<T>(
+  id: string | number,
+  tree: T[] = [],
+  props?: {children?: keyof T; key?: keyof T}
+): T | null {
+  const {children = 'children' as any, key = 'key' as any} = props || {}
+  for (const item of tree) {
+    if (item[key] === id) {
+      return item
+    }
+    if (item[children]) {
+      const result = findItemById(id, item[children], props)
+      if (result !== null) {
+        return result
+      }
+    }
+  }
+  return null
+}

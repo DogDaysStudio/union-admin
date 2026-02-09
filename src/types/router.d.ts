@@ -75,6 +75,13 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/asset/management/detail': RouteRecordInfo<
+    '/asset/management/detail', // name
+    '/asset/management/detail', // path
+    any,
+    any,
+    never
+  >
   '/asset/management/building-floor': RouteRecordInfo<
     '/asset/management/building-floor', // name
     '/asset/management/building-floor', // path

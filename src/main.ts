@@ -20,12 +20,12 @@ setGlobalOptions({
   },
 })
 
-const pinia = createPinia()
 const app = createApp(App)
 
-pinia.use(piniaPluginPersistedstate)
-
-app.use(pinia)
 app.use(router)
+
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+app.use(pinia)
 
 app.mount('#app')

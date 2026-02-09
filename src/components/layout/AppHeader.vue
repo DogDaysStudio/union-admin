@@ -7,11 +7,11 @@
     <el-menu
       class="flex-1 border-none!"
       mode="horizontal"
-      :default-active="activeKey"
+      :default-active="moduleStore.activeModule"
       @select="handleMenuSelect"
     >
-      <el-menu-item v-for="item in menuItems" :key="item.key" :index="item.key">
-        {{ item.label }}
+      <el-menu-item v-for="item in moduleStore.roots" :key="item.path" :index="item.path">
+        {{ item.title }}
       </el-menu-item>
     </el-menu>
     <div class="px-4">
@@ -34,7 +34,6 @@
 </template>
 
 <script setup lang="ts">
-import {computed} from 'vue'
 import {Compass, User, ArrowDown} from '@element-plus/icons-vue'
 import {useModuleStore} from '@/stores/module'
 import {ElMessage} from 'element-plus'
@@ -42,26 +41,8 @@ import {iamAuthLogout} from '@/service/api/iamAuth'
 
 const moduleStore = useModuleStore()
 
-const menuItems = [
-  {label: '数据', key: '/data-center', module: 'data'},
-  {label: '资产', key: '/asset', module: 'asset'},
-  {label: '租赁', key: '/lease', module: 'lease'},
-  {label: '物业', key: '/property', module: 'property'},
-  {label: 'IOT', key: '/iot', module: 'iot'},
-  {label: '管理', key: '/management', module: 'management'},
-]
-
-const activeKey = computed(() => {
-  const currentModule = moduleStore.activeModule
-  const menuItem = menuItems.find(item => item.module === currentModule)
-  return menuItem ? menuItem.key : menuItems[0].key
-})
-
 const handleMenuSelect = (key: string) => {
-  const menuItem = menuItems.find(item => item.key === key)
-  if (menuItem) {
-    moduleStore.setActiveModule(menuItem.module)
-  }
+  moduleStore.setActiveModule(key)
 }
 
 const handleLogout = async () => {

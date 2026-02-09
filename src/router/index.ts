@@ -1,19 +1,11 @@
 import {createRouter, createWebHistory, type RouteRecordRaw} from 'vue-router'
 import {useModuleStore} from '@/stores/module'
-// 导入各模块路由
-import data from './data'
-import asset from './asset'
-import lease from './lease'
-import property from './property'
-import iot from './iot'
-import management from './management'
 import {joinPath, walkRoute} from '@/utils/router'
+import modules from '@/router/modules'
 // import {useUserStore} from '@/stores/user'
 
-const businessRoutes = [...data, ...asset, ...lease, ...property, ...iot, ...management]
-
 export const routes: RouteRecordRaw[] = [
-  ...businessRoutes,
+  ...modules,
   // 登录路由
   {
     path: '/login',
@@ -51,11 +43,16 @@ const router = createRouter({
   routes,
 })
 
-// 路由守卫
+// // 路由守卫
 router.afterEach(to => {
   const moduleStore = useModuleStore()
   moduleStore.updateModuleFromRoute(to.path)
 })
+
+// router.isReady().then(() => {
+//   const moduleStore = useModuleStore()
+//   moduleStore.init()
+// })
 
 // 路由守卫
 // router.beforeEach(to => {

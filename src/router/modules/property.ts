@@ -4,22 +4,22 @@ import MainLayout from '@/layouts/MainLayout.vue'
 const propertyRoutes: RouteRecordRaw[] = [
   {
     path: '/property',
-    redirect: '/property/settings',
+    meta: {title: '物业', root: true},
     component: MainLayout,
     children: [
       {
         path: 'settings',
-        meta: {title: '物业基础设置'},
+        meta: {title: '物业基础设置', menu: true},
         component: () => import('@/views/home-view.vue'),
       },
       {
         path: 'charge-standard',
-        meta: {title: '收费标准设置'},
+        meta: {title: '收费标准设置', menu: true},
         component: () => import('@/views/home-view.vue'),
       },
       {
         path: 'charge-management',
-        meta: {title: '物业收费管理'},
+        meta: {title: '物业收费管理', menu: true},
         component: () => import('@/views/home-view.vue'),
       },
       {
