@@ -184,7 +184,7 @@ const getFieldValue = (fieldConfig: FormField): string => {
   }
 
   const value = formData[fieldConfig.field as keyof AssetProjectVO]
-  return value?.toString() || ''
+  return value?.toString() || '-'
 }
 </script>
 

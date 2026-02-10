@@ -1,15 +1,31 @@
 <script setup lang="ts">
 import {ref, reactive, onMounted} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
-import type {CascaderProps, FormInstance, FormRules} from 'element-plus'
+import type {CascaderProps, FormInstance, FormRules, UploadFile, UploadFiles} from 'element-plus'
+declare module 'element-plus' {
+  interface UploadFile {
+    bizData?: {
+      id: string
+    }
+  }
+}
 import {ElMessage} from 'element-plus'
 import {useRequest} from 'vue-request'
 import {amsAssetProjectGet, amsAssetProjectUpdate} from '@/service/api/amsAsset'
 import {iamCommonAreaList, iamCommonDicListTree} from '@/service/api/iamCommon'
 import {findValueByCustomId} from '@/utils/array-util'
+import UniUpload from '@/components/upload/UploadFile.vue' // 替换为你的组件实际路径
 
 const router = useRouter()
 const route = useRoute()
+
+// 文件列表
+const fileList = ref<UploadFile[]>([])
+// 文件变化回调
+const handleFileChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+  fileList.value = uploadFiles as UploadFile[]
+  console.log(fileList.value, 'fileList.value')
+}
 
 // 所属省市区
 const areaList = useRequest(iamCommonAreaList, {
@@ -135,6 +151,21 @@ const getDetail = async (): Promise<void> => {
   cloneData.provinceCityDistrictCode = [data.provinceCode, data.cityCode, data.districtCode]
   cloneData.warrantyContract = [data.warrantyContractBegin, data.warrantyContractEnd]
   Object.assign(formData, cloneData)
+  if (cloneData?.coverImageModel?.id) {
+    const initFile = [
+      {
+        url: cloneData?.coverImageModel.path, // 图片预览地址（必选）
+        uid: Date.now() + Math.floor(Math.random() * 1000), // 唯一标识（用接口返回的id，必选）
+        name: cloneData?.coverImageModel.name, // 文件名
+        status: 'success' as const, // 标记为已上传成功
+        size: cloneData?.coverImageModel.size, // 文件大小（可选，用于显示）
+        bizData: {
+          id: cloneData?.coverImageModel.id,
+        },
+      },
+    ] as UploadFile[]
+    fileList.value = initFile
+  }
 }
 
 const handleSubmit = () => {
@@ -205,6 +236,11 @@ const handleSubmit = () => {
       )
       cloneForm.warrantyContractBegin = cloneForm.warrantyContract[0]
       cloneForm.warrantyContractEnd = cloneForm.warrantyContract[1]
+      if (fileList.value?.length) {
+        const fileResponse = fileList.value[0]?.response as {data: {id: string}} | undefined
+        cloneForm.projectCoverImage = fileResponse?.data?.id || fileList.value[0]?.bizData?.id
+      }
+      // cloneForm.projectCoverImage = '698a8f32e4b0e413ff31e754'
 
       await projectUpdate.runAsync({...cloneForm})
       router.push('/asset/management/project')
@@ -276,6 +312,18 @@ const props: CascaderProps = {
         label-position="top"
       >
         <section-group title="楼层信息" inline>
+          <el-row :gutter="24">
+            <el-col :span="8">
+              <el-form-item label="封面图片">
+                <uni-upload
+                  v-model:file-list="fileList"
+                  :limit="1"
+                  :accept="'.jpg,.png,.pdf'"
+                  @change="handleFileChange"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-row :gutter="24">
             <el-col :span="8">
               <el-form-item label="项目名称" prop="projectName">
