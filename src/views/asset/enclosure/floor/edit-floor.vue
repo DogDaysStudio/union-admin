@@ -44,7 +44,7 @@ const getFloor = useRequest(amsAssetFloorGet, {
 const formRef = ref<FormInstance>()
 
 // 初始化表单数据：响应式对象，与表单双向绑定
-const formData = reactive({} as AssetFloorBaseDTO)
+const formData = reactive({} as AssetFloorDTO)
 
 // 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({

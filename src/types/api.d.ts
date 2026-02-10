@@ -447,10 +447,10 @@ interface ApiType {
   '/ams/asset-shop/list': {Req: AssetShopListDTO; Res: AssetShopVO[]}
 
   /* 【资产管理-商业管理】
-  // 新增商铺
-  export function amsAssetShopInsert(payload: AssetShopUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/insert', payload)}
+  // 新增商铺 | {shopList:[{商铺信息}]}
+  export function amsAssetShopInsert(payload: AssetShopInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/insert', payload)}
   */
-  '/ams/asset-shop/insert': {Req: AssetShopUpsertDTO; Res: Record<string, any>}
+  '/ams/asset-shop/insert': {Req: AssetShopInsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-商业管理】
   // 商铺详情
@@ -483,10 +483,10 @@ interface ApiType {
   '/ams/asset-room/list': {Req: AssetRoomListDTO; Res: AssetRoomVO[]}
 
   /* 【资产管理-住宅管理】
-  // 新增/更新住宅
-  export function amsAssetRoomInsert(payload: AssetRoomUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-room/insert', payload)}
+  // 新增/更新住宅 | {roomList:[{住宅信息}]}
+  export function amsAssetRoomInsert(payload: AssetRoomInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-room/insert', payload)}
   */
-  '/ams/asset-room/insert': {Req: AssetRoomUpsertDTO; Res: Record<string, any>}
+  '/ams/asset-room/insert': {Req: AssetRoomInsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-住宅管理】
   // 住宅详情
@@ -604,9 +604,9 @@ interface ApiType {
 
   /* 【资产管理-停车场管理】
   // 更新停车场
-  export function amsAssetParkingUpdate(payload: AssetParkingBaseDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/update', payload)}
+  export function amsAssetParkingUpdate(payload: AssetParkingDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/update', payload)}
   */
-  '/ams/asset-parking/update': {Req: AssetParkingBaseDTO; Res: Record<string, any>}
+  '/ams/asset-parking/update': {Req: AssetParkingDTO; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 根据停车场id查询停车场区域 | object:{parkingId:停车场编码}
@@ -652,9 +652,9 @@ interface ApiType {
 
   /* 【资产管理-停车位管理】
   // 更新停车位
-  export function amsAssetParkingSpaceUpdate(payload: AssetParkingSpaceBaseDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/update', payload)}
+  export function amsAssetParkingSpaceUpdate(payload: AssetParkingSpaceDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/update', payload)}
   */
-  '/ams/asset-parking-space/update': {Req: AssetParkingSpaceBaseDTO; Res: Record<string, any>}
+  '/ams/asset-parking-space/update': {Req: AssetParkingSpaceDTO; Res: Record<string, any>}
 
   /* 【资产管理-停车位管理】
   // 停车位列表
@@ -664,9 +664,9 @@ interface ApiType {
 
   /* 【资产管理-停车位管理】
   // 新增停车位
-  export function amsAssetParkingSpaceInsert(payload: AssetParkingSpaceBaseDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/insert', payload)}
+  export function amsAssetParkingSpaceInsert(payload: AssetParkingSpaceDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/insert', payload)}
   */
-  '/ams/asset-parking-space/insert': {Req: AssetParkingSpaceBaseDTO; Res: Record<string, any>}
+  '/ams/asset-parking-space/insert': {Req: AssetParkingSpaceDTO; Res: Record<string, any>}
 
   /* 【资产管理-停车位管理】
   // 停车位详情
@@ -688,9 +688,9 @@ interface ApiType {
 
   /* 【资产管理-楼层管理】
   // 更新楼层
-  export function amsAssetFloorUpdate(payload: AssetFloorBaseDTO) {return http.post<Res<string>>('/ams/asset-floor/update', payload)}
+  export function amsAssetFloorUpdate(payload: AssetFloorDTO) {return http.post<Res<string>>('/ams/asset-floor/update', payload)}
   */
-  '/ams/asset-floor/update': {Req: AssetFloorBaseDTO; Res: string}
+  '/ams/asset-floor/update': {Req: AssetFloorDTO; Res: string}
 
   /* 【资产管理-楼层管理】
   // 楼层列表
@@ -700,9 +700,9 @@ interface ApiType {
 
   /* 【资产管理-楼层管理】
   // 新增楼层
-  export function amsAssetFloorInsert(payload: AssetFloorBaseDTO) {return http.post<Res<string>>('/ams/asset-floor/insert', payload)}
+  export function amsAssetFloorInsert(payload: AssetFloorDTO) {return http.post<Res<string>>('/ams/asset-floor/insert', payload)}
   */
-  '/ams/asset-floor/insert': {Req: AssetFloorBaseDTO; Res: string}
+  '/ams/asset-floor/insert': {Req: AssetFloorDTO; Res: string}
 
   /* 【资产管理-楼层管理】
   // 楼层详情
@@ -1321,6 +1321,9 @@ interface AssetShopListDTO {
   shopNumber: string // 商铺号
   buildingArea: number // 建筑面积
   usableArea: number // 实用面积
+  projectId: string // 项目编码
+  assetId: string // 楼栋/围合/停车场id
+  floorId: string // 楼层编码
   projectName: string // 项目名称
   enclosureName: string // 围合名称
   floorName: string // 楼层名称
@@ -1368,6 +1371,10 @@ interface AssetShopVO {
   expireTime: string // 失效时间
 }
 
+interface AssetShopInsertDTO {
+  shopList: AssetShopUpsertDTO[] // 商铺数据
+}
+
 // 资产管理-住宅管理
 interface AssetRoomUpsertDTO {
   roomId: string // 住宅编码
@@ -1404,6 +1411,9 @@ interface AssetRoomListDTO {
   roomId: string // 住宅编码
   roomNumber: string // 房间号
   roomLayoutCode: string // 户型编码
+  projectId: string // 项目编码
+  assetId: string // 楼栋/围合/停车场id
+  floorId: string // 楼层编码
   projectName: string // 项目名称
   buildingName: string // 楼栋名称
   floorName: string // 楼层名称
@@ -1438,6 +1448,10 @@ interface AssetRoomVO {
   powerGridNo: string // 电网户号
   gasNo: string // 燃气户号
   decorationLevel: string // 房屋装修等级
+}
+
+interface AssetRoomInsertDTO {
+  roomList: AssetRoomUpsertDTO[] // 住宅数据
 }
 
 // 资产管理-空间点位资源
@@ -1696,7 +1710,7 @@ interface AssetProjectVO {
 }
 
 // 资产管理-停车场管理
-interface AssetParkingBaseDTO {
+interface AssetParkingDTO {
   parkingId: string // 停车场编码
   projectId: string // 项目编码
   parkingName: string // 停车场名称
@@ -1715,12 +1729,12 @@ interface AssetParkingBaseDTO {
 
 // 资产管理-新增停车场DTO
 interface AssetParkingInsertDTO {
-  parking: AssetParkingBaseDTO // 停车场信息
-  parkingSpaces: AssetParkingSpaceBaseDTO[] // 车位信息
+  parking: AssetParkingDTO // 停车场信息
+  parkingSpaces: AssetParkingSpaceDTO[] // 车位信息
 }
 
 // 资产管理-停车位
-interface AssetParkingSpaceBaseDTO {
+interface AssetParkingSpaceDTO {
   parkingSpaceId: string // 车位编码
   projectId: string // 项目编码
   parkingId: string // 停车场编码
@@ -1810,7 +1824,7 @@ interface AssetParkingSpaceVO {
 }
 
 // 资产管理-楼层管理
-interface AssetFloorBaseDTO {
+interface AssetFloorDTO {
   floorId: string // 楼层编码
   projectId: string // 项目编码
   assetId: string // 资产编码
@@ -1829,6 +1843,7 @@ interface AssetFloorListDTO {
   pageNum: number
   pageSize: number
   floorId: string // 楼层编码
+  assetId: string // 资产编码
   floorName: string // 楼层名称
   projectName: string // 项目名称
   buildingName: string // 楼栋名称
@@ -2018,6 +2033,7 @@ interface AssetEnclosureListDTO {
   pageNum: number
   pageSize: number
   enclosureId: string // 围合编码
+  projectId: string // 项目编码
   projectName: string // 项目名称
   enclosureName: string // 围合名称
   enclosureTypeCode: string // 围合类型编码
@@ -2046,7 +2062,7 @@ interface AssetEnclosureInsertDTO {
   enclosureTypeName: string // 围合类型名称
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
-  floorList: AssetFloorBaseDTO[] // 楼层信息
+  floorList: AssetFloorDTO[] // 楼层信息
 }
 
 interface AssetBuildingUpdateDTO {
@@ -2063,6 +2079,7 @@ interface AssetBuildingListDTO {
   pageNum: number
   pageSize: number
   projectName: string // 项目名称
+  projectId: string // 项目编码
   buildingId: string // 楼栋编码
   buildingName: string // 楼栋名称
   projectTypeCode: string // 项目类型编码
@@ -2092,7 +2109,7 @@ interface AssetBuildingDTO {
   ownershipUnitName: string // 产权单位名称
   totalFloor: number // 总层数
   totalRoom: number // 总房间
-  floorList: AssetFloorBaseDTO[] // 楼层数据
+  floorList: AssetFloorDTO[] // 楼层数据
 }
 
 interface AssetBuildingInsertDTO {

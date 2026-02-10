@@ -180,6 +180,13 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/asset/management/add-room': RouteRecordInfo<
+    '/asset/management/add-room', // name
+    '/asset/management/add-room', // path
+    any,
+    any,
+    never
+  >
   '/asset/statistics': RouteRecordInfo<
     '/asset/statistics', // name
     '/asset/statistics', // path

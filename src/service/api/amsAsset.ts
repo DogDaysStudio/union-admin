@@ -55,11 +55,11 @@ export function amsAssetFloorList(payload: AssetFloorListDTO) {
   return http.post<Res<AssetFloorVO[]>>('/ams/asset-floor/list', payload)
 }
 // 新增楼层
-export function amsAssetFloorInsert(payload: AssetFloorBaseDTO) {
+export function amsAssetFloorInsert(payload: AssetFloorDTO) {
   return http.post<Res<string>>('/ams/asset-floor/insert', payload)
 }
 // 更新楼层
-export function amsAssetFloorUpdate(payload: AssetFloorBaseDTO) {
+export function amsAssetFloorUpdate(payload: AssetFloorDTO) {
   return http.post<Res<string>>('/ams/asset-floor/update', payload)
 }
 // 楼层详情

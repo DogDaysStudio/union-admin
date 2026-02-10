@@ -197,9 +197,9 @@ const handleCurrentChange = (val: number): void => {
 }
 
 const router = useRouter()
-const addRoom = () => router.push('/asset/management/add-enclosure')
-const editRoom = (roomId: string) => router.push(`/asset/management/edit-enclosure/${roomId}`)
-const detailRoom = (roomId: string) => router.push(`/asset/management/detail-enclosure/${roomId}`)
+const addRoom = () => router.push('/asset/management/add-room')
+const editRoom = (roomId: string) => router.push(`/asset/management/edit-room/${roomId}`)
+const detailRoom = (roomId: string) => router.push(`/asset/management/detail-room/${roomId}`)
 
 // 修改状态
 const toggleStatus = (roomId: string, enable: number): void => {
