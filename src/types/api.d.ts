@@ -1692,6 +1692,7 @@ interface AssetProjectVO {
   parkingCount: number // 停车场数量
   parkingSpaceCount: number // 停车位数量
   resourceCount: number // 空间点位数量
+  coverImageModel: FileModel // 封面照片文件对象
 }
 
 // 资产管理-停车场管理

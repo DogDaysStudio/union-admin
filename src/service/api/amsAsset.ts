@@ -99,3 +99,28 @@ export function amsAssetEnclosureDelete(payload: Record<string, any>) {
 export function amsAssetEnclosureEnable(payload: {enclosureId: any; enable: boolean}) {
   return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/enable', payload)
 }
+
+// 住宅列表
+export function amsAssetRoomList(payload: AssetRoomListDTO) {
+  return http.post<Res<AssetRoomVO[]>>('/ams/asset-room/list', payload)
+}
+// 新增住宅
+export function amsAssetRoomInsert(payload: AssetRoomUpsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-room/insert', payload)
+}
+// 更新住宅
+export function amsAssetRoomUpdate(payload: AssetRoomUpsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-room/update', payload)
+}
+// 住宅详情
+export function amsAssetRoomGet(payload: Record<string, any>) {
+  return http.post<Res<AssetRoomVO>>('/ams/asset-room/get', payload)
+}
+// 删除住宅
+export function amsAssetRoomDelete(payload: Record<string, any>) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-room/delete', payload)
+}
+// 启用/禁用住宅 | object:{roomId:住宅编码,enable:bool}
+export function amsAssetRoomEnable(payload: {roomId: any; enable: boolean}) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-room/enable', payload)
+}

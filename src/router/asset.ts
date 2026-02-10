@@ -106,6 +106,12 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '围合-楼层-详情', hidden: true},
             component: () => import('@/views/asset/enclosure/floor/detail-floor.vue'),
           },
+
+          {
+            path: '/asset/management/room',
+            meta: {title: '房屋（住宅）管理'},
+            component: () => import('@/views/asset/room/index.vue'),
+          },
         ],
       },
       {
