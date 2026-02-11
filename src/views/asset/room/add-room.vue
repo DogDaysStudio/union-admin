@@ -56,7 +56,7 @@ interface RoomInfo {
   roomLayoutCode: string
   roomLayoutName: string
   projectId: string
-  buildingArea: string
+  buildingArea: number
   ownershipUnitCode: string
   ownershipUnitName: string
 }
@@ -188,7 +188,7 @@ const handleAddRoom = (data: FloorItem) => {
     floorId: data.floorId,
     roomNumber: '',
     roomLayoutCode: data.roomLayoutCode,
-    buildingArea: '',
+    buildingArea: null,
     ownershipUnitCode: '',
     ownershipUnitName: '',
     roomLayoutName: '',
@@ -395,7 +395,7 @@ const handleReset = () => router.push('/asset/management/room')
                 </span>
                 <span class="ml-2">
                   面积：
-                  <el-input class="w-50!" v-model="data.buildingArea" />
+                  <el-input-number class="w-50!" v-model="data.buildingArea" :min="0" />
                 </span>
               </div>
             </template>

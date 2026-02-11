@@ -35,7 +35,6 @@ const roomDelete = useRequest(amsAssetRoomDelete, {
 })
 
 const formState = reactive({
-  pageable: false,
   pageNum: 1,
   pageSize: 10,
 } as AssetRoomListDTO)

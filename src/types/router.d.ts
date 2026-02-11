@@ -187,6 +187,13 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/asset/management/edit-room/:id': RouteRecordInfo<
+    '/asset/management/edit-room/:id', // name
+    '/asset/management/edit-room/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
   '/asset/statistics': RouteRecordInfo<
     '/asset/statistics', // name
     '/asset/statistics', // path

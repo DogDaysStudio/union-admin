@@ -1430,15 +1430,22 @@ interface AssetRoomListDTO {
 interface AssetRoomVO {
   roomId: string // 住宅编码
   roomNumber: string // 房间号
+  roomLayoutCode: string // 户型编码
   roomLayoutName: string // 户型名称
   buildingArea: number // 建筑面积
+  projectId: string // 项目编码
   projectName: string // 项目名称
+  assetId: string // 楼栋编码
   buildingName: string // 楼栋名称
+  floorId: string // 楼层编码
   floorName: string // 楼层名称
+  businessModelCode: string // 经营模式编码
   businessModelName: string // 经营模式名称
+  ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
   leaseType: string // 租赁方式 0-整租;1-合租
   enable: number // 0-禁用;1-启用
+  roomTypeCode: string // 房屋类型编码
   roomTypeName: string // 房屋类型名称
   roomHeight: number // 房间层高
   rentalArea: number // 计租面积
