@@ -105,7 +105,7 @@ export function amsAssetRoomList(payload: AssetRoomListDTO) {
   return http.post<Res<AssetRoomVO[]>>('/ams/asset-room/list', payload)
 }
 // 新增住宅
-export function amsAssetRoomInsert(payload: AssetRoomUpsertDTO) {
+export function amsAssetRoomInsert(payload: AssetRoomInsertDTO) {
   return http.post<Res<Record<string, any>>>('/ams/asset-room/insert', payload)
 }
 // 更新住宅

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, reactive, onMounted} from 'vue'
+import {ref, reactive, onMounted, watch} from 'vue'
 import {useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
@@ -8,10 +8,11 @@ import {
   amsAssetBuildingList,
   amsAssetFloorList,
   amsAssetRoomInsert,
+  amsAssetRoomList,
 } from '@/service/api/amsAsset'
 import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
-// import {findValueByCustomId} from '@/utils/array-util'
+import {findValueByCustomId} from '@/utils/array-util'
 
 const router = useRouter()
 
@@ -30,38 +31,65 @@ const floorList = useRequest(amsAssetFloorList, {
   throttleInterval: 500,
 })
 const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
-// 字典 户型
-const roomListTree = useRequest(iamCommonDicListTree, {
+// 字典 [户型 产权单位]
+const dicListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
 })
 const roomOptions = reactive<SysDicVO[]>([])
+const companyOptions = reactive<SysDicVO[]>([])
 // 新增楼层
 const addFloor = useRequest(amsAssetRoomInsert, {
+  throttleInterval: 500,
+})
+// 楼层列表
+const roomList = useRequest(amsAssetRoomList, {
   throttleInterval: 500,
 })
 
 // 表单Ref：用于调用表单内置方法（验证、重置）
 const formRef = ref<FormInstance>()
 
-interface floorDTO {
+// 1. 子房间信息
+interface RoomInfo {
+  assetType: string
+  roomNumber: string
+  roomLayoutCode: string
+  roomLayoutName: string
+  projectId: string
+  buildingArea: string
+  ownershipUnitCode: string
+  ownershipUnitName: string
+}
+
+// 2. 单个楼层信息
+interface FloorItem {
+  projectId: string
+  assetId: string
+  floorId: string
+  floorName: string
+  roomNumber: number
+  roomLayoutCode: string
+  count: number
+  children: RoomInfo[]
+}
+
+// 3. 顶层楼层DTO
+interface FloorDTO {
   projectId: string
   assetId: string
   floorId: string
   roomLayoutCode: string
+  floorList: FloorItem[]
 }
 
-// 核心：定义围合完整类型 = 原有AssetBuildingDTO + 楼层扩展字段floorDTO
-type AssetBuildingCompleteDTO = AssetBuildingDTO & floorDTO
-
-// 初始化表单数据：响应式对象，与表单双向绑定
-const formData = reactive({} as AssetRoomInsertDTO & AssetBuildingCompleteDTO)
+const formData = reactive({floorList: []} as AssetRoomInsertDTO & FloorDTO)
 
 // 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({
-  projectId: {required: true, message: '请选择所属项目', trigger: 'change'},
-  assetId: {required: true, message: '请选择所属楼栋', trigger: 'change'},
-  floorId: {required: true, message: '请选择所属楼层', trigger: 'change'},
-  roomLayoutCode: {required: true, message: '请选择户型', trigger: 'change'},
+  projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
+  assetId: {required: true, message: '请选择所属楼栋', trigger: 'blur'},
+  floorId: {required: true, message: '请选择所属楼层', trigger: 'blur'},
+  roomLayoutCode: {required: true, message: '请选择户型', trigger: 'blur'},
 })
 
 onMounted(() => getOptions())
@@ -70,30 +98,101 @@ onMounted(() => getOptions())
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
-  const {data: build} = await buildList.runAsync({pageable: false} as AssetBuildingListDTO)
-  buildOptions.push(...Object.values(build))
-  const {data: floor} = await floorList.runAsync({
-    pageable: false,
-    assetType: '1',
-  } as AssetFloorListDTO)
-  floorOptions.push(...Object.values(floor))
-  console.log(floorOptions, 'floorOptions')
-  const {data: roomList} = await roomListTree.runAsync({
+  const {data: roomList} = await dicListTree.runAsync({
     dicType: 1024,
     pageable: false,
   } as SysDicListDTO)
   roomOptions.push(...Object.values(roomList))
+  const {data: companyList} = await dicListTree.runAsync({
+    dicType: 1001,
+    pageable: false,
+  } as SysDicListDTO)
+  companyOptions.push(...Object.values(companyList))
 }
 
-// 生成商铺数据：点击生成按钮触发
-const handleGenerateShops = () => {}
+// 监听projectId变化，获取楼栋列表
+watch(
+  () => formData.projectId,
+  async projectId => {
+    buildOptions.length = 0
+    formData.assetId = ''
+    floorOptions.length = 0
+    formData.floorId = ''
+    if (projectId) {
+      const {data: build} = await buildList.runAsync({
+        pageable: false,
+        projectId,
+      } as AssetBuildingListDTO)
+      buildOptions.push(...Object.values(build))
+    }
+  },
+  {immediate: false}
+)
 
-interface Shop {
-  projectId: string
-  shopNumber: string
-  shopHeight: number
-  ownershipUnitCode: []
-  ownershipUnitName: string
+// 监听assetId变化，获取楼层列表
+watch(
+  () => formData.assetId,
+  async assetId => {
+    floorOptions.length = 0
+    formData.floorId = ''
+    if (assetId) {
+      const {data: floor} = await floorList.runAsync({
+        pageable: false,
+        assetType: '1',
+        assetId,
+      } as AssetFloorListDTO)
+      floorOptions.push(...Object.values(floor))
+    }
+  },
+  {immediate: false}
+)
+
+// 生成楼层
+const handleAddFloor = () => {
+  if (!formRef.value) return
+  formRef.value.validate(async valid => {
+    if (valid) {
+      const Flag = formData.floorList.find(e => e.floorId === formData.floorId)
+      if (Flag) {
+        ElMessage.warning('该楼层已生成！')
+        return
+      }
+      const {data: room} = await roomList.runAsync({
+        floorId: formData.floorId,
+        pageable: false,
+      } as AssetRoomListDTO)
+      formData.floorList.push({
+        projectId: formData.projectId,
+        assetId: formData.assetId,
+        floorId: formData.floorId,
+        floorName: room[0].floorName,
+        roomNumber: room.length,
+        roomLayoutCode: formData.roomLayoutCode,
+        count: null,
+        children: [],
+      })
+    }
+  })
+}
+
+// 生成房间
+const handleAddRoom = (data: FloorItem) => {
+  if (!data.count) {
+    ElMessage.warning('请填写新增房间数量！')
+    return
+  }
+  data.children = Array.from({length: data.count}, () => ({
+    projectId: data.projectId,
+    assetId: data.assetId,
+    assetType: '1',
+    floorId: data.floorId,
+    roomNumber: '',
+    roomLayoutCode: data.roomLayoutCode,
+    buildingArea: '',
+    ownershipUnitCode: '',
+    ownershipUnitName: '',
+    roomLayoutName: '',
+  }))
 }
 
 // 提交表单：先验证，通过后处理数据
@@ -101,27 +200,40 @@ const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
     if (valid) {
-      let Flag = true
-      const paramsData = JSON.parse(JSON.stringify(formData))
-      paramsData.assetType = '2'
-      paramsData.roomList?.forEach((shop: Shop) => {
-        shop.projectId = paramsData.projectId
-        if (!shop?.shopHeight) Flag = false
-      })
-      if (Flag) {
-        const {msg} = await addFloor.runAsync({...paramsData})
-        ElMessage.success(msg)
-        router.push('/asset/management/enclosure-floor')
-      } else {
-        ElMessage.warning('请填写层高')
+      const paramsData = JSON.parse(JSON.stringify(formData)) as AssetRoomInsertDTO & FloorDTO
+      if (!paramsData?.floorList) {
+        ElMessage.warning('请生成楼层')
+        return
       }
-    } else {
-      ElMessage.error('请填写完整信息')
+      let flag = true
+      paramsData.roomList = []
+      paramsData?.floorList.map(e => {
+        e.children.map(k => {
+          if (!k?.roomNumber || !k?.buildingArea || !k?.ownershipUnitCode) flag = false
+          k.roomLayoutName =
+            findValueByCustomId(k.roomLayoutCode, 'dicId', 'dicName', roomOptions) || ''
+          paramsData.roomList.push(k as unknown as AssetRoomUpsertDTO)
+          if (Array.isArray(k.ownershipUnitCode)) {
+            const targetCode = k.ownershipUnitCode[k.ownershipUnitCode.length - 1] ?? ''
+            if (!targetCode) flag = false
+            k.ownershipUnitName =
+              findValueByCustomId(targetCode, 'dicId', 'dicName', companyOptions) || ''
+            k.ownershipUnitCode = targetCode
+          }
+        })
+      })
+      if (flag) {
+        const {msg} = await addFloor.runAsync({roomList: paramsData.roomList})
+        ElMessage.success(msg)
+        router.push('/asset/management/room')
+      } else {
+        ElMessage.warning('请填写房号、产权、面积！')
+      }
     }
   })
 }
 
-const handleReset = () => router.push('/asset/management/enclosure-floor')
+const handleReset = () => router.push('/asset/management/room')
 </script>
 
 <template>
@@ -162,7 +274,11 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
             </el-col>
             <el-col :span="8">
               <el-form-item label="所属楼栋" prop="assetId" required>
-                <el-select v-model="formData.assetId" placeholder="请选择所属楼栋">
+                <el-select
+                  v-model="formData.assetId"
+                  placeholder="请选择所属楼栋"
+                  :disabled="!formData.projectId"
+                >
                   <el-option
                     v-for="item in buildOptions"
                     :key="item.buildingId"
@@ -174,7 +290,11 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
             </el-col>
             <el-col :span="8">
               <el-form-item label="所属楼层" prop="floorId" required>
-                <el-select v-model="formData.floorId" placeholder="请选择所属楼层">
+                <el-select
+                  v-model="formData.floorId"
+                  placeholder="请选择所属楼层"
+                  :disabled="!formData.assetId"
+                >
                   <el-option
                     v-for="item in floorOptions"
                     :key="item.floorId"
@@ -199,50 +319,89 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
           </el-row>
         </section-group>
 
-        <section-group title="商铺信息" inline>
-          <el-row :gutter="24">
-            <el-col :span="8">
-              <el-form-item label="每层商铺数">
-                <div class="flex w-full">
-                  <!-- <el-input-number v-model="formData.shopNumber" placeholder="请填写每层商铺数" /> -->
-                  <el-button type="primary" class="ml-4" @click="handleGenerateShops">
-                    生成
-                  </el-button>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
+        <section-group title="房间信息" inline>
+          <template #extra>
+            <el-button type="primary" @click="handleAddFloor">生成楼层</el-button>
+          </template>
           <el-tree
             ref="treeRef"
-            :data="formData.roomList"
+            :data="formData.floorList"
             node-key="shopId"
             default-expand-all
             :props="{
-              children: 'roomList',
+              children: 'children',
             }"
             :expand-on-click-node="false"
           >
             <template #default="{data}">
-              <el-row :gutter="24">
-                <el-col :span="8">
-                  商铺：
-                  <el-input class="w-50!" v-model="data.shopNumber" />
-                </el-col>
-                <el-col :span="8">
-                  层高：
-                  <el-input-number
+              <div :gutter="24" v-if="data.children">
+                <span class="ml-2">
+                  楼层：
+                  <el-input class="w-50!" v-model="data.floorName" disabled />
+                </span>
+                <span class="ml-2">
+                  已有房间：
+                  <el-input class="w-50!" v-model="data.roomNumber" disabled />
+                </span>
+                <span class="ml-2">
+                  户型：
+                  <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
+                    <el-option
+                      v-for="item in roomOptions"
+                      :key="item.dicId"
+                      :label="item.dicName"
+                      :value="item.dicId"
+                    />
+                  </el-select>
+                </span>
+                <span class="ml-2">
+                  新增房间数：
+                  <el-input-number class="w-50!" v-model="data.count" :min="1" />
+                  <el-button class="ml-2" type="primary" @click="handleAddRoom(data)">
+                    生成房间
+                  </el-button>
+                </span>
+              </div>
+              <div :gutter="24" v-else>
+                <span class="ml-2">
+                  房号：
+                  <el-input class="w-50!" v-model="data.roomNumber" />
+                </span>
+                <span class="ml-2">
+                  户型：
+                  <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
+                    <el-option
+                      v-for="item in roomOptions"
+                      :key="item.dicId"
+                      :label="item.dicName"
+                      :value="item.dicId"
+                    />
+                  </el-select>
+                </span>
+                <span class="ml-2">
+                  产权单位：
+                  <el-cascader
                     class="w-50!"
-                    v-model="data.shopHeight"
-                    placeholder="请输入层高"
+                    v-model="data.ownershipUnitCode"
+                    placeholder="请选择产权单位"
+                    :options="companyOptions"
+                    :props="{
+                      checkStrictly: true,
+                      value: 'dicId',
+                      label: 'dicName',
+                    }"
+                    clearable
                   />
-                </el-col>
-              </el-row>
+                </span>
+                <span class="ml-2">
+                  面积：
+                  <el-input class="w-50!" v-model="data.buildingArea" />
+                </span>
+              </div>
             </template>
           </el-tree>
         </section-group>
 
-        <!-- 表单操作按钮：居中、间距 -->
         <div class="flex justify-center mt-6">
           <el-button @click="handleReset">取消</el-button>
           <el-button type="primary" @click="handleSubmit">确定</el-button>
