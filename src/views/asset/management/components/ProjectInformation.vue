@@ -179,11 +179,29 @@ const getFieldValue = (fieldConfig: FormField): string => {
   if (!fieldConfig.field || !fieldConfig.label) return ''
 
   if (Array.isArray(fieldConfig.field)) {
-    const values = fieldConfig.field.map(f => formData[f as keyof AssetProjectVO])
-    return fieldConfig.formatter ? fieldConfig.formatter(values) : values.join(' / ')
+    const values = fieldConfig.field.map(f => formData[f])
+    if (fieldConfig.formatter) {
+      return fieldConfig.formatter(values)
+    }
+    return values
+      .map(val => {
+        if (
+          Array.isArray(val) &&
+          val.every(item => typeof item === 'object' && item !== null && 'name' in item)
+        ) {
+          return val.map(item => item.name).join(', ')
+        }
+        return val?.toString() || '-'
+      })
+      .join(' / ')
   }
-
-  const value = formData[fieldConfig.field as keyof AssetProjectVO]
+  const value = formData[fieldConfig.field]
+  if (
+    Array.isArray(value) &&
+    value.every(item => typeof item === 'object' && item !== null && 'name' in item)
+  ) {
+    return value.map(item => item.name).join(', ')
+  }
   return value?.toString() || '-'
 }
 </script>

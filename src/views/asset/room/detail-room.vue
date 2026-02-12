@@ -1,0 +1,141 @@
+<script lang="ts" setup>
+import {reactive, onMounted} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import {useRequest} from 'vue-request'
+import {amsAssetRoomGet} from '@/service/api/amsAsset'
+
+const router = useRouter()
+const route = useRoute()
+
+const roomGet = useRequest(amsAssetRoomGet, {
+  throttleInterval: 500,
+})
+
+const formData = reactive({} as AssetRoomVO)
+
+onMounted(() => getDetail())
+
+const getDetail = async (): Promise<void> => {
+  const {data} = await roomGet.runAsync({roomId: route.params.id})
+  const cloneData = JSON.parse(JSON.stringify(data))
+  cloneData.leaseType =
+    cloneData.leaseType == '0' ? '整租' : cloneData.leaseType == '1' ? '合租' : '-'
+  Object.assign(formData, cloneData)
+}
+
+// 简化的表单配置（移除复杂接口，保留类型安全）
+type FormField = {
+  label: string
+  field: string | string[]
+  required: boolean
+  formatter?: (vals: (string | number | undefined)[]) => string
+}
+
+const formConfig = [
+  {
+    title: '基本信息',
+    fields: [
+      [
+        {label: '房间号', field: 'roomNumber', required: true},
+        {label: '房间编码', field: 'roomId', required: true},
+        {label: '户型', field: 'roomLayoutName', required: true},
+      ],
+      [
+        {label: '所属项目', field: 'projectName', required: true},
+        {label: '所属楼栋', field: 'assetName', required: true},
+        {label: '所属楼层', field: 'floorName', required: true},
+      ],
+      [{label: '产权单位', field: 'ownershipUnitName', required: true}],
+    ],
+  },
+  {
+    title: '其他信息',
+    fields: [
+      [
+        {label: '房间类型', field: 'roomTypeName', required: true},
+        {label: '经营模式', field: 'businessModelName', required: true},
+        {label: '房间层高（m）', field: 'roomHeight', required: true},
+      ],
+      [
+        {label: '建筑面积（m）', field: 'buildingArea', required: true},
+        {label: '计租面积（m）', field: 'rentalArea', required: true},
+        {label: '物业收费面积（m）', field: 'propertyFeeArea', required: true},
+      ],
+
+      [
+        {label: '水务户号', field: 'waterServiceNo', required: true},
+        {label: '电网户号', field: 'powerGridNo', required: true},
+        {label: '燃气户号', field: 'gasNo', required: true},
+      ],
+      [
+        {label: '房源装修等级', field: 'decorationLevel', required: true},
+        {label: '租赁方式', field: 'leaseType', required: true},
+      ],
+    ],
+  },
+]
+
+// 格式化值的方法（移除any，类型安全）
+const getFieldValue = (fieldConfig: FormField): string => {
+  if (!fieldConfig.field || !fieldConfig.label) return ''
+
+  if (Array.isArray(fieldConfig.field)) {
+    const values = fieldConfig.field.map(f => formData[f])
+    if (fieldConfig.formatter) {
+      return fieldConfig.formatter(values)
+    }
+    return values
+      .map(val => {
+        if (
+          Array.isArray(val) &&
+          val.every(item => typeof item === 'object' && item !== null && 'name' in item)
+        ) {
+          return val.map(item => item.name).join(', ')
+        }
+        return val?.toString() || '-'
+      })
+      .join(' / ')
+  }
+  const value = formData[fieldConfig.field]
+  if (
+    Array.isArray(value) &&
+    value.every(item => typeof item === 'object' && item !== null && 'name' in item)
+  ) {
+    return value.map(item => item.name).join(', ')
+  }
+  return value?.toString() || '-'
+}
+</script>
+
+<template>
+  <el-card>
+    <template #header>
+      <div class="flex justify-between">
+        编辑
+        <p class="text-red-600">
+          <span>*</span>
+          为必填项
+        </p>
+      </div>
+    </template>
+    <el-form :model="formData" ref="formRef" label-width="80px" label-position="top">
+      <section-group
+        v-for="(group, groupIdx) in formConfig"
+        :key="groupIdx"
+        :title="group.title"
+        inline
+      >
+        <el-row :gutter="24" v-for="(row, rowIdx) in group.fields" :key="rowIdx">
+          <el-col :span="8" v-for="(field, colIdx) in row" :key="colIdx">
+            <el-form-item :label="field.label" :required="field.required">
+              <span class="ml-4">{{ getFieldValue(field) }}</span>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </section-group>
+      <div class="flex justify-center mt-6">
+        <el-button type="primary" @click="router.push('/asset/management/room')">返回</el-button>
+      </div>
+    </el-form>
+  </el-card>
+</template>

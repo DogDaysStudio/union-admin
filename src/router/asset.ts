@@ -122,6 +122,11 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '房屋-编辑', hidden: true},
             component: () => import('@/views/asset/room/edit-room.vue'),
           },
+          {
+            path: '/asset/management/detail-room/:id',
+            meta: {title: '房屋-编辑', hidden: true},
+            component: () => import('@/views/asset/room/detail-room.vue'),
+          },
         ],
       },
       {
