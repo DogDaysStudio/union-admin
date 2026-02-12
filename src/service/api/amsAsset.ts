@@ -124,3 +124,28 @@ export function amsAssetRoomDelete(payload: Record<string, any>) {
 export function amsAssetRoomEnable(payload: {roomId: any; enable: boolean}) {
   return http.post<Res<Record<string, any>>>('/ams/asset-room/enable', payload)
 }
+
+// 资源列表
+export function amsAssetResourceList(payload: AssetResourceListDTO) {
+  return http.post<Res<AssetResourceVO[]>>('/ams/asset-resource/list', payload)
+}
+// 新增资源
+export function amsAssetResourceInsert(payload: AssetResourceUpsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-resource/insert', payload)
+}
+// 更新资源
+export function amsAssetResourceUpdate(payload: AssetResourceUpsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-resource/update', payload)
+}
+// 资源详情
+export function amsAssetResourceGet(payload: Record<string, any>) {
+  return http.post<Res<AssetResourceVO>>('/ams/asset-resource/get', payload)
+}
+// 删除资源
+export function amsAssetResourceDelete(payload: Record<string, any>) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-resource/delete', payload)
+}
+// 启用/禁用资源 | object:{resourceId:资源编码,enable:bool}
+export function amsAssetResourceEnable(payload: {resourceId: any; enable: boolean}) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-resource/enable', payload)
+}

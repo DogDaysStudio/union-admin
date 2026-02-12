@@ -16,22 +16,11 @@ const formData = reactive({} as AssetRoomVO)
 onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
-  try {
-    const {data} = await roomGet.runAsync({roomId: route.params.id})
-    const cloneData = JSON.parse(JSON.stringify(data))
-    cloneData.leaseType =
-      cloneData.leaseType == '0' ? '整租' : cloneData.leaseType == '1' ? '合租' : '-'
-    Object.assign(formData, cloneData)
-  } catch (error) {
-    console.error('获取房间详情失败：', error)
-  }
-}
-
-type FormField = {
-  label: string
-  field: string | number | (string | number)[] | undefined
-  required: boolean
-  formatter?: (vals: (string | number | undefined)[]) => string
+  const {data} = await roomGet.runAsync({roomId: route.params.id})
+  const cloneData = JSON.parse(JSON.stringify(data))
+  cloneData.leaseType =
+    cloneData.leaseType == '0' ? '整租' : cloneData.leaseType == '1' ? '合租' : '-'
+  Object.assign(formData, cloneData)
 }
 
 const formConfig = computed(() => [
@@ -76,26 +65,6 @@ const formConfig = computed(() => [
     ],
   },
 ])
-
-const getFieldValue = (fieldConfig: FormField): string => {
-  if (!fieldConfig.field || !fieldConfig.label) return ''
-  if (Array.isArray(fieldConfig.field)) {
-    const vals = fieldConfig.field.map(val => val ?? '-')
-    if (fieldConfig.formatter) {
-      return fieldConfig.formatter(vals)
-    }
-    return vals.join(' / ')
-  }
-
-  const value = fieldConfig.field
-  if (
-    Array.isArray(value) &&
-    value.every(item => typeof item === 'object' && item !== null && 'name' in item)
-  ) {
-    return value.map(item => item.name).join(', ')
-  }
-  return value?.toString() || '-'
-}
 </script>
 
 <template>
@@ -117,9 +86,9 @@ const getFieldValue = (fieldConfig: FormField): string => {
         inline
       >
         <el-row :gutter="24" v-for="(row, rowIdx) in group.fields" :key="rowIdx">
-          <el-col :span="8" v-for="(field, colIdx) in row" :key="colIdx">
-            <el-form-item :label="field.label" :required="field.required">
-              <span class="ml-4">{{ getFieldValue(field) || '-' }}</span>
+          <el-col :span="8" v-for="(item, colIdx) in row" :key="colIdx">
+            <el-form-item :label="item.label" :required="item.required">
+              <span class="ml-4">{{ item.field || '-' }}</span>
             </el-form-item>
           </el-col>
         </el-row>

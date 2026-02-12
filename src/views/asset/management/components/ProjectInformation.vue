@@ -26,10 +26,8 @@ const formConfig = computed(() => [
         {label: '详细地址', field: formData.address, required: true},
         {
           label: '经纬度',
-          field: [formData.lng, formData.lat],
+          field: `${formData.lng || '-'} - ${formData.lat || '-'}`,
           required: true,
-          formatter: (vals: (string | number | undefined)[]) =>
-            `${vals[0] || '-'} / ${vals[1] || '-'}`,
         },
       ],
       [
@@ -117,20 +115,14 @@ const formConfig = computed(() => [
         {label: '客梯数量', field: formData.customElevator, required: true},
         {label: '货梯数量', field: formData.goodsElevator, required: true},
       ],
-      [
-        {label: '消防梯数量', field: formData.firefightElevator, required: true},
-        {label: '', field: '', required: false},
-        {label: '', field: '', required: false},
-      ],
+      [{label: '消防梯数量', field: formData.firefightElevator, required: true}],
       [
         {label: '物业公司名称', field: formData.propertyCompany, required: true},
         {label: '项目负责人', field: formData.projectManager, required: true},
         {
           label: '质保期',
-          field: [formData.warrantyContractBegin, formData.warrantyContractEnd],
+          field: `${formData.warrantyContractBegin || '-'} - ${formData.warrantyContractEnd || '-'}`,
           required: true,
-          formatter: (vals: (string | number | undefined)[]) =>
-            `${vals[0] || '-'} / ${vals[1] || '-'}`,
         },
       ],
       [
@@ -152,34 +144,12 @@ const formConfig = computed(() => [
   },
 ])
 
-const getFieldValue = (fieldConfig: FormField): string => {
-  if (!fieldConfig.label) return ''
-  if (Array.isArray(fieldConfig.field)) {
-    const vals = fieldConfig.field.map(val => val ?? '-')
-    return fieldConfig.formatter ? fieldConfig.formatter(vals) : vals.join(' / ')
-  }
-  return fieldConfig.field?.toString() || '-'
-}
-
 onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
-  try {
-    const {data} = await projectGet.runAsync({projectId: route.params.id})
-    const cloneData = JSON.parse(JSON.stringify(data))
-    Object.assign(formData, cloneData)
-    console.log(formData, 'formData')
-    console.log(formConfig.value, 'formConfig')
-  } catch (error) {
-    console.error('获取项目详情失败：', error)
-  }
-}
-
-type FormField = {
-  label: string
-  field: string | number | (string | number)[] | undefined
-  required: boolean
-  formatter?: (vals: (string | number | undefined)[]) => string
+  const {data} = await projectGet.runAsync({projectId: route.params.id})
+  const cloneData = JSON.parse(JSON.stringify(data))
+  Object.assign(formData, cloneData)
 }
 </script>
 
@@ -194,9 +164,9 @@ type FormField = {
           inline
         >
           <el-row :gutter="24" v-for="(row, rowIdx) in group.fields" :key="rowIdx">
-            <el-col :span="8" v-for="(field, colIdx) in row" :key="colIdx">
-              <el-form-item :label="field.label" :required="field.required">
-                <span class="ml-4">{{ getFieldValue(field) }}</span>
+            <el-col :span="8" v-for="(item, colIdx) in row" :key="colIdx">
+              <el-form-item :label="item.label" :required="item.required">
+                <span class="ml-4">{{ item.field || '-' }}</span>
               </el-form-item>
             </el-col>
           </el-row>
