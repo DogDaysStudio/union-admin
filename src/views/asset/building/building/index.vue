@@ -198,20 +198,11 @@ const deleteData = (buildingId: string): void => {
       <el-table-column fixed="right" label="操作" min-width="105">
         <template #default="{row}">
           <el-button
-            v-if="row.enable"
             link
-            type="danger"
+            :type="row.enable ? 'danger' : 'primary'"
             @click="toggleStatus(row.buildingId, row.enable)"
           >
-            停用
-          </el-button>
-          <el-button
-            v-if="!row.enable"
-            link
-            type="primary"
-            @click="toggleStatus(row.buildingId, row.enable)"
-          >
-            启用
+            {{ row.enable ? '停用' : '启用' }}
           </el-button>
           <el-button link type="primary" @click="detailBuilding(row.buildingId)">
             查看详情

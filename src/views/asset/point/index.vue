@@ -144,10 +144,10 @@ const handleCurrentChange = (val: number): void => {
 }
 
 const router = useRouter()
-const addPoint = () => router.push('/asset/management/add-room')
-const editPoint = (resourceId: string) => router.push(`/asset/management/edit-room/${resourceId}`)
+const addPoint = () => router.push('/asset/management/add-point')
+const editPoint = (resourceId: string) => router.push(`/asset/management/edit-point/${resourceId}`)
 const detailPoint = (resourceId: string) =>
-  router.push(`/asset/management/detail-room/${resourceId}`)
+  router.push(`/asset/management/detail-point/${resourceId}`)
 
 // 修改状态
 const toggleStatus = (resourceId: string, enable: number): void => {
@@ -217,20 +217,11 @@ const deleteRoom = (resourceId: string): void => {
       <el-table-column fixed="right" label="操作" min-width="170">
         <template #default="{row}">
           <el-button
-            v-if="row.enable"
             link
-            type="danger"
+            :type="row.enable ? 'danger' : 'primary'"
             @click="toggleStatus(row.resourceId, row.enable)"
           >
-            停用
-          </el-button>
-          <el-button
-            v-if="!row.enable"
-            link
-            type="primary"
-            @click="toggleStatus(row.resourceId, row.enable)"
-          >
-            启用
+            {{ row.enable ? '停用' : '启用' }}
           </el-button>
           <el-button link type="primary" @click="detailPoint(row.resourceId)">查看详情</el-button>
           <el-button link type="primary" @click="editPoint(row.resourceId)">编辑</el-button>

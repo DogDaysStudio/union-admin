@@ -265,20 +265,11 @@ const deleteRoom = (roomId: string): void => {
       <el-table-column fixed="right" label="操作" min-width="170">
         <template #default="{row}">
           <el-button
-            v-if="row.enable"
             link
-            type="danger"
+            :type="row.enable ? 'danger' : 'primary'"
             @click="toggleStatus(row.roomId, row.enable)"
           >
-            停用
-          </el-button>
-          <el-button
-            v-if="!row.enable"
-            link
-            type="primary"
-            @click="toggleStatus(row.roomId, row.enable)"
-          >
-            启用
+            {{ row.enable ? '停用' : '启用' }}
           </el-button>
           <el-button link type="primary" @click="detailRoom(row.roomId)">查看详情</el-button>
           <el-button link type="primary" @click="editRoom(row.roomId)">编辑</el-button>

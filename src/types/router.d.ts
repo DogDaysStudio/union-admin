@@ -208,6 +208,13 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/asset/management/add-point': RouteRecordInfo<
+    '/asset/management/add-point', // name
+    '/asset/management/add-point', // path
+    any,
+    any,
+    never
+  >
   '/asset/statistics': RouteRecordInfo<
     '/asset/statistics', // name
     '/asset/statistics', // path
