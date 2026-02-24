@@ -520,9 +520,9 @@ interface ApiType {
 
   /* 【资产管理-资源管理】
   // 新增/更新资源
-  export function amsAssetResourceInsert(payload: AssetResourceUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/insert', payload)}
+  export function amsAssetResourceInsert(payload: AssetResourceInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/insert', payload)}
   */
-  '/ams/asset-resource/insert': {Req: AssetResourceUpsertDTO; Res: Record<string, any>}
+  '/ams/asset-resource/insert': {Req: AssetResourceInsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
   // 资源详情
@@ -1528,6 +1528,10 @@ interface AssetResourceVO {
   resourceArea: number // 面积
   resourceState: number // 状态，0-待租;1-已租
   enable: number // 0-禁用;1-启用
+}
+
+interface AssetResourceInsertDTO {
+  resourceList: AssetResourceUpsertDTO[] // 资源数据
 }
 
 interface AssetResourceIdGenerateDTO {

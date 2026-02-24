@@ -130,7 +130,7 @@ export function amsAssetResourceList(payload: AssetResourceListDTO) {
   return http.post<Res<AssetResourceVO[]>>('/ams/asset-resource/list', payload)
 }
 // 新增资源
-export function amsAssetResourceInsert(payload: AssetResourceUpsertDTO) {
+export function amsAssetResourceInsert(payload: AssetResourceInsertDTO) {
   return http.post<Res<Record<string, any>>>('/ams/asset-resource/insert', payload)
 }
 // 更新资源

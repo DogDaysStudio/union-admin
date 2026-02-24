@@ -48,7 +48,7 @@ const formSchema = defineSchema({
       options: resourceBusinessTypeOptions,
       clearable: true,
       props: {
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),
@@ -58,18 +58,17 @@ const formSchema = defineSchema({
       options: resourceTypeOptions,
       clearable: true,
       props: {
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),
-    defineField.Cascader({
+    defineField.Select({
       label: '广告类型',
       prop: 'resourceAdTypeCode',
       options: resourceAdTypeOptions,
       clearable: true,
       props: {
-        checkStrictly: true,
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),
@@ -79,7 +78,7 @@ const formSchema = defineSchema({
       options: resourceMediaOptions,
       clearable: true,
       props: {
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),
@@ -114,7 +113,7 @@ onMounted(() => {
 const getOptions = async (): Promise<void> => {
   const {data: resourceBusinessType} = await dicListTree.runAsync({dicType: 1009})
   resourceBusinessTypeOptions.push(...Object.values(resourceBusinessType))
-  const {data: resourceType} = await dicListTree.runAsync({dicType: 10011})
+  const {data: resourceType} = await dicListTree.runAsync({dicType: 1011})
   resourceTypeOptions.push(...Object.values(resourceType))
   const {data: resourceAdType} = await dicListTree.runAsync({dicType: 1010})
   resourceAdTypeOptions.push(...Object.values(resourceAdType))
@@ -194,27 +193,27 @@ const deleteRoom = (resourceId: string): void => {
       </div>
     </template>
     <el-table v-loading="loading" :data="tableData" border>
-      <el-table-column label="序号" type="index" width="60" />
-      <el-table-column label="点位编码" prop="resourceId" />
-      <el-table-column label="点位名称" prop="resourceName" />
-      <el-table-column label="点位编号" prop="resourceNumber" />
-      <el-table-column label="业务类型" prop="resourceBusinessType" />
-      <el-table-column label="点位类型" prop="resourceType" />
-      <el-table-column label="广告类型" prop="resourceAdType" />
-      <el-table-column label="媒体类型" prop="resourceMediaType" />
-      <el-table-column label="所属项目" prop="projectName" />
-      <el-table-column label="所属围合/楼栋" prop="buildingEnclosureName" />
-      <el-table-column label="楼层名称" prop="floorName" />
-      <el-table-column label="位置" prop="location" />
-      <el-table-column label="规格" prop="resourceSpecs" />
-      <el-table-column label="面积（㎡）" prop="resourceArea" />
-      <el-table-column label="点位状态" prop="resourceState" />
-      <el-table-column label="启停状态" prop="enable">
+      <el-table-column label="序号" type="index" width="60" fixed="left" />
+      <el-table-column label="点位编码" prop="resourceId" width="180" />
+      <el-table-column label="点位名称" prop="resourceName" width="120" />
+      <el-table-column label="点位编号" prop="resourceNumber" width="120" />
+      <el-table-column label="业务类型" prop="resourceBusinessType" width="120" />
+      <el-table-column label="点位类型" prop="resourceType" width="120" />
+      <el-table-column label="广告类型" prop="resourceAdType" width="120" />
+      <el-table-column label="媒体类型" prop="resourceMediaType" width="120" />
+      <el-table-column label="所属项目" prop="projectName" width="120" />
+      <el-table-column label="所属围合/楼栋" prop="buildingEnclosureName" width="120" />
+      <el-table-column label="楼层名称" prop="floorName" width="120" />
+      <el-table-column label="位置" prop="location" width="120" />
+      <el-table-column label="规格" prop="resourceSpecs" width="80" />
+      <el-table-column label="面积（㎡）" prop="resourceArea" width="100" />
+      <el-table-column label="点位状态" prop="resourceState" width="90" />
+      <el-table-column label="启停状态" prop="enable" width="90">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="170">
+      <el-table-column fixed="right" label="操作" min-width="230">
         <template #default="{row}">
           <el-button
             link
