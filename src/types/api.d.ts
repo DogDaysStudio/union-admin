@@ -507,10 +507,16 @@ interface ApiType {
   '/ams/asset-room/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
-  // 新增/更新资源
+  // 更新资源
   export function amsAssetResourceUpdate(payload: AssetResourceUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/update', payload)}
   */
   '/ams/asset-resource/update': {Req: AssetResourceUpsertDTO; Res: Record<string, any>}
+
+  /* 【资产管理-资源管理】
+  // 根据楼层查询商铺号/房间号
+  export function amsAssetResourceSelectLocationId(payload: AssetLocationIdListDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/select-location-id', payload)}
+  */
+  '/ams/asset-resource/select-location-id': {Req: AssetLocationIdListDTO; Res: Record<string, any>}
 
   /* 【资产管理-资源管理】
   // 资源列表
@@ -519,7 +525,7 @@ interface ApiType {
   '/ams/asset-resource/list': {Req: AssetResourceListDTO; Res: AssetResourceVO[]}
 
   /* 【资产管理-资源管理】
-  // 新增/更新资源
+  // 新增资源
   export function amsAssetResourceInsert(payload: AssetResourceInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/insert', payload)}
   */
   '/ams/asset-resource/insert': {Req: AssetResourceInsertDTO; Res: Record<string, any>}
@@ -835,6 +841,12 @@ interface ApiType {
   export function amsAssetBuildingUpdate(payload: AssetBuildingUpdateDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-building/update', payload)}
   */
   '/ams/asset-building/update': {Req: AssetBuildingUpdateDTO; Res: Record<string, any>}
+
+  /* 【资产管理-楼栋管理】
+  // 根据项目id查询楼栋&围合
+  export function amsAssetBuildingSelectBuildingEnclosure(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-building/select-building-enclosure', payload)}
+  */
+  '/ams/asset-building/select-building-enclosure': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-楼栋管理】
   // 楼栋列表
@@ -1469,23 +1481,31 @@ interface AssetResourceUpsertDTO {
   assetType: string // 资产类型(楼栋/围合/停车场)
   floorId: string // 楼层编码
   resourceNumber: string // 资源编号
-  resourceName: string // 资源名称
-  resourceType: string // 资源类型
-  resourceTypeCode: string // 资源类型编码
-  resourceBusinessType: string // 资源业务类型
-  resourceBusinessTypeCode: string // 资源业务类型编码
-  resourceAdType: string // 资源广告类型
-  resourceAdTypeCode: string // 资源广告类型编码
-  resourceMediaType: string // 资源媒体类型
-  resourceMediaTypeCode: string // 资源媒体类型编码
+  resourceName: string // 点位名称
+  resourceType: string // 点位类型
+  resourceTypeCode: string // 点位类型编码
+  resourceBusinessType: string // 业务类型
+  resourceBusinessTypeCode: string // 业务类型编码
+  resourceAdType: string // 广告类型
+  resourceAdTypeCode: string // 广告类型编码
+  resourceMediaType: string // 媒体类型
+  resourceMediaTypeCode: string // 媒体类型编码
+  resourceBusinessTag: string // 业务标签
+  resourceBusinessTagCode: string // 业务标签编码
   resourceSpecs: string // 资源规格
   resourceSpecsCode: string // 资源规格编码
   resourceArea: number // 资源面积
   resourceState: number // 资源状态，0-待租;1-已租
-  locationTypeCode: string // 位置类型编码(Pz or NonPz)
-  locationTypeName: string // 位置类型名称(公区 或 非公区)
-  locationId: string // 位置编码(非公区为房间或商铺编码;公区为字典编码)
-  locationName: string // 位置名称(非公区为房间号或商铺号;公区为字典字典名称)
+  locationCode: string // 位置编码
+  locationName: string // 位置名称
+  businessModelCode: string // 经营模式编码
+  businessModelName: string // 经营模式名称
+  locationId: string // 房间号/商铺号
+}
+
+interface AssetLocationIdListDTO {
+  businessModelCode: string // 经营模式编码
+  floorId: string // 楼层编码
 }
 
 // 资产管理-空间点位资源
@@ -1513,20 +1533,30 @@ interface AssetResourceListDTO {
 
 // 资产管理-空间点位资源
 interface AssetResourceVO {
-  resourceId: string // 资源编码
-  resourceName: string // 资源名称
-  resourceNumber: string // 资源编号
-  resourceType: string // 资源类型
+  resourceId: string // 点位编码
+  resourceName: string // 点位名称
+  resourceNumber: string // 点位编号
+  resourceType: string // 点位类型
+  resourceTypeCode: string // 点位类型编码
   resourceBusinessType: string // 业务类型
+  resourceBusinessTypeCode: string // 业务类型编码
   resourceAdType: string // 广告类型
+  resourceAdTypeCode: string // 广告类型编码
   resourceMediaType: string // 媒体类型
+  resourceMediaTypeCode: string // 媒体类型编码
   projectName: string // 项目名称
   buildingEnclosureName: string // 楼栋/围合名称
   floorName: string // 楼层名称
-  location: string // 位置
   resourceSpecs: string // 规格
   resourceArea: number // 面积
   resourceState: number // 状态，0-待租;1-已租
+  locationCode: string // 位置编码
+  locationName: string // 位置名称
+  businessModelCode: string // 经营模式编码
+  businessModelName: string // 经营模式名称
+  resourceBusinessTag: string // 业务标签
+  resourceBusinessTagCode: string // 业务标签编码
+  locationId: string // 房间号/商铺号
   enable: number // 0-禁用;1-启用
 }
 
@@ -1537,7 +1567,8 @@ interface AssetResourceInsertDTO {
 interface AssetResourceIdGenerateDTO {
   projectId: string // 项目编码
   floorId: string // 楼层编码
-  locationId: string // 位置编码
+  locationCode: string // 位置编码
+  locationId: string // 房间号/商铺号
   resourceBusinessTypeCode: string // 业务类型编码
   resourceMediaTypeCode: string // 媒体类型编码
 }

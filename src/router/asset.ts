@@ -138,6 +138,11 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '点位-新增', hidden: true},
             component: () => import('@/views/asset/point/add-point.vue'),
           },
+          {
+            path: '/asset/management/edit-point/:id',
+            meta: {title: '点位-编辑', hidden: true},
+            component: () => import('@/views/asset/point/edit-point.vue'),
+          },
         ],
       },
       {

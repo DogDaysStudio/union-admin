@@ -44,6 +44,10 @@ const dict = [
   {label: '户型', value: 1024},
   {label: '区域类别', value: 1025},
   {label: '停车方式', value: 1026},
+  {label: '固定资产标签', value: 1027},
+  {label: '资源业务标签', value: 1028},
+  {label: '物业服务模式', value: 1029},
+  {label: '平台', value: 1030},
 ]
 const dictNameMap: Record<number, Partial<{[key in keyof SysDicVO]: string}>> = {
   ...Object.fromEntries([...sysDict, ...dict].map(item => [item.value, {dicName: item.label}])),

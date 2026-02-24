@@ -5,7 +5,8 @@ import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {
   amsAssetProjectList,
-  amsAssetBuildingList,
+  amsAssetBuildingSelectBuildingEnclosure,
+  amsAssetResourceSelectLocationId,
   amsAssetFloorList,
   amsAssetResourceInsert,
 } from '@/service/api/amsAsset'
@@ -20,17 +21,24 @@ const projectList = useRequest(amsAssetProjectList, {
   throttleInterval: 500,
 })
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 楼栋列表
-const buildList = useRequest(amsAssetBuildingList, {
+// 楼栋/围合列表
+const assetList = useRequest(amsAssetBuildingSelectBuildingEnclosure, {
   throttleInterval: 500,
 })
-const buildOptions = reactive<{buildingId: string; buildingName: string}[]>([])
+const assetOptions = reactive<{id: string; name: string; assetType: string}[]>([])
 // 楼层列表
 const floorList = useRequest(amsAssetFloorList, {
   throttleInterval: 500,
 })
 const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
-// 字典 [业务类型1009 点位类型1011 广告类型1010 媒体类型1012]
+// 商铺号/房间号
+//  businessModelCode: string // 经营模式编码
+// floorId: string // 楼层编码
+const locationList = useRequest(amsAssetResourceSelectLocationId, {
+  throttleInterval: 500,
+})
+const locationOptions = reactive<string[]>([])
+// 字典 [业务类型1009 点位类型1011 广告类型1010 媒体类型1012 位置1004 经营模式1020 资源业务标签1028]
 const dicListTree = useRequest(iamCommonDicListTree, {
   throttleInterval: 500,
 })
@@ -38,6 +46,9 @@ const resourceBusinessTypeOptions = reactive<SysDicVO[]>([])
 const resourceTypeOptions = reactive<SysDicVO[]>([])
 const resourceAdTypeOptions = reactive<SysDicVO[]>([])
 const resourceMediaTypeOptions = reactive<SysDicVO[]>([])
+const locationTypeOptions = reactive<SysDicVO[]>([])
+const businessModelCodeOptions = reactive<SysDicVO[]>([])
+const resourceBusinessTagOptions = reactive<SysDicVO[]>([])
 // 新增点位
 const resourceInsert = useRequest(amsAssetResourceInsert, {
   throttleInterval: 500,
@@ -57,12 +68,12 @@ const formData = reactive({resourceList: []} as AssetResourceUpsertDTO & AddReso
 // 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({
   projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
-  assetId: {required: true, message: '请选择所属楼栋', trigger: 'blur'},
-  floorId: {required: true, message: '请选择所属楼层', trigger: 'blur'},
+  locationCode: {required: true, message: '请选择位置', trigger: 'blur'},
   resourceBusinessTypeCode: {required: true, message: '请选择业务类型', trigger: 'blur'},
   resourceTypeCode: {required: true, message: '请选择点位类型', trigger: 'blur'},
   resourceAdTypeCode: {required: true, message: '请选择广告类型', trigger: 'blur'},
   resourceMediaTypeCode: {required: true, message: '请选择媒体类型', trigger: 'blur'},
+  resourceBusinessTagCode: {required: true, message: '请选择业务标签', trigger: 'blur'},
   code: {required: true, message: '请填写空间点位资源编号前缀', trigger: 'blur'},
   start: {required: true, message: '请填写点位编号起始序号', trigger: 'blur'},
   end: {required: true, message: '请填写点位编号终止序号', trigger: 'blur'},
@@ -86,22 +97,30 @@ const getOptions = async (): Promise<void> => {
   resourceAdTypeOptions.push(...Object.values(resourceAdType))
   const {data: resourceMediaType} = await dicListTree.runAsync({dicType: 1012})
   resourceMediaTypeOptions.push(...Object.values(resourceMediaType))
+  const {data: locationTypeCode} = await dicListTree.runAsync({dicType: 1004})
+  locationTypeOptions.push(...Object.values(locationTypeCode))
+  const {data: businessModelCode} = await dicListTree.runAsync({dicType: 1020})
+  businessModelCodeOptions.push(...Object.values(businessModelCode))
+  const {data: resourceBusinessTagCode} = await dicListTree.runAsync({dicType: 1028})
+  resourceBusinessTagOptions.push(...Object.values(resourceBusinessTagCode))
 }
+
+const assetType = ref('')
 
 // 监听projectId变化，获取楼栋列表
 watch(
   () => formData.projectId,
   async projectId => {
-    buildOptions.length = 0
+    assetOptions.length = 0
     formData.assetId = ''
     floorOptions.length = 0
     formData.floorId = ''
     if (projectId) {
-      const {data: build} = await buildList.runAsync({
+      const {data: build} = await assetList.runAsync({
         pageable: false,
         projectId,
       } as AssetBuildingListDTO)
-      buildOptions.push(...Object.values(build))
+      assetOptions.push(...Object.values(build))
     }
   },
   {immediate: false}
@@ -113,13 +132,48 @@ watch(
   async assetId => {
     floorOptions.length = 0
     formData.floorId = ''
+    assetType.value = ''
     if (assetId) {
+      assetType.value = assetOptions.find(item => formData.assetId == item.id).assetType
       const {data: floor} = await floorList.runAsync({
         pageable: false,
-        assetType: '1',
+        assetType: assetType.value,
         assetId,
       } as AssetFloorListDTO)
       floorOptions.push(...Object.values(floor))
+    }
+  },
+  {immediate: false}
+)
+
+// 监听floorId获取房间/商铺号
+watch(
+  () => formData.floorId,
+  async floorId => {
+    locationOptions.length = 0
+    formData.locationId = ''
+    if (floorId && formData.businessModelCode) {
+      const {data: floor} = await locationList.runAsync({
+        floorId,
+        businessModelCode: formData.businessModelCode,
+      } as AssetLocationIdListDTO)
+      locationOptions.push(...Object.values(floor))
+    }
+  },
+  {immediate: false}
+)
+// 监听businessModelCode获取房间/商铺号
+watch(
+  () => formData.businessModelCode,
+  async businessModelCode => {
+    locationOptions.length = 0
+    formData.locationId = ''
+    if (businessModelCode && formData.floorId) {
+      const {data: floor} = await locationList.runAsync({
+        businessModelCode,
+        floorId: formData.floorId,
+      } as AssetLocationIdListDTO)
+      locationOptions.push(...Object.values(floor))
     }
   },
   {immediate: false}
@@ -140,10 +194,14 @@ const handleAddPoint = () => {
         projectId,
         assetId,
         floorId,
+        locationId,
+        locationCode,
+        businessModelCode,
         resourceBusinessTypeCode,
         resourceTypeCode,
         resourceAdTypeCode,
         resourceMediaTypeCode,
+        resourceBusinessTagCode,
       } = formData
 
       // 1. 验证序号有效性
@@ -155,6 +213,18 @@ const handleAddPoint = () => {
       }
 
       // 2. 预匹配所有需要的中文名称（避免循环内重复调用）
+      const businessModelName = findValueByCustomId(
+        businessModelCode,
+        'dicCode',
+        'dicName',
+        businessModelCodeOptions
+      )
+      const locationName = findValueByCustomId(
+        locationCode,
+        'dicCode',
+        'dicName',
+        locationTypeOptions
+      )
       const resourceBusinessType = findValueByCustomId(
         resourceBusinessTypeCode,
         'dicCode',
@@ -179,6 +249,12 @@ const handleAddPoint = () => {
         'dicName',
         resourceMediaTypeOptions
       )
+      const resourceBusinessTag = findValueByCustomId(
+        resourceBusinessTagCode,
+        'dicCode',
+        'dicName',
+        resourceBusinessTagOptions
+      )
 
       const newPoints = []
       for (let num = startNum; num <= endNum; num++) {
@@ -199,21 +275,24 @@ const handleAddPoint = () => {
           projectId,
           assetId,
           floorId,
+          locationId,
+          locationCode,
           resourceBusinessTypeCode,
           resourceTypeCode,
           resourceAdTypeCode,
           resourceMediaTypeCode,
+          locationName,
+          businessModelName,
           resourceBusinessType,
           resourceType,
           resourceAdType,
           resourceMediaType,
-          locationId: '1234',
+          resourceBusinessTag,
+          assetType: assetType.value,
         })
       }
       if (newPoints.length > 0) {
         formData.resourceList.push(...newPoints)
-        console.log(formData.resourceList, 'formData.pointList')
-
         ElMessage.success(`成功生成 ${newPoints.length} 个点位`)
       } else {
         ElMessage.warning('未生成新点位（无有效序号或全部重复）')
@@ -235,9 +314,6 @@ const handleSubmit = () => {
   formRef.value.validate(async valid => {
     if (valid) {
       const paramsData = JSON.parse(JSON.stringify(formData)) as AssetResourceInsertDTO
-
-      // let flag = true
-
       const {msg} = await resourceInsert.runAsync({resourceList: paramsData.resourceList})
       ElMessage.success(msg)
       router.push('/asset/management/point')
@@ -285,23 +361,23 @@ const handleReset = () => router.push('/asset/management/point')
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="所属楼栋" prop="assetId" required>
+              <el-form-item label="所属围合/楼栋" prop="assetId">
                 <el-select
                   v-model="formData.assetId"
-                  placeholder="请选择所属楼栋"
+                  placeholder="请选择所属围合/楼栋"
                   :disabled="!formData.projectId"
                 >
                   <el-option
-                    v-for="item in buildOptions"
-                    :key="item.buildingId"
-                    :label="item.buildingName"
-                    :value="item.buildingId"
+                    v-for="item in assetOptions"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
                   />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="所属楼层" prop="floorId" required>
+              <el-form-item label="所属楼层" prop="floorId">
                 <el-select
                   v-model="formData.floorId"
                   placeholder="请选择所属楼层"
@@ -312,6 +388,42 @@ const handleReset = () => router.push('/asset/management/point')
                     :key="item.floorId"
                     :label="item.floorName"
                     :value="item.floorId"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="位置" prop="locationCode" required>
+                <el-select v-model="formData.locationCode" placeholder="请选择位置">
+                  <el-option
+                    v-for="item in locationTypeOptions"
+                    :key="item.dicCode"
+                    :label="item.dicName"
+                    :value="item.dicCode"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="经营模式">
+                <el-select v-model="formData.businessModelCode" placeholder="请选择经营模式">
+                  <el-option
+                    v-for="item in businessModelCodeOptions"
+                    :key="item.dicCode"
+                    :label="item.dicName"
+                    :value="item.dicCode"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="房间号/商铺号">
+                <el-select v-model="formData.locationId" placeholder="请选择房间号/商铺号">
+                  <el-option
+                    v-for="item in locationOptions"
+                    :key="item"
+                    :label="item"
+                    :value="item"
                   />
                 </el-select>
               </el-form-item>
@@ -357,6 +469,18 @@ const handleReset = () => router.push('/asset/management/point')
                 <el-select v-model="formData.resourceMediaTypeCode" placeholder="请选择媒体类型">
                   <el-option
                     v-for="item in resourceMediaTypeOptions"
+                    :key="item.dicCode"
+                    :label="item.dicName"
+                    :value="item.dicCode"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="业务标签" prop="resourceBusinessTagCode" required>
+                <el-select v-model="formData.resourceBusinessTagCode" placeholder="请选择业务标签">
+                  <el-option
+                    v-for="item in resourceBusinessTagOptions"
                     :key="item.dicCode"
                     :label="item.dicName"
                     :value="item.dicCode"
