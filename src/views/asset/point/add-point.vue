@@ -277,10 +277,12 @@ const handleAddPoint = () => {
           floorId,
           locationId,
           locationCode,
+          businessModelCode,
           resourceBusinessTypeCode,
           resourceTypeCode,
           resourceAdTypeCode,
           resourceMediaTypeCode,
+          resourceBusinessTagCode,
           locationName,
           businessModelName,
           resourceBusinessType,
@@ -598,12 +600,3 @@ const handleReset = () => router.push('/asset/management/point')
     </div>
   </el-card>
 </template>
-
-<style lang="scss" scoped>
-:deep() {
-  .el-tree-node__content {
-    height: 44px;
-    line-height: 30px;
-  }
-}
-</style>

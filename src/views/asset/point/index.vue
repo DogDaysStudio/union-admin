@@ -204,7 +204,7 @@ const deleteRoom = (resourceId: string): void => {
       <el-table-column label="所属项目" prop="projectName" width="120" />
       <el-table-column label="所属围合/楼栋" prop="buildingEnclosureName" width="120" />
       <el-table-column label="楼层名称" prop="floorName" width="120" />
-      <el-table-column label="位置" prop="location" width="120" />
+      <el-table-column label="位置" prop="locationName" width="120" />
       <el-table-column label="规格" prop="resourceSpecs" width="80" />
       <el-table-column label="面积（㎡）" prop="resourceArea" width="100" />
       <el-table-column label="点位状态" prop="resourceState" width="90" />

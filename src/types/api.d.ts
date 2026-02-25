@@ -1493,7 +1493,6 @@ interface AssetResourceUpsertDTO {
   resourceBusinessTag: string // 业务标签
   resourceBusinessTagCode: string // 业务标签编码
   resourceSpecs: string // 资源规格
-  resourceSpecsCode: string // 资源规格编码
   resourceArea: number // 资源面积
   resourceState: number // 资源状态，0-待租;1-已租
   locationCode: string // 位置编码
@@ -1524,9 +1523,8 @@ interface AssetResourceListDTO {
   resourceAdTypeCode: string // 资源广告类型
   resourceMediaTypeCode: string // 资源媒体类型
   resourceState: number // 资源状态，0-待租;1-已租
-  resourceSpecsCode: string // 资源规格编码
-  locationTypeCode: string // 位置类型编码(Pz or NonPz)
-  locationId: string // 位置编码(非公区为房间或商铺编码;公区为字典编码)
+  resourceSpecs: string // 资源规格
+  locationName: string // 位置名称
   resourceArea: number // 资源面积
   enable: number // 0-禁用;1-启用
 }

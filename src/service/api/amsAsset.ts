@@ -157,7 +157,6 @@ export function amsAssetBuildingSelectBuildingEnclosure(payload: Record<string, 
     payload
   )
 }
-
 // 根据楼层查询商铺号/房间号
 export function amsAssetResourceSelectLocationId(payload: AssetLocationIdListDTO) {
   return http.post<Res<Record<string, any>>>('/ams/asset-resource/select-location-id', payload)
