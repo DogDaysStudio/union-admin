@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive, onMounted} from 'vue'
+import {reactive, onMounted, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {amsAssetFloorGet} from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
@@ -16,11 +16,28 @@ const formData = reactive({} as AssetFloorVO)
 onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
-  const {data: floorDetail} = await getFloor.runAsync({floorId: route.params.id})
-  Object.assign(formData, floorDetail)
+  const {data} = await getFloor.runAsync({floorId: route.params.id})
+  Object.assign(formData, data)
 }
 
-const handleSubmit = () => router.push('/asset/management/enclosure-floor')
+const back = () => router.push('/asset/management/enclosure-floor')
+
+const formConfig = computed(() => [
+  [
+    {label: '楼层名称', field: formData.floorName, required: true},
+    {label: '楼层编码', field: formData.floorId, required: true},
+    {label: '层高（m）', field: formData.floorHeight, required: true},
+  ],
+  [
+    {label: '所属项目', field: formData.projectName, required: true},
+    {label: '项目编码', field: formData.projectId, required: true},
+    {label: '所属围合', field: formData.assetName, required: true},
+  ],
+  [
+    {label: '围合编码', field: formData.assetId, required: true},
+    {label: '产权单位', field: formData.ownershipUnitName, required: true},
+  ],
+])
 </script>
 
 <template>
@@ -37,51 +54,16 @@ const handleSubmit = () => router.push('/asset/management/enclosure-floor')
         :validate-on-rule-change="false"
         :validate-on-init="false"
       >
-        <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="楼层名称" required>
-              <span>{{ formData.floorName }}</span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="楼层编码" required>
-              <span>{{ formData.floorId }}</span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="层高（m）" required>
-              <span>{{ formData.floorHeight }}</span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="所属项目" required>
-              <span>{{ formData.projectName }}</span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="项目编码" required>
-              <span>{{ formData.projectId }}</span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="所属围合" required>
-              <span>{{ formData.assetName }}</span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="围合编码" required>
-              <span>{{ formData.assetId }}</span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="产权单位" required>
-              <span>{{ formData.ownershipUnitName }}</span>
+        <el-row :gutter="24" v-for="(row, rowIdx) in formConfig" :key="rowIdx">
+          <el-col :span="8" v-for="(item, colIdx) in row" :key="colIdx">
+            <el-form-item :label="item.label" :required="item.required">
+              <span>{{ item.field || '-' }}</span>
             </el-form-item>
           </el-col>
         </el-row>
 
         <div class="flex justify-center mt-6">
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button type="primary" @click="back">返回</el-button>
         </div>
       </el-form>
     </div>

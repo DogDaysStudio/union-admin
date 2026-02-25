@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive, onMounted} from 'vue'
+import {reactive, onMounted, computed} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
 import {useRequest} from 'vue-request'
 import {amsAssetBuildingGet} from '@/service/api/amsAsset'
@@ -15,13 +15,24 @@ const formData = reactive({} as AssetBuildingVO)
 
 onMounted(() => getDetail())
 
-// 获取详情
 const getDetail = async (): Promise<void> => {
   const {data} = await buildingGet.runAsync({buildingId: route.params.id})
   Object.assign(formData, data)
 }
 
-const handleSubmit = () => router.push('/asset/management/building-floor')
+const back = () => router.push('/asset/management/building-floor')
+
+const formConfig = computed(() => [
+  [
+    {label: '楼栋名称', field: formData.buildingName, required: true},
+    {label: '楼栋编码', field: formData.buildingId, required: true},
+    {label: '项目名称', field: formData.projectName, required: true},
+  ],
+  [
+    {label: '项目编码', field: formData.projectId, required: true},
+    {label: '产权单位', field: formData.ownershipUnitName, required: true},
+  ],
+])
 </script>
 
 <template>
@@ -37,36 +48,16 @@ const handleSubmit = () => router.push('/asset/management/building-floor')
     </template>
     <div class="mx-auto">
       <el-form :model="formData" ref="formRef" label-width="80px" label-position="top">
-        <el-row :gutter="24">
-          <el-col :span="8">
-            <el-form-item label="楼栋名称" required>
-              {{ formData.buildingName }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="楼栋编码" required>
-              {{ formData.buildingId }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="项目名称" required>
-              {{ formData.projectName }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="项目编码" required>
-              {{ formData.projectId }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="产权单位" required>
-              {{ formData.ownershipUnitName }}
+        <el-row :gutter="24" v-for="(row, rowIdx) in formConfig" :key="rowIdx">
+          <el-col :span="8" v-for="(item, colIdx) in row" :key="colIdx">
+            <el-form-item :label="item.label" :required="item.required">
+              {{ item.field || '-' }}
             </el-form-item>
           </el-col>
         </el-row>
 
         <div class="flex justify-center mt-6">
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button type="primary" @click="back">返回</el-button>
         </div>
       </el-form>
     </div>
