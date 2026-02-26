@@ -8,59 +8,29 @@ import {
   amsAssetBuildingDelete,
   amsAssetBuildingEnable,
   amsAssetBuildingList,
-  amsAssetProjectList,
 } from '@/service/api/amsAsset'
 import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
-// 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
-const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 字典 产权单位（公司）
-const companyListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+// 字典 [产权单位]
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const companyOptions = reactive<SysDicVO[]>([])
 // 列表数据
-const buildingList = useRequest(amsAssetBuildingList, {
-  throttleInterval: 500,
-})
+const {runAsync: buildingList} = useRequest(amsAssetBuildingList)
 // 修改数据状态
-const toggleStatusBuilding = useRequest(amsAssetBuildingEnable, {
-  throttleInterval: 500,
-})
+const {runAsync: toggleStatusBuilding} = useRequest(amsAssetBuildingEnable)
 // 删除数据
-const deleteBuilding = useRequest(amsAssetBuildingDelete, {
-  throttleInterval: 500,
-})
+const {runAsync: deleteBuilding} = useRequest(amsAssetBuildingDelete)
 
 const formState = reactive({
-  pageable: false,
   pageNum: 1,
   pageSize: 10,
-  projectName: '', // 项目名称
-  buildingId: '', // 楼栋编码
-  buildingName: '', // 楼栋名称
-  projectTypeCode: '', // 项目类型编码
-  ownershipUnitCode: '', // 产权单位编码
-  enable: null, // 状态
 } as AssetBuildingListDTO)
 
 const formSchema = defineSchema({
   fields: [
     defineField.Input({label: '楼栋名称', prop: 'buildingName', clearable: true}),
     defineField.Input({label: '楼栋编码', prop: 'buildingId', clearable: true}),
-    defineField.Select({
-      label: '所属项目',
-      prop: 'projectTypeCode',
-      options: projectOptions,
-      props: {
-        value: 'projectId',
-        label: 'projectName',
-      },
-      clearable: true,
-    }),
+    defineField.Input({label: '所属项目', prop: 'projectName', clearable: true}),
     defineField.Cascader({
       label: '产权单位',
       prop: 'ownershipUnitCode',
@@ -98,11 +68,8 @@ onMounted(() => {
   getData()
 })
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: companyList} = await companyListTree.runAsync({dicType: 1001})
+  const {data: companyList} = await dicListTree({dicType: 1001})
   companyOptions.push(...Object.values(companyList))
 }
 
@@ -114,7 +81,7 @@ const getData = async (): Promise<void> => {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await buildingList.runAsync({...cloneformState})
+  const {total: resTotal, data} = await buildingList({...cloneformState})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
@@ -145,7 +112,7 @@ const toggleStatus = (buildingId: string, enable: number): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await toggleStatusBuilding.runAsync({buildingId, enable: !enable})
+    await toggleStatusBuilding({buildingId, enable: !enable})
     ElMessage.success('修改成功')
     getData()
   })
@@ -158,7 +125,7 @@ const deleteData = (buildingId: string): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await deleteBuilding.runAsync({buildingId})
+    await deleteBuilding({buildingId})
     ElMessage.success('删除成功')
     getData()
   })

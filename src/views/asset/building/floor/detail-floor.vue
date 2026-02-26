@@ -7,16 +7,14 @@ import {amsAssetFloorGet} from '@/service/api/amsAsset'
 const route = useRoute()
 const router = useRouter()
 
-const getFloor = useRequest(amsAssetFloorGet, {
-  throttleInterval: 500,
-})
+const {runAsync: getFloor} = useRequest(amsAssetFloorGet)
 
 const formData = reactive({} as AssetFloorVO)
 
 onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
-  const {data} = await getFloor.runAsync({floorId: route.params.id})
+  const {data} = await getFloor({floorId: route.params.id})
   Object.assign(formData, data)
 }
 

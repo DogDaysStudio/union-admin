@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {ref, reactive, onMounted} from 'vue'
+import {useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {useRequest} from 'vue-request'
@@ -7,27 +8,18 @@ import {findValueByCustomId} from '@/utils/array-util'
 import {amsAssetBuildingInsert, amsAssetProjectList} from '@/service/api/amsAsset'
 import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
+const router = useRouter()
+
 // 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
+const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 字典 户型
-const roomListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+// 字典 [户型 产权单位]
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const roomOptions = reactive<SysDicVO[]>([])
-// 字典 产权单位（公司）
-const companyListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
 const companyOptions = reactive<SysDicVO[]>([])
 // 新增项目
-const addBuilding = useRequest(amsAssetBuildingInsert, {
-  throttleInterval: 500,
-})
+const {runAsync: addBuilding, loading: insertLoading} = useRequest(amsAssetBuildingInsert)
 
-// 表单Ref：用于调用表单内置方法（验证、重置）
 const formRef = ref<FormInstance>()
 
 interface floorDTO {
@@ -36,10 +28,8 @@ interface floorDTO {
   roomNumber: number | null // 每层房间数
 }
 
-// 核心：定义楼栋完整类型 = 原有AssetBuildingDTO + 楼层扩展字段floorDTO
 type AssetBuildingCompleteDTO = AssetBuildingDTO & floorDTO
 
-// 初始化表单数据：响应式对象，与表单双向绑定
 const formData = reactive({
   buildingList: [
     {
@@ -88,7 +78,6 @@ const updateFormRules = () => {
   })
 }
 
-// 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({})
 
 onMounted(() => {
@@ -96,16 +85,15 @@ onMounted(() => {
   updateFormRules() // 初始化时生成第一个楼栋的规则
 })
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
+  const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
-  const {data: roomList} = await roomListTree.runAsync({
+  const {data: roomList} = await dicListTree({
     dicType: 1024,
     pageable: false,
   } as SysDicListDTO)
   roomOptions.push(...Object.values(roomList))
-  const {data: companyList} = await companyListTree.runAsync({
+  const {data: companyList} = await dicListTree({
     dicType: 1001,
     pageable: false,
   } as SysDicListDTO)
@@ -206,8 +194,8 @@ const generateFloorAndRoom = (index: number) => {
 
   // 5. 更新当前楼栋的floorData，ElTree会自动重新渲染并回显产权单位
   currentBuilding.floorList = floorData
+  currentBuilding.totalFloor = aboveground + underground
   currentBuilding.totalRoom = (aboveground + underground) * roomNumber
-  ElMessage.success('楼层房间数据生成成功，已继承楼栋产权单位！')
 }
 
 // 先完善TS接口：补全Floor、Room的产权单位相关字段，保证类型匹配
@@ -286,8 +274,9 @@ const handleSubmit = () => {
       })
 
       if (Flag) {
-        const {msg} = await addBuilding.runAsync({...paramsData})
+        const {msg} = await addBuilding({...paramsData})
         ElMessage.success(msg)
+        router.push('/asset/management/building-floor')
       } else {
         ElMessage.warning('请填写完整信息：层高、户型、产权单位为必填项')
       }
@@ -295,13 +284,6 @@ const handleSubmit = () => {
       ElMessage.error('请填写完整楼栋基础信息')
     }
   })
-}
-
-// 重置表单：重置数据+清除验证状态
-const handleReset = () => {
-  if (!formRef.value) return
-  formRef.value.resetFields()
-  ElMessage.info('表单已重置')
 }
 </script>
 
@@ -379,12 +361,12 @@ const handleReset = () => {
           <el-row :gutter="24">
             <el-col :span="8">
               <el-form-item label="总楼层" :prop="`buildingList[${index}].totalFloor`" required>
-                <el-input v-model="item.totalFloor" placeholder="请填写总楼层" />
+                <el-input v-model="item.totalFloor" placeholder="请填写总楼层" disabled />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="总房间数" :prop="`buildingList[${index}].totalRoom`" required>
-                <el-input v-model="item.totalRoom" placeholder="请填写总房间数" />
+                <el-input v-model="item.totalRoom" placeholder="请填写总房间数" disabled />
               </el-form-item>
             </el-col>
           </el-row>
@@ -510,10 +492,9 @@ const handleReset = () => {
           </section-group>
         </el-card>
 
-        <!-- 表单操作按钮：居中、间距 -->
         <div class="flex justify-center mt-6">
-          <el-button @click="handleReset">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button @click="router.push('/asset/management/building-floor')">返回</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="insertLoading">确定</el-button>
         </div>
       </el-form>
     </div>

@@ -14,30 +14,18 @@ import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 const router = useRouter()
 
-// 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
+// 项目列表
+const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 字典 户型
-const roomListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+// 字典 [户型 产权单位 ]
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const roomOptions = reactive<SysDicVO[]>([])
-// 楼栋下拉列表
-const buildingList = useRequest(amsAssetBuildingList, {
-  throttleInterval: 500,
-})
-const buildingOptions = reactive<AssetBuildingVO[]>([])
-// 字典 产权单位（公司）
-const companyListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
 const companyOptions = reactive<SysDicVO[]>([])
+// 楼栋下拉列表
+const {runAsync: buildingList} = useRequest(amsAssetBuildingList)
+const buildingOptions = reactive<AssetBuildingVO[]>([])
 // 新增楼层
-const addFloor = useRequest(amsAssetFloorInsert, {
-  throttleInterval: 500,
-})
+const {runAsync: addFloor, loading: insertLoading} = useRequest(amsAssetFloorInsert)
 
 // 表单Ref：用于调用表单内置方法（验证、重置）
 const formRef = ref<FormInstance>()
@@ -65,19 +53,19 @@ onMounted(() => getOptions())
 
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
+  const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
-  const {data: roomList} = await roomListTree.runAsync({
+  const {data: roomList} = await dicListTree({
     dicType: 1024,
     pageable: false,
   } as SysDicListDTO)
   roomOptions.push(...Object.values(roomList))
-  const {data: companyList} = await companyListTree.runAsync({
+  const {data: companyList} = await dicListTree({
     dicType: 1001,
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
-  const {data: building} = await buildingList.runAsync({pageable: false} as AssetBuildingListDTO)
+  const {data: building} = await buildingList({pageable: false} as AssetBuildingListDTO)
   buildingOptions.push(...Object.values(building))
 }
 
@@ -135,7 +123,6 @@ interface Room {
   ownershipUnitName: string
 }
 
-// 提交表单：先验证，通过后处理数据
 const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
@@ -170,7 +157,7 @@ const handleSubmit = () => {
         }
       })
       if (Flag) {
-        const {msg} = await addFloor.runAsync({...paramsData})
+        const {msg} = await addFloor({...paramsData})
         ElMessage.success(msg)
         router.push('/asset/management/building-floor')
       } else {
@@ -181,8 +168,6 @@ const handleSubmit = () => {
     }
   })
 }
-
-const handleReset = () => router.push('/asset/management/building-floor')
 </script>
 
 <template>
@@ -196,7 +181,6 @@ const handleReset = () => router.push('/asset/management/building-floor')
         </p>
       </div>
     </template>
-    <!-- 外层容器：水平居中 -->
     <div class="mx-auto">
       <el-form
         :model="formData"
@@ -329,10 +313,9 @@ const handleReset = () => router.push('/asset/management/building-floor')
           </el-tree>
         </section-group>
 
-        <!-- 表单操作按钮：居中、间距 -->
         <div class="flex justify-center mt-6">
-          <el-button @click="handleReset">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button @click="router.push('/asset/management/building-floor')">返回</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="insertLoading">确定</el-button>
         </div>
       </el-form>
     </div>

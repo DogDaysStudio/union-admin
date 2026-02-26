@@ -7,16 +7,14 @@ import {amsAssetBuildingGet} from '@/service/api/amsAsset'
 const router = useRouter()
 const route = useRoute()
 
-const buildingGet = useRequest(amsAssetBuildingGet, {
-  throttleInterval: 500,
-})
+const {runAsync: buildingGet} = useRequest(amsAssetBuildingGet)
 
 const formData = reactive({} as AssetBuildingVO)
 
 onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await buildingGet.runAsync({buildingId: route.params.id})
+  const {data} = await buildingGet({buildingId: route.params.id})
   Object.assign(formData, data)
 }
 

@@ -16,31 +16,20 @@ const router = useRouter()
 const route = useRoute()
 
 // 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
+const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 字典 产权单位（公司）
-const companyListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+// 字典 [ 产权单位 ]
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const companyOptions = reactive<SysDicVO[]>([])
 // 楼栋详情
-const buildingGet = useRequest(amsAssetBuildingGet, {
-  throttleInterval: 500,
-})
-// 新增项目
-const buildingUpdate = useRequest(amsAssetBuildingUpdate, {
-  throttleInterval: 500,
-})
+const {runAsync: buildingGet} = useRequest(amsAssetBuildingGet)
+// 编辑项目
+const {runAsync: buildingUpdate, loading: updateLoading} = useRequest(amsAssetBuildingUpdate)
 
-// 表单Ref：用于调用表单内置方法（验证、重置）
 const formRef = ref<FormInstance>()
 
-// 初始化表单数据：响应式对象，与表单双向绑定
 const formData = reactive({} as AssetBuildingVO)
 
-// 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({
   buildingName: {required: true, message: '请填写楼栋名称', trigger: 'blur'},
   ownershipUnitCode: {required: true, message: '请选择产权单位', trigger: 'change'},
@@ -51,24 +40,21 @@ onMounted(() => {
   getDetail()
 })
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
+  const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
-  const {data: companyList} = await companyListTree.runAsync({
+  const {data: companyList} = await dicListTree({
     dicType: 1001,
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
 }
 
-// 获取详情
 const getDetail = async (): Promise<void> => {
-  const {data} = await buildingGet.runAsync({buildingId: route.params.id})
+  const {data} = await buildingGet({buildingId: route.params.id})
   Object.assign(formData, data)
 }
 
-// 提交表单：先验证，通过后处理数据
 const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
@@ -84,7 +70,7 @@ const handleSubmit = () => {
       }
       paramsData.projectName =
         findValueByCustomId(paramsData.projectId, 'projectId', 'projectName', projectOptions) || ''
-      const {msg} = await buildingUpdate.runAsync({...paramsData})
+      const {msg} = await buildingUpdate({...paramsData})
       ElMessage.success(msg)
       router.push('/asset/management/building-floor')
     } else {
@@ -92,9 +78,6 @@ const handleSubmit = () => {
     }
   })
 }
-
-// 重置表单：重置数据+清除验证状态
-const handleReset = () => router.push('/asset/management/building-floor')
 </script>
 
 <template>
@@ -108,7 +91,6 @@ const handleReset = () => router.push('/asset/management/building-floor')
         </p>
       </div>
     </template>
-    <!-- 外层容器：水平居中 -->
     <div class="mx-auto">
       <el-form
         :model="formData"
@@ -167,8 +149,8 @@ const handleReset = () => router.push('/asset/management/building-floor')
         </el-row>
 
         <div class="flex justify-center mt-6">
-          <el-button @click="handleReset">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button @click="router.push('/asset/management/building-floor')">返回</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="updateLoading">确定</el-button>
         </div>
       </el-form>
     </div>

@@ -38,7 +38,7 @@ const assetRoutes: RouteRecordRaw[] = [
           },
           {
             path: '/asset/management/building-floor',
-            meta: {title: '楼栋楼层管理'},
+            meta: {title: '楼栋管理'},
             component: () => import('@/views/asset/building/building-floor.vue'),
           },
           {
