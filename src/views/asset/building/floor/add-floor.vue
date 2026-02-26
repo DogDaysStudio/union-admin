@@ -146,7 +146,7 @@ const handleSubmit = () => {
         const targetCode =
           paramsData.ownershipUnitCode[paramsData.ownershipUnitCode.length - 1] ?? ''
         paramsData.ownershipUnitName =
-          findValueByCustomId(targetCode, 'dicId', 'dicName', companyOptions) || ''
+          findValueByCustomId(targetCode, 'dicCode', 'dicName', companyOptions) || ''
         paramsData.ownershipUnitCode =
           paramsData.ownershipUnitCode[paramsData.ownershipUnitCode.length - 1]
       }
@@ -158,14 +158,14 @@ const handleSubmit = () => {
         }
         if (room.roomLayoutCode) {
           room.roomLayoutName =
-            findValueByCustomId(room.roomLayoutCode, 'dicId', 'dicName', roomOptions) || ''
+            findValueByCustomId(room.roomLayoutCode, 'dicCode', 'dicName', roomOptions) || ''
         } else {
           Flag = false
         }
         if (Array.isArray(room?.ownershipUnitCode)) {
           const targetCode = room.ownershipUnitCode[room.ownershipUnitCode.length - 1] ?? ''
           room.ownershipUnitName =
-            findValueByCustomId(targetCode, 'dicId', 'dicName', companyOptions) || ''
+            findValueByCustomId(targetCode, 'dicCode', 'dicName', companyOptions) || ''
           room.ownershipUnitCode = room.ownershipUnitCode[room.ownershipUnitCode.length - 1]
         }
       })
@@ -251,7 +251,7 @@ const handleReset = () => router.push('/asset/management/building-floor')
                   :options="companyOptions"
                   :props="{
                     checkStrictly: true,
-                    value: 'dicId',
+                    value: 'dicCode',
                     label: 'dicName',
                   }"
                   clearable
@@ -304,9 +304,9 @@ const handleReset = () => router.push('/asset/management/building-floor')
                   <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
                     <el-option
                       v-for="item in roomOptions"
-                      :key="item.dicId"
+                      :key="item.dicCode"
                       :label="item.dicName"
-                      :value="item.dicId"
+                      :value="item.dicCode"
                     />
                   </el-select>
                 </el-col>
@@ -318,7 +318,7 @@ const handleReset = () => router.push('/asset/management/building-floor')
                     :options="companyOptions"
                     :props="{
                       checkStrictly: true,
-                      value: 'dicId',
+                      value: 'dicCode',
                       label: 'dicName',
                     }"
                     clearable

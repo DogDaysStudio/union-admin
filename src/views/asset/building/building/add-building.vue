@@ -257,7 +257,7 @@ const handleSubmit = () => {
           const targetCode = target.ownershipUnitCode[target.ownershipUnitCode.length - 1] ?? ''
           if (!targetCode) Flag = false
           target.ownershipUnitName =
-            findValueByCustomId(targetCode, 'dicId', 'dicName', companyOptions) || ''
+            findValueByCustomId(targetCode, 'dicCode', 'dicName', companyOptions) || ''
           target.ownershipUnitCode = targetCode
         }
       }
@@ -277,7 +277,7 @@ const handleSubmit = () => {
             processOwnershipUnit(room)
             if (room.roomLayoutCode) {
               room.roomLayoutName =
-                findValueByCustomId(room.roomLayoutCode, 'dicId', 'dicName', roomOptions) || ''
+                findValueByCustomId(room.roomLayoutCode, 'dicCode', 'dicName', roomOptions) || ''
             } else {
               Flag = false
             }
@@ -367,7 +367,7 @@ const handleReset = () => {
                   :options="companyOptions"
                   :props="{
                     checkStrictly: true,
-                    value: 'dicId',
+                    value: 'dicCode',
                     label: 'dicName',
                   }"
                   clearable
@@ -458,7 +458,7 @@ const handleReset = () => {
                       :options="companyOptions"
                       :props="{
                         checkStrictly: true,
-                        value: 'dicId',
+                        value: 'dicCode',
                         label: 'dicName',
                       }"
                       clearable
@@ -483,9 +483,9 @@ const handleReset = () => {
                     <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
                       <el-option
                         v-for="item in roomOptions"
-                        :key="item.dicId"
+                        :key="item.dicCode"
                         :label="item.dicName"
-                        :value="item.dicId"
+                        :value="item.dicCode"
                       />
                     </el-select>
                   </el-col>
@@ -498,7 +498,7 @@ const handleReset = () => {
                       :options="companyOptions"
                       :props="{
                         checkStrictly: true,
-                        value: 'dicId',
+                        value: 'dicCode',
                         label: 'dicName',
                       }"
                       clearable

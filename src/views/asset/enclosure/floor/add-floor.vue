@@ -123,11 +123,12 @@ interface Shop {
 
 const processOwnershipUnit = (
   obj: {ownershipUnitCode?: string | string[]; ownershipUnitName?: string},
-  companyOptions: {dicId: string; dicName: string}[]
+  companyOptions: {dicCode: string; dicName: string}[]
 ) => {
   if (!Array.isArray(obj?.ownershipUnitCode)) return
   const targetCode = obj.ownershipUnitCode[obj.ownershipUnitCode.length - 1] ?? ''
-  obj.ownershipUnitName = findValueByCustomId(targetCode, 'dicId', 'dicName', companyOptions) || ''
+  obj.ownershipUnitName =
+    findValueByCustomId(targetCode, 'dicCode', 'dicName', companyOptions) || ''
   obj.ownershipUnitCode = targetCode
 }
 
@@ -227,7 +228,7 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
                   :options="companyOptions"
                   :props="{
                     checkStrictly: true,
-                    value: 'dicId',
+                    value: 'dicCode',
                     label: 'dicName',
                   }"
                   clearable
@@ -283,7 +284,7 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
                     :options="companyOptions"
                     :props="{
                       checkStrictly: true,
-                      value: 'dicId',
+                      value: 'dicCode',
                       label: 'dicName',
                     }"
                     clearable

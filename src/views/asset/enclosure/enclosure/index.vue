@@ -61,7 +61,7 @@ const formSchema = defineSchema({
       prop: 'enclosureTypeCode',
       options: enclosureOptions,
       props: {
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
       clearable: true,
@@ -73,7 +73,7 @@ const formSchema = defineSchema({
       clearable: true,
       props: {
         checkStrictly: true,
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),

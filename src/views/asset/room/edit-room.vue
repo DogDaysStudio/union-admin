@@ -147,9 +147,9 @@ const handleSubmit = () => {
                 <el-select v-model="formData.roomLayoutCode" placeholder="请选择户型" disabled>
                   <el-option
                     v-for="item in roomOptions"
-                    :key="item.dicId"
+                    :key="item.dicCode"
                     :label="item.dicName"
-                    :value="item.dicId"
+                    :value="item.dicCode"
                   />
                 </el-select>
               </el-form-item>
@@ -198,7 +198,7 @@ const handleSubmit = () => {
                   :options="companyOptions"
                   :props="{
                     checkStrictly: true,
-                    value: 'dicId',
+                    value: 'dicCode',
                     label: 'dicName',
                   }"
                   clearable
@@ -215,9 +215,9 @@ const handleSubmit = () => {
                 <el-select v-model="formData.roomTypeCode" placeholder="请选择房间类型" disabled>
                   <el-option
                     v-for="item in roomTypeOptions"
-                    :key="item.dicId"
+                    :key="item.dicCode"
                     :label="item.dicName"
-                    :value="item.dicId"
+                    :value="item.dicCode"
                   />
                 </el-select>
               </el-form-item>
@@ -231,9 +231,9 @@ const handleSubmit = () => {
                 >
                   <el-option
                     v-for="item in businessModelOptions"
-                    :key="item.dicId"
+                    :key="item.dicCode"
                     :label="item.dicName"
-                    :value="item.dicId"
+                    :value="item.dicCode"
                   />
                 </el-select>
               </el-form-item>

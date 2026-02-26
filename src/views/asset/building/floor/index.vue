@@ -78,7 +78,7 @@ const formSchema = defineSchema({
       clearable: true,
       props: {
         checkStrictly: true,
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),

@@ -195,7 +195,7 @@ const handleSubmit = () => {
           cloneForm.ownershipUnitCode[cloneForm.ownershipUnitCode.length - 1]
         cloneForm.ownershipUnitName = findValueByCustomId(
           cloneForm.ownershipUnitCode,
-          'dicId',
+          'dicCode',
           'dicName',
           companyOptions
         )
@@ -205,32 +205,32 @@ const handleSubmit = () => {
           cloneForm.collectSubjectCode[cloneForm.collectSubjectCode.length - 1]
         cloneForm.collectSubjectName = findValueByCustomId(
           cloneForm.collectSubjectCode,
-          'dicId',
+          'dicCode',
           'dicName',
           companyOptions
         )
       }
       cloneForm.ownershipPropertyName = findValueByCustomId(
         cloneForm.ownershipPropertyCode,
-        'dicId',
+        'dicCode',
         'dicName',
         ownershipPropertyOptions
       )
       cloneForm.collectWayName = findValueByCustomId(
         cloneForm.collectWayCode,
-        'dicId',
+        'dicCode',
         'dicName',
         collectWayOptions
       )
       cloneForm.businessModelName = findValueByCustomId(
         cloneForm.businessModelCode,
-        'dicId',
+        'dicCode',
         'dicName',
         businessModelOptions
       )
       cloneForm.projectTypeName = findValueByCustomId(
         cloneForm.projectTypeCode,
-        'dicId',
+        'dicCode',
         'dicName',
         projectTypeOption
       )
@@ -379,9 +379,9 @@ const props: CascaderProps = {
                 <el-select v-model="formData.ownershipPropertyCode" placeholder="请选择产权性质">
                   <el-option
                     v-for="item in ownershipPropertyOptions"
-                    :key="item.dicId"
+                    :key="item.dicCode"
                     :label="item.dicName"
-                    :value="item.dicId"
+                    :value="item.dicCode"
                   />
                 </el-select>
               </el-form-item>
@@ -394,7 +394,7 @@ const props: CascaderProps = {
                   :options="companyOptions"
                   :props="{
                     checkStrictly: true,
-                    value: 'dicId',
+                    value: 'dicCode',
                     label: 'dicName',
                   }"
                   clearable
@@ -407,9 +407,9 @@ const props: CascaderProps = {
                 <el-select v-model="formData.collectWayCode" placeholder="请选择筹集方式">
                   <el-option
                     v-for="item in collectWayOptions"
-                    :key="item.dicId"
+                    :key="item.dicCode"
                     :label="item.dicName"
-                    :value="item.dicId"
+                    :value="item.dicCode"
                   />
                 </el-select>
               </el-form-item>
@@ -422,7 +422,7 @@ const props: CascaderProps = {
                   :options="companyOptions"
                   :props="{
                     checkStrictly: true,
-                    value: 'dicId',
+                    value: 'dicCode',
                     label: 'dicName',
                   }"
                   clearable
@@ -445,9 +445,9 @@ const props: CascaderProps = {
                 <el-select v-model="formData.businessModelCode" placeholder="请选择经营模式">
                   <el-option
                     v-for="item in businessModelOptions"
-                    :key="item.dicId"
+                    :key="item.dicCode"
                     :label="item.dicName"
-                    :value="item.dicId"
+                    :value="item.dicCode"
                   />
                 </el-select>
               </el-form-item>
@@ -457,9 +457,9 @@ const props: CascaderProps = {
                 <el-select v-model="formData.projectTypeCode" placeholder="请选择项目类型">
                   <el-option
                     v-for="item in projectTypeOption"
-                    :key="item.dicId"
+                    :key="item.dicCode"
                     :label="item.dicName"
-                    :value="item.dicId"
+                    :value="item.dicCode"
                   />
                 </el-select>
               </el-form-item>

@@ -81,7 +81,7 @@ const handleSubmit = () => {
         const targetCode =
           paramsData.ownershipUnitCode[paramsData.ownershipUnitCode.length - 1] ?? ''
         paramsData.ownershipUnitName =
-          findValueByCustomId(targetCode, 'dicId', 'dicName', companyOptions) || ''
+          findValueByCustomId(targetCode, 'dicCode', 'dicName', companyOptions) || ''
         paramsData.ownershipUnitCode =
           paramsData.ownershipUnitCode[paramsData.ownershipUnitCode.length - 1]
       }
@@ -177,7 +177,7 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
                 :options="companyOptions"
                 :props="{
                   checkStrictly: true,
-                  value: 'dicId',
+                  value: 'dicCode',
                   label: 'dicName',
                 }"
                 clearable

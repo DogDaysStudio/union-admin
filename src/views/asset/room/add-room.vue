@@ -196,13 +196,13 @@ const handleSubmit = () => {
         e.children.map(k => {
           if (!k?.roomNumber || !k?.buildingArea || !k?.ownershipUnitCode) flag = false
           k.roomLayoutName =
-            findValueByCustomId(k.roomLayoutCode, 'dicId', 'dicName', roomOptions) || ''
+            findValueByCustomId(k.roomLayoutCode, 'dicCode', 'dicName', roomOptions) || ''
           paramsData.roomList.push(k as unknown as AssetRoomUpsertDTO)
           if (Array.isArray(k.ownershipUnitCode)) {
             const targetCode = k.ownershipUnitCode[k.ownershipUnitCode.length - 1] ?? ''
             if (!targetCode) flag = false
             k.ownershipUnitName =
-              findValueByCustomId(targetCode, 'dicId', 'dicName', companyOptions) || ''
+              findValueByCustomId(targetCode, 'dicCode', 'dicName', companyOptions) || ''
             k.ownershipUnitCode = targetCode
           }
         })
@@ -291,9 +291,9 @@ const handleSubmit = () => {
                 <el-select v-model="formData.roomLayoutCode" placeholder="请选择户型">
                   <el-option
                     v-for="item in roomOptions"
-                    :key="item.dicId"
+                    :key="item.dicCode"
                     :label="item.dicName"
-                    :value="item.dicId"
+                    :value="item.dicCode"
                   />
                 </el-select>
               </el-form-item>
@@ -330,9 +330,9 @@ const handleSubmit = () => {
                   <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
                     <el-option
                       v-for="item in roomOptions"
-                      :key="item.dicId"
+                      :key="item.dicCode"
                       :label="item.dicName"
-                      :value="item.dicId"
+                      :value="item.dicCode"
                     />
                   </el-select>
                 </span>
@@ -354,9 +354,9 @@ const handleSubmit = () => {
                   <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
                     <el-option
                       v-for="item in roomOptions"
-                      :key="item.dicId"
+                      :key="item.dicCode"
                       :label="item.dicName"
-                      :value="item.dicId"
+                      :value="item.dicCode"
                     />
                   </el-select>
                 </span>
@@ -369,7 +369,7 @@ const handleSubmit = () => {
                     :options="companyOptions"
                     :props="{
                       checkStrictly: true,
-                      value: 'dicId',
+                      value: 'dicCode',
                       label: 'dicName',
                     }"
                     clearable

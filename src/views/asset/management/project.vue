@@ -79,7 +79,7 @@ const formSchema = defineSchema({
       prop: 'collectWayCode',
       options: collectWayOptions,
       props: {
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
       clearable: true,
@@ -91,7 +91,7 @@ const formSchema = defineSchema({
       clearable: true,
       props: {
         checkStrictly: true,
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),
@@ -101,7 +101,7 @@ const formSchema = defineSchema({
       options: ownershipPropertyOptions,
       clearable: true,
       props: {
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),
@@ -111,7 +111,7 @@ const formSchema = defineSchema({
       options: businessModelOptions,
       clearable: true,
       props: {
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),

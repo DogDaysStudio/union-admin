@@ -38,7 +38,7 @@ const formSchema = defineSchema({
       clearable: true,
       props: {
         checkStrictly: true,
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),
@@ -48,7 +48,7 @@ const formSchema = defineSchema({
       options: businessModelOptions,
       clearable: true,
       props: {
-        value: 'dicId',
+        value: 'dicCode',
         label: 'dicName',
       },
     }),

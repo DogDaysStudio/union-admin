@@ -79,14 +79,14 @@ const handleSubmit = () => {
         if (Array.isArray(target.ownershipUnitCode)) {
           const targetCode = target.ownershipUnitCode[target.ownershipUnitCode.length - 1] ?? ''
           target.ownershipUnitName =
-            findValueByCustomId(targetCode, 'dicId', 'dicName', companyOptions) || ''
+            findValueByCustomId(targetCode, 'dicCode', 'dicName', companyOptions) || ''
           target.ownershipUnitCode = targetCode
         }
       }
       processOwnershipUnit(paramsData)
 
       paramsData.enclosureTypeName =
-        findValueByCustomId(paramsData.enclosureTypeCode, 'dicId', 'dicName', enclosureOptions) ||
+        findValueByCustomId(paramsData.enclosureTypeCode, 'dicCode', 'dicName', enclosureOptions) ||
         ''
       const {msg} = await enclosureUpdate.runAsync({...paramsData})
       ElMessage.success(msg)
@@ -155,9 +155,9 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
               <el-select v-model="formData.enclosureTypeCode" placeholder="请选择围合类型">
                 <el-option
                   v-for="item in enclosureOptions"
-                  :key="item.dicId"
+                  :key="item.dicCode"
                   :label="item.dicName"
-                  :value="item.dicId"
+                  :value="item.dicCode"
                 />
               </el-select>
             </el-form-item>
@@ -170,7 +170,7 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
                 :options="companyOptions"
                 :props="{
                   checkStrictly: true,
-                  value: 'dicId',
+                  value: 'dicCode',
                   label: 'dicName',
                 }"
                 clearable
