@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, reactive, onMounted} from 'vue'
+import {ref, reactive, onMounted, watch} from 'vue'
 import {useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
@@ -44,9 +44,9 @@ const formData = reactive({} as AssetFloorDTO & AssetBuildingCompleteDTO)
 const formRules = reactive<FormRules>({
   floorName: {required: true, message: '请填写楼层名称', trigger: 'blur'},
   floorHeight: {required: true, message: '请填写层高（m）', trigger: 'blur'},
-  projectId: {required: true, message: '请选择所属项目', trigger: 'change'},
-  assetId: {required: true, message: '请选择所属楼栋', trigger: 'change'},
-  ownershipUnitCode: {required: true, message: '请选择产权单位', trigger: 'change'},
+  projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
+  assetId: {required: true, message: '请选择所属楼栋', trigger: 'blur'},
+  ownershipUnitCode: {required: true, message: '请选择产权单位', trigger: 'blur'},
 })
 
 onMounted(() => getOptions())
@@ -65,9 +65,24 @@ const getOptions = async (): Promise<void> => {
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
-  const {data: building} = await buildingList({pageable: false} as AssetBuildingListDTO)
-  buildingOptions.push(...Object.values(building))
 }
+
+// 监听projectId变化，获取楼栋
+watch(
+  () => formData.projectId,
+  async projectId => {
+    buildingOptions.length = 0
+    formData.assetId = ''
+    if (projectId) {
+      const {data: building} = await buildingList({
+        pageable: false,
+        projectId,
+      } as AssetBuildingListDTO)
+      buildingOptions.push(...Object.values(building))
+    }
+  },
+  {immediate: false}
+)
 
 // 定义房间项的类型（规范TS类型，可选但推荐）
 interface RoomItem {
@@ -217,7 +232,11 @@ const handleSubmit = () => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="所属楼栋" prop="assetId" required>
-                <el-select v-model="formData.assetId" placeholder="请选择所属楼栋">
+                <el-select
+                  v-model="formData.assetId"
+                  placeholder="请选择所属楼栋"
+                  :disabled="!formData.projectId"
+                >
                   <el-option
                     v-for="item in buildingOptions"
                     :key="item.buildingId"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, reactive, onMounted} from 'vue'
+import {ref, reactive, onMounted, watch} from 'vue'
 import {useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
@@ -39,9 +39,9 @@ const formData = reactive({} as AssetFloorDTO & AssetBuildingCompleteDTO)
 const formRules = reactive<FormRules>({
   floorName: {required: true, message: '请填写楼层名称', trigger: 'blur'},
   floorHeight: {required: true, message: '请填写层高（m）', trigger: 'blur'},
-  projectId: {required: true, message: '请选择所属项目', trigger: 'change'},
-  assetId: {required: true, message: '请选择所属围合', trigger: 'change'},
-  ownershipUnitCode: {required: true, message: '请选择产权单位', trigger: 'change'},
+  projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
+  assetId: {required: true, message: '请选择所属围合', trigger: 'blur'},
+  ownershipUnitCode: {required: true, message: '请选择产权单位', trigger: 'blur'},
 })
 
 onMounted(() => getOptions())
@@ -54,9 +54,24 @@ const getOptions = async (): Promise<void> => {
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
-  const {data: enclosure} = await enclosureList({pageable: false} as AssetEnclosureListDTO)
-  enclosureOptions.push(...Object.values(enclosure))
 }
+
+// 监听projectId变化，获取围合
+watch(
+  () => formData.projectId,
+  async projectId => {
+    enclosureOptions.length = 0
+    formData.assetId = ''
+    if (projectId) {
+      const {data: enclosure} = await enclosureList({
+        pageable: false,
+        projectId,
+      } as AssetEnclosureListDTO)
+      enclosureOptions.push(...Object.values(enclosure))
+    }
+  },
+  {immediate: false}
+)
 
 // 定义商铺项的类型（规范TS类型，可选但推荐）
 interface ShopItem {
@@ -194,7 +209,11 @@ const handleSubmit = () => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="所属围合" prop="assetId" required>
-                <el-select v-model="formData.assetId" placeholder="请选择所属围合">
+                <el-select
+                  v-model="formData.assetId"
+                  placeholder="请选择所属围合"
+                  :disabled="!formData.projectId"
+                >
                   <el-option
                     v-for="item in enclosureOptions"
                     :key="item.enclosureId"

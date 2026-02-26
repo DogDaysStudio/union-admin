@@ -156,7 +156,7 @@ const handleSubmit = () => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="所属项目" prop="projectId" required>
-                <el-select v-model="formData.projectId" placeholder="请选择所属项目">
+                <el-select v-model="formData.projectId" placeholder="请选择所属项目" disabled>
                   <el-option
                     v-for="item in projectOptions"
                     :key="item.projectId"
