@@ -7,16 +7,14 @@ import {useRequest} from 'vue-request'
 const router = useRouter()
 const route = useRoute()
 
-const resourceGet = useRequest(amsAssetResourceGet, {
-  throttleInterval: 500,
-})
+const {runAsync: resourceGet} = useRequest(amsAssetResourceGet)
 
 const formData = reactive({} as AssetResourceVO)
 
 onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await resourceGet.runAsync({
+  const {data} = await resourceGet({
     resourceId: route.params.id,
   } as AssetResourceVO)
   const cloneData = JSON.parse(JSON.stringify(data))

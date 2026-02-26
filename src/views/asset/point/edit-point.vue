@@ -3,11 +3,7 @@ import {ref, reactive, onMounted} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
-import {
-  amsAssetProjectList,
-  amsAssetResourceUpdate,
-  amsAssetResourceGet,
-} from '@/service/api/amsAsset'
+import {amsAssetResourceUpdate, amsAssetResourceGet} from '@/service/api/amsAsset'
 import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
@@ -15,28 +11,17 @@ import {findValueByCustomId} from '@/utils/array-util'
 const router = useRouter()
 const route = useRoute()
 
-// 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
-const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 [业务类型1009 点位类型1011 广告类型1010 媒体类型1012 资源业务标签1028]
-const dicListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const resourceBusinessTypeOptions = reactive<SysDicVO[]>([])
 const resourceTypeOptions = reactive<SysDicVO[]>([])
 const resourceAdTypeOptions = reactive<SysDicVO[]>([])
 const resourceMediaTypeOptions = reactive<SysDicVO[]>([])
 const resourceBusinessTagOptions = reactive<SysDicVO[]>([])
 // 编辑点位
-const resourceUpdate = useRequest(amsAssetResourceUpdate, {
-  throttleInterval: 500,
-})
+const {runAsync: resourceUpdate, loading: updateLoading} = useRequest(amsAssetResourceUpdate)
 // 点位详情
-const resourceGet = useRequest(amsAssetResourceGet, {
-  throttleInterval: 500,
-})
+const {runAsync: resourceGet} = useRequest(amsAssetResourceGet)
 
 const formRef = ref<FormInstance>()
 
@@ -71,28 +56,25 @@ onMounted(() => {
 
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: resourceBusinessType} = await dicListTree.runAsync({dicType: 1009})
+  const {data: resourceBusinessType} = await dicListTree({dicType: 1009})
   resourceBusinessTypeOptions.push(...Object.values(resourceBusinessType))
-  const {data: resourceType} = await dicListTree.runAsync({dicType: 1011})
+  const {data: resourceType} = await dicListTree({dicType: 1011})
   resourceTypeOptions.push(...Object.values(resourceType))
-  const {data: resourceAdType} = await dicListTree.runAsync({dicType: 1010})
+  const {data: resourceAdType} = await dicListTree({dicType: 1010})
   resourceAdTypeOptions.push(...Object.values(resourceAdType))
-  const {data: resourceMediaType} = await dicListTree.runAsync({dicType: 1012})
+  const {data: resourceMediaType} = await dicListTree({dicType: 1012})
   resourceMediaTypeOptions.push(...Object.values(resourceMediaType))
-  const {data: resourceBusinessTagCode} = await dicListTree.runAsync({dicType: 1028})
+  const {data: resourceBusinessTagCode} = await dicListTree({dicType: 1028})
   resourceBusinessTagOptions.push(...Object.values(resourceBusinessTagCode))
 }
 
 const getDetail = async (): Promise<void> => {
-  const {data: resource} = await resourceGet.runAsync({
+  const {data: resource} = await resourceGet({
     resourceId: route.params.id,
   } as AssetResourceVO)
   Object.assign(formData, resource)
 }
 
-// 提交表单：先验证，通过后处理数据
 const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
@@ -128,14 +110,14 @@ const handleSubmit = () => {
         'dicName',
         resourceBusinessTagOptions
       )
-      const {msg} = await resourceUpdate.runAsync({...paramsData})
+      const {msg} = await resourceUpdate({...paramsData})
       ElMessage.success(msg)
       router.push('/asset/management/point')
     }
   })
 }
 
-const handleReset = () => router.push('/asset/management/point')
+const back = () => router.push('/asset/management/point')
 </script>
 
 <template>
@@ -149,7 +131,6 @@ const handleReset = () => router.push('/asset/management/point')
         </p>
       </div>
     </template>
-    <!-- 外层容器：水平居中 -->
     <div class="mx-auto">
       <el-form
         :model="formData"
@@ -329,8 +310,8 @@ const handleReset = () => router.push('/asset/management/point')
         </section-group>
 
         <div class="flex justify-center mt-6">
-          <el-button @click="handleReset">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button @click="back">返回</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="updateLoading">确定</el-button>
         </div>
       </el-form>
     </div>

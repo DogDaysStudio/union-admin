@@ -12,25 +12,17 @@ import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
 // 字典 [业务类型1009 点位类型1011 广告类型1010 媒体类型1012]
-const dicListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const resourceBusinessTypeOptions = reactive<SysDicVO[]>([])
 const resourceTypeOptions = reactive<SysDicVO[]>([])
 const resourceAdTypeOptions = reactive<SysDicVO[]>([])
 const resourceMediaOptions = reactive<SysDicVO[]>([])
 // 列表数据
-const resourceList = useRequest(amsAssetResourceList, {
-  throttleInterval: 500,
-})
+const {runAsync: resourceList} = useRequest(amsAssetResourceList)
 // 修改数据状态
-const resourceEnable = useRequest(amsAssetResourceEnable, {
-  throttleInterval: 500,
-})
+const {runAsync: resourceEnable} = useRequest(amsAssetResourceEnable)
 // 删除数据
-const resourceDelete = useRequest(amsAssetResourceDelete, {
-  throttleInterval: 500,
-})
+const {runAsync: resourceDelete} = useRequest(amsAssetResourceDelete)
 
 const formState = reactive({
   pageNum: 1,
@@ -111,13 +103,13 @@ onMounted(() => {
 
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: resourceBusinessType} = await dicListTree.runAsync({dicType: 1009})
+  const {data: resourceBusinessType} = await dicListTree({dicType: 1009})
   resourceBusinessTypeOptions.push(...Object.values(resourceBusinessType))
-  const {data: resourceType} = await dicListTree.runAsync({dicType: 1011})
+  const {data: resourceType} = await dicListTree({dicType: 1011})
   resourceTypeOptions.push(...Object.values(resourceType))
-  const {data: resourceAdType} = await dicListTree.runAsync({dicType: 1010})
+  const {data: resourceAdType} = await dicListTree({dicType: 1010})
   resourceAdTypeOptions.push(...Object.values(resourceAdType))
-  const {data: resourceMedia} = await dicListTree.runAsync({dicType: 1012})
+  const {data: resourceMedia} = await dicListTree({dicType: 1012})
   resourceMediaOptions.push(...Object.values(resourceMedia))
 }
 
@@ -125,7 +117,7 @@ const tableData = reactive<AssetResourceVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
   const cloneformState = {...formState}
-  const {total: resTotal, data} = await resourceList.runAsync({...cloneformState})
+  const {total: resTotal, data} = await resourceList({...cloneformState})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
@@ -155,7 +147,7 @@ const toggleStatus = (resourceId: string, enable: number): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await resourceEnable.runAsync({resourceId, enable: enable ? false : true})
+    await resourceEnable({resourceId, enable: enable ? false : true})
     ElMessage.success('修改成功')
     getData()
   })
@@ -168,7 +160,7 @@ const deleteRoom = (resourceId: string): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await resourceDelete.runAsync({resourceId})
+    await resourceDelete({resourceId})
     ElMessage.success('删除成功')
     getData()
   })

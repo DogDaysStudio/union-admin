@@ -17,31 +17,19 @@ import {findValueByCustomId} from '@/utils/array-util'
 const router = useRouter()
 
 // 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
+const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 楼栋/围合列表
-const assetList = useRequest(amsAssetBuildingSelectBuildingEnclosure, {
-  throttleInterval: 500,
-})
+const {runAsync: assetList} = useRequest(amsAssetBuildingSelectBuildingEnclosure)
 const assetOptions = reactive<{id: string; name: string; assetType: string}[]>([])
 // 楼层列表
-const floorList = useRequest(amsAssetFloorList, {
-  throttleInterval: 500,
-})
+const {runAsync: floorList} = useRequest(amsAssetFloorList)
 const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
 // 商铺号/房间号
-//  businessModelCode: string // 经营模式编码
-// floorId: string // 楼层编码
-const locationList = useRequest(amsAssetResourceSelectLocationId, {
-  throttleInterval: 500,
-})
+const {runAsync: locationList} = useRequest(amsAssetResourceSelectLocationId)
 const locationOptions = reactive<string[]>([])
 // 字典 [业务类型1009 点位类型1011 广告类型1010 媒体类型1012 位置1004 经营模式1020 资源业务标签1028]
-const dicListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const resourceBusinessTypeOptions = reactive<SysDicVO[]>([])
 const resourceTypeOptions = reactive<SysDicVO[]>([])
 const resourceAdTypeOptions = reactive<SysDicVO[]>([])
@@ -50,9 +38,7 @@ const locationTypeOptions = reactive<SysDicVO[]>([])
 const businessModelCodeOptions = reactive<SysDicVO[]>([])
 const resourceBusinessTagOptions = reactive<SysDicVO[]>([])
 // 新增点位
-const resourceInsert = useRequest(amsAssetResourceInsert, {
-  throttleInterval: 500,
-})
+const {runAsync: resourceInsert, loading: insertLoading} = useRequest(amsAssetResourceInsert)
 
 const formRef = ref<FormInstance>()
 
@@ -87,21 +73,21 @@ onMounted(() => getOptions())
 
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
+  const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
-  const {data: resourceBusinessType} = await dicListTree.runAsync({dicType: 1009})
+  const {data: resourceBusinessType} = await dicListTree({dicType: 1009})
   resourceBusinessTypeOptions.push(...Object.values(resourceBusinessType))
-  const {data: resourceType} = await dicListTree.runAsync({dicType: 1011})
+  const {data: resourceType} = await dicListTree({dicType: 1011})
   resourceTypeOptions.push(...Object.values(resourceType))
-  const {data: resourceAdType} = await dicListTree.runAsync({dicType: 1010})
+  const {data: resourceAdType} = await dicListTree({dicType: 1010})
   resourceAdTypeOptions.push(...Object.values(resourceAdType))
-  const {data: resourceMediaType} = await dicListTree.runAsync({dicType: 1012})
+  const {data: resourceMediaType} = await dicListTree({dicType: 1012})
   resourceMediaTypeOptions.push(...Object.values(resourceMediaType))
-  const {data: locationTypeCode} = await dicListTree.runAsync({dicType: 1004})
+  const {data: locationTypeCode} = await dicListTree({dicType: 1004})
   locationTypeOptions.push(...Object.values(locationTypeCode))
-  const {data: businessModelCode} = await dicListTree.runAsync({dicType: 1020})
+  const {data: businessModelCode} = await dicListTree({dicType: 1020})
   businessModelCodeOptions.push(...Object.values(businessModelCode))
-  const {data: resourceBusinessTagCode} = await dicListTree.runAsync({dicType: 1028})
+  const {data: resourceBusinessTagCode} = await dicListTree({dicType: 1028})
   resourceBusinessTagOptions.push(...Object.values(resourceBusinessTagCode))
 }
 
@@ -116,7 +102,7 @@ watch(
     floorOptions.length = 0
     formData.floorId = ''
     if (projectId) {
-      const {data: build} = await assetList.runAsync({
+      const {data: build} = await assetList({
         pageable: false,
         projectId,
       } as AssetBuildingListDTO)
@@ -135,7 +121,7 @@ watch(
     assetType.value = ''
     if (assetId) {
       assetType.value = assetOptions.find(item => formData.assetId == item.id).assetType
-      const {data: floor} = await floorList.runAsync({
+      const {data: floor} = await floorList({
         pageable: false,
         assetType: assetType.value,
         assetId,
@@ -153,7 +139,7 @@ watch(
     locationOptions.length = 0
     formData.locationId = ''
     if (floorId && formData.businessModelCode) {
-      const {data: floor} = await locationList.runAsync({
+      const {data: floor} = await locationList({
         floorId,
         businessModelCode: formData.businessModelCode,
       } as AssetLocationIdListDTO)
@@ -169,7 +155,7 @@ watch(
     locationOptions.length = 0
     formData.locationId = ''
     if (businessModelCode && formData.floorId) {
-      const {data: floor} = await locationList.runAsync({
+      const {data: floor} = await locationList({
         businessModelCode,
         floorId: formData.floorId,
       } as AssetLocationIdListDTO)
@@ -310,20 +296,19 @@ const handleDeletePoint = async (resourceNumber: string) => {
   ElMessage.success('点位删除成功!')
 }
 
-// 提交表单：先验证，通过后处理数据
 const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
     if (valid) {
       const paramsData = JSON.parse(JSON.stringify(formData)) as AssetResourceInsertDTO
-      const {msg} = await resourceInsert.runAsync({resourceList: paramsData.resourceList})
+      const {msg} = await resourceInsert({resourceList: paramsData.resourceList})
       ElMessage.success(msg)
       router.push('/asset/management/point')
     }
   })
 }
 
-const handleReset = () => router.push('/asset/management/point')
+const back = () => router.push('/asset/management/point')
 </script>
 
 <template>
@@ -337,7 +322,6 @@ const handleReset = () => router.push('/asset/management/point')
         </p>
       </div>
     </template>
-    <!-- 外层容器：水平居中 -->
     <div class="mx-auto">
       <el-form
         :model="formData"
@@ -593,8 +577,8 @@ const handleReset = () => router.push('/asset/management/point')
         </section-group>
 
         <div class="flex justify-center mt-6">
-          <el-button @click="handleReset">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button @click="back">返回</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="insertLoading">确定</el-button>
         </div>
       </el-form>
     </div>
