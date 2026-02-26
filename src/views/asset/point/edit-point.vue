@@ -27,7 +27,6 @@ const formRef = ref<FormInstance>()
 
 const formData = reactive({} as AssetResourceVO)
 
-// 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({
   projectName: {required: true, message: '请填写所属项目', trigger: 'blur'},
   locationName: {required: true, message: '请填写位置', trigger: 'blur'},
@@ -54,7 +53,6 @@ onMounted(() => {
   getOptions()
 })
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
   const {data: resourceBusinessType} = await dicListTree({dicType: 1009})
   resourceBusinessTypeOptions.push(...Object.values(resourceBusinessType))
@@ -116,8 +114,6 @@ const handleSubmit = () => {
     }
   })
 }
-
-const back = () => router.push('/asset/management/point')
 </script>
 
 <template>
@@ -310,7 +306,7 @@ const back = () => router.push('/asset/management/point')
         </section-group>
 
         <div class="flex justify-center mt-6">
-          <el-button @click="back">返回</el-button>
+          <el-button @click="router.push('/asset/management/point')">返回</el-button>
           <el-button type="primary" @click="handleSubmit" :loading="updateLoading">确定</el-button>
         </div>
       </el-form>

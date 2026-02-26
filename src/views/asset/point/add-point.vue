@@ -16,7 +16,7 @@ import {findValueByCustomId} from '@/utils/array-util'
 
 const router = useRouter()
 
-// 获取项目列表
+// 项目列表
 const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 楼栋/围合列表
@@ -51,7 +51,6 @@ interface AddResource {
 
 const formData = reactive({resourceList: []} as AssetResourceUpsertDTO & AddResource)
 
-// 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({
   projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
   locationCode: {required: true, message: '请选择位置', trigger: 'blur'},
@@ -71,7 +70,6 @@ const formRules = reactive<FormRules>({
 
 onMounted(() => getOptions())
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
@@ -307,8 +305,6 @@ const handleSubmit = () => {
     }
   })
 }
-
-const back = () => router.push('/asset/management/point')
 </script>
 
 <template>
@@ -577,7 +573,7 @@ const back = () => router.push('/asset/management/point')
         </section-group>
 
         <div class="flex justify-center mt-6">
-          <el-button @click="back">返回</el-button>
+          <el-button @click="router.push('/asset/management/point')">返回</el-button>
           <el-button type="primary" @click="handleSubmit" :loading="insertLoading">确定</el-button>
         </div>
       </el-form>

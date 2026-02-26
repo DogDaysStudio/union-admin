@@ -16,40 +16,27 @@ import {findValueByCustomId} from '@/utils/array-util'
 
 const router = useRouter()
 
-// 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
+// 项目列表
+const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 楼栋列表
-const buildList = useRequest(amsAssetBuildingList, {
-  throttleInterval: 500,
-})
+const {runAsync: buildList} = useRequest(amsAssetBuildingList)
 const buildOptions = reactive<{buildingId: string; buildingName: string}[]>([])
 // 楼层列表
-const floorList = useRequest(amsAssetFloorList, {
-  throttleInterval: 500,
-})
+const {runAsync: floorList} = useRequest(amsAssetFloorList)
 const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
 // 字典 [户型 产权单位]
-const dicListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const roomOptions = reactive<SysDicVO[]>([])
 const companyOptions = reactive<SysDicVO[]>([])
+// 房间列表
+const {runAsync: roomList} = useRequest(amsAssetRoomList)
 // 新增楼层
-const addFloor = useRequest(amsAssetRoomInsert, {
-  throttleInterval: 500,
-})
-// 楼层列表
-const roomList = useRequest(amsAssetRoomList, {
-  throttleInterval: 500,
-})
+const {runAsync: addFloor, loading: insertLoading} = useRequest(amsAssetRoomInsert)
 
-// 表单Ref：用于调用表单内置方法（验证、重置）
 const formRef = ref<FormInstance>()
 
-// 1. 子房间信息
+// 1. 房间信息
 interface RoomInfo {
   assetType: string
   roomNumber: string
@@ -61,8 +48,8 @@ interface RoomInfo {
   ownershipUnitName: string
 }
 
-// 2. 单个楼层信息
-interface FloorItem {
+// 2. 楼层信息
+interface FloorInfo {
   projectId: string
   assetId: string
   floorId: string
@@ -73,18 +60,17 @@ interface FloorItem {
   children: RoomInfo[]
 }
 
-// 3. 顶层楼层DTO
-interface FloorDTO {
+// 3. 基本信息
+interface BaseInfo {
   projectId: string
   assetId: string
   floorId: string
   roomLayoutCode: string
-  floorList: FloorItem[]
+  floorList: FloorInfo[]
 }
 
-const formData = reactive({floorList: []} as AssetRoomInsertDTO & FloorDTO)
+const formData = reactive({floorList: []} as AssetRoomInsertDTO & BaseInfo)
 
-// 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({
   projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
   assetId: {required: true, message: '请选择所属楼栋', trigger: 'blur'},
@@ -94,16 +80,15 @@ const formRules = reactive<FormRules>({
 
 onMounted(() => getOptions())
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
+  const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
-  const {data: roomList} = await dicListTree.runAsync({
+  const {data: roomList} = await dicListTree({
     dicType: 1024,
     pageable: false,
   } as SysDicListDTO)
   roomOptions.push(...Object.values(roomList))
-  const {data: companyList} = await dicListTree.runAsync({
+  const {data: companyList} = await dicListTree({
     dicType: 1001,
     pageable: false,
   } as SysDicListDTO)
@@ -119,7 +104,7 @@ watch(
     floorOptions.length = 0
     formData.floorId = ''
     if (projectId) {
-      const {data: build} = await buildList.runAsync({
+      const {data: build} = await buildList({
         pageable: false,
         projectId,
       } as AssetBuildingListDTO)
@@ -136,7 +121,7 @@ watch(
     floorOptions.length = 0
     formData.floorId = ''
     if (assetId) {
-      const {data: floor} = await floorList.runAsync({
+      const {data: floor} = await floorList({
         pageable: false,
         assetType: '1',
         assetId,
@@ -157,7 +142,7 @@ const handleAddFloor = () => {
         ElMessage.warning('该楼层已生成！')
         return
       }
-      const {data: room} = await roomList.runAsync({
+      const {data: room} = await roomList({
         floorId: formData.floorId,
         pageable: false,
       } as AssetRoomListDTO)
@@ -176,7 +161,7 @@ const handleAddFloor = () => {
 }
 
 // 生成房间
-const handleAddRoom = (data: FloorItem) => {
+const handleAddRoom = (data: FloorInfo) => {
   if (!data.count) {
     ElMessage.warning('请填写新增房间数量！')
     return
@@ -200,7 +185,7 @@ const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
     if (valid) {
-      const paramsData = JSON.parse(JSON.stringify(formData)) as AssetRoomInsertDTO & FloorDTO
+      const paramsData = JSON.parse(JSON.stringify(formData)) as AssetRoomInsertDTO & BaseInfo
       if (!paramsData?.floorList) {
         ElMessage.warning('请生成楼层')
         return
@@ -223,7 +208,7 @@ const handleSubmit = () => {
         })
       })
       if (flag) {
-        const {msg} = await addFloor.runAsync({roomList: paramsData.roomList})
+        const {msg} = await addFloor({roomList: paramsData.roomList})
         ElMessage.success(msg)
         router.push('/asset/management/room')
       } else {
@@ -232,8 +217,6 @@ const handleSubmit = () => {
     }
   })
 }
-
-const handleReset = () => router.push('/asset/management/room')
 </script>
 
 <template>
@@ -247,7 +230,6 @@ const handleReset = () => router.push('/asset/management/room')
         </p>
       </div>
     </template>
-    <!-- 外层容器：水平居中 -->
     <div class="mx-auto">
       <el-form
         :model="formData"
@@ -403,8 +385,8 @@ const handleReset = () => router.push('/asset/management/room')
         </section-group>
 
         <div class="flex justify-center mt-6">
-          <el-button @click="handleReset">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button @click="router.push('/asset/management/room')">返回</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="insertLoading">确定</el-button>
         </div>
       </el-form>
     </div>

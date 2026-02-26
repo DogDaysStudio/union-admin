@@ -17,45 +17,30 @@ import {iamCommonDicListTree} from '@/service/api/iamCommon'
 const route = useRoute()
 const router = useRouter()
 
-// 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
+// 项目列表
+const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 楼栋下拉列表
-const buildingList = useRequest(amsAssetBuildingList, {
-  throttleInterval: 500,
-})
+const {runAsync: buildingList} = useRequest(amsAssetBuildingList)
 const buildingOptions = reactive<AssetBuildingVO[]>([])
 // 字典 [户型 产权单位（公司） 房间类型 经营模式]
-const dicListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const roomOptions = reactive<SysDicVO[]>([])
 const companyOptions = reactive<SysDicVO[]>([])
 const roomTypeOptions = reactive<SysDicVO[]>([])
 const businessModelOptions = reactive<SysDicVO[]>([])
 // 楼层列表
-const floorList = useRequest(amsAssetFloorList, {
-  throttleInterval: 500,
-})
+const {runAsync: floorList} = useRequest(amsAssetFloorList)
 const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
 // 编辑楼层
-const roomUpdate = useRequest(amsAssetRoomUpdate, {
-  throttleInterval: 500,
-})
+const {runAsync: roomUpdate, loading: updateLoading} = useRequest(amsAssetRoomUpdate)
 // 房间详情
-const getRoom = useRequest(amsAssetRoomGet, {
-  throttleInterval: 500,
-})
+const {runAsync: getRoom} = useRequest(amsAssetRoomGet)
 
-// 表单Ref：用于调用表单内置方法（验证、重置）
 const formRef = ref<FormInstance>()
 
-// 初始化表单数据：响应式对象，与表单双向绑定
 const formData = reactive({} as AssetRoomUpsertDTO)
 
-// 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({
   roomNumber: {required: true, message: '请填写房间号', trigger: 'blur'},
   projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
@@ -70,35 +55,34 @@ onMounted(() => {
   getDetail()
 })
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: roomList} = await dicListTree.runAsync({
+  const {data: roomList} = await dicListTree({
     dicType: 1024,
     pageable: false,
   } as SysDicListDTO)
   roomOptions.push(...Object.values(roomList))
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
+  const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
-  const {data: companyList} = await dicListTree.runAsync({
+  const {data: companyList} = await dicListTree({
     dicType: 1001,
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
-  const {data: roomType} = await dicListTree.runAsync({dicType: 1005})
+  const {data: roomType} = await dicListTree({dicType: 1005})
   roomTypeOptions.push(...Object.values(roomType))
-  const {data: businessModel} = await dicListTree.runAsync({dicType: 1020})
+  const {data: businessModel} = await dicListTree({dicType: 1020})
   businessModelOptions.push(...Object.values(businessModel))
 }
 
 const getDetail = async () => {
-  const {data: floorDetail} = await getRoom.runAsync({roomId: route.params.id})
+  const {data: floorDetail} = await getRoom({roomId: route.params.id})
   Object.assign(formData, floorDetail)
-  const {data: building} = await buildingList.runAsync({
+  const {data: building} = await buildingList({
     projectId: floorDetail.projectId,
     pageable: false,
   } as AssetBuildingListDTO)
   buildingOptions.push(...Object.values(building))
-  const {data: floor} = await floorList.runAsync({
+  const {data: floor} = await floorList({
     pageable: false,
     assetType: '1',
     assetId: floorDetail.assetId,
@@ -117,14 +101,12 @@ const handleSubmit = () => {
         'projectName',
         projectOptions
       )
-      const {msg} = await roomUpdate.runAsync({...paramsData, assetType: '1'})
+      const {msg} = await roomUpdate({...paramsData, assetType: '1'})
       ElMessage.success(msg)
       router.push('/asset/management/room')
     }
   })
 }
-
-const handleReset = () => router.push('/asset/management/room')
 </script>
 
 <template>
@@ -138,7 +120,6 @@ const handleReset = () => router.push('/asset/management/room')
         </p>
       </div>
     </template>
-    <!-- 外层容器：水平居中 -->
     <div class="mx-auto">
       <el-form
         :model="formData"
@@ -335,10 +316,9 @@ const handleReset = () => router.push('/asset/management/room')
           </el-row>
         </section-group>
 
-        <!-- 表单操作按钮：居中、间距 -->
         <div class="flex justify-center mt-6">
-          <el-button @click="handleReset">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button @click="router.push('/asset/management/room')">返回</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="updateLoading">确定</el-button>
         </div>
       </el-form>
     </div>

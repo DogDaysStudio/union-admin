@@ -7,16 +7,14 @@ import {amsAssetRoomGet} from '@/service/api/amsAsset'
 const router = useRouter()
 const route = useRoute()
 
-const roomGet = useRequest(amsAssetRoomGet, {
-  throttleInterval: 500,
-})
+const {runAsync: roomGet} = useRequest(amsAssetRoomGet)
 
 const formData = reactive({} as AssetRoomVO)
 
 onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await roomGet.runAsync({roomId: route.params.id})
+  const {data} = await roomGet({roomId: route.params.id})
   const cloneData = JSON.parse(JSON.stringify(data))
   cloneData.leaseType =
     cloneData.leaseType == '0' ? '整租' : cloneData.leaseType == '1' ? '合租' : '-'

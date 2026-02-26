@@ -8,31 +8,18 @@ import {iamCommonDicListTree, iamCommonAreaList} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
 // 字典 [产权单位/公司1001 经营模式1020 项目类型1003 资产分类1002 房屋类型1005]
-const dicListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const companyOptions = reactive<SysDicVO[]>([])
 const businessModelOptions = reactive<SysDicVO[]>([])
-// const projectTypeOptions = reactive<SysDicVO[]>([])
-// const assetOptions = reactive<SysDicVO[]>([])
-// const roomTypeOptions = reactive<SysDicVO[]>([])
 // 所属省市区
-const areaList = useRequest(iamCommonAreaList, {
-  throttleInterval: 500,
-})
+const {runAsync: areaList} = useRequest(iamCommonAreaList)
 const cityOptions = reactive<PairModel[]>([])
 // 列表数据
-const roomList = useRequest(amsAssetRoomList, {
-  throttleInterval: 500,
-})
+const {runAsync: roomList} = useRequest(amsAssetRoomList)
 // 修改数据状态
-const roomEnable = useRequest(amsAssetRoomEnable, {
-  throttleInterval: 500,
-})
+const {runAsync: roomEnable} = useRequest(amsAssetRoomEnable)
 // 删除数据
-const roomDelete = useRequest(amsAssetRoomDelete, {
-  throttleInterval: 500,
-})
+const {runAsync: roomDelete} = useRequest(amsAssetRoomDelete)
 
 const formState = reactive({
   pageNum: 1,
@@ -92,7 +79,7 @@ const formSchema = defineSchema({
                 break
               case 1:
               case 2:
-                const {data} = await areaList.runAsync({pid: value})
+                const {data} = await areaList({pid: value})
                 nodes = data
                 break
             }
@@ -103,37 +90,6 @@ const formSchema = defineSchema({
       },
       clearable: true,
     }),
-    // defineField.Select({
-    //   label: '项目类型',
-    //   prop: 'ownershipUnitCode',
-    //   options: projectTypeOptions,
-    //   clearable: true,
-    //   props: {
-    //     value: 'dicId',
-    //     label: 'dicName',
-    //   },
-    // }),
-    // defineField.Cascader({
-    //   label: '资产类型',
-    //   prop: 'ownershipUnitCode',
-    //   options: assetOptions,
-    //   clearable: true,
-    //   props: {
-    //     checkStrictly: true,
-    //     value: 'dicId',
-    //     label: 'dicName',
-    //   },
-    // }),
-    // defineField.Select({
-    //   label: '房屋类型',
-    //   prop: 'ownershipUnitCode',
-    //   options: roomTypeOptions,
-    //   clearable: true,
-    //   props: {
-    //     value: 'dicId',
-    //     label: 'dicName',
-    //   },
-    // }),
   ],
 })
 
@@ -151,22 +107,15 @@ onMounted(() => {
   getData()
 })
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: companyList} = await dicListTree.runAsync({
+  const {data: companyList} = await dicListTree({
     dicType: 1001,
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
-  const {data: businessModel} = await dicListTree.runAsync({dicType: 1020})
+  const {data: businessModel} = await dicListTree({dicType: 1020})
   businessModelOptions.push(...Object.values(businessModel))
-  //   const {data: projectType} = await dicListTree.runAsync({dicType: 1003})
-  //   projectTypeOptions.push(...Object.values(projectType))
-  //   const {data: asset} = await dicListTree.runAsync({dicType: 1002})
-  //   assetOptions.push(...Object.values(asset))
-  //   const {data: roomType} = await dicListTree.runAsync({dicType: 1005})
-  //   roomTypeOptions.push(...Object.values(roomType))
-  const {data: cityOption} = await areaList.runAsync({pid: ''})
+  const {data: cityOption} = await areaList({pid: ''})
   cityOptions.push(...cityOption)
 }
 
@@ -174,11 +123,14 @@ const tableData = reactive<AssetRoomVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
   const cloneformState = {...formState}
+  cloneformState.cityCode = cloneformState?.provinceCode?.[1]
+  cloneformState.districtCode = cloneformState?.provinceCode?.[2]
+  cloneformState.provinceCode = cloneformState?.provinceCode?.[0]
   if (cloneformState.ownershipUnitCode?.length) {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await roomList.runAsync({...cloneformState})
+  const {total: resTotal, data} = await roomList({...cloneformState})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
@@ -207,7 +159,7 @@ const toggleStatus = (roomId: string, enable: number): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await roomEnable.runAsync({roomId, enable: enable ? false : true})
+    await roomEnable({roomId, enable: enable ? false : true})
     ElMessage.success('修改成功')
     getData()
   })
@@ -220,7 +172,7 @@ const deleteRoom = (roomId: string): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await roomDelete.runAsync({roomId})
+    await roomDelete({roomId})
     ElMessage.success('删除成功')
     getData()
   })
@@ -249,20 +201,18 @@ const deleteRoom = (roomId: string): void => {
       <el-table-column label="房间编码" prop="roomId" />
       <el-table-column label="房间号" prop="roomNumber" />
       <el-table-column label="户型" prop="roomLayoutName" />
-      <el-table-column label="建筑面积（㎡）" prop="buildingArea" />
+      <el-table-column label="建筑面积（㎡）" prop="buildingArea" width="130" />
       <el-table-column label="所属项目" prop="projectName" />
       <el-table-column label="所属楼栋" prop="buildingName" />
       <el-table-column label="所属楼层" prop="floorName" />
       <el-table-column label="经营模式" prop="businessModelName" />
       <el-table-column label="产权单位" prop="ownershipUnitName" />
-      <!-- <el-table-column label="租赁类型" prop="ownershipUnitName" />
-      <el-table-column label="拆分状态" prop="ownershipUnitName" /> -->
       <el-table-column label="状态" prop="enable">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="170">
+      <el-table-column fixed="right" label="操作" min-width="175">
         <template #default="{row}">
           <el-button
             link
