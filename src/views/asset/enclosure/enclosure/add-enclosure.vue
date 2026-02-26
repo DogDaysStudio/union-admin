@@ -11,23 +11,16 @@ import {findValueByCustomId} from '@/utils/array-util'
 const router = useRouter()
 
 // 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
+const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 户型 产权单位（公司） 围合类型
-const dicListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const shopOptions = reactive<SysDicVO[]>([])
 const companyOptions = reactive<SysDicVO[]>([])
 const enclosureOptions = reactive<SysDicVO[]>([])
 // 新增围合
-const addEncloseure = useRequest(amsAssetEnclosureInsert, {
-  throttleInterval: 500,
-})
+const {runAsync: addEncloseure, loading: insertLoading} = useRequest(amsAssetEnclosureInsert)
 
-// 表单Ref：用于调用表单内置方法（验证、重置）
 const formRef = ref<FormInstance>()
 
 interface floorDTO {
@@ -38,10 +31,8 @@ interface floorDTO {
 
 type AssetEnclosureCompleteDTO = AssetEnclosureInsertDTO & floorDTO
 
-// 初始化表单数据：响应式对象，与表单双向绑定
 const formData = reactive({} as AssetEnclosureInsertDTO & AssetEnclosureCompleteDTO)
 
-// 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({
   enclosureName: {required: true, message: '请填写围合名称', trigger: 'blur'},
   projectId: {required: true, message: '请选择所属项目', trigger: 'change'},
@@ -51,21 +42,20 @@ const formRules = reactive<FormRules>({
 
 onMounted(() => getOptions())
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
+  const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
-  const {data: shopList} = await dicListTree.runAsync({
+  const {data: shopList} = await dicListTree({
     dicType: 1024,
     pageable: false,
   } as SysDicListDTO)
   shopOptions.push(...Object.values(shopList))
-  const {data: companyList} = await dicListTree.runAsync({
+  const {data: companyList} = await dicListTree({
     dicType: 1001,
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
-  const {data: enclosureList} = await dicListTree.runAsync({
+  const {data: enclosureList} = await dicListTree({
     dicType: 1023,
     pageable: false,
   } as SysDicListDTO)
@@ -164,7 +154,6 @@ interface Floor {
   floorName?: string // 兼容楼层名称字段
 }
 
-// 提交表单：先验证，通过后处理数据
 const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
@@ -184,6 +173,7 @@ const handleSubmit = () => {
           target.ownershipUnitCode = targetCode
         }
       }
+
       processOwnershipUnit(paramsData)
       paramsData.enclosureTypeName =
         findValueByCustomId(paramsData.enclosureTypeCode, 'dicCode', 'dicName', enclosureOptions) ||
@@ -201,7 +191,7 @@ const handleSubmit = () => {
       })
 
       if (Flag) {
-        const {msg} = await addEncloseure.runAsync({...paramsData})
+        const {msg} = await addEncloseure({...paramsData})
         ElMessage.success(msg)
         router.push('/asset/management/enclosure-floor')
       } else {
@@ -212,8 +202,6 @@ const handleSubmit = () => {
     }
   })
 }
-
-const handleReset = () => router.push('/asset/management/enclosure-floor')
 </script>
 
 <template>
@@ -227,7 +215,6 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
         </p>
       </div>
     </template>
-    <!-- 外层容器：水平居中 -->
     <div class="mx-auto">
       <el-form
         :model="formData"
@@ -337,6 +324,7 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
                     class="w-50!"
                     v-model="data.floorHeight"
                     placeholder="请输入层高"
+                    :min="0"
                   />
                 </el-col>
                 <el-col :span="8">
@@ -388,10 +376,9 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
           </el-tree>
         </section-group>
 
-        <!-- 表单操作按钮：居中、间距 -->
         <div class="flex justify-center mt-6">
-          <el-button @click="handleReset">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button @click="router.push('/asset/management/enclosure-floor')">返回</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="insertLoading">确定</el-button>
         </div>
       </el-form>
     </div>

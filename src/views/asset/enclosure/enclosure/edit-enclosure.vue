@@ -16,30 +16,21 @@ const router = useRouter()
 const route = useRoute()
 
 // 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
+const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 户型 产权单位（公司） 围合类型
-const dicListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const companyOptions = reactive<SysDicVO[]>([])
 const enclosureOptions = reactive<SysDicVO[]>([])
 // 编辑围合
-const enclosureUpdate = useRequest(amsAssetEnclosureUpdate, {
-  throttleInterval: 500,
-})
+const {runAsync: enclosureUpdate, loading: updateLoading} = useRequest(amsAssetEnclosureUpdate)
 // 围合详情
-const enclosureGet = useRequest(amsAssetEnclosureGet, {
-  throttleInterval: 500,
-})
+const {runAsync: enclosureGet} = useRequest(amsAssetEnclosureGet)
 
 const formRef = ref<FormInstance>()
 
 const formData = reactive({} as AssetEnclosureUpdateDTO)
 
-// 表单验证规则：对应prop字段，实现必填/格式校验
 const formRules = reactive<FormRules>({
   enclosureName: {required: true, message: '请填写围合名称', trigger: 'blur'},
   projectId: {required: true, message: '请选择所属项目', trigger: 'change'},
@@ -49,21 +40,20 @@ const formRules = reactive<FormRules>({
 
 onMounted(() => getOptions())
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
+  const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...Object.values(project))
-  const {data: companyList} = await dicListTree.runAsync({
+  const {data: companyList} = await dicListTree({
     dicType: 1001,
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
-  const {data: enclosureList} = await dicListTree.runAsync({
+  const {data: enclosureList} = await dicListTree({
     dicType: 1023,
     pageable: false,
   } as SysDicListDTO)
   enclosureOptions.push(...Object.values(enclosureList))
-  const {data: detail} = await enclosureGet.runAsync({enclosureId: route.params.id})
+  const {data: detail} = await enclosureGet({enclosureId: route.params.id})
   Object.assign(formData, detail)
 }
 
@@ -88,7 +78,7 @@ const handleSubmit = () => {
       paramsData.enclosureTypeName =
         findValueByCustomId(paramsData.enclosureTypeCode, 'dicCode', 'dicName', enclosureOptions) ||
         ''
-      const {msg} = await enclosureUpdate.runAsync({...paramsData})
+      const {msg} = await enclosureUpdate({...paramsData})
       ElMessage.success(msg)
       router.push('/asset/management/enclosure-floor')
     } else {
@@ -96,8 +86,6 @@ const handleSubmit = () => {
     }
   })
 }
-
-const handleReset = () => router.push('/asset/management/enclosure-floor')
 </script>
 
 <template>
@@ -111,7 +99,6 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
         </p>
       </div>
     </template>
-    <!-- 外层容器：水平居中 -->
     <div class="mx-auto">
       <el-form
         :model="formData"
@@ -179,10 +166,9 @@ const handleReset = () => router.push('/asset/management/enclosure-floor')
           </el-col>
         </el-row>
 
-        <!-- 表单操作按钮：居中、间距 -->
         <div class="flex justify-center mt-6">
-          <el-button @click="handleReset">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button @click="router.push('/asset/management/enclosure-floor')">返回</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="updateLoading">确定</el-button>
         </div>
       </el-form>
     </div>

@@ -4,7 +4,6 @@ import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {
-  amsAssetProjectList,
   amsAssetEnclosureList,
   amsAssetEnclosureEnable,
   amsAssetEnclosureDelete,
@@ -12,32 +11,18 @@ import {
 import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
-// 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
-const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 产权单位/公司 围合类型
-const companyListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: companyListTree} = useRequest(iamCommonDicListTree)
 const companyOptions = reactive<SysDicVO[]>([])
 const enclosureOptions = reactive<SysDicVO[]>([])
 // 列表数据
-const enclosureList = useRequest(amsAssetEnclosureList, {
-  throttleInterval: 500,
-})
+const {runAsync: enclosureList} = useRequest(amsAssetEnclosureList)
 // 修改数据状态
-const enclosureEnable = useRequest(amsAssetEnclosureEnable, {
-  throttleInterval: 500,
-})
+const {runAsync: enclosureEnable} = useRequest(amsAssetEnclosureEnable)
 // 删除数据
-const enclosureDelete = useRequest(amsAssetEnclosureDelete, {
-  throttleInterval: 500,
-})
+const {runAsync: enclosureDelete} = useRequest(amsAssetEnclosureDelete)
 
 const formState = reactive({
-  pageable: false,
   pageNum: 1,
   pageSize: 10,
 } as AssetEnclosureListDTO)
@@ -46,16 +31,7 @@ const formSchema = defineSchema({
   fields: [
     defineField.Input({label: '围合名称', prop: 'enclosureName', clearable: true}),
     defineField.Input({label: '围合编码', prop: 'enclosureId', clearable: true}),
-    defineField.Select({
-      label: '所属项目',
-      prop: 'projectTypeCode',
-      options: projectOptions,
-      props: {
-        value: 'projectId',
-        label: 'projectName',
-      },
-      clearable: true,
-    }),
+    defineField.Input({label: '所属项目', prop: 'projectName', clearable: true}),
     defineField.Select({
       label: '围合类型',
       prop: 'enclosureTypeCode',
@@ -105,14 +81,12 @@ onMounted(() => {
 
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: companyList} = await companyListTree.runAsync({
+  const {data: companyList} = await companyListTree({
     dicType: 1001,
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
-  const {data: enclosureList} = await companyListTree.runAsync({
+  const {data: enclosureList} = await companyListTree({
     dicType: 1023,
     pageable: false,
   } as SysDicListDTO)
@@ -127,7 +101,7 @@ const getData = async (): Promise<void> => {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await enclosureList.runAsync({...cloneformState})
+  const {total: resTotal, data} = await enclosureList({...cloneformState})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
@@ -158,7 +132,7 @@ const toggleStatus = (enclosureId: string, enable: number): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await enclosureEnable.runAsync({enclosureId, enable: enable ? false : true})
+    await enclosureEnable({enclosureId, enable: enable ? false : true})
     ElMessage.success('修改成功')
     getData()
   })
@@ -171,7 +145,7 @@ const deleteEnclosure = (enclosureId: string): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await enclosureDelete.runAsync({enclosureId})
+    await enclosureDelete({enclosureId})
     ElMessage.success('删除成功')
     getData()
   })

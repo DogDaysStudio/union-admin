@@ -322,7 +322,7 @@ const handleSubmit = () => {
                   <el-input class="w-50!" v-model="data.floorName" disabled />
                 </span>
                 <span class="ml-2">
-                  已有房间：
+                  已有房间数：
                   <el-input class="w-50!" v-model="data.roomNumber" disabled />
                 </span>
                 <span class="ml-2">

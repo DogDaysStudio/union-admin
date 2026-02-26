@@ -5,7 +5,6 @@ import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {
   amsAssetEnclosureList,
-  amsAssetProjectList,
   amsAssetFloorList,
   amsAssetFloorEnable,
   amsAssetFloorDelete,
@@ -13,33 +12,18 @@ import {
 import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
-// 字典 产权单位（公司）
-const companyListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+// 字典 [产权单位]
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const companyOptions = reactive<SysDicVO[]>([])
 // 围合下拉列表
-const enclosureList = useRequest(amsAssetEnclosureList, {
-  throttleInterval: 500,
-})
+const {runAsync: enclosureList} = useRequest(amsAssetEnclosureList)
 const enclosureOptions = reactive<AssetEnclosureVO[]>([])
-// 获取项目列表
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
-const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 列表数据
-const floorList = useRequest(amsAssetFloorList, {
-  throttleInterval: 500,
-})
+const {runAsync: floorList} = useRequest(amsAssetFloorList)
 // 修改数据状态
-const toggleStatusFloor = useRequest(amsAssetFloorEnable, {
-  throttleInterval: 500,
-})
+const {runAsync: toggleStatusFloor} = useRequest(amsAssetFloorEnable)
 // 删除数据
-const deleteFloor = useRequest(amsAssetFloorDelete, {
-  throttleInterval: 500,
-})
+const {runAsync: deleteFloor} = useRequest(amsAssetFloorDelete)
 
 const formState = reactive({
   pageNum: 1,
@@ -51,16 +35,7 @@ const formSchema = defineSchema({
   fields: [
     defineField.Input({label: '楼层名称', prop: 'floorName', clearable: true}),
     defineField.Input({label: '楼层编码', prop: 'floorId', clearable: true}),
-    defineField.Select({
-      label: '所属项目',
-      prop: 'projectTypeCode',
-      options: projectOptions,
-      props: {
-        value: 'projectId',
-        label: 'projectName',
-      },
-      clearable: true,
-    }),
+    defineField.Input({label: '所属项目', prop: 'projectName', clearable: true}),
     defineField.Select({
       label: '所属围合',
       prop: 'assetId',
@@ -110,14 +85,12 @@ onMounted(() => {
 
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: project} = await projectList.runAsync({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: companyList} = await companyListTree.runAsync({
+  const {data: companyList} = await dicListTree({
     dicType: 1001,
     pageable: false,
   } as SysDicListDTO)
   companyOptions.push(...Object.values(companyList))
-  const {data: enclosure} = await enclosureList.runAsync({pageable: false} as AssetEnclosureListDTO)
+  const {data: enclosure} = await enclosureList({pageable: false} as AssetEnclosureListDTO)
   enclosureOptions.push(...Object.values(enclosure))
 }
 
@@ -129,7 +102,7 @@ const getData = async (): Promise<void> => {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await floorList.runAsync({...cloneformState})
+  const {total: resTotal, data} = await floorList({...cloneformState})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
@@ -160,7 +133,7 @@ const toggleStatus = (floorId: string, enable: number): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await toggleStatusFloor.runAsync({floorId, enable: enable ? 0 : 1})
+    await toggleStatusFloor({floorId, enable: enable ? 0 : 1})
     ElMessage.success('修改成功')
     getData()
   })
@@ -173,7 +146,7 @@ const deleteData = (floorId: string): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await deleteFloor.runAsync({floorId})
+    await deleteFloor({floorId})
     ElMessage.success('删除成功')
     getData()
   })

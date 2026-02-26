@@ -7,16 +7,14 @@ import {useRequest} from 'vue-request'
 const router = useRouter()
 const route = useRoute()
 
-const enclosureGet = useRequest(amsAssetEnclosureGet, {
-  throttleInterval: 500,
-})
+const {runAsync: enclosureGet} = useRequest(amsAssetEnclosureGet)
 
 const formData = reactive({} as AssetEnclosureVO)
 
 onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
-  const {data} = await enclosureGet.runAsync({enclosureId: route.params.id})
+  const {data} = await enclosureGet({enclosureId: route.params.id})
   Object.assign(formData, data)
 }
 
