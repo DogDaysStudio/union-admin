@@ -12,30 +12,20 @@ import {
 import {iamCommonAreaList, iamCommonDicListTree} from '@/service/api/iamCommon'
 
 // 所属省市区
-const areaList = useRequest(iamCommonAreaList, {
-  throttleInterval: 500,
-})
+const {runAsync: areaList} = useRequest(iamCommonAreaList)
 const cityOptions = reactive<PairModel[]>([])
 // 字典 [筹集方式 产权单位 产权性质 经营模式]
-const dicListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const collectWayOptions = reactive<SysDicVO[]>([])
 const companyOptions = reactive<SysDicVO[]>([])
 const ownershipPropertyOptions = reactive<SysDicVO[]>([])
 const businessModelOptions = reactive<SysDicVO[]>([])
 // 列表数据
-const projectList = useRequest(amsAssetProjectList, {
-  throttleInterval: 500,
-})
+const {runAsync: projectList} = useRequest(amsAssetProjectList)
 // 修改数据状态
-const toggleStatusProject = useRequest(amsAssetProjectEnable, {
-  throttleInterval: 500,
-})
+const {runAsync: toggleStatusProject} = useRequest(amsAssetProjectEnable)
 // 删除数据
-const projectDelete = useRequest(amsAssetProjectDelete, {
-  throttleInterval: 500,
-})
+const {runAsync: projectDelete} = useRequest(amsAssetProjectDelete)
 
 const formState = reactive({
   pageNum: 1,
@@ -63,7 +53,7 @@ const formSchema = defineSchema({
                 break
               case 1:
               case 2:
-                const {data} = await areaList.runAsync({pid: value})
+                const {data} = await areaList({pid: value})
                 nodes = data
                 break
             }
@@ -142,15 +132,15 @@ onMounted(() => {
 })
 
 const getOptions = async (): Promise<void> => {
-  const {data: cityOption} = await areaList.runAsync({pid: ''})
+  const {data: cityOption} = await areaList({pid: ''})
   cityOptions.push(...cityOption)
-  const {data: collectWay} = await dicListTree.runAsync({dicType: 1021})
+  const {data: collectWay} = await dicListTree({dicType: 1021})
   collectWayOptions.push(...Object.values(collectWay))
-  const {data: companyList} = await dicListTree.runAsync({dicType: 1001})
+  const {data: companyList} = await dicListTree({dicType: 1001})
   companyOptions.push(...Object.values(companyList))
-  const {data: ownershipProperty} = await dicListTree.runAsync({dicType: 1022})
+  const {data: ownershipProperty} = await dicListTree({dicType: 1022})
   ownershipPropertyOptions.push(...Object.values(ownershipProperty))
-  const {data: businessModel} = await dicListTree.runAsync({dicType: 1020})
+  const {data: businessModel} = await dicListTree({dicType: 1020})
   businessModelOptions.push(...Object.values(businessModel))
 }
 
@@ -165,7 +155,7 @@ const getData = async (): Promise<void> => {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await projectList.runAsync({...cloneformState})
+  const {total: resTotal, data} = await projectList({...cloneformState})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
@@ -193,7 +183,7 @@ const deleteProject = (projectId: string): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await projectDelete.runAsync({projectId})
+    await projectDelete({projectId})
     getData()
     ElMessage.success('删除成功')
   })
@@ -205,7 +195,7 @@ const toggleStatus = (projectId: string, enable: number): void => {
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await toggleStatusProject.runAsync({projectId, enable: !enable})
+    await toggleStatusProject({projectId, enable: !enable})
     getData()
     ElMessage.success('修改成功')
   })

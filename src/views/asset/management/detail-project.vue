@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
+import {useRouter} from 'vue-router'
 import type {TabsPaneContext} from 'element-plus'
 import ProjectInformation from './components/ProjectInformation.vue'
+
+const router = useRouter()
 
 const activeName = ref('first')
 
@@ -15,7 +18,7 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
     <template #header>
       <div class="flex justify-between items-center">
         <span>基本信息</span>
-        <el-button type="primary">编辑</el-button>
+        <el-button type="primary" @click="router.push('/asset/management/project')">返回</el-button>
       </div>
     </template>
     <el-tabs v-model="activeName" @tab-click="handleClick">

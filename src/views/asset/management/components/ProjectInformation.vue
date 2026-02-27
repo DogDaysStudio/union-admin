@@ -6,9 +6,7 @@ import {amsAssetProjectGet} from '@/service/api/amsAsset'
 
 const route = useRoute()
 
-const projectGet = useRequest(amsAssetProjectGet, {
-  throttleInterval: 500,
-})
+const {runAsync: projectGet} = useRequest(amsAssetProjectGet)
 
 const formData = reactive({} as AssetProjectVO)
 
@@ -147,7 +145,7 @@ const formConfig = computed(() => [
 onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await projectGet.runAsync({projectId: route.params.id})
+  const {data} = await projectGet({projectId: route.params.id})
   const cloneData = JSON.parse(JSON.stringify(data))
   Object.assign(formData, cloneData)
 }

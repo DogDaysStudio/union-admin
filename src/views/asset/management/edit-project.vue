@@ -14,7 +14,7 @@ import {useRequest} from 'vue-request'
 import {amsAssetProjectGet, amsAssetProjectUpdate} from '@/service/api/amsAsset'
 import {iamCommonAreaList, iamCommonDicListTree} from '@/service/api/iamCommon'
 import {findValueByCustomId} from '@/utils/array-util'
-import UniUpload from '@/components/upload/UploadFile.vue' // 替换为你的组件实际路径
+import UniUpload from '@/components/upload/UploadFile.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -28,29 +28,21 @@ const handleFileChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
 }
 
 // 所属省市区
-const areaList = useRequest(iamCommonAreaList, {
-  throttleInterval: 500,
-})
+const {runAsync: areaList} = useRequest(iamCommonAreaList)
 const provinceOptions = reactive<PairModel[]>([])
 const cityOptions = reactive<PairModel[]>([])
 const districtOptions = reactive<PairModel[]>([])
 // 字典 [筹集方式 产权单位 产权性质 经营模式 筹集主体 项目类型]
-const dicListTree = useRequest(iamCommonDicListTree, {
-  throttleInterval: 500,
-})
+const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
 const collectWayOptions = reactive<SysDicVO[]>([])
 const companyOptions = reactive<SysDicVO[]>([])
 const ownershipPropertyOptions = reactive<SysDicVO[]>([])
 const businessModelOptions = reactive<SysDicVO[]>([])
 const projectTypeOption = reactive<SysDicVO[]>([])
 // 项目详情
-const projectGet = useRequest(amsAssetProjectGet, {
-  throttleInterval: 500,
-})
+const {runAsync: projectGet} = useRequest(amsAssetProjectGet)
 // 编辑项目
-const projectUpdate = useRequest(amsAssetProjectUpdate, {
-  throttleInterval: 500,
-})
+const {runAsync: projectUpdate, loading: updateLoading} = useRequest(amsAssetProjectUpdate)
 
 const formRef = ref<FormInstance>()
 
@@ -131,22 +123,22 @@ onMounted(() => {
 })
 
 const getOptions = async (): Promise<void> => {
-  const {data: cityOption} = await areaList.runAsync({pid: ''})
+  const {data: cityOption} = await areaList({pid: ''})
   provinceOptions.push(...cityOption)
-  const {data: collectWay} = await dicListTree.runAsync({dicType: 1021})
+  const {data: collectWay} = await dicListTree({dicType: 1021})
   collectWayOptions.push(...Object.values(collectWay))
-  const {data: companyList} = await dicListTree.runAsync({dicType: 1001})
+  const {data: companyList} = await dicListTree({dicType: 1001})
   companyOptions.push(...Object.values(companyList))
-  const {data: ownershipProperty} = await dicListTree.runAsync({dicType: 1022})
+  const {data: ownershipProperty} = await dicListTree({dicType: 1022})
   ownershipPropertyOptions.push(...Object.values(ownershipProperty))
-  const {data: businessModel} = await dicListTree.runAsync({dicType: 1020})
+  const {data: businessModel} = await dicListTree({dicType: 1020})
   businessModelOptions.push(...Object.values(businessModel))
-  const {data: projectType} = await dicListTree.runAsync({dicType: 1003})
+  const {data: projectType} = await dicListTree({dicType: 1003})
   projectTypeOption.push(...Object.values(projectType))
 }
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await projectGet.runAsync({projectId: route.params.id})
+  const {data} = await projectGet({projectId: route.params.id})
   const cloneData = JSON.parse(JSON.stringify(data))
   cloneData.provinceCityDistrictCode = [data.provinceCode, data.cityCode, data.districtCode]
   cloneData.warrantyContract = [data.warrantyContractBegin, data.warrantyContractEnd]
@@ -242,7 +234,7 @@ const handleSubmit = () => {
       }
       // cloneForm.projectCoverImage = '698a8f32e4b0e413ff31e754'
 
-      await projectUpdate.runAsync({...cloneForm})
+      await projectUpdate({...cloneForm})
       router.push('/asset/management/project')
 
       ElMessage.success('表单提交成功！')
@@ -250,13 +242,6 @@ const handleSubmit = () => {
       ElMessage.error('表单填写有误，请检查必填项和格式！')
     }
   })
-}
-
-// 重置表单：重置数据+清除验证状态
-const handleReset = () => {
-  if (!formRef.value) return
-  formRef.value.resetFields()
-  ElMessage.info('表单已重置')
 }
 
 const props: CascaderProps = {
@@ -273,12 +258,12 @@ const props: CascaderProps = {
           nodes = provinceOptions
           break
         case 1:
-          const {data: city} = await areaList.runAsync({pid: value})
+          const {data: city} = await areaList({pid: value})
           cityOptions.push(...city)
           nodes = city
           break
         case 2:
-          const {data: district} = await areaList.runAsync({pid: value})
+          const {data: district} = await areaList({pid: value})
           districtOptions.push(...district)
           nodes = district
           break
@@ -301,9 +286,7 @@ const props: CascaderProps = {
         </p>
       </div>
     </template>
-    <!-- 外层容器：水平居中 -->
     <div class="mx-auto">
-      <!-- 表单核心：绑定数据/验证、标签宽度、间距 -->
       <el-form
         :model="formData"
         :rules="formRules"
@@ -863,10 +846,9 @@ const props: CascaderProps = {
           </el-row>
         </section-group>
 
-        <!-- 表单操作按钮：居中、间距 -->
         <div class="flex justify-center mt-6">
-          <el-button @click="handleReset">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
+          <el-button @click="router.push('/asset/management/project')">返回</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="updateLoading">确定</el-button>
         </div>
       </el-form>
     </div>
