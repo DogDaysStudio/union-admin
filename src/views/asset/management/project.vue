@@ -4,22 +4,22 @@ import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {useRequest} from 'vue-request'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetProjectDelete,
   amsAssetProjectEnable,
   amsAssetProjectList,
 } from '@/service/api/amsAsset'
-import {iamCommonAreaList, iamCommonDicListTree} from '@/service/api/iamCommon'
+import {iamCommonAreaList} from '@/service/api/iamCommon'
 
 // 所属省市区
 const {runAsync: areaList} = useRequest(iamCommonAreaList)
 const cityOptions = reactive<PairModel[]>([])
 // 字典 [筹集方式 产权单位 产权性质 经营模式]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const collectWayOptions = reactive<SysDicVO[]>([])
-const companyOptions = reactive<SysDicVO[]>([])
-const ownershipPropertyOptions = reactive<SysDicVO[]>([])
-const businessModelOptions = reactive<SysDicVO[]>([])
+const collectWayOptions = useDicListTree({dicType: 1021})
+const companyOptions = useDicListTree({dicType: 1001})
+const ownershipPropertyOptions = useDicListTree({dicType: 1022})
+const businessModelOptions = useDicListTree({dicType: 1020})
 // 列表数据
 const {runAsync: projectList} = useRequest(amsAssetProjectList)
 // 修改数据状态
@@ -134,14 +134,6 @@ onMounted(() => {
 const getOptions = async (): Promise<void> => {
   const {data: cityOption} = await areaList({pid: ''})
   cityOptions.push(...cityOption)
-  const {data: collectWay} = await dicListTree({dicType: 1021})
-  collectWayOptions.push(...Object.values(collectWay))
-  const {data: companyList} = await dicListTree({dicType: 1001})
-  companyOptions.push(...Object.values(companyList))
-  const {data: ownershipProperty} = await dicListTree({dicType: 1022})
-  ownershipPropertyOptions.push(...Object.values(ownershipProperty))
-  const {data: businessModel} = await dicListTree({dicType: 1020})
-  businessModelOptions.push(...Object.values(businessModel))
 }
 
 const tableData = reactive<AssetProjectVO[]>([])

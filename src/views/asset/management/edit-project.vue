@@ -11,8 +11,9 @@ declare module 'element-plus' {
 }
 import {ElMessage} from 'element-plus'
 import {useRequest} from 'vue-request'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {amsAssetProjectGet, amsAssetProjectUpdate} from '@/service/api/amsAsset'
-import {iamCommonAreaList, iamCommonDicListTree} from '@/service/api/iamCommon'
+import {iamCommonAreaList} from '@/service/api/iamCommon'
 import {findValueByCustomId} from '@/utils/array-util'
 import UniUpload from '@/components/upload/UploadFile.vue'
 
@@ -33,12 +34,11 @@ const provinceOptions = reactive<PairModel[]>([])
 const cityOptions = reactive<PairModel[]>([])
 const districtOptions = reactive<PairModel[]>([])
 // 字典 [筹集方式 产权单位 产权性质 经营模式 筹集主体 项目类型]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const collectWayOptions = reactive<SysDicVO[]>([])
-const companyOptions = reactive<SysDicVO[]>([])
-const ownershipPropertyOptions = reactive<SysDicVO[]>([])
-const businessModelOptions = reactive<SysDicVO[]>([])
-const projectTypeOption = reactive<SysDicVO[]>([])
+const collectWayOptions = useDicListTree({dicType: 1021})
+const companyOptions = useDicListTree({dicType: 1001})
+const ownershipPropertyOptions = useDicListTree({dicType: 1022})
+const businessModelOptions = useDicListTree({dicType: 1020})
+const projectTypeOption = useDicListTree({dicType: 1003})
 // 项目详情
 const {runAsync: projectGet} = useRequest(amsAssetProjectGet)
 // 编辑项目
@@ -125,16 +125,6 @@ onMounted(() => {
 const getOptions = async (): Promise<void> => {
   const {data: cityOption} = await areaList({pid: ''})
   provinceOptions.push(...cityOption)
-  const {data: collectWay} = await dicListTree({dicType: 1021})
-  collectWayOptions.push(...Object.values(collectWay))
-  const {data: companyList} = await dicListTree({dicType: 1001})
-  companyOptions.push(...Object.values(companyList))
-  const {data: ownershipProperty} = await dicListTree({dicType: 1022})
-  ownershipPropertyOptions.push(...Object.values(ownershipProperty))
-  const {data: businessModel} = await dicListTree({dicType: 1020})
-  businessModelOptions.push(...Object.values(businessModel))
-  const {data: projectType} = await dicListTree({dicType: 1003})
-  projectTypeOption.push(...Object.values(projectType))
 }
 
 const getDetail = async (): Promise<void> => {
