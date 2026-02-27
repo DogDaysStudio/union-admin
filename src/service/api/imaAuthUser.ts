@@ -12,3 +12,11 @@ export function iamAuthUserList(payload: AuthUserListDTO) {
 export function iamAuthUserIsLoginAccountExist(payload: {loginAccount: any}) {
   return http.post<Res<boolean>>('/iam/auth-user/is-loginAccount-exist', payload)
 }
+// 登录日志列表
+export function iamAuthUserListLoginLog(payload: AuthUserLoginLogListDTO) {
+  return http.post<Res<AuthUserLoginLogVO[]>>('/iam/auth-user/list-login-log', payload)
+}
+// 人员详情 | object:{userId:人员ID}
+export function iamAuthUserGet(payload: {userId: any}) {
+  return http.post<Res<AuthUserVO>>('/iam/auth-user/get', payload)
+}

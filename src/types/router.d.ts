@@ -362,6 +362,13 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/management/personnel/edit/:userId': RouteRecordInfo<
+    '/management/personnel/edit/:userId', // name
+    '/management/personnel/edit/:userId', // path
+    {userId: ParamValue<true>},
+    {userId: ParamValue<false>},
+    never
+  >
   '/management/personnel/detail/:id': RouteRecordInfo<
     '/management/personnel/detail/:id', // name
     '/management/personnel/detail/:id', // path

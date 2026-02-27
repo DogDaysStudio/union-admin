@@ -1,18 +1,37 @@
 <script setup lang="ts">
-import {computed, useTemplateRef} from 'vue'
+import {computed, onMounted, useTemplateRef} from 'vue'
 import {defineField, defineSchema} from '@/components'
 import {rules} from '@/common/rules'
 import {useRequest} from 'vue-request'
-import {iamAuthUserIsLoginAccountExist, iamAuthUserUpsert} from '@/service/api/imaAuthUser'
+import {
+  iamAuthUserGet,
+  iamAuthUserIsLoginAccountExist,
+  iamAuthUserUpsert,
+} from '@/service/api/imaAuthUser'
 import {useForm} from '@/common/hooks'
 import {iamAuthOrgList, iamAuthRoleList} from '@/service/api/iamAuth'
 import {amsCommonFuncZhToPinyin} from '@/service/api/iamCommon'
+import {useRoute} from 'vue-router'
+
+const route = useRoute('/management/personnel/edit/:userId')
+
+const userId = route.params.userId
 
 // 表单引用
 const formRef = useTemplateRef('formRef')
 // const form = reactive({} as AuthUserUpsertDTO)
 // 表单数据
 const [form, resetForm] = useForm({} as AuthUserUpsertDTO, formRef)
+
+onMounted(() => {
+  if (userId) {
+    iamAuthUserGet({userId}).then(({data}) => {
+      Object.assign(form, data)
+      form.orgIdList = data.orgList.map(item => item.orgId)
+      form.roleIdList = data.roleList.map(item => item.roleId)
+    })
+  }
+})
 
 const {runAsync: upsertAsync, loading: upsertLoading} = useRequest(iamAuthUserUpsert)
 // 处理提交
@@ -38,13 +57,17 @@ const {data: orgList} = useRequest(iamAuthOrgList, {
 
 const {runAsync: zhToPinyinAsync} = useRequest(amsCommonFuncZhToPinyin, {
   manual: true,
-  debounceInterval: 1500,
+  debounceInterval: 1000,
 })
 
+const isLoginAccountExist = useRequest(iamAuthUserIsLoginAccountExist, {
+  manual: true,
+  debounceInterval: 1000,
+})
 // 检查登录账号是否已存在
 const checkLoginAccount = async (value: string) => {
   if (!value) return
-  const {data} = await iamAuthUserIsLoginAccountExist({loginAccount: value})
+  const {data} = await isLoginAccountExist.runAsync({loginAccount: value})
   if (data) {
     ElMessage.error('登录账号已存在')
   }
@@ -61,11 +84,11 @@ const basicSchema = computed(() =>
         rules: [rules.required()],
         onInput: value => {
           if (!value) return
+          if (userId) return
           zhToPinyinAsync({key: value}, {showError: false}).then(({data}) => {
-            if (data) {
-              form.loginAccount = data
-              checkLoginAccount(data)
-            }
+            if (!data) return
+            form.loginAccount = data
+            checkLoginAccount(data)
           })
         },
       }),
@@ -74,9 +97,10 @@ const basicSchema = computed(() =>
         prop: 'loginAccount',
         placeholder: '请填写登录账号',
         rules: [rules.required()],
-        onBlur: () => {
-          if (form.loginAccount) {
-            checkLoginAccount(form.loginAccount)
+        disabled: !!userId,
+        onInput: value => {
+          if (value) {
+            checkLoginAccount(value)
           }
         },
       }),
@@ -85,6 +109,7 @@ const basicSchema = computed(() =>
         prop: 'mobile',
         placeholder: '请填写手机号码',
         rules: [rules.required(), rules.mobile()],
+        disabled: !!userId,
       }),
       defineField.Input({
         label: '身份证号码',
@@ -97,8 +122,8 @@ const basicSchema = computed(() =>
         prop: 'gender',
         rules: [rules.required()],
         options: [
-          {value: '男', label: '1'},
-          {value: '女', label: '2'},
+          {value: '1', label: '男'},
+          {value: '2', label: '女'},
         ],
       }),
       defineField.Input({

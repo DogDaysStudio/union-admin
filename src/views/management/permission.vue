@@ -29,8 +29,6 @@ const {
   current,
   pageSize,
   total,
-  changePageSize,
-  changeCurrent,
 } = usePagination(iamAuthPermissionList, {
   manual: false,
   defaultParams: [searchForm],
@@ -189,8 +187,6 @@ const searchFormSchema = defineSchema({
     v-model:current-page="current"
     v-model:page-size="pageSize"
     :total="total"
-    @size-change="changePageSize"
-    @current-change="changeCurrent"
   />
 
   <!-- 新增/编辑弹窗 -->

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import {useForm} from '@/common/hooks'
+import {useActivated, useForm} from '@/common/hooks'
 import {defineField, defineSchema} from '@/components'
-import {computed, onActivated, onUpdated} from 'vue'
+import {computed} from 'vue'
 import {useRouter} from 'vue-router'
 import {usePagination, useRequest} from 'vue-request'
 import {iamAuthOrgList, iamAuthRoleList} from '@/service/api/iamAuth'
@@ -19,7 +19,7 @@ const [searchForm] = useForm({
 const {
   data: personnelList,
   runAsync: runPersonnelList,
-  // refresh: refreshPersonnelList,
+  refreshAsync: refreshPersonnelList,
   loading: personnelListLoading,
   current,
   pageSize,
@@ -30,6 +30,8 @@ const {
   manual: false,
   defaultParams: [searchForm],
 })
+
+useActivated(refreshPersonnelList)
 
 // 角色列表
 const {data: roleList} = useRequest(iamAuthRoleList, {
@@ -83,13 +85,13 @@ const handleBatchResetPwd = () => {
 }
 
 // 处理详情
-const handleDetail = (id: number) => {
-  router.push(`/management/personnel/detail/${id}`)
+const handleDetail = (user: AuthUserVO) => {
+  router.push({name: '/management/personnel/detail/:id', params: {id: user.userId}})
 }
 
 // 处理重置密码
-const handleResetPassword = (id: number) => {
-  console.log('重置密码', id)
+const handleResetPassword = (user: AuthUserVO) => {
+  console.log('重置密码', user)
   // 这里可以添加重置密码的逻辑
 }
 
@@ -117,15 +119,6 @@ const schema = computed(() =>
     ],
   })
 )
-
-onActivated(() => {
-  // runPersonnelList(searchForm)
-  console.log('onActivated')
-})
-
-onUpdated(() => {
-  console.log('onUpdated')
-})
 </script>
 
 <template>
@@ -193,8 +186,8 @@ onUpdated(() => {
       </el-table-column>
       <el-table-column label="操作" width="130" fixed="right">
         <template #default="scope">
-          <el-button link size="small" @click="handleDetail(scope.row.id)">详情</el-button>
-          <el-button link size="small" type="danger" @click="handleResetPassword(scope.row.id)">
+          <el-button link size="small" @click="handleDetail(scope.row)">详情</el-button>
+          <el-button link size="small" type="danger" @click="handleResetPassword(scope.row)">
             重置密码
           </el-button>
         </template>

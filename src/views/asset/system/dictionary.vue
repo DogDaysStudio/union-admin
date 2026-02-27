@@ -128,7 +128,7 @@ watch(filterText, val => {
         :dicType="activeNode"
         :dic-names="dictNameMap[activeNode]"
       />
-      <KVDict v-else :dicType="activeNode" :dic-names="dictNameMap[activeNode]" />
+      <KVDict v-else :dic-type="activeNode" :dic-names="dictNameMap[activeNode]" />
     </el-col>
   </el-row>
 </template>

@@ -22,6 +22,11 @@ const managementRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/management/personnel/add-personnel.vue'),
           },
           {
+            path: '/management/personnel/edit/:userId',
+            meta: {title: '编辑人员'},
+            component: () => import('@/views/management/personnel/add-personnel.vue'),
+          },
+          {
             path: '/management/personnel/detail/:id',
             meta: {title: '人员详情'},
             component: () => import('@/views/management/personnel/detail-personnel.vue'),
