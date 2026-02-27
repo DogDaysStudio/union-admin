@@ -3,18 +3,17 @@ import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetEnclosureList,
   amsAssetFloorList,
   amsAssetFloorEnable,
   amsAssetFloorDelete,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
 // 字典 [产权单位]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const companyOptions = reactive<SysDicVO[]>([])
+const companyOptions = useDicListTree({dicType: 1001})
 // 围合下拉列表
 const {runAsync: enclosureList} = useRequest(amsAssetEnclosureList)
 const enclosureOptions = reactive<AssetEnclosureVO[]>([])
@@ -83,15 +82,9 @@ onMounted(() => {
   getData()
 })
 
-// 获取下拉接口
 const getOptions = async (): Promise<void> => {
-  const {data: companyList} = await dicListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
   const {data: enclosure} = await enclosureList({pageable: false} as AssetEnclosureListDTO)
-  enclosureOptions.push(...Object.values(enclosure))
+  enclosureOptions.push(...enclosure)
 }
 
 const tableData = reactive<AssetFloorVO[]>([])

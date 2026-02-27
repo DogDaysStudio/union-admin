@@ -8,13 +8,12 @@ import {
   amsAssetEnclosureEnable,
   amsAssetEnclosureDelete,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {useRequest} from 'vue-request'
 
 // 字典 产权单位/公司 围合类型
-const {runAsync: companyListTree} = useRequest(iamCommonDicListTree)
-const companyOptions = reactive<SysDicVO[]>([])
-const enclosureOptions = reactive<SysDicVO[]>([])
+const companyOptions = useDicListTree({dicType: 1001})
+const enclosureOptions = useDicListTree({dicType: 1023})
 // 列表数据
 const {runAsync: enclosureList} = useRequest(amsAssetEnclosureList)
 // 修改数据状态
@@ -74,24 +73,7 @@ const handleFinish = async (model: typeof formState) => {
 const total = ref<number>(0)
 const loading = ref<boolean>(false)
 
-onMounted(() => {
-  getOptions()
-  getData()
-})
-
-// 获取下拉接口
-const getOptions = async (): Promise<void> => {
-  const {data: companyList} = await companyListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
-  const {data: enclosureList} = await companyListTree({
-    dicType: 1023,
-    pageable: false,
-  } as SysDicListDTO)
-  enclosureOptions.push(...Object.values(enclosureList))
-}
+onMounted(() => getData())
 
 const tableData = reactive<AssetEnclosureVO[]>([])
 const getData = async (): Promise<void> => {

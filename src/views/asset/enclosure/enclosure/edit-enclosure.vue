@@ -3,12 +3,12 @@ import {ref, reactive, onMounted} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetProjectList,
   amsAssetEnclosureUpdate,
   amsAssetEnclosureGet,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
 
@@ -18,10 +18,9 @@ const route = useRoute()
 // 获取项目列表
 const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 字典 户型 产权单位（公司） 围合类型
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const companyOptions = reactive<SysDicVO[]>([])
-const enclosureOptions = reactive<SysDicVO[]>([])
+// 字典 产权单位（公司） 围合类型
+const companyOptions = useDicListTree({dicType: 1001})
+const enclosureOptions = useDicListTree({dicType: 1023})
 // 编辑围合
 const {runAsync: enclosureUpdate, loading: updateLoading} = useRequest(amsAssetEnclosureUpdate)
 // 围合详情
@@ -42,17 +41,7 @@ onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: companyList} = await dicListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
-  const {data: enclosureList} = await dicListTree({
-    dicType: 1023,
-    pageable: false,
-  } as SysDicListDTO)
-  enclosureOptions.push(...Object.values(enclosureList))
+  projectOptions.push(...project)
   const {data: detail} = await enclosureGet({enclosureId: route.params.id})
   Object.assign(formData, detail)
 }

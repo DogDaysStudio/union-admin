@@ -3,8 +3,8 @@ import {ref, reactive, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {amsAssetProjectList, amsAssetEnclosureInsert} from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
 
@@ -13,11 +13,9 @@ const router = useRouter()
 // 获取项目列表
 const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 字典 户型 产权单位（公司） 围合类型
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const shopOptions = reactive<SysDicVO[]>([])
-const companyOptions = reactive<SysDicVO[]>([])
-const enclosureOptions = reactive<SysDicVO[]>([])
+// 字典 产权单位（公司） 围合类型
+const companyOptions = useDicListTree({dicType: 1001})
+const enclosureOptions = useDicListTree({dicType: 1023})
 // 新增围合
 const {runAsync: addEncloseure, loading: insertLoading} = useRequest(amsAssetEnclosureInsert)
 
@@ -44,22 +42,7 @@ onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: shopList} = await dicListTree({
-    dicType: 1024,
-    pageable: false,
-  } as SysDicListDTO)
-  shopOptions.push(...Object.values(shopList))
-  const {data: companyList} = await dicListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
-  const {data: enclosureList} = await dicListTree({
-    dicType: 1023,
-    pageable: false,
-  } as SysDicListDTO)
-  enclosureOptions.push(...Object.values(enclosureList))
+  projectOptions.push(...project)
 }
 
 /**
