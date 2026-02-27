@@ -42,11 +42,16 @@ http.interceptors.response.use(
       userStore.logout()
 
       // 显示错误信息
-      ElMessage.error(
-        `登录已过期，请重新登录${error.response?.data?.msg ? `: ${error.response?.data?.msg}` : ''}`
-      )
+      if (error.response?.config?.showError !== false) {
+        ElMessage.error(
+          `登录已过期，请重新登录${error.response?.data?.msg ? `: ${error.response?.data?.msg}` : ''}`
+        )
+      }
     } else {
-      ElMessage.error(error.response?.data?.msg || error.message || '请求失败')
+      // 显示错误信息
+      if (error.response?.config?.showError !== false) {
+        ElMessage.error(error.response?.data?.msg || error.message || '请求失败')
+      }
     }
 
     return Promise.reject(error)
