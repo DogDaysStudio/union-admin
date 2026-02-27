@@ -5,12 +5,12 @@ import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetBuildingList,
   amsAssetFloorInsert,
   amsAssetProjectList,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 const router = useRouter()
 
@@ -18,9 +18,8 @@ const router = useRouter()
 const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 [户型 产权单位 ]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const roomOptions = reactive<SysDicVO[]>([])
-const companyOptions = reactive<SysDicVO[]>([])
+const roomOptions = useDicListTree({dicType: 1024})
+const companyOptions = useDicListTree({dicType: 1001})
 // 楼栋下拉列表
 const {runAsync: buildingList} = useRequest(amsAssetBuildingList)
 const buildingOptions = reactive<AssetBuildingVO[]>([])
@@ -54,17 +53,7 @@ onMounted(() => getOptions())
 // 获取下拉接口
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: roomList} = await dicListTree({
-    dicType: 1024,
-    pageable: false,
-  } as SysDicListDTO)
-  roomOptions.push(...Object.values(roomList))
-  const {data: companyList} = await dicListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
+  projectOptions.push(...project)
 }
 
 // 监听projectId变化，获取楼栋
@@ -78,7 +67,7 @@ watch(
         pageable: false,
         projectId,
       } as AssetBuildingListDTO)
-      buildingOptions.push(...Object.values(building))
+      buildingOptions.push(...building)
     }
   },
   {immediate: false}

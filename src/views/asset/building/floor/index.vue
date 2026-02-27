@@ -4,17 +4,16 @@ import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {useRequest} from 'vue-request'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetBuildingList,
   amsAssetFloorDelete,
   amsAssetFloorEnable,
   amsAssetFloorList,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 // 字典 [产权单位]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const companyOptions = reactive<SysDicVO[]>([])
+const companyOptions = useDicListTree({dicType: 1001})
 // 楼栋下拉列表
 const {runAsync: buildingList} = useRequest(amsAssetBuildingList)
 const buildingOptions = reactive<AssetBuildingVO[]>([])
@@ -84,13 +83,8 @@ onMounted(() => {
 })
 
 const getOptions = async (): Promise<void> => {
-  const {data: companyList} = await dicListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
   const {data: building} = await buildingList({pageable: false} as AssetBuildingListDTO)
-  buildingOptions.push(...Object.values(building))
+  buildingOptions.push(...building)
 }
 
 const tableData = reactive<AssetFloorVO[]>([])

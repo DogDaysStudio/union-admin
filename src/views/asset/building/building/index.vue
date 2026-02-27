@@ -4,16 +4,15 @@ import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {useRequest} from 'vue-request'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetBuildingDelete,
   amsAssetBuildingEnable,
   amsAssetBuildingList,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 // 字典 [产权单位]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const companyOptions = reactive<SysDicVO[]>([])
+const companyOptions = useDicListTree({dicType: 1001})
 // 列表数据
 const {runAsync: buildingList} = useRequest(amsAssetBuildingList)
 // 修改数据状态
@@ -63,15 +62,7 @@ const handleFinish = async (model: typeof formState) => {
 const total = ref<number>(0)
 const loading = ref<boolean>(false)
 
-onMounted(() => {
-  getOptions()
-  getData()
-})
-
-const getOptions = async (): Promise<void> => {
-  const {data: companyList} = await dicListTree({dicType: 1001})
-  companyOptions.push(...Object.values(companyList))
-}
+onMounted(() => getData())
 
 const tableData = reactive<AssetBuildingVO[]>([])
 const getData = async (): Promise<void> => {

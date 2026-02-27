@@ -5,13 +5,13 @@ import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetBuildingList,
   amsAssetFloorGet,
   amsAssetFloorUpdate,
   amsAssetProjectList,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 const route = useRoute()
 const router = useRouter()
@@ -23,8 +23,7 @@ const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 const {runAsync: buildingList} = useRequest(amsAssetBuildingList)
 const buildingOptions = reactive<AssetBuildingVO[]>([])
 // 字典 [产权单位]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const companyOptions = reactive<SysDicVO[]>([])
+const companyOptions = useDicListTree({dicType: 1001})
 // 编辑楼层
 const {runAsync: updateFloor, loading: updateLoading} = useRequest(amsAssetFloorUpdate)
 // 楼层详情
@@ -46,12 +45,7 @@ onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: companyList} = await dicListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
+  projectOptions.push(...project)
   const {data: floorDetail} = await getFloor({floorId: route.params.id})
   Object.assign(formData, floorDetail)
 }
@@ -69,7 +63,7 @@ watch(
         pageable: false,
         projectId: newVal,
       } as AssetBuildingListDTO)
-      buildingOptions.push(...Object.values(building))
+      buildingOptions.push(...building)
     }
   },
   {immediate: true}

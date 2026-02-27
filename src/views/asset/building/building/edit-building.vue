@@ -5,12 +5,12 @@ import {ElMessage} from 'element-plus'
 import {useRouter, useRoute} from 'vue-router'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetBuildingGet,
   amsAssetBuildingUpdate,
   amsAssetProjectList,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 const router = useRouter()
 const route = useRoute()
@@ -19,8 +19,7 @@ const route = useRoute()
 const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 字典 [ 产权单位 ]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const companyOptions = reactive<SysDicVO[]>([])
+const companyOptions = useDicListTree({dicType: 1001})
 // 楼栋详情
 const {runAsync: buildingGet} = useRequest(amsAssetBuildingGet)
 // 编辑项目
@@ -42,12 +41,7 @@ onMounted(() => {
 
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: companyList} = await dicListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
+  projectOptions.push(...project)
 }
 
 const getDetail = async (): Promise<void> => {
