@@ -5,6 +5,7 @@ import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetBuildingList,
   amsAssetRoomGet,
@@ -12,7 +13,6 @@ import {
   amsAssetProjectList,
   amsAssetFloorList,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 
 const route = useRoute()
 const router = useRouter()
@@ -23,12 +23,11 @@ const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
 // 楼栋下拉列表
 const {runAsync: buildingList} = useRequest(amsAssetBuildingList)
 const buildingOptions = reactive<AssetBuildingVO[]>([])
-// 字典 [户型 产权单位（公司） 房间类型 经营模式]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const roomOptions = reactive<SysDicVO[]>([])
-const companyOptions = reactive<SysDicVO[]>([])
-const roomTypeOptions = reactive<SysDicVO[]>([])
-const businessModelOptions = reactive<SysDicVO[]>([])
+// 字典 [户型 产权单位 房间类型 经营模式]
+const roomOptions = useDicListTree({dicType: 1024})
+const companyOptions = useDicListTree({dicType: 1001})
+const roomTypeOptions = useDicListTree({dicType: 1005})
+const businessModelOptions = useDicListTree({dicType: 1020})
 // 楼层列表
 const {runAsync: floorList} = useRequest(amsAssetFloorList)
 const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
@@ -56,22 +55,8 @@ onMounted(() => {
 })
 
 const getOptions = async (): Promise<void> => {
-  const {data: roomList} = await dicListTree({
-    dicType: 1024,
-    pageable: false,
-  } as SysDicListDTO)
-  roomOptions.push(...Object.values(roomList))
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: companyList} = await dicListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
-  const {data: roomType} = await dicListTree({dicType: 1005})
-  roomTypeOptions.push(...Object.values(roomType))
-  const {data: businessModel} = await dicListTree({dicType: 1020})
-  businessModelOptions.push(...Object.values(businessModel))
+  projectOptions.push(...project)
 }
 
 const getDetail = async () => {
@@ -81,13 +66,13 @@ const getDetail = async () => {
     projectId: floorDetail.projectId,
     pageable: false,
   } as AssetBuildingListDTO)
-  buildingOptions.push(...Object.values(building))
+  buildingOptions.push(...building)
   const {data: floor} = await floorList({
     pageable: false,
     assetType: '1',
     assetId: floorDetail.assetId,
   } as AssetFloorListDTO)
-  floorOptions.push(...Object.values(floor))
+  floorOptions.push(...floor)
 }
 
 const handleSubmit = () => {

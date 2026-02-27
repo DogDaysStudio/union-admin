@@ -3,20 +3,19 @@ import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetResourceList,
   amsAssetResourceEnable,
   amsAssetResourceDelete,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
 // 字典 [业务类型1009 点位类型1011 广告类型1010 媒体类型1012]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const resourceBusinessTypeOptions = reactive<SysDicVO[]>([])
-const resourceTypeOptions = reactive<SysDicVO[]>([])
-const resourceAdTypeOptions = reactive<SysDicVO[]>([])
-const resourceMediaOptions = reactive<SysDicVO[]>([])
+const resourceBusinessTypeOptions = useDicListTree({dicType: 1009})
+const resourceTypeOptions = useDicListTree({dicType: 1011})
+const resourceAdTypeOptions = useDicListTree({dicType: 1010})
+const resourceMediaOptions = useDicListTree({dicType: 1012})
 // 列表数据
 const {runAsync: resourceList} = useRequest(amsAssetResourceList)
 // 修改数据状态
@@ -96,22 +95,7 @@ const handleFinish = async (model: typeof formState) => {
 const total = ref<number>(0)
 const loading = ref<boolean>(false)
 
-onMounted(() => {
-  getOptions()
-  getData()
-})
-
-// 获取下拉接口
-const getOptions = async (): Promise<void> => {
-  const {data: resourceBusinessType} = await dicListTree({dicType: 1009})
-  resourceBusinessTypeOptions.push(...Object.values(resourceBusinessType))
-  const {data: resourceType} = await dicListTree({dicType: 1011})
-  resourceTypeOptions.push(...Object.values(resourceType))
-  const {data: resourceAdType} = await dicListTree({dicType: 1010})
-  resourceAdTypeOptions.push(...Object.values(resourceAdType))
-  const {data: resourceMedia} = await dicListTree({dicType: 1012})
-  resourceMediaOptions.push(...Object.values(resourceMedia))
-}
+onMounted(() => getData())
 
 const tableData = reactive<AssetResourceVO[]>([])
 const getData = async (): Promise<void> => {

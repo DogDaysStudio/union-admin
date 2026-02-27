@@ -3,14 +3,14 @@ import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {amsAssetRoomList, amsAssetRoomEnable, amsAssetRoomDelete} from '@/service/api/amsAsset'
-import {iamCommonDicListTree, iamCommonAreaList} from '@/service/api/iamCommon'
+import {iamCommonAreaList} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
-// 字典 [产权单位/公司1001 经营模式1020 项目类型1003 资产分类1002 房屋类型1005]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const companyOptions = reactive<SysDicVO[]>([])
-const businessModelOptions = reactive<SysDicVO[]>([])
+// 字典 [产权单位1001 经营模式1020]
+const companyOptions = useDicListTree({dicType: 1001})
+const businessModelOptions = useDicListTree({dicType: 1020})
 // 所属省市区
 const {runAsync: areaList} = useRequest(iamCommonAreaList)
 const cityOptions = reactive<PairModel[]>([])
@@ -108,13 +108,6 @@ onMounted(() => {
 })
 
 const getOptions = async (): Promise<void> => {
-  const {data: companyList} = await dicListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
-  const {data: businessModel} = await dicListTree({dicType: 1020})
-  businessModelOptions.push(...Object.values(businessModel))
   const {data: cityOption} = await areaList({pid: ''})
   cityOptions.push(...cityOption)
 }

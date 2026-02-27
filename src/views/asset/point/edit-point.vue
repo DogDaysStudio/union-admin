@@ -3,8 +3,8 @@ import {ref, reactive, onMounted} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {amsAssetResourceUpdate, amsAssetResourceGet} from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
 
@@ -12,12 +12,11 @@ const router = useRouter()
 const route = useRoute()
 
 // 字典 [业务类型1009 点位类型1011 广告类型1010 媒体类型1012 资源业务标签1028]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const resourceBusinessTypeOptions = reactive<SysDicVO[]>([])
-const resourceTypeOptions = reactive<SysDicVO[]>([])
-const resourceAdTypeOptions = reactive<SysDicVO[]>([])
-const resourceMediaTypeOptions = reactive<SysDicVO[]>([])
-const resourceBusinessTagOptions = reactive<SysDicVO[]>([])
+const resourceBusinessTypeOptions = useDicListTree({dicType: 1009})
+const resourceTypeOptions = useDicListTree({dicType: 1011})
+const resourceAdTypeOptions = useDicListTree({dicType: 1010})
+const resourceMediaTypeOptions = useDicListTree({dicType: 1012})
+const resourceBusinessTagOptions = useDicListTree({dicType: 1028})
 // 编辑点位
 const {runAsync: resourceUpdate, loading: updateLoading} = useRequest(amsAssetResourceUpdate)
 // 点位详情
@@ -48,23 +47,7 @@ const formRules = reactive<FormRules>({
   enable: {required: true, message: '请选择启停状态', trigger: 'blur'},
 })
 
-onMounted(() => {
-  getDetail()
-  getOptions()
-})
-
-const getOptions = async (): Promise<void> => {
-  const {data: resourceBusinessType} = await dicListTree({dicType: 1009})
-  resourceBusinessTypeOptions.push(...Object.values(resourceBusinessType))
-  const {data: resourceType} = await dicListTree({dicType: 1011})
-  resourceTypeOptions.push(...Object.values(resourceType))
-  const {data: resourceAdType} = await dicListTree({dicType: 1010})
-  resourceAdTypeOptions.push(...Object.values(resourceAdType))
-  const {data: resourceMediaType} = await dicListTree({dicType: 1012})
-  resourceMediaTypeOptions.push(...Object.values(resourceMediaType))
-  const {data: resourceBusinessTagCode} = await dicListTree({dicType: 1028})
-  resourceBusinessTagOptions.push(...Object.values(resourceBusinessTagCode))
-}
+onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
   const {data: resource} = await resourceGet({

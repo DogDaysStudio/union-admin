@@ -3,6 +3,7 @@ import {ref, reactive, onMounted, watch} from 'vue'
 import {useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetProjectList,
   amsAssetBuildingList,
@@ -10,7 +11,6 @@ import {
   amsAssetRoomInsert,
   amsAssetRoomList,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
 
@@ -26,9 +26,8 @@ const buildOptions = reactive<{buildingId: string; buildingName: string}[]>([])
 const {runAsync: floorList} = useRequest(amsAssetFloorList)
 const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
 // 字典 [户型 产权单位]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const roomOptions = reactive<SysDicVO[]>([])
-const companyOptions = reactive<SysDicVO[]>([])
+const roomOptions = useDicListTree({dicType: 1024})
+const companyOptions = useDicListTree({dicType: 1001})
 // 房间列表
 const {runAsync: roomList} = useRequest(amsAssetRoomList)
 // 新增楼层
@@ -82,17 +81,7 @@ onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: roomList} = await dicListTree({
-    dicType: 1024,
-    pageable: false,
-  } as SysDicListDTO)
-  roomOptions.push(...Object.values(roomList))
-  const {data: companyList} = await dicListTree({
-    dicType: 1001,
-    pageable: false,
-  } as SysDicListDTO)
-  companyOptions.push(...Object.values(companyList))
+  projectOptions.push(...project)
 }
 
 // 监听projectId变化，获取楼栋列表
@@ -108,7 +97,7 @@ watch(
         pageable: false,
         projectId,
       } as AssetBuildingListDTO)
-      buildOptions.push(...Object.values(build))
+      buildOptions.push(...build)
     }
   },
   {immediate: false}
@@ -126,7 +115,7 @@ watch(
         assetType: '1',
         assetId,
       } as AssetFloorListDTO)
-      floorOptions.push(...Object.values(floor))
+      floorOptions.push(...floor)
     }
   },
   {immediate: false}

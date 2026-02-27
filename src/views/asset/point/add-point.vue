@@ -3,6 +3,7 @@ import {ref, reactive, onMounted, watch} from 'vue'
 import {useRouter} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetProjectList,
   amsAssetBuildingSelectBuildingEnclosure,
@@ -10,7 +11,6 @@ import {
   amsAssetFloorList,
   amsAssetResourceInsert,
 } from '@/service/api/amsAsset'
-import {iamCommonDicListTree} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
 
@@ -29,14 +29,13 @@ const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
 const {runAsync: locationList} = useRequest(amsAssetResourceSelectLocationId)
 const locationOptions = reactive<string[]>([])
 // 字典 [业务类型1009 点位类型1011 广告类型1010 媒体类型1012 位置1004 经营模式1020 资源业务标签1028]
-const {runAsync: dicListTree} = useRequest(iamCommonDicListTree)
-const resourceBusinessTypeOptions = reactive<SysDicVO[]>([])
-const resourceTypeOptions = reactive<SysDicVO[]>([])
-const resourceAdTypeOptions = reactive<SysDicVO[]>([])
-const resourceMediaTypeOptions = reactive<SysDicVO[]>([])
-const locationTypeOptions = reactive<SysDicVO[]>([])
-const businessModelCodeOptions = reactive<SysDicVO[]>([])
-const resourceBusinessTagOptions = reactive<SysDicVO[]>([])
+const resourceBusinessTypeOptions = useDicListTree({dicType: 1009})
+const resourceTypeOptions = useDicListTree({dicType: 1011})
+const resourceAdTypeOptions = useDicListTree({dicType: 1010})
+const resourceMediaTypeOptions = useDicListTree({dicType: 1012})
+const locationTypeOptions = useDicListTree({dicType: 1004})
+const businessModelCodeOptions = useDicListTree({dicType: 1020})
+const resourceBusinessTagOptions = useDicListTree({dicType: 1028})
 // 新增点位
 const {runAsync: resourceInsert, loading: insertLoading} = useRequest(amsAssetResourceInsert)
 
@@ -72,21 +71,7 @@ onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
-  projectOptions.push(...Object.values(project))
-  const {data: resourceBusinessType} = await dicListTree({dicType: 1009})
-  resourceBusinessTypeOptions.push(...Object.values(resourceBusinessType))
-  const {data: resourceType} = await dicListTree({dicType: 1011})
-  resourceTypeOptions.push(...Object.values(resourceType))
-  const {data: resourceAdType} = await dicListTree({dicType: 1010})
-  resourceAdTypeOptions.push(...Object.values(resourceAdType))
-  const {data: resourceMediaType} = await dicListTree({dicType: 1012})
-  resourceMediaTypeOptions.push(...Object.values(resourceMediaType))
-  const {data: locationTypeCode} = await dicListTree({dicType: 1004})
-  locationTypeOptions.push(...Object.values(locationTypeCode))
-  const {data: businessModelCode} = await dicListTree({dicType: 1020})
-  businessModelCodeOptions.push(...Object.values(businessModelCode))
-  const {data: resourceBusinessTagCode} = await dicListTree({dicType: 1028})
-  resourceBusinessTagOptions.push(...Object.values(resourceBusinessTagCode))
+  projectOptions.push(...project)
 }
 
 const assetType = ref('')
