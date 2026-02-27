@@ -9,3 +9,7 @@ export function iamCommonAreaList(payload: {pid: any}) {
 export function iamCommonDicListTree(payload: {dicType: any}, config?: AxiosRequestConfig) {
   return http.post<Res<SysDicVO[]>>('/iam/common/dic/list-tree', payload, config)
 }
+// 中文转拼音 | object:{key:中文}
+export function amsCommonFuncZhToPinyin(payload: {key: any}, config?: AxiosRequestConfig) {
+  return http.post<Res<string>>('/ams/common/func/zh-to-pinyin', payload, config)
+}

@@ -159,19 +159,58 @@ defineField.InputNumber = (field => {
   return defineField({component: ElInputNumber, ...field})
 }) as DefineField<typeof ElInputNumber>
 
-// *空组件，直接渲染在 el-form-item 内
+/**
+ * *空组件，直接渲染在 el-form-item 内
+ * @example
+  defineField.Empty({
+    label: '空字段1',
+    prop: 'name',
+  }),
+ */
 defineField.Empty = (field => {
   return defineField({component: EmptyField, ...field})
 }) as DefineField<typeof EmptyField>
 
+/**
+ * @example
+  defineField.SubField({
+    label: '经纬度',
+    schema: {
+      span: 12,
+      formItemProps: {labelWidth: 0},
+      fields: [defineField.Input({prop: 'name'}), defineField.Input({prop: 'name'})],
+    },
+  }),
+ */
 defineField.SubField = (field => {
   return defineField({component: SubField, ...field})
 }) as DefineField<typeof SubField>
 
+/**
+ * @example
+  defineField.ListField({
+    prop: 'dicList',
+    formItemProps: {labelWidth: 0},
+    schema: {
+      fields: [
+        defineField.Input({prop: 'dicName', label: dicNameLabel, rules: [rules.required()]}),
+        defineField.Input({prop: 'dicCode', label: dicCodeLabel, rules: [rules.required()]}),
+      ],
+    },
+  }),
+ */
 defineField.ListField = (field => {
   return defineField({component: ListField, ...field})
 }) as DefineField<typeof ListField, 'component' | 'propMapping'>
 
+/**
+ * @example
+  defineField.UploadFile({
+    label: '照片',
+    prop: 'avatarFid',
+    valuePropName: 'fileList',
+  }),
+ */
 defineField.UploadFile = (field => {
   return defineField({component: UploadFile, ...field})
 }) as DefineField<typeof UploadFile, 'component'>

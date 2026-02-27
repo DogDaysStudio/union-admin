@@ -4,7 +4,7 @@ import {onMounted, reactive} from 'vue'
 /**
  * 获取字典列表
  * @example
- * const companyDict = useDicTree({dicType: 1001})
+ * const companyDict = useDicListTree({dicType: 1001})
  */
 export function useDicListTree(params: {dicType: number | string}) {
   const dicTree = reactive<SysDicVO[]>([])

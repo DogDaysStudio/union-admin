@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useForm} from '@/common/hooks'
 import {defineField, defineSchema} from '@/components'
-import {computed} from 'vue'
+import {computed, onActivated, onUpdated} from 'vue'
 import {useRouter} from 'vue-router'
 import {usePagination, useRequest} from 'vue-request'
 import {iamAuthOrgList, iamAuthRoleList} from '@/service/api/iamAuth'
@@ -117,6 +117,15 @@ const schema = computed(() =>
     ],
   })
 )
+
+onActivated(() => {
+  // runPersonnelList(searchForm)
+  console.log('onActivated')
+})
+
+onUpdated(() => {
+  console.log('onUpdated')
+})
 </script>
 
 <template>

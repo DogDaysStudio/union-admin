@@ -1542,6 +1542,7 @@ interface AssetResourceVO {
   resourceAdTypeCode: string // 广告类型编码
   resourceMediaType: string // 媒体类型
   resourceMediaTypeCode: string // 媒体类型编码
+  projectId: string // 项目编码
   projectName: string // 项目名称
   buildingEnclosureName: string // 楼栋/围合名称
   floorName: string // 楼层名称
@@ -2085,7 +2086,8 @@ interface AssetEnclosureListDTO {
 interface AssetEnclosureVO {
   enclosureId: string // 围合编码
   enclosureName: string // 围合名称
-  enclosureTypeName: string // 围合类型
+  enclosureTypeCode: string // 围合类型编码
+  enclosureTypeName: string // 围合类型名称
   projectId: string // 项目编码
   projectName: string // 项目名称
   ownershipUnitCode: string // 产权单位编码

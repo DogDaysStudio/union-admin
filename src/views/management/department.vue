@@ -179,7 +179,7 @@ const schema = defineSchema({
   </div>
 
   <!-- 添加部门弹窗 -->
-  <el-dialog v-model="addDialogVisible" title="添加部门" @closed="addFormRef.resetFields()">
+  <el-dialog v-model="addDialogVisible" title="添加部门" @closed="addFormRef?.resetFields()">
     <el-form :model="addForm" ref="addFormRef" label-width="100px">
       <el-form-item label="上级部门" prop="orgPid">
         <el-tree-select

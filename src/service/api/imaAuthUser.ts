@@ -8,3 +8,7 @@ export function iamAuthUserUpsert(payload: AuthUserUpsertDTO) {
 export function iamAuthUserList(payload: AuthUserListDTO) {
   return http.post<Res<AuthUserVO[]>>('/iam/auth-user/list', payload)
 }
+// 是否当前登录账号已存在 | object:{loginAccount:登录账号}
+export function iamAuthUserIsLoginAccountExist(payload: {loginAccount: any}) {
+  return http.post<Res<boolean>>('/iam/auth-user/is-loginAccount-exist', payload)
+}
