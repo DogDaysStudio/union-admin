@@ -257,27 +257,6 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/lease/management': RouteRecordInfo<
-    '/lease/management', // name
-    '/lease/management', // path
-    any,
-    any,
-    never
-  >
-  '/lease/contract': RouteRecordInfo<
-    '/lease/contract', // name
-    '/lease/contract', // path
-    any,
-    any,
-    never
-  >
-  '/lease/rental': RouteRecordInfo<
-    '/lease/rental', // name
-    '/lease/rental', // path
-    any,
-    any,
-    never
-  >
   '/property': RouteRecordInfo<
     '/property', // name
     '/property', // path

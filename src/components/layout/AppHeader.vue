@@ -38,11 +38,37 @@ import {Compass, User, ArrowDown} from '@element-plus/icons-vue'
 import {useModuleStore} from '@/stores/module'
 import {ElMessage} from 'element-plus'
 import {iamAuthLogout} from '@/service/api/iamAuth'
+import {useRouter} from 'vue-router'
+import {useTabStore} from '@/stores/tabs'
+import type {MenuItem} from './types/menu'
 
+const router = useRouter()
+const tabsStore = useTabStore()
 const moduleStore = useModuleStore()
 
 const handleMenuSelect = (key: string) => {
   moduleStore.setActiveModule(key)
+  if (key === '/lease') {
+    router.push(key)
+  } else if (router.currentRoute.value.fullPath === '/lease') {
+    const tab = tabsStore.tabs.find(item => item.path.startsWith(key))
+    if (tab) {
+      router.push(tab.path)
+    } else {
+      const menuPath = findFirstMenu(moduleStore.currentMenu)
+      if (menuPath) {
+        router.push(menuPath)
+      }
+    }
+  }
+}
+
+function findFirstMenu(menu: MenuItem[]): string {
+  if (menu?.length) {
+    if (menu[0]?.children) return findFirstMenu(menu[0].children)
+    return menu[0].path
+  }
+  return null
 }
 
 const handleLogout = async () => {

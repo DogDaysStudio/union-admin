@@ -72,8 +72,6 @@ const handleTabRemove = (name: TabPaneName) => {
 
 // 标注 name 的类型为 tabs 的 @tab-change 事件的入参
 const handleTabChange = (name: TabPaneName) => {
-  console.log('name', name)
-
   // todo: 如果已经页面已经存在，考虑要不要刷新页面
   router.push(name as string)
 }
