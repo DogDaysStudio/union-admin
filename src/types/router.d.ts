@@ -208,6 +208,20 @@ export interface RouteNamedMap {
     {id: ParamValue<false>},
     never
   >
+  '/asset/management/shop': RouteRecordInfo<
+    '/asset/management/shop', // name
+    '/asset/management/shop', // path
+    any,
+    any,
+    never
+  >
+  '/asset/management/add-shop': RouteRecordInfo<
+    '/asset/management/add-shop', // name
+    '/asset/management/add-shop', // path
+    any,
+    any,
+    never
+  >
   '/asset/management/point': RouteRecordInfo<
     '/asset/management/point', // name
     '/asset/management/point', // path

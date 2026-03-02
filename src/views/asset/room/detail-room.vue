@@ -69,7 +69,7 @@ const formConfig = computed(() => [
   <el-card>
     <template #header>
       <div class="flex justify-between">
-        编辑
+        详情
         <p class="text-red-600">
           <span>*</span>
           为必填项

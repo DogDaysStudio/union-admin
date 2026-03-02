@@ -125,6 +125,31 @@ export function amsAssetRoomEnable(payload: {roomId: any; enable: boolean}) {
   return http.post<Res<Record<string, any>>>('/ams/asset-room/enable', payload)
 }
 
+// 商铺列表
+export function amsAssetShopList(payload: AssetShopListDTO) {
+  return http.post<Res<AssetShopVO[]>>('/ams/asset-shop/list', payload)
+}
+// 新增商铺
+export function amsAssetShopInsert(payload: AssetShopInsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-shop/insert', payload)
+}
+// 更新商铺
+export function amsAssetShopUpdate(payload: AssetShopUpsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-shop/update', payload)
+}
+// 商铺详情
+export function amsAssetShopGet(payload: Record<string, any>) {
+  return http.post<Res<AssetShopVO>>('/ams/asset-shop/get', payload)
+}
+// 删除商铺
+export function amsAssetShopDelete(payload: Record<string, any>) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-shop/delete', payload)
+}
+// 启用/禁用商业 | object:{shopId:住宅编码,enable:bool}
+export function amsAssetShopEnable(payload: {shopId: any; enable: boolean}) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-shop/enable', payload)
+}
+
 // 资源列表
 export function amsAssetResourceList(payload: AssetResourceListDTO) {
   return http.post<Res<AssetResourceVO[]>>('/ams/asset-resource/list', payload)

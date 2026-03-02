@@ -134,6 +134,17 @@ const assetRoutes: RouteRecordRaw[] = [
           },
 
           {
+            path: '/asset/management/shop',
+            meta: {title: '房屋（商业）管理', menu: true},
+            component: () => import('@/views/asset/shop/index.vue'),
+          },
+          {
+            path: '/asset/management/add-shop',
+            meta: {title: '商业-新增'},
+            component: () => import('@/views/asset/shop/add-shop.vue'),
+          },
+
+          {
             path: '/asset/management/point',
             meta: {title: '点位资源管理', menu: true},
             component: () => import('@/views/asset/point/index.vue'),
