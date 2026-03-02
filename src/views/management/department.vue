@@ -9,6 +9,7 @@ import {
 } from '@/service/api/iamAuth'
 import {ref, reactive, watchEffect, useTemplateRef} from 'vue'
 import {usePagination, useRequest} from 'vue-request'
+import AddUser from './role/components/AddUser.vue'
 
 // 搜索表单
 const searchForm = reactive({
@@ -74,10 +75,9 @@ const addDialogVisible = ref(false)
 const addFormRef = useTemplateRef('addFormRef')
 // 处理弹窗确认
 const handleAddConfirm = async () => {
-  console.log('添加部门', addForm)
   await addFormRef.value?.validate()
-  await runUpsertOrg(addForm)
-  ElMessage.success('添加部门成功')
+  await runUpsertOrg({...addForm, userIdList: userList.value.map(item => item.userId) || []})
+  ElMessage.success(addForm.orgId ? '编辑部门成功' : '添加部门成功')
   // 关闭弹窗
   addDialogVisible.value = false
   refreshOrgList()
@@ -121,6 +121,9 @@ const schema = defineSchema({
     }),
   ],
 })
+
+const addUserRef = useTemplateRef('addUserRef')
+const userList = ref<AuthUserVO[]>([])
 </script>
 
 <template>
@@ -143,14 +146,18 @@ const schema = defineSchema({
     <el-table :data="orgList?.data" style="width: 100%" stripe border v-loading="orgListLoading">
       <el-table-column type="selection" width="55" />
       <el-table-column prop="orgName" label="部门名称" />
-      <el-table-column prop="userIdCount" label="部门成员" />
+      <el-table-column
+        prop="userIdCount"
+        label="部门成员"
+        :formatter="row => row.userIdCount || 0"
+      />
       <el-table-column prop="updateTime" label="更新时间" width="170" />
       <el-table-column prop="notes" label="部门描述" />
-      <el-table-column prop="enabled" label="启用">
-        <template #default="{row}">
-          {{ row.enable ? '启用' : '停用' }}
-        </template>
-      </el-table-column>
+      <el-table-column
+        prop="enabled"
+        label="启用"
+        :formatter="row => (row.enable ? '启用' : '停用')"
+      ></el-table-column>
       <el-table-column label="操作" width="130">
         <template #default="{row}">
           <el-button link size="small" @click="handleEdit(row)">编辑</el-button>
@@ -178,8 +185,14 @@ const schema = defineSchema({
     />
   </div>
 
+  <AddUser ref="addUserRef" @submit="((userList = $event), addUserRef.hide())" />
+
   <!-- 添加部门弹窗 -->
-  <el-dialog v-model="addDialogVisible" title="添加部门" @closed="addFormRef?.resetFields()">
+  <el-dialog
+    v-model="addDialogVisible"
+    :title="addForm.orgId ? '编辑部门' : '添加部门'"
+    @closed="addFormRef?.resetFields()"
+  >
     <el-form :model="addForm" ref="addFormRef" label-width="100px">
       <el-form-item label="上级部门" prop="orgPid">
         <el-tree-select
@@ -188,13 +201,30 @@ const schema = defineSchema({
           :data="orgTree?.data"
           :props="{label: 'orgName'}"
           node-key="orgId"
+          check-strictly
         />
       </el-form-item>
       <el-form-item label="部门名称" prop="orgName" :rules="[rules.required()]">
         <el-input v-model="addForm.orgName" placeholder="请填写部门名称" />
       </el-form-item>
       <el-form-item label="人员" prop="userIdList">
-        <el-select v-model="addForm.userIdList" placeholder="输入人员ID，多个ID用逗号分隔" />
+        <el-space>
+          <el-avatar
+            class="cursor-pointer"
+            v-for="item in userList"
+            :key="item.userId"
+            :src="item.avatarFile?.url"
+            @click="userList = userList.filter(el => el.userId !== item.userId)"
+          >
+            {{ item.certName?.[0] }}
+          </el-avatar>
+          <el-avatar
+            class="cursor-default"
+            @click="addUserRef?.show(userList.map(item => item.userId))"
+          >
+            +
+          </el-avatar>
+        </el-space>
       </el-form-item>
       <el-form-item label="部门描述" prop="notes">
         <el-input
