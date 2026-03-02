@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import {ref, watchEffect} from 'vue'
+import {computed, ref, useTemplateRef} from 'vue'
 import {useRequest} from 'vue-request'
-import {ElMessage, ElMessageBox, type TreeNodeData} from 'element-plus'
-import {iamAuthPermissionTree} from '@/service/api/iamAuthPermission'
-import {amsSysDicList} from '@/service/api/amsSysDic'
+import {ElMessage, ElMessageBox} from 'element-plus'
 import {iamAuthRoleGet, iamAuthRoleUpsert} from '@/service/api/iamAuth'
-import {keysInTree} from '@/utils/array-util'
 import RoleTable from './components/RoleTable.vue'
+import UserPermission from './components/UserPermission.vue'
 
 const {roleId} = defineProps<{
   roleId: string
@@ -14,59 +12,13 @@ const {roleId} = defineProps<{
 
 // 标签页
 const activeTab = ref('permission')
-const activeSubTab = ref<string>()
 
 // 角色信息
 const {data: roleInfo} = useRequest(iamAuthRoleGet, {
   manual: false,
   defaultParams: [{roleId}],
 })
-
-// 更新角色权限(保存权限)
-const upsertRole = useRequest(iamAuthRoleUpsert)
-
-// 权限树
-const {data: permissionTree} = useRequest(iamAuthPermissionTree, {
-  manual: false,
-  defaultParams: [{pageable: false} as AuthPermissionListDTO],
-})
-
-// 选中的节点 { "OMS": [], "PMS": [], "AMS": [] }
-const selectedNodes = ref<Record<string, string[]>>({})
-// 初始化选中的节点
-watchEffect(() => {
-  if (permissionTree?.value?.data && roleInfo.value?.data?.permList) {
-    selectedNodes.value = dicList.value?.data?.reduce((prev, item) => {
-      prev[item.dicCode] = keysInTree(
-        roleInfo.value?.data?.permList?.map(item => item.permId),
-        permissionTree.value?.data?.[item.dicCode],
-        {key: 'permId'}
-      )
-      return prev
-    }, {})
-  }
-})
-
-// 码表数据（租赁、物业、资产）
-const {data: dicList} = useRequest(amsSysDicList, {
-  manual: false,
-  defaultParams: [{dicType: 9000} as SysDicListDTO],
-  onSuccess: response => {
-    // 初始化默认选中的子标签页
-    activeSubTab.value ??= response.data?.[0]?.dicCode
-  },
-})
-
-// 处理保存权限
-const handleSavePermission = async () => {
-  const {msg} = await upsertRole.runAsync({
-    roleName: roleInfo.value?.data?.roleName,
-    userIdList: roleInfo.value?.data?.userList?.map(item => item.userId), // 加上，不然会清空用户数组
-    roleId,
-    permIdList: Object.values(selectedNodes.value).flat(),
-  } as AuthRoleUpsertDTO)
-  if (msg) ElMessage.success(msg)
-}
+const permIdList = computed(() => roleInfo?.value?.data?.permList?.map(item => item.permId) || [])
 
 // 处理添加人员
 const handleAddMember = () => {
@@ -96,8 +48,21 @@ const handleDeleteRole = async () => {
   ElMessage.success('角色删除成功')
 }
 
-const customNodeClass = (data: TreeNodeData) =>
-  !(data as AuthPermissionVO).children?.length ? 'is-last' : ''
+const userPermission = useTemplateRef('userPermission')
+// 更新角色权限(保存权限)
+const upsertRole = useRequest(iamAuthRoleUpsert)
+
+// 处理保存权限
+const handleSavePermission = async () => {
+  const selectedNodes = userPermission.value?.getSelectedNodes() || {}
+  const {msg} = await upsertRole.runAsync({
+    roleName: roleInfo.value?.data?.roleName,
+    userIdList: roleInfo.value?.data?.userList?.map(item => item.userId), // 加上，不然会清空用户数组
+    roleId,
+    permIdList: Object.values(selectedNodes).flat(),
+  } as AuthRoleUpsertDTO)
+  if (msg) ElMessage.success(msg)
+}
 </script>
 
 <template>
@@ -144,7 +109,8 @@ const customNodeClass = (data: TreeNodeData) =>
     <!-- 操作权限内容 -->
     <div v-if="activeTab === 'permission'">
       <!-- 子标签页 -->
-      <el-tabs v-model="activeSubTab">
+      <UserPermission ref="userPermission" :perm-id-list="permIdList" />
+      <!-- <el-tabs v-model="activeSubTab">
         <el-tab-pane
           v-for="dic in dicList?.data"
           :label="dic.dicName"
@@ -165,9 +131,8 @@ const customNodeClass = (data: TreeNodeData) =>
             :default-checked-keys="selectedNodes[dic.dicCode]"
           />
         </el-tab-pane>
-      </el-tabs>
+      </el-tabs> -->
 
-      <!-- 保存按钮 -->
       <div class="mt-6 flex justify-end">
         <el-button type="primary" :loading="upsertRole.loading.value" @click="handleSavePermission">
           保存权限

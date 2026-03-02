@@ -28,3 +28,11 @@ export function iamAuthUserUpdateOrg(payload: AuthUserUpdateOrgDTO) {
 export function iamAuthUserUpdateRole(payload: AuthUserUpdateRoleDTO) {
   return http.post<Res<Record<string, any>>>('/iam/auth-user/update-role', payload)
 }
+// 重置密码 | object:{userId:人员ID}
+export function iamAuthUserResetPassword(payload: {userId: any}) {
+  return http.post<Res<Record<string, any>>>('/iam/auth-user/reset-password', payload)
+}
+// 启用/禁用人员 | object:{userId:人员ID,enable:bool}
+export function iamAuthUserEnable(payload: {userId: any; enable: boolean}) {
+  return http.post<Res<Record<string, any>>>('/iam/auth-user/enable', payload)
+}

@@ -4,6 +4,7 @@ import {useRoute, useRouter} from 'vue-router'
 import {User} from '@element-plus/icons-vue'
 import {iamAuthUserGet, iamAuthUserListLoginLog} from '@/service/api/imaAuthUser'
 import {usePagination, useRequest} from 'vue-request'
+import UserPermission from '../role/components/UserPermission.vue'
 
 const router = useRouter()
 const route = useRoute('/management/personnel/detail/:id')
@@ -72,7 +73,7 @@ const handleEdit = () => {
 
     <!-- 操作权限 -->
     <el-tab-pane label="操作权限" name="permission">
-      <div class="p-4 text-gray-500">操作权限信息将在此显示</div>
+      <user-permission :perm-id-list="personnelInfo.permIdList" />
     </el-tab-pane>
   </el-tabs>
 </template>
