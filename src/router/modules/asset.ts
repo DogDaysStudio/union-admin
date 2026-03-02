@@ -129,7 +129,7 @@ const assetRoutes: RouteRecordRaw[] = [
           },
           {
             path: '/asset/management/detail-room/:id',
-            meta: {title: '房屋-编辑'},
+            meta: {title: '房屋-详情'},
             component: () => import('@/views/asset/room/detail-room.vue'),
           },
 
@@ -142,6 +142,16 @@ const assetRoutes: RouteRecordRaw[] = [
             path: '/asset/management/add-shop',
             meta: {title: '商业-新增'},
             component: () => import('@/views/asset/shop/add-shop.vue'),
+          },
+          {
+            path: '/asset/management/edit-shop/:id',
+            meta: {title: '商业-编辑'},
+            component: () => import('@/views/asset/shop/edit-shop.vue'),
+          },
+          {
+            path: '/asset/management/detail-shop/:id',
+            meta: {title: '商业-详情'},
+            component: () => import('@/views/asset/shop/detail-shop.vue'),
           },
 
           {

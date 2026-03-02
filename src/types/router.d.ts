@@ -222,6 +222,20 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/asset/management/edit-shop/:id': RouteRecordInfo<
+    '/asset/management/edit-shop/:id', // name
+    '/asset/management/edit-shop/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/detail-shop/:id': RouteRecordInfo<
+    '/asset/management/detail-shop/:id', // name
+    '/asset/management/detail-shop/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
   '/asset/management/point': RouteRecordInfo<
     '/asset/management/point', // name
     '/asset/management/point', // path

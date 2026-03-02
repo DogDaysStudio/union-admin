@@ -128,12 +128,8 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="所属围合/楼栋" prop="buildingEnclosureName">
-                <el-input
-                  v-model="formData.buildingEnclosureName"
-                  placeholder="请填写所属围合/楼栋"
-                  disabled
-                />
+              <el-form-item label="所属围合/楼栋" prop="assetName">
+                <el-input v-model="formData.assetName" placeholder="请填写所属围合/楼栋" disabled />
               </el-form-item>
             </el-col>
             <el-col :span="8">

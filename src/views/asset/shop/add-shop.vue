@@ -6,10 +6,11 @@ import {ElMessage} from 'element-plus'
 import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetProjectList,
-  amsAssetEnclosureList,
+  amsAssetBuildingSelectBuildingEnclosure,
   amsAssetFloorList,
   amsAssetShopInsert,
   amsAssetShopList,
+  amsAssetRoomList,
 } from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
@@ -19,9 +20,9 @@ const router = useRouter()
 // 项目列表
 const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 围合列表
-const {runAsync: enclosureList} = useRequest(amsAssetEnclosureList)
-const enclosureOptions = reactive<{enclosureId: string; enclosureName: string}[]>([])
+// 楼栋/围合列表
+const {runAsync: assetList} = useRequest(amsAssetBuildingSelectBuildingEnclosure)
+const assetOptions = reactive<{id: string; name: string; assetType: string}[]>([])
 // 楼层列表
 const {runAsync: floorList} = useRequest(amsAssetFloorList)
 const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
@@ -29,6 +30,8 @@ const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
 const companyOptions = useDicListTree({dicType: 1001})
 // 商铺列表
 const {runAsync: shopList} = useRequest(amsAssetShopList)
+// 房间列表
+const {runAsync: roomList} = useRequest(amsAssetRoomList)
 // 新增楼层
 const {runAsync: shopInsert, loading: insertLoading} = useRequest(amsAssetShopInsert)
 
@@ -38,10 +41,9 @@ const formRef = ref<FormInstance>()
 interface ShopInfo {
   assetType: string
   shopNumber: string
-  roomLayoutName: string
   projectId: string
   buildingArea: number
-  usableArea: number
+  shopName: string
   ownershipUnitCode: string
   ownershipUnitName: string
 }
@@ -69,7 +71,7 @@ const formData = reactive({floorList: []} as AssetShopInsertDTO & BaseInfo)
 
 const formRules = reactive<FormRules>({
   projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
-  assetId: {required: true, message: '请选择所属楼栋', trigger: 'blur'},
+  assetId: {required: true, message: '请选择楼栋/围合', trigger: 'blur'},
   floorId: {required: true, message: '请选择所属楼层', trigger: 'blur'},
 })
 
@@ -80,20 +82,22 @@ const getOptions = async (): Promise<void> => {
   projectOptions.push(...project)
 }
 
+const assetType = ref('')
+
 // 监听projectId变化，获取楼栋列表
 watch(
   () => formData.projectId,
   async projectId => {
-    enclosureOptions.length = 0
+    assetOptions.length = 0
     formData.assetId = ''
     floorOptions.length = 0
     formData.floorId = ''
     if (projectId) {
-      const {data: enclosure} = await enclosureList({
+      const {data: asset} = await assetList({
         pageable: false,
         projectId,
-      } as AssetEnclosureListDTO)
-      enclosureOptions.push(...enclosure)
+      } as AssetBuildingListDTO)
+      assetOptions.push(...Object.values(asset))
     }
   },
   {immediate: false}
@@ -105,10 +109,12 @@ watch(
   async assetId => {
     floorOptions.length = 0
     formData.floorId = ''
+    assetType.value = ''
     if (assetId) {
+      assetType.value = assetOptions.find(item => formData.assetId == item.id).assetType
       const {data: floor} = await floorList({
         pageable: false,
-        assetType: '2',
+        assetType: assetType.value,
         assetId,
       } as AssetFloorListDTO)
       floorOptions.push(...floor)
@@ -127,16 +133,30 @@ const handleAddFloor = () => {
         ElMessage.warning('该楼层已生成！')
         return
       }
-      const {data: shop} = await shopList({
-        floorId: formData.floorId,
-        pageable: false,
-      } as AssetShopListDTO)
+      let floorName = ''
+      let total = 0
+      if (assetType.value == '1') {
+        const {data: room} = await roomList({
+          floorId: formData.floorId,
+          pageable: false,
+        } as AssetRoomListDTO)
+        total = room.length
+        floorName = room[0].floorName
+      } else {
+        const {data: shop} = await shopList({
+          floorId: formData.floorId,
+          pageable: false,
+        } as AssetShopListDTO)
+        total = shop.length
+        floorName = shop[0].floorName
+      }
+
       formData.floorList.push({
         projectId: formData.projectId,
         assetId: formData.assetId,
         floorId: formData.floorId,
-        floorName: shop[0].floorName,
-        shopNumber: shop.length,
+        floorName,
+        shopNumber: total,
         count: null,
         children: [],
       })
@@ -157,10 +177,9 @@ const handleAddRoom = (data: FloorInfo) => {
     floorId: data.floorId,
     shopNumber: '',
     buildingArea: null,
-    usableArea: null,
+    shopName: '',
     ownershipUnitCode: '',
     ownershipUnitName: '',
-    roomLayoutName: '',
   }))
 }
 
@@ -178,7 +197,7 @@ const handleSubmit = () => {
       paramsData.shopList = []
       paramsData?.floorList.map(e => {
         e.children.map(k => {
-          if (!k?.shopNumber || !k?.buildingArea || !k?.usableArea || !k?.ownershipUnitCode)
+          if (!k?.shopName || !k?.shopNumber || !k?.buildingArea || !k?.ownershipUnitCode)
             flag = false
           paramsData.shopList.push(k as unknown as AssetShopUpsertDTO)
           if (Array.isArray(k.ownershipUnitCode)) {
@@ -195,7 +214,7 @@ const handleSubmit = () => {
         ElMessage.success(msg)
         router.push('/asset/management/shop')
       } else {
-        ElMessage.warning('请填写商铺号、产权、建筑面积、实用面积！')
+        ElMessage.warning('请填写商铺名称、商铺号、产权、建筑面积！')
       }
     }
   })
@@ -238,17 +257,17 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="所属围合" prop="assetId" required>
+              <el-form-item label="所属楼栋/围合" prop="assetId" required>
                 <el-select
                   v-model="formData.assetId"
-                  placeholder="请选择所属围合"
+                  placeholder="请选择所属楼栋/围合"
                   :disabled="!formData.projectId"
                 >
                   <el-option
-                    v-for="item in enclosureOptions"
-                    :key="item.enclosureId"
-                    :label="item.enclosureName"
-                    :value="item.enclosureId"
+                    v-for="item in assetOptions"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
                   />
                 </el-select>
               </el-form-item>
@@ -306,6 +325,10 @@ const handleSubmit = () => {
               </div>
               <div :gutter="24" v-else>
                 <span class="ml-2">
+                  商铺名称：
+                  <el-input class="w-40!" v-model="data.shopName" :min="0" />
+                </span>
+                <span class="ml-2">
                   商铺号：
                   <el-input class="w-40!" v-model="data.shopNumber" />
                 </span>
@@ -327,10 +350,6 @@ const handleSubmit = () => {
                 <span class="ml-2">
                   建筑面积(㎡)：
                   <el-input-number class="w-40!" v-model="data.buildingArea" :min="0" />
-                </span>
-                <span class="ml-2">
-                  实用面积(㎡)：
-                  <el-input-number class="w-40!" v-model="data.usableArea" :min="0" />
                 </span>
               </div>
             </template>

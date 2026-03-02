@@ -178,7 +178,7 @@ const deleteRoom = (resourceId: string): void => {
       <el-table-column label="广告类型" prop="resourceAdType" width="120" />
       <el-table-column label="媒体类型" prop="resourceMediaType" width="120" />
       <el-table-column label="所属项目" prop="projectName" width="120" />
-      <el-table-column label="所属围合/楼栋" prop="buildingEnclosureName" width="120" />
+      <el-table-column label="所属围合/楼栋" prop="assetName" width="120" />
       <el-table-column label="楼层名称" prop="floorName" width="120" />
       <el-table-column label="位置" prop="locationName" width="120" />
       <el-table-column label="规格" prop="resourceSpecs" width="80" />

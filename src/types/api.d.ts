@@ -8,6 +8,18 @@ interface Res<T = any> {
 }
 
 interface ApiType {
+  /* 【日志管理】
+  // 日志列表
+  export function iamSysActionLogList(payload: SysActionLogListDTO) {return http.post<Res<SysActionLogVO[]>>('/iam/sys-action-log/list', payload)}
+  */
+  '/iam/sys-action-log/list': {Req: SysActionLogListDTO; Res: SysActionLogVO[]}
+
+  /* 【日志管理】
+  // 清空日志
+  export function iamSysActionLogClear(payload: SysActionLogListDTO) {return http.post<Res<Record<string, any>>>('/iam/sys-action-log/clear', payload)}
+  */
+  '/iam/sys-action-log/clear': {Req: SysActionLogListDTO; Res: Record<string, any>}
+
   /* 【开放平台应用】
   // 新增/修改应用
   export function iamOpenAppUpsert(payload: OpenAppUpsertDTO) {return http.post<Res<string>>('/iam/open-app/upsert', payload)}
@@ -70,9 +82,9 @@ interface ApiType {
 
   /* 【通用相关】
   // 码表元信息
-  export function iamCommonDicMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/iam/common/dic/meta', payload)}
+  export function iamCommonDicMeta(payload: Record<string, any>) {return http.post<Res<Record<string, Record<string, any>>[]>>('/iam/common/dic/meta', payload)}
   */
-  '/iam/common/dic/meta': {Req: Record<string, any>; Res: PairModel[]}
+  '/iam/common/dic/meta': {Req: Record<string, any>; Res: Record<string, Record<string, any>>[]}
 
   /* 【通用相关】
   // 树形码表 | object:{dicType:字典类型}
@@ -183,10 +195,10 @@ interface ApiType {
   '/iam/auth-user/update-org': {Req: AuthUserUpdateOrgDTO; Res: Record<string, any>}
 
   /* 【人员管理】
-  // 重置密码 | object:{userId:人员ID}
-  export function iamAuthUserResetPassword(payload: {userId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/reset-password', payload)}
+  // 重置密码 | object:{userId:人员ID,remark:备注}
+  export function iamAuthUserResetPassword(payload: {userId: any; remark: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/reset-password', payload)}
   */
-  '/iam/auth-user/reset-password': {Req: {userId: any}; Res: Record<string, any>}
+  '/iam/auth-user/reset-password': {Req: {userId: any; remark: any}; Res: Record<string, any>}
 
   /* 【人员管理】
   // 人员列表
@@ -199,6 +211,12 @@ interface ApiType {
   export function iamAuthUserListLoginLog(payload: AuthUserLoginLogListDTO) {return http.post<Res<AuthUserLoginLogVO[]>>('/iam/auth-user/list-login-log', payload)}
   */
   '/iam/auth-user/list-login-log': {Req: AuthUserLoginLogListDTO; Res: AuthUserLoginLogVO[]}
+
+  /* 【人员管理】
+  // 人员列表导出
+  export function iamAuthUserListExport(payload: AuthUserListDTO) {return http.post<Res<>>('/iam/auth-user/list-export', payload)}
+  */
+  '/iam/auth-user/list-export': {Req: AuthUserListDTO}
 
   /* 【人员管理】
   // 是否当前手机号已存在 | object:{mobile:手机号}
@@ -225,10 +243,10 @@ interface ApiType {
   '/iam/auth-user/get': {Req: {userId: any}; Res: AuthUserVO}
 
   /* 【人员管理】
-  // 启用/禁用人员 | object:{userId:人员ID,enable:bool}
-  export function iamAuthUserEnable(payload: {userId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/enable', payload)}
+  // 启用/禁用人员 | object:{userIdList:人员ID列表,enable:bool,remark:备注}
+  export function iamAuthUserEnable(payload: {userIdList: any; enable: boolean; remark: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/enable', payload)}
   */
-  '/iam/auth-user/enable': {Req: {userId: any; enable: boolean}; Res: Record<string, any>}
+  '/iam/auth-user/enable': {Req: {userIdList: any; enable: boolean; remark: any}; Res: Record<string, any>}
 
   /* 【角色管理】
   // 新增/修改角色
@@ -400,9 +418,9 @@ interface ApiType {
 
   /* 【通用相关】
   // 码表元信息
-  export function amsCommonDicMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/common/dic/meta', payload)}
+  export function amsCommonDicMeta(payload: Record<string, any>) {return http.post<Res<Record<string, Record<string, any>>[]>>('/ams/common/dic/meta', payload)}
   */
-  '/ams/common/dic/meta': {Req: Record<string, any>; Res: PairModel[]}
+  '/ams/common/dic/meta': {Req: Record<string, any>; Res: Record<string, Record<string, any>>[]}
 
   /* 【通用相关】
   // 树形码表 | object:{dicType:字典类型}
@@ -459,7 +477,7 @@ interface ApiType {
   '/ams/asset-shop/get': {Req: Record<string, any>; Res: AssetShopVO}
 
   /* 【资产管理-商业管理】
-  // 启用/禁用商业 | object:{shopId:住宅编码,enable:bool}
+  // 启用/禁用商铺 | object:{shopId:住宅编码,enable:bool}
   export function amsAssetShopEnable(payload: {shopId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/enable', payload)}
   */
   '/ams/asset-shop/enable': {Req: {shopId: any; enable: boolean}; Res: Record<string, any>}
@@ -579,6 +597,12 @@ interface ApiType {
   '/ams/asset-project/insert': {Req: AssetProjectUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-项目管理】
+  // 导入步骤4: 导入项目 | object:{fid:文件ID}
+  export function amsAssetProjectImportTemplate(payload: {fid: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-project/import-template', payload)}
+  */
+  '/ams/asset-project/import-template': {Req: {fid: any}; Res: Record<string, any>}
+
+  /* 【资产管理-项目管理】
   // 项目详情
   export function amsAssetProjectGet(payload: Record<string, any>) {return http.post<Res<AssetProjectVO>>('/ams/asset-project/get', payload)}
   */
@@ -591,6 +615,12 @@ interface ApiType {
   '/ams/asset-project/generate-project-id': {Res: string}
 
   /* 【资产管理-项目管理】
+  // 导入步骤1: 导出上传模板
+  export function amsAssetProjectExportTemplate(payload: Record<string, any>) {return http.post<Res<>>('/ams/asset-project/export-template', payload)}
+  */
+  '/ams/asset-project/export-template': {Req: Record<string, any>}
+
+  /* 【资产管理-项目管理】
   // 启用/禁用项目 | object:{projectId:项目编码,enable:bool}
   export function amsAssetProjectEnable(payload: {projectId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-project/enable', payload)}
   */
@@ -601,6 +631,18 @@ interface ApiType {
   export function amsAssetProjectDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-project/delete', payload)}
   */
   '/ams/asset-project/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-项目管理】
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
+  export function amsAssetProjectCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-project/check-template', payload)}
+  */
+  '/ams/asset-project/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【资产管理-项目管理】
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
+  export function amsAssetProjectCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-project/check-template-export', payload)}
+  */
+  '/ams/asset-project/check-template-export': {Req: {fid: any}}
 
   /* 【资产管理-停车场管理】
   // 新增停车场
@@ -711,6 +753,12 @@ interface ApiType {
   '/ams/asset-floor/insert': {Req: AssetFloorDTO; Res: string}
 
   /* 【资产管理-楼层管理】
+  // 导入步骤4: 导入楼层 | object:{fid:文件ID,assetType:资产类型}
+  export function amsAssetFloorImportTemplate(payload: {fid: any; assetType: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/import-template', payload)}
+  */
+  '/ams/asset-floor/import-template': {Req: {fid: any; assetType: any}; Res: Record<string, any>}
+
+  /* 【资产管理-楼层管理】
   // 楼层详情
   export function amsAssetFloorGet(payload: Record<string, any>) {return http.post<Res<AssetFloorVO>>('/ams/asset-floor/get', payload)}
   */
@@ -723,6 +771,12 @@ interface ApiType {
   '/ams/asset-floor/generate-floor-id': {Req: {assetId: any}; Res: string}
 
   /* 【资产管理-楼层管理】
+  // 导入步骤1: 导出上传模板
+  export function amsAssetFloorExportTemplate(payload: Record<string, any>) {return http.post<Res<>>('/ams/asset-floor/export-template', payload)}
+  */
+  '/ams/asset-floor/export-template': {Req: Record<string, any>}
+
+  /* 【资产管理-楼层管理】
   // 启用/禁用楼层 | object:{floorId:楼层编码,enable:bool}
   export function amsAssetFloorEnable(payload: {floorId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)}
   */
@@ -733,6 +787,18 @@ interface ApiType {
   export function amsAssetFloorDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/delete', payload)}
   */
   '/ams/asset-floor/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-楼层管理】
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
+  export function amsAssetFloorCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-floor/check-template', payload)}
+  */
+  '/ams/asset-floor/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【资产管理-楼层管理】
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
+  export function amsAssetFloorCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-floor/check-template-export', payload)}
+  */
+  '/ams/asset-floor/check-template-export': {Req: {fid: any}}
 
   /* 【资产管理-固定资产管理】
   // 更新固定资产
@@ -813,6 +879,12 @@ interface ApiType {
   '/ams/asset-enclosure/insert': {Req: AssetEnclosureInsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-围合管理】
+  // 导入步骤4: 导入围合 | object:{fid:文件ID}
+  export function amsAssetEnclosureImportTemplate(payload: {fid: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/import-template', payload)}
+  */
+  '/ams/asset-enclosure/import-template': {Req: {fid: any}; Res: Record<string, any>}
+
+  /* 【资产管理-围合管理】
   // 围合详情
   export function amsAssetEnclosureGet(payload: Record<string, any>) {return http.post<Res<AssetEnclosureVO>>('/ams/asset-enclosure/get', payload)}
   */
@@ -825,7 +897,13 @@ interface ApiType {
   '/ams/asset-enclosure/generate-enclosure-id': {Req: Record<string, any>; Res: string}
 
   /* 【资产管理-围合管理】
-  // 启用/禁用项目 | object:{enclosureId:围合编码,enable:bool}
+  // 导入步骤1: 导出上传模板
+  export function amsAssetEnclosureExportTemplate(payload: Record<string, any>) {return http.post<Res<>>('/ams/asset-enclosure/export-template', payload)}
+  */
+  '/ams/asset-enclosure/export-template': {Req: Record<string, any>}
+
+  /* 【资产管理-围合管理】
+  // 启用/禁用合围 | object:{enclosureId:围合编码,enable:bool}
   export function amsAssetEnclosureEnable(payload: {enclosureId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/enable', payload)}
   */
   '/ams/asset-enclosure/enable': {Req: {enclosureId: any; enable: boolean}; Res: Record<string, any>}
@@ -835,6 +913,18 @@ interface ApiType {
   export function amsAssetEnclosureDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-enclosure/delete', payload)}
   */
   '/ams/asset-enclosure/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-围合管理】
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
+  export function amsAssetEnclosureCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-enclosure/check-template', payload)}
+  */
+  '/ams/asset-enclosure/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【资产管理-围合管理】
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
+  export function amsAssetEnclosureCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-enclosure/check-template-export', payload)}
+  */
+  '/ams/asset-enclosure/check-template-export': {Req: {fid: any}}
 
   /* 【资产管理-楼栋管理】
   // 更新楼栋
@@ -861,6 +951,12 @@ interface ApiType {
   '/ams/asset-building/insert': {Req: AssetBuildingInsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-楼栋管理】
+  // 导入步骤4: 导入楼栋 | object:{fid:文件ID}
+  export function amsAssetBuildingImportTemplate(payload: {fid: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-building/import-template', payload)}
+  */
+  '/ams/asset-building/import-template': {Req: {fid: any}; Res: Record<string, any>}
+
+  /* 【资产管理-楼栋管理】
   // 楼栋详情
   export function amsAssetBuildingGet(payload: Record<string, any>) {return http.post<Res<AssetBuildingVO>>('/ams/asset-building/get', payload)}
   */
@@ -873,7 +969,13 @@ interface ApiType {
   '/ams/asset-building/generate-building-id': {Req: Record<string, any>; Res: string}
 
   /* 【资产管理-楼栋管理】
-  // 启用/禁用项目 | object:{buildingId:楼栋编码,enable:bool}
+  // 导入步骤1: 导出上传模板
+  export function amsAssetBuildingExportTemplate(payload: Record<string, any>) {return http.post<Res<>>('/ams/asset-building/export-template', payload)}
+  */
+  '/ams/asset-building/export-template': {Req: Record<string, any>}
+
+  /* 【资产管理-楼栋管理】
+  // 启用/禁用楼栋 | object:{buildingId:楼栋编码,enable:bool}
   export function amsAssetBuildingEnable(payload: {buildingId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-building/enable', payload)}
   */
   '/ams/asset-building/enable': {Req: {buildingId: any; enable: boolean}; Res: Record<string, any>}
@@ -883,6 +985,45 @@ interface ApiType {
   export function amsAssetBuildingDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-building/delete', payload)}
   */
   '/ams/asset-building/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-楼栋管理】
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
+  export function amsAssetBuildingCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-building/check-template', payload)}
+  */
+  '/ams/asset-building/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【资产管理-楼栋管理】
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
+  export function amsAssetBuildingCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-building/check-template-export', payload)}
+  */
+  '/ams/asset-building/check-template-export': {Req: {fid: any}}
+}
+
+interface SysActionLogListDTO {
+  pageable: boolean
+  pageNum: number
+  pageSize: number
+  uname: string // 操作人姓名
+  sysId: string // 系统ID
+  client: string // 终端设备
+  module: string // 操作模块
+  type: string // 操作类型
+  ip: string // IP
+  content: string // 内容
+  insertTimeBegin: string // 记录插入时间
+  insertTimeEnd: string // 记录插入时间
+}
+
+interface SysActionLogVO {
+  id: string // 日志ID
+  uname: string // 操作人姓名
+  sysId: string // 操作系统
+  client: string // 终端设备
+  module: string // 操作模块
+  type: string // 操作类型
+  ip: string // IP地址
+  content: string // 内容
+  insertTime: string // 日志时间
 }
 
 interface OpenAppUpsertDTO {
@@ -952,11 +1093,6 @@ interface FileModel {
   md5: string // 文件MD5
 }
 
-interface PairModel {
-  k: string
-  v: string
-}
-
 interface SysDicVO {
   dicId: string // ID
   dicType: number // 字典类型
@@ -978,6 +1114,11 @@ interface SysDicVO {
   updateBy: string // 记录更新操作人
   dicPname: string // 父级名称
   children: SysDicVO[] // 子级字典
+}
+
+interface PairModel {
+  k: string
+  v: string
 }
 
 interface TreeModel {
@@ -1137,11 +1278,13 @@ interface AuthUserUpsertDTO {
 interface AuthUserUpdateRoleDTO {
   userIdList: string[] // 用户ID
   roleIdList: string[] // 角色ID
+  remark?: string // 备注
 }
 
 interface AuthUserUpdateOrgDTO {
   userIdList: string[] // 用户ID
   orgIdList: string[] // 部门ID
+  remark?: string // 备注
 }
 
 interface AuthUserListDTO {
@@ -1298,6 +1441,7 @@ interface AssetShopUpsertDTO {
   ownershipYear: number // 产权年限
   ownershipRatio: number // 产权比例
   realEstateNumber: string // 不动产编号
+  shopName: string // 商铺名称
   shopNumber: string // 商铺号
   shopTypeCode: string // 商铺类型编码
   shopTypeName: string // 商铺类型名称
@@ -1334,10 +1478,10 @@ interface AssetShopListDTO {
   buildingArea: number // 建筑面积
   usableArea: number // 实用面积
   projectId: string // 项目编码
-  assetId: string // 楼栋/围合/停车场id
+  assetId: string // 楼栋/围合编码
+  assetName: string // 楼栋/围合名称
   floorId: string // 楼层编码
   projectName: string // 项目名称
-  enclosureName: string // 围合名称
   floorName: string // 楼层名称
   ownershipUnitCode: string // 产权单位编码
   businessModelCode: string // 经营模式编码
@@ -1350,15 +1494,22 @@ interface AssetShopListDTO {
 // 资产管理-商铺
 interface AssetShopVO {
   shopId: string // 商铺编码
+  shopName: string // 商铺名称
   shopNumber: string // 商铺号
   buildingArea: number // 建筑面积
   usableArea: number // 实用面积
+  projectId: string // 项目编码
   projectName: string // 项目名称
-  enclosureName: string // 围合名称
+  assetId: string // 楼栋/围合编码
+  assetName: string // 楼栋/围合名称
+  floorId: string // 楼层编码
   floorName: string // 楼层名称
+  businessModelCode: string // *经营模式编码
   businessModelName: string // 经营模式名称
+  ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
   enable: number // 0-禁用;1-启用
+  ownershipTypeCode: string // 产权类型编码
   ownershipTypeName: string // 产权类型名称
   ownershipYear: number // 产权年限
   ownershipRatio: number // 产权比例
@@ -1515,7 +1666,7 @@ interface AssetResourceListDTO {
   resourceId: string // 资源编码
   resourceName: string // 资源名称
   resourceNumber: string // 资源编号
-  buildingName: string // 楼栋名称
+  assetName: string // 楼栋/围合名称
   floorName: string // 楼层名称
   projectName: string // 项目名称
   resourceTypeCode: string // 资源类型
@@ -1544,7 +1695,7 @@ interface AssetResourceVO {
   resourceMediaTypeCode: string // 媒体类型编码
   projectId: string // 项目编码
   projectName: string // 项目名称
-  buildingEnclosureName: string // 楼栋/围合名称
+  assetName: string // 楼栋/围合名称
   floorName: string // 楼层名称
   resourceSpecs: string // 规格
   resourceArea: number // 面积
@@ -1748,6 +1899,12 @@ interface AssetProjectVO {
   parkingSpaceCount: number // 停车位数量
   resourceCount: number // 空间点位数量
   coverImageModel: FileModel // 封面照片文件对象
+}
+
+interface UserTemplateImportCheckVO {
+  numRight: number // 正常数量条数
+  numError: number // 异常数量条数
+  errorMsgList: string[] // 异常提示
 }
 
 // 资产管理-停车场管理

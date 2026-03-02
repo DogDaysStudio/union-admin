@@ -207,7 +207,7 @@ const deleteShop = (shopId: string): void => {
       <el-table-column label="建筑面积（㎡）" prop="buildingArea" width="125" />
       <el-table-column label="实用面积（㎡）" prop="usableArea" width="125" />
       <el-table-column label="所属项目" prop="projectName" />
-      <el-table-column label="所属围合" prop="enclosureName" />
+      <el-table-column label="所属楼栋/围合" prop="assetName" width="125" />
       <el-table-column label="所属楼层" prop="floorName" width="90" />
       <el-table-column label="经营模式" prop="businessModelName" />
       <el-table-column label="产权单位" prop="ownershipUnitName" />
