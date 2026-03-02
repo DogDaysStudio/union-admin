@@ -15,6 +15,7 @@ interface Tree {
 const sysDict = [
   {label: '系统分类', value: 9000},
   {label: '权限分类', value: 9001},
+  {label: '性别', value: 9002},
 ]
 
 const dict = [

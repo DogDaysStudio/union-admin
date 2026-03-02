@@ -20,3 +20,11 @@ export function iamAuthUserListLoginLog(payload: AuthUserLoginLogListDTO) {
 export function iamAuthUserGet(payload: {userId: any}) {
   return http.post<Res<AuthUserVO>>('/iam/auth-user/get', payload)
 }
+// 修改部门
+export function iamAuthUserUpdateOrg(payload: AuthUserUpdateOrgDTO) {
+  return http.post<Res<Record<string, any>>>('/iam/auth-user/update-org', payload)
+}
+// 修改角色
+export function iamAuthUserUpdateRole(payload: AuthUserUpdateRoleDTO) {
+  return http.post<Res<Record<string, any>>>('/iam/auth-user/update-role', payload)
+}

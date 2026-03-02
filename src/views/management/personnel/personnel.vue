@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import {useActivated, useForm} from '@/common/hooks'
+import {useActivated, useDicListTree, useForm} from '@/common/hooks'
 import {defineField, defineSchema} from '@/components'
-import {computed} from 'vue'
+import {computed, ref, useTemplateRef} from 'vue'
 import {useRouter} from 'vue-router'
 import {usePagination, useRequest} from 'vue-request'
 import {iamAuthOrgList, iamAuthRoleList} from '@/service/api/iamAuth'
-import {iamAuthUserList} from '@/service/api/imaAuthUser'
+import {iamAuthUserList, iamAuthUserUpdateOrg} from '@/service/api/imaAuthUser'
+import {rules} from '@/common/rules'
+import {ElMessage} from 'element-plus'
 
 const router = useRouter()
 
@@ -54,12 +56,6 @@ const handleImport = () => {
   router.push('/management/personnel/import')
 }
 
-// 处理批量修改部门
-const handleBatchUpdateDept = () => {
-  console.log('修改部门')
-  // 这里可以添加批量修改部门的逻辑
-}
-
 // 处理批量修改角色
 const handleBatchUpdateRole = () => {
   console.log('修改角色')
@@ -95,6 +91,63 @@ const handleResetPassword = (user: AuthUserVO) => {
   // 这里可以添加重置密码的逻辑
 }
 
+const handleSelectionChange = (val: AuthUserVO[]) => {
+  editDeptForm.users = val
+  editDeptForm.userList = val.map(item => item.userId)
+}
+
+const multipleTableRef = useTemplateRef('multipleTableRef')
+
+// 修改部门弹窗
+const editDeptDialogVisible = ref(false)
+const editDeptFormRef = useTemplateRef('editDeptFormRef')
+const [editDeptForm, resetEditDeptForm] = useForm(
+  {
+    users: [] as AuthUserVO[],
+    userList: [] as string[],
+    orgId: '',
+    notes: '',
+  },
+  editDeptFormRef
+)
+
+// 处理修改部门
+const handleBatchUpdateDept = () => {
+  if (!editDeptForm.users.length) {
+    ElMessage.warning('请选择要修改部门的人员')
+    return
+  }
+  // 显示弹窗
+  editDeptDialogVisible.value = true
+}
+
+// 修改部门
+const {runAsync: runUpsertUserOrg, loading: upsertLoading} = useRequest(iamAuthUserUpdateOrg)
+
+// 修改角色
+// const {runAsync: runUpsertUserRole, loading: upsertRoleLoading} = useRequest(iamAuthUserUpdateRole)
+
+// 处理修改部门确认
+const handleEditDeptConfirm = async () => {
+  if (!editDeptFormRef.value) return
+  await editDeptFormRef.value?.validate()
+  // 这里可以添加修改部门的逻辑
+  await runUpsertUserOrg({
+    userIdList: editDeptForm.userList,
+    orgIdList: [editDeptForm.orgId],
+  })
+  ElMessage.success('修改部门成功')
+  // 关闭弹窗
+  editDeptDialogVisible.value = false
+  refreshPersonnelList()
+}
+
+// 处理修改部门取消
+const handleEditDeptCancel = () => {
+  // 关闭弹窗
+  editDeptDialogVisible.value = false
+}
+
 const schema = computed(() =>
   defineSchema({
     fields: [
@@ -119,6 +172,8 @@ const schema = computed(() =>
     ],
   })
 )
+
+const gender = useDicListTree({dicType: 9002})
 </script>
 
 <template>
@@ -155,10 +210,21 @@ const schema = computed(() =>
       </el-space>
     </template>
 
-    <el-table :data="personnelList?.data" stripe border v-loading="personnelListLoading">
+    <el-table
+      ref="multipleTableRef"
+      :data="personnelList?.data"
+      stripe
+      border
+      v-loading="personnelListLoading"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="certName" label="姓名" />
-      <el-table-column prop="gender" label="性别" />
+      <el-table-column
+        prop="gender"
+        label="性别"
+        :formatter="row => gender?.find(item => item.dicCode === row.gender)?.dicName || '-'"
+      />
       <el-table-column prop="orgName" label="所属部门" />
       <el-table-column prop="roleName" label="当前角色" />
       <el-table-column prop="loginAccount" label="登录账号" width="140" />
@@ -203,4 +269,60 @@ const schema = computed(() =>
     @size-change="changePageSize"
     @current-change="changeCurrent"
   />
+
+  <!-- 修改部门弹窗 -->
+  <el-dialog
+    v-model="editDeptDialogVisible"
+    title="修改部门"
+    @closed="
+      () => {
+        resetEditDeptForm()
+        multipleTableRef?.clearSelection()
+      }
+    "
+  >
+    <el-form :model="editDeptForm" ref="editDeptFormRef" label-width="100px">
+      <el-form-item label="已选员工" prop="userList" :rules="[rules.required()]">
+        <el-select v-model="editDeptForm.userList" placeholder="选择员工" multiple>
+          <el-option
+            v-for="item in editDeptForm.users"
+            :key="item.userId"
+            :label="item.certName + ' ' + `${item.orgName} / ${item.roleName}`"
+            :value="item.userId"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="修改部门" prop="orgId" :rules="[rules.required()]">
+        <el-select
+          v-model="editDeptForm.orgId"
+          placeholder="选择部门"
+          filterable
+          default-first-option
+        >
+          <el-option
+            v-for="item in orgList?.data"
+            :key="item.orgId"
+            :label="item.orgName"
+            :value="item.orgId"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="原因备注" prop="notes" :rules="[rules.required()]">
+        <el-input
+          v-model="editDeptForm.notes"
+          type="textarea"
+          placeholder="请输入原因备注"
+          :rows="4"
+          show-word-limit
+          maxlength="300"
+        />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="handleEditDeptCancel">取消</el-button>
+      <el-button type="primary" :loading="upsertLoading" @click="handleEditDeptConfirm">
+        保存
+      </el-button>
+    </template>
+  </el-dialog>
 </template>
