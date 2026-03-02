@@ -43,14 +43,20 @@ http.interceptors.response.use(
 
       // 显示错误信息
       if (error.response?.config?.showError !== false) {
-        ElMessage.error(
-          `登录已过期，请重新登录${error.response?.data?.msg ? `: ${error.response?.data?.msg}` : ''}`
-        )
+        ElMessage({
+          message: error.response?.data?.msg || '登录已过期，请重新登录',
+          type: 'error',
+          grouping: true,
+        })
       }
     } else {
       // 显示错误信息
       if (error.response?.config?.showError !== false) {
-        ElMessage.error(error.response?.data?.msg || error.message || '请求失败')
+        ElMessage({
+          message: error.response?.data?.msg || error.message || '请求失败',
+          type: 'error',
+          grouping: true,
+        })
       }
     }
 
