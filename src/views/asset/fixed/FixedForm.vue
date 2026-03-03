@@ -53,7 +53,12 @@ const locationDisplay = reactive({
   totalFloor: '',
 })
 
-type AssetFixedFormData = AssetFixedUpsertDTO & {enable?: number; businessModelCode?: string}
+type AssetFixedFormData = AssetFixedUpsertDTO & {
+  enable?: number
+  businessModelCode?: string
+  fixedId: string
+  locationTypeCode?: string
+}
 
 const formData = reactive<AssetFixedFormData>({
   fixedId: '',
@@ -425,7 +430,7 @@ const handleSubmit = () => {
   formRef.value.validate(async valid => {
     if (!valid) return
     if (!formData.fixedId) {
-      formData.fixedId = generateFixedId()
+      generateFixedId()
     }
     const fileIds = await validateFileList(attachmentFileList.value)
     const payload: AssetFixedFormData = {...formData}

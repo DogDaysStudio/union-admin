@@ -12,25 +12,17 @@ import {
   amsAssetFixedBatchEnable,
 } from '@/service/api/amsAsset'
 
-type AssetFixedListForm = Omit<AssetFixedListDTO, 'enable'> & {
-  enable?: number
+type AssetFixedListForm = AssetFixedListDTO & {
+  // enable?: number
   deviceWorkState?: number | string
   locationName?: string
 }
 
-const formState = reactive<AssetFixedListForm>({
+const formState = reactive({
   pageable: true,
   pageNum: 1,
   pageSize: 10,
-  buildingName: '',
-  floorName: '',
-  projectName: '',
-  deviceType: '',
-  fixedName: '',
-  deviceWorkState: '',
-  locationName: '',
-  enable: undefined,
-})
+} as AssetFixedListForm)
 
 const formSchema = defineSchema({
   fields: [
@@ -73,14 +65,6 @@ const reset = () => {
     pageable: true,
     pageNum: 1,
     pageSize: 10,
-    buildingName: '',
-    floorName: '',
-    projectName: '',
-    deviceType: '',
-    fixedName: '',
-    deviceWorkState: '',
-    locationName: '',
-    enable: undefined,
   })
   getData()
 }
@@ -205,19 +189,15 @@ const handleBatchDisable = () => {
   })
 }
 
-const handleBatchDelete = () => {
+const handleBatchDelete = async () => {
   if (!ensureSelection()) return
-  ElMessageBox.confirm('确认批量删除选中的固定资产吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    // 循环调用删除接口实现批量删除（根据后端接口要求一次传一个 fixedId）
-    const deletePromises = selectedRows.value.map(item => fixedDelete({fixedId: item.fixedId}))
-    await Promise.all(deletePromises)
-    ElMessage.success('批量删除成功')
-    getData()
-  })
+  await ElMessageBox.confirm('确认批量删除选中的固定资产吗？', '提示')
+
+  // 循环调用删除接口实现批量删除（根据后端接口要求一次传一个 fixedId）
+  const deletePromises = selectedRows.value.map(item => fixedDelete({fixedId: item.fixedId}))
+  await Promise.all(deletePromises)
+  ElMessage.success('批量删除成功')
+  getData()
 }
 
 const warrantyDialogVisible = ref(false)
