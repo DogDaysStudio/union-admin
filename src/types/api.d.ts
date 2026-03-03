@@ -195,6 +195,30 @@ interface ApiType {
   '/iam/auth-user/update-org': {Req: AuthUserUpdateOrgDTO; Res: Record<string, any>}
 
   /* 【人员管理】
+  // 导入步骤4: 导入人员 | object:{fid:文件ID}
+  export function iamAuthUserTemplateImport(payload: {fid: any}) {return http.post<Res<number>>('/iam/auth-user/template-import', payload)}
+  */
+  '/iam/auth-user/template-import': {Req: {fid: any}; Res: number}
+
+  /* 【人员管理】
+  // 导入步骤1: 导出上传模板
+  export function iamAuthUserTemplateExport(payload: Record<string, any>) {return http.post<Res<>>('/iam/auth-user/template-export', payload)}
+  */
+  '/iam/auth-user/template-export': {Req: Record<string, any>}
+
+  /* 【人员管理】
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
+  export function iamAuthUserTemplateCheck(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/iam/auth-user/template-check', payload)}
+  */
+  '/iam/auth-user/template-check': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【人员管理】
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
+  export function iamAuthUserTemplateCheckExport(payload: {fid: any}) {return http.post<Res<>>('/iam/auth-user/template-check-export', payload)}
+  */
+  '/iam/auth-user/template-check-export': {Req: {fid: any}}
+
+  /* 【人员管理】
   // 重置密码 | object:{userId:人员ID,remark:备注}
   export function iamAuthUserResetPassword(payload: {userId: any; remark: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-user/reset-password', payload)}
   */
@@ -1263,7 +1287,7 @@ interface AuthUserUpsertDTO {
   certName: string // 证件姓名
   certType?: string // 证件类型
   certNo?: string // *证件号码
-  gender: string // 性别 1:男 2:女
+  gender: string // 性别(1:男 2:女)
   birthday?: string // 生日
   mobile: string // 手机号
   email?: string // 邮箱
@@ -1273,6 +1297,7 @@ interface AuthUserUpsertDTO {
   companyCode?: string // 企业编号
   roleIdList?: string[] // 角色ID列表
   orgIdList?: string[] // 部门ID列表
+  errorMsg?: string // 导入错误信息
 }
 
 interface AuthUserUpdateRoleDTO {
@@ -1285,6 +1310,12 @@ interface AuthUserUpdateOrgDTO {
   userIdList: string[] // 用户ID
   orgIdList: string[] // 部门ID
   remark?: string // 备注
+}
+
+interface UserTemplateImportCheckVO {
+  numRight: number // 正常数量条数
+  numError: number // 异常数量条数
+  errorMsgList: string[] // 异常提示
 }
 
 interface AuthUserListDTO {
@@ -1515,6 +1546,7 @@ interface AssetShopVO {
   ownershipYear: number // 产权年限
   ownershipRatio: number // 产权比例
   realEstateNumber: string // 不动产编号
+  shopTypeCode: string // 商铺类型编码
   shopTypeName: string // 商铺类型名称
   shopHeight: number // 商铺层高
   shopState: number // 0-空闲;1-出租中
@@ -1900,12 +1932,6 @@ interface AssetProjectVO {
   parkingSpaceCount: number // 停车位数量
   resourceCount: number // 空间点位数量
   coverImageModel: FileModel // 封面照片文件对象
-}
-
-interface UserTemplateImportCheckVO {
-  numRight: number // 正常数量条数
-  numError: number // 异常数量条数
-  errorMsgList: string[] // 异常提示
 }
 
 // 资产管理-停车场管理

@@ -11,7 +11,7 @@ const leaseRoutes: RouteRecordRaw[] = [
       {
         path: '',
         // meta: {title: '租赁管理', menu: true},
-        meta: {menu: true},
+        meta: {title: '', menu: true},
         component: () => import('@/views/lease/index.vue'),
       },
     ],

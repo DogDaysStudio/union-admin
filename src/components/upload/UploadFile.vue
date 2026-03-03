@@ -1,4 +1,8 @@
 <script setup lang="ts">
+/**
+ * @example
+   <upload-file ref="uploadRef" v-model:file-list="form.avatarFid as any"></upload-file>
+ */
 import {ref, useAttrs, useTemplateRef} from 'vue'
 import {baseUrl} from '@/common/config'
 import {createHeaders} from '@/service/service'
