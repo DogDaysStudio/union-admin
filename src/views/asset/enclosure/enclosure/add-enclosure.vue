@@ -50,74 +50,70 @@ const getOptions = async (): Promise<void> => {
  * @param index 当前楼栋在buildingList中的索引
  */
 const generateFloorAndShop = () => {
-  const currentBuilding = formData
-  const {aboveground, underground, shopNumber, ownershipUnitCode} = currentBuilding
+  formRef.value.validate(async valid => {
+    if (!valid) return
 
-  // 1. 输入值校验：非空、非负整数
-  if (
-    aboveground === null ||
-    aboveground < 0 ||
-    underground === null ||
-    underground < 0 ||
-    shopNumber === null ||
-    shopNumber < 1
-  ) {
-    ElMessage.warning('请填写有效的数值：地上层/地下层≥0，每层商铺数≥1')
-    return
-  }
+    const currentBuilding = formData
+    const {aboveground, underground, shopNumber, ownershipUnitCode} = currentBuilding
+    if (aboveground === undefined || underground === undefined || shopNumber === undefined) {
+      ElMessage.warning('请填写有效的数值：地上层/地下层≥0，每层商铺数≥1')
+      return
+    }
 
-  const floorData = []
-  const defaultHeight = null // 商铺默认层高（保持原有逻辑）
+    const floorData = []
+    const defaultHeight = null // 商铺默认层高（保持原有逻辑）
 
-  // 3. 生成地上楼层（倒序：如2层→1层，符合示例要求）
-  for (let f = aboveground; f >= 1; f--) {
-    const shopChildren = []
-    // 生成当前楼层的商铺
-    for (let r = 1; r <= shopNumber; r++) {
-      shopChildren.push({
+    // 3. 生成地上楼层（倒序：如2层→1层，符合示例要求）
+    for (let f = aboveground; f >= 1; f--) {
+      const shopChildren = []
+      // 生成当前楼层的商铺
+      for (let r = 1; r <= shopNumber; r++) {
+        shopChildren.push({
+          assetType: '2',
+          shopName: '',
+          shopNumber: `${f}${r.toString().padStart(2, '0')}`,
+          shopHeight: defaultHeight,
+          shopList: undefined,
+          ownershipUnitCode, // 赋值：商铺继承楼栋的产权单位编码
+        })
+      }
+      // 推入地上楼层（新增ownershipUnitCode赋值）
+      floorData.push({
         assetType: '2',
-        shopNumber: `${f}${r.toString().padStart(2, '0')}`,
-        shopHeight: defaultHeight,
-        shopList: undefined,
-        ownershipUnitCode, // 赋值：商铺继承楼栋的产权单位编码
+        floorName: `${f}层`,
+        floorHeight: defaultHeight,
+        shopList: shopChildren,
+        ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
       })
     }
-    // 推入地上楼层（新增ownershipUnitCode赋值）
-    floorData.push({
-      assetType: '2',
-      floorName: `${f}层`,
-      floorHeight: defaultHeight,
-      shopList: shopChildren,
-      ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
-    })
-  }
 
-  // 4. 生成地下楼层（正序：B1层→B2层，符合示例要求）
-  for (let f = 1; f <= underground; f++) {
-    const shopChildren = []
-    // 生成当前地下楼层的商铺
-    for (let r = 1; r <= shopNumber; r++) {
-      shopChildren.push({
+    // 4. 生成地下楼层（正序：B1层→B2层，符合示例要求）
+    for (let f = 1; f <= underground; f++) {
+      const shopChildren = []
+      // 生成当前地下楼层的商铺
+      for (let r = 1; r <= shopNumber; r++) {
+        shopChildren.push({
+          assetType: '2',
+          shopName: '',
+          shopNumber: `B${f}-${r.toString().padStart(3, '0')}`,
+          shopHeight: defaultHeight,
+          shopList: undefined,
+          ownershipUnitCode, // 赋值：商铺继承楼栋的产权单位编码
+        })
+      }
+      // 推入地下楼层（新增ownershipUnitCode赋值）
+      floorData.push({
         assetType: '2',
-        shopNumber: `B${f}-${r.toString().padStart(3, '0')}`,
-        shopHeight: defaultHeight,
-        shopList: undefined,
-        ownershipUnitCode, // 赋值：商铺继承楼栋的产权单位编码
+        floorName: `B${f}层`,
+        floorHeight: defaultHeight,
+        shopList: shopChildren,
+        ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
       })
     }
-    // 推入地下楼层（新增ownershipUnitCode赋值）
-    floorData.push({
-      assetType: '2',
-      floorName: `B${f}层`,
-      floorHeight: defaultHeight,
-      shopList: shopChildren,
-      ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
-    })
-  }
 
-  // 5. 更新当前楼栋的floorData，ElTree会自动重新渲染并回显产权单位
-  currentBuilding.floorList = floorData
-  ElMessage.success('生成成功！')
+    // 5. 更新当前楼栋的floorData，ElTree会自动重新渲染并回显产权单位
+    currentBuilding.floorList = floorData
+  })
 }
 
 // 先完善TS接口：补全Floor、Shop的产权单位相关字段，保证类型匹配
@@ -262,21 +258,33 @@ const handleSubmit = () => {
             <el-col :span="8">
               <el-form-item label="地面（层）">
                 <div class="flex w-full">
-                  <el-input-number v-model="formData.aboveground" placeholder="请填写地面（层）" />
+                  <el-input-number
+                    v-model="formData.aboveground"
+                    placeholder="请填写地面（层）"
+                    :min="0"
+                  />
                 </div>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="地下（层）">
                 <div class="flex w-full">
-                  <el-input-number v-model="formData.underground" placeholder="请填写地下（层）" />
+                  <el-input-number
+                    v-model="formData.underground"
+                    placeholder="请填写地下（层）"
+                    :min="0"
+                  />
                 </div>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="每层商铺数">
                 <div class="flex w-full">
-                  <el-input-number v-model="formData.shopNumber" placeholder="请填写每层商铺数" />
+                  <el-input-number
+                    v-model="formData.shopNumber"
+                    placeholder="请填写每层商铺数"
+                    :min="0"
+                  />
                   <el-button type="primary" class="ml-4" @click="generateFloorAndShop">
                     生成
                   </el-button>
@@ -297,23 +305,23 @@ const handleSubmit = () => {
           >
             <template #default="{data}">
               <el-row v-if="data.shopList" :gutter="24">
-                <el-col :span="8">
+                <span class="ml-2">
                   楼层：
-                  <el-input class="w-50!" v-model="data.floorName" />
-                </el-col>
-                <el-col :span="8">
+                  <el-input class="w-40!" v-model="data.floorName" />
+                </span>
+                <span class="ml-2">
                   层高：
                   <el-input-number
-                    class="w-50!"
+                    class="w-40!"
                     v-model="data.floorHeight"
                     placeholder="请输入层高"
                     :min="0"
                   />
-                </el-col>
-                <el-col :span="8">
+                </span>
+                <span class="ml-2">
                   产权单位：
                   <el-cascader
-                    class="w-50!"
+                    class="w-40!"
                     v-model="data.ownershipUnitCode"
                     placeholder="请选择产权单位"
                     :options="companyOptions"
@@ -324,25 +332,29 @@ const handleSubmit = () => {
                     }"
                     clearable
                   />
-                </el-col>
+                </span>
               </el-row>
               <el-row v-else :gutter="24">
-                <el-col :span="8">
-                  商铺：
-                  <el-input class="w-50!" v-model="data.shopNumber" />
-                </el-col>
-                <el-col :span="8">
+                <span class="ml-2">
+                  商铺名称：
+                  <el-input class="w-40!" v-model="data.shopName" />
+                </span>
+                <span class="ml-2">
+                  商铺号：
+                  <el-input class="w-40!" v-model="data.shopNumber" />
+                </span>
+                <span class="ml-2">
                   层高：
                   <el-input-number
-                    class="w-50!"
+                    class="w-40!"
                     v-model="data.shopHeight"
                     placeholder="请输入层高"
                   />
-                </el-col>
-                <el-col :span="8">
+                </span>
+                <span class="ml-2">
                   产权单位：
                   <el-cascader
-                    class="w-50!"
+                    class="w-40!"
                     v-model="data.ownershipUnitCode"
                     placeholder="请选择产权单位"
                     :options="companyOptions"
@@ -353,7 +365,7 @@ const handleSubmit = () => {
                     }"
                     clearable
                   />
-                </el-col>
+                </span>
               </el-row>
             </template>
           </el-tree>

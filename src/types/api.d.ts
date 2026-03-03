@@ -1501,6 +1501,7 @@ interface AssetShopVO {
   projectId: string // 项目编码
   projectName: string // 项目名称
   assetId: string // 楼栋/围合编码
+  assetType: string // 楼栋/围合类型
   assetName: string // 楼栋/围合名称
   floorId: string // 楼层编码
   floorName: string // 楼层名称

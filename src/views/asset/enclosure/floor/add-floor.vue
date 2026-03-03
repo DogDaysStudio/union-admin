@@ -69,6 +69,7 @@ watch(
 
 // 定义商铺项的类型（规范TS类型，可选但推荐）
 interface ShopItem {
+  shopName: string
   shopNumber: string // 商铺号（与商铺名一致）
   shopHeight: number // 商铺层高（与表单填写的层高一致）
   assetType: string
@@ -77,40 +78,30 @@ interface ShopItem {
 
 // 生成商铺数据：点击生成按钮触发
 const handleGenerateShops = () => {
-  // 1. 校验层高和商铺数是否有效
-  const floorHeight = Number(formData.floorHeight) // 转数字（兼容输入框字符串）
-  const shopCount = formData.shopNumber // 每层商铺数（el-input-number绑定的数字）
-
-  // 校验规则：层高必须是有效数字、商铺数必须是正整数、两者都不能为空
-  if (!shopCount || shopCount < 1) {
-    ElMessage.warning('请填写有效的每层商铺数（正整数）')
-    return
-  }
-  if (isNaN(floorHeight) || floorHeight <= 0) {
-    ElMessage.warning('请填写有效的层高（大于0的数字）')
-    return
-  }
-
-  // 2. 生成商铺数据数组
-  const shopList: ShopItem[] = []
-  for (let i = 1; i <= shopCount; i++) {
-    // 补零生成商铺名/商铺号（001、002、003...格式）
-    const shopNo = String(i).padStart(3, '0')
-    shopList.push({
-      shopNumber: shopNo,
-      shopHeight: floorHeight, // 商铺层高与表单填写的层高一致
-      assetType: '2',
-      ownershipUnitCode:
-        typeof formData.ownershipUnitCode === 'string'
-          ? [formData.ownershipUnitCode]
-          : formData.ownershipUnitCode,
-    })
-  }
-  formData.shopList = shopList as unknown as AssetShopUpsertDTO[]
+  formRef.value.validate(async valid => {
+    if (!valid) return
+    const shopList: ShopItem[] = []
+    for (let i = 1; i <= formData.shopNumber; i++) {
+      // 补零生成商铺名/商铺号（001、002、003...格式）
+      const shopNo = String(i).padStart(3, '0')
+      shopList.push({
+        shopName: '',
+        shopNumber: shopNo,
+        shopHeight: formData.floorHeight,
+        assetType: '2',
+        ownershipUnitCode:
+          typeof formData.ownershipUnitCode === 'string'
+            ? [formData.ownershipUnitCode]
+            : formData.ownershipUnitCode,
+      })
+    }
+    formData.shopList = shopList as unknown as AssetShopUpsertDTO[]
+  })
 }
 
 interface Shop {
   projectId: string
+  shopName: string
   shopNumber: string
   shopHeight: number
   ownershipUnitCode: []
@@ -139,7 +130,7 @@ const handleSubmit = () => {
       paramsData.assetType = '2'
       paramsData.shopList?.forEach((shop: Shop) => {
         shop.projectId = paramsData.projectId
-        if (!shop?.shopHeight) Flag = false
+        if (!shop?.shopName || !shop?.shopNumber || !shop?.shopHeight) Flag = false
         processOwnershipUnit(shop, companyOptions)
       })
       if (Flag) {
@@ -147,7 +138,7 @@ const handleSubmit = () => {
         ElMessage.success(msg)
         router.push('/asset/management/enclosure-floor')
       } else {
-        ElMessage.warning('请填写层高')
+        ElMessage.warning('请填写商铺名称、商铺号、层高')
       }
     } else {
       ElMessage.error('请填写完整信息')
@@ -186,7 +177,7 @@ const handleSubmit = () => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="层高（m）" prop="floorHeight" required>
-                <el-input-number v-model="formData.floorHeight" placeholder="请填写层高" />
+                <el-input-number v-model="formData.floorHeight" placeholder="请填写层高" :min="0" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -228,7 +219,6 @@ const handleSubmit = () => {
                     value: 'dicCode',
                     label: 'dicName',
                   }"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -240,7 +230,13 @@ const handleSubmit = () => {
             <el-col :span="8">
               <el-form-item label="每层商铺数">
                 <div class="flex w-full">
-                  <el-input-number v-model="formData.shopNumber" placeholder="请填写每层商铺数" />
+                  <el-input-number
+                    v-model="formData.shopNumber"
+                    placeholder="请填写每层商铺数"
+                    :precision="0"
+                    :min="1"
+                    :step="1"
+                  />
                   <el-button type="primary" class="ml-4" @click="handleGenerateShops">
                     生成
                   </el-button>
@@ -261,21 +257,26 @@ const handleSubmit = () => {
           >
             <template #default="{data}">
               <el-row :gutter="24">
-                <el-col :span="8">
-                  商铺：
-                  <el-input class="w-50!" v-model="data.shopNumber" />
-                </el-col>
-                <el-col :span="8">
+                <span class="ml-2">
+                  商铺名称：
+                  <el-input class="w-40!" v-model="data.shopName" />
+                </span>
+                <span class="ml-2">
+                  商铺号：
+                  <el-input class="w-40!" v-model="data.shopNumber" />
+                </span>
+                <span class="ml-2">
                   层高：
                   <el-input-number
-                    class="w-50!"
+                    class="w-40!"
                     v-model="data.shopHeight"
                     placeholder="请输入层高"
                   />
-                </el-col>
-                <el-col :span="8">
+                </span>
+                <span class="ml-2">
                   产权单位：
                   <el-cascader
+                    class="w-40!"
                     v-model="data.ownershipUnitCode"
                     placeholder="请选择产权单位"
                     :options="companyOptions"
@@ -284,9 +285,8 @@ const handleSubmit = () => {
                       value: 'dicCode',
                       label: 'dicName',
                     }"
-                    clearable
                   />
-                </el-col>
+                </span>
               </el-row>
             </template>
           </el-tree>
