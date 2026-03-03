@@ -75,6 +75,11 @@ const managementRoutes: RouteRecordRaw[] = [
         meta: {title: '权限管理', menu: true},
         component: () => import('@/views/management/permission.vue'),
       },
+      {
+        path: '/management/log',
+        meta: {title: '日志管理', menu: true},
+        component: () => import('@/views/management/log.vue'),
+      },
     ],
   },
 ]

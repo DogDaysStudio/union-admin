@@ -432,6 +432,13 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/management/log': RouteRecordInfo<
+    '/management/log', // name
+    '/management/log', // path
+    any,
+    any,
+    never
+  >
   '/login': RouteRecordInfo<
     'login', // name
     '/login', // path
