@@ -264,6 +264,34 @@ export interface RouteNamedMap {
     {id: ParamValue<false>},
     never
   >
+  '/asset/management/parking': RouteRecordInfo<
+    '/asset/management/parking', // name
+    '/asset/management/parking', // path
+    any,
+    any,
+    never
+  >
+  '/asset/management/add-parking-lot': RouteRecordInfo<
+    '/asset/management/add-parking-lot', // name
+    '/asset/management/add-parking-lot', // path
+    any,
+    any,
+    never
+  >
+  '/asset/management/edit-parking-lot/:id': RouteRecordInfo<
+    '/asset/management/edit-parking-lot/:id', // name
+    '/asset/management/edit-parking-lot/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/detail-parking-lot/:id': RouteRecordInfo<
+    '/asset/management/detail-parking-lot/:id', // name
+    '/asset/management/detail-parking-lot/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
   '/asset/statistics': RouteRecordInfo<
     '/asset/statistics', // name
     '/asset/statistics', // path

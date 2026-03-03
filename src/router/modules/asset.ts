@@ -174,6 +174,27 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '点位-详情'},
             component: () => import('@/views/asset/point/detail-point.vue'),
           },
+
+          {
+            path: '/asset/management/parking',
+            meta: {title: '建筑物管理', menu: true},
+            component: () => import('@/views/asset/parking/index.vue'),
+          },
+          {
+            path: '/asset/management/add-parking-lot',
+            meta: {title: '停车场-新增'},
+            component: () => import('@/views/asset/parking/lot/add-lot.vue'),
+          },
+          {
+            path: '/asset/management/edit-parking-lot/:id',
+            meta: {title: '停车场-编辑'},
+            component: () => import('@/views/asset/parking/lot/edit-lot.vue'),
+          },
+          {
+            path: '/asset/management/detail-parking-lot/:id',
+            meta: {title: '停车场-详情'},
+            component: () => import('@/views/asset/parking/lot/detail-lot.vue'),
+          },
         ],
       },
       {

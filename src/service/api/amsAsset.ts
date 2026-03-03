@@ -175,6 +175,31 @@ export function amsAssetResourceEnable(payload: {resourceId: any; enable: boolea
   return http.post<Res<Record<string, any>>>('/ams/asset-resource/enable', payload)
 }
 
+// 停车场列表
+export function amsAssetParkingList(payload: AssetParkingListDTO) {
+  return http.post<Res<AssetParkingVO[]>>('/ams/asset-parking/list', payload)
+}
+// 新增停车场
+export function amsAssetParkingUpsert(payload: AssetParkingInsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-parking/upsert', payload)
+}
+// 更新停车场
+export function amsAssetParkingUpdate(payload: AssetParkingDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-parking/update', payload)
+}
+// 停车场详情 | object:{parkingId:停车场编码}
+export function amsAssetParkingGet(payload: {parkingId: any}) {
+  return http.post<Res<AssetParkingVO>>('/ams/asset-parking/get', payload)
+}
+// 删除停车场 | object:{parkingId:停车场编码}
+export function amsAssetParkingDelete(payload: {parkingId: any}) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-parking/delete', payload)
+}
+// 启用/禁用停车场 | object:{parkingId:停车场编码,enable:bool}
+export function amsAssetParkingEnable(payload: {parkingId: any; enable: boolean}) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-parking/enable', payload)
+}
+
 // 根据项目查询围合/楼栋
 export function amsAssetBuildingSelectBuildingEnclosure(payload: Record<string, any>) {
   return http.post<Res<Record<string, any>>>(
