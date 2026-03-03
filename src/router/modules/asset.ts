@@ -132,7 +132,6 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '房屋-详情'},
             component: () => import('@/views/asset/room/detail-room.vue'),
           },
-
           {
             path: '/asset/management/shop',
             meta: {title: '房屋（商业）管理', menu: true},
@@ -142,6 +141,21 @@ const assetRoutes: RouteRecordRaw[] = [
             path: '/asset/management/add-shop',
             meta: {title: '商业-新增'},
             component: () => import('@/views/asset/shop/add-shop.vue'),
+          },
+          {
+            path: 'management/fixed/add',
+            meta: {title: '固定资产-新增'},
+            component: () => import('@/views/asset/fixed/add-fixed.vue'),
+          },
+          {
+            path: 'management/fixed/edit-fixed/:id',
+            meta: {title: '固定资产-编辑'},
+            component: () => import('@/views/asset/fixed/edit-fixed.vue'),
+          },
+          {
+            path: 'management/fixed/detail-fixed/:id',
+            meta: {title: '固定资产-详情'},
+            component: () => import('@/views/asset/fixed/detail-fixed.vue'),
           },
           {
             path: '/asset/management/edit-shop/:id',
@@ -174,7 +188,11 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '点位-详情'},
             component: () => import('@/views/asset/point/detail-point.vue'),
           },
-
+          {
+            path: 'management/fixed',
+            meta: {title: '固定资产管理', menu: true},
+            component: () => import('@/views/asset/fixed/index.vue'),
+          },
           {
             path: '/asset/management/parking',
             meta: {title: '建筑物管理', menu: true},

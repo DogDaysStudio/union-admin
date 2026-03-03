@@ -211,3 +211,40 @@ export function amsAssetBuildingSelectBuildingEnclosure(payload: Record<string, 
 export function amsAssetResourceSelectLocationId(payload: AssetLocationIdListDTO) {
   return http.post<Res<Record<string, any>>>('/ams/asset-resource/select-location-id', payload)
 }
+
+// 固定资产管理
+export function amsAssetFixedList(payload: AssetFixedListDTO) {
+  return http.post<Res<AssetFixedVO[]>>('/ams/asset-fixed/list', payload)
+}
+
+export function amsAssetFixedInsert(payload: AssetFixedUpsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-fixed/insert', payload)
+}
+
+export function amsAssetFixedUpdate(payload: AssetFixedUpsertDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-fixed/update', payload)
+}
+
+// 删除固定资产
+export function amsAssetFixedDelete(payload: {fixedId: string}) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-fixed/delete', payload)
+}
+
+// 启用/禁用固定资产 | object:{fixedId:固定资产编码,enable:bool}
+export function amsAssetFixedEnable(payload: {fixedId: string; enable: boolean}) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-fixed/enable', payload)
+}
+
+// 批量启用/禁用固定资产
+export function amsAssetFixedBatchEnable(payload: AssetFixedBatchEnableDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-enable', payload)
+}
+
+// 生成固定资产编码
+export function amsAssetFixedGenerateFixedId(payload: AssetFixedIdGenerateDTO) {
+  return http.post<Res<string>>('/ams/asset-fixed/generate-fixed-id', payload)
+}
+
+export function amsAssetFixedGet(payload: {fixedId: string}) {
+  return http.post<Res<AssetFixedVO>>('/ams/asset-fixed/get', payload)
+}

@@ -222,6 +222,27 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/asset/management/fixed/add': RouteRecordInfo<
+    '/asset/management/fixed/add', // name
+    '/asset/management/fixed/add', // path
+    any,
+    any,
+    never
+  >
+  '/asset/management/fixed/edit-fixed/:id': RouteRecordInfo<
+    '/asset/management/fixed/edit-fixed/:id', // name
+    '/asset/management/fixed/edit-fixed/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/fixed/detail-fixed/:id': RouteRecordInfo<
+    '/asset/management/fixed/detail-fixed/:id', // name
+    '/asset/management/fixed/detail-fixed/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
   '/asset/management/edit-shop/:id': RouteRecordInfo<
     '/asset/management/edit-shop/:id', // name
     '/asset/management/edit-shop/:id', // path
@@ -262,6 +283,13 @@ export interface RouteNamedMap {
     '/asset/management/detail-point/:id', // path
     {id: ParamValue<true>},
     {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/fixed': RouteRecordInfo<
+    '/asset/management/fixed', // name
+    '/asset/management/fixed', // path
+    any,
+    any,
     never
   >
   '/asset/management/parking': RouteRecordInfo<

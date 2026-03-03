@@ -531,10 +531,22 @@ interface ApiType {
   '/ams/asset-room/insert': {Req: AssetRoomInsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-住宅管理】
+  // 导入步骤4: 导入房间 | object:{fid:文件ID,assetType:资产类型}
+  export function amsAssetRoomImportTemplate(payload: {fid: any; assetType: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-room/import-template', payload)}
+  */
+  '/ams/asset-room/import-template': {Req: {fid: any; assetType: any}; Res: Record<string, any>}
+
+  /* 【资产管理-住宅管理】
   // 住宅详情
   export function amsAssetRoomGet(payload: Record<string, any>) {return http.post<Res<AssetRoomVO>>('/ams/asset-room/get', payload)}
   */
   '/ams/asset-room/get': {Req: Record<string, any>; Res: AssetRoomVO}
+
+  /* 【资产管理-住宅管理】
+  // 导入步骤1: 导出上传模板
+  export function amsAssetRoomExportTemplate(payload: Record<string, any>) {return http.post<Res<>>('/ams/asset-room/export-template', payload)}
+  */
+  '/ams/asset-room/export-template': {Req: Record<string, any>}
 
   /* 【资产管理-住宅管理】
   // 启用/禁用住宅 | object:{roomId:住宅编码,enable:bool}
@@ -547,6 +559,18 @@ interface ApiType {
   export function amsAssetRoomDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-room/delete', payload)}
   */
   '/ams/asset-room/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-住宅管理】
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
+  export function amsAssetRoomCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-room/check-template', payload)}
+  */
+  '/ams/asset-room/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【资产管理-住宅管理】
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
+  export function amsAssetRoomCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-room/check-template-export', payload)}
+  */
+  '/ams/asset-room/check-template-export': {Req: {fid: any}}
 
   /* 【资产管理-资源管理】
   // 更新资源
@@ -1064,6 +1088,7 @@ interface OpenAppListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   appId: string // 应用ID
   appName: string // 应用名称
   homeUrl: string // 应用主页URL
@@ -1322,6 +1347,7 @@ interface AuthUserListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   keyword: string // 姓名/账号/手机号
   certName: string // 证件姓名
   enable: number // 账号启用
@@ -1337,6 +1363,7 @@ interface AuthUserLoginLogListDTO {
   pageable?: boolean
   pageNum?: number
   pageSize?: number
+  exportFields?: string[]
   userId: string // 用户ID
   insertTimeBegin?: string // 记录插入时间
   insertTimeEnd?: string // 记录插入时间
@@ -1374,6 +1401,7 @@ interface AuthRoleListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   roleId: string // 角色id
   roleName: string // 角色名称
   roleCode: string // 自定义角色编码
@@ -1395,6 +1423,7 @@ interface AuthPermissionListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   permId: string // 权限ID
   permPid: string // 上级权限ID
   sysId: string // 系统编码
@@ -1418,6 +1447,7 @@ interface AuthOrgListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   orgId: string // 部门ID
   orgIdList: string[] // 部门ID列表
   orgPid: string // 上级部门ID
@@ -1446,6 +1476,7 @@ interface SysDicListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   dicId: string // ID
   dicType: number // 字典类型
   dicPcode: string // 父级ID（用于树形结构，顶级为NULL）
@@ -1504,6 +1535,7 @@ interface AssetShopListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   shopId: string // 商铺编码
   shopNumber: string // 商铺号
   buildingArea: number // 建筑面积
@@ -1604,6 +1636,7 @@ interface AssetRoomListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   roomId: string // 住宅编码
   roomNumber: string // 房间号
   roomLayoutCode: string // 户型编码
@@ -1696,6 +1729,7 @@ interface AssetResourceListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   resourceId: string // 资源编码
   resourceName: string // 资源名称
   resourceNumber: string // 资源编号
@@ -1836,6 +1870,7 @@ interface AssetProjectListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   projectId: string // 项目编码
   projectName: string // 项目名称
   projectShortName: string // 项目简称
@@ -1982,6 +2017,7 @@ interface AssetParkingListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   parkingId: string // 停车场编码
   parkingName: string // 停车场名称
   projectName: string // 项目名称
@@ -2012,6 +2048,7 @@ interface AssetParkingSpaceListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   parkingSpaceName: string // 车位名称
   parkingSpaceId: string // 车位编码
   parkingId: string // 停车场编码
@@ -2067,6 +2104,7 @@ interface AssetFloorListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   floorId: string // 楼层编码
   assetId: string // 资产编码
   floorName: string // 楼层名称
@@ -2097,15 +2135,15 @@ interface AssetFloorVO {
 
 // 资产管理-固定资产
 interface AssetFixedUpsertDTO {
-  fixedId: string // 固定资产编码
   projectId: string // 项目编码
   assetId: string // 楼栋/围合/停车场id
   assetType: string // 楼栋/围合/停车场
   floorId: string // 楼层编码
-  locationTypeCode: string // 位置类型编码(Pz or NonPz)
-  locationTypeName: string // 位置类型名称(公区 或 非公区)
-  locationId: string // 位置编码(非公区为房间或商铺编码;公区为字典编码)
-  locationName: string // 位置名称(非公区为房间号或商铺号;公区为字典字典名称)
+  locationCode: string // 位置编码
+  locationName: string // 位置名称
+  businessModelCode: string // 经营模式编码
+  businessModelName: string // 经营模式名称
+  locationId: string // 房间号/商铺号
   fixedName: string // 固定资产名称
   serialNumber: string // 序列号
   fixedTypeCode: string // 资产类型编码
@@ -2152,6 +2190,7 @@ interface AssetFixedListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   projectName: string // 项目名称
   buildingName: string // 楼栋名称
   floorName: string // 楼层名称
@@ -2164,13 +2203,17 @@ interface AssetFixedListDTO {
 interface AssetFixedVO {
   fixedId: string // 固定资产编码
   projectId: string // 项目编码
+  projectName: string // 项目名称
   assetId: string // 楼栋/围合/停车场id
+  assetName: string // 楼栋/围合/停车场名称
   assetType: string // 楼栋/围合/停车场
   floorId: string // 楼层编码
-  locationTypeCode: string // 位置类型编码(Pz or NonPz)
-  locationTypeName: string // 位置类型名称(公区 或 非公区)
-  locationId: string // 位置编码(非公区为房间或商铺编码;公区为字典编码)
-  locationName: string // 位置名称(非公区为房间号或商铺号;公区为字典字典名称)
+  floorName: string // 楼层编码
+  locationCode: string // 位置编码
+  locationName: string // 位置名称
+  businessModelCode: string // 经营模式编码
+  businessModelName: string // 经营模式名称
+  locationId: string // 房间号/商铺号
   fixedName: string // 固定资产名称
   serialNumber: string // 序列号
   fixedTypeCode: string // 资产类型编码
@@ -2215,7 +2258,8 @@ interface AssetFixedVO {
 interface AssetFixedIdGenerateDTO {
   projectId: string // 项目编码
   floorId: string // 楼层编码
-  locationId: string // 位置编码
+  locationCode: string // 位置编码
+  locationId: string // 房间号/商铺号
   fixedTypeCode: string // 资产类型编码
   deviceTypeCode: string // 设备类型编码
 }
@@ -2257,6 +2301,7 @@ interface AssetEnclosureListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   enclosureId: string // 围合编码
   projectId: string // 项目编码
   projectName: string // 项目名称
@@ -2304,6 +2349,7 @@ interface AssetBuildingListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   projectName: string // 项目名称
   projectId: string // 项目编码
   buildingId: string // 楼栋编码
