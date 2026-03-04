@@ -11,6 +11,7 @@ const assetRoutes: RouteRecordRaw[] = [
         path: '',
         meta: {title: '资产管理'},
         children: [
+          // 项目管理
           {
             path: '/asset/management/project',
             meta: {title: '项目管理', menu: true},
@@ -41,6 +42,7 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '项目管理-详情'},
             component: () => import('@/views/asset/management/detail-project.vue'),
           },
+          // 楼栋管理
           {
             path: '/asset/management/building-floor',
             meta: {title: '楼栋管理', menu: true},
@@ -76,6 +78,7 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '楼层-详情'},
             component: () => import('@/views/asset/building/floor/detail-floor.vue'),
           },
+          // 围合管理
           {
             path: '/asset/management/enclosure-floor',
             meta: {title: '围合管理', menu: true},
@@ -111,7 +114,7 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '围合-楼层-详情'},
             component: () => import('@/views/asset/enclosure/floor/detail-floor.vue'),
           },
-
+          // 房屋（住宅）管理
           {
             path: '/asset/management/room',
             meta: {title: '房屋（住宅）管理', menu: true},
@@ -143,21 +146,6 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/shop/add-shop.vue'),
           },
           {
-            path: 'management/fixed/add',
-            meta: {title: '固定资产-新增'},
-            component: () => import('@/views/asset/fixed/add-fixed.vue'),
-          },
-          {
-            path: 'management/fixed/edit-fixed/:id',
-            meta: {title: '固定资产-编辑'},
-            component: () => import('@/views/asset/fixed/edit-fixed.vue'),
-          },
-          {
-            path: 'management/fixed/detail-fixed/:id',
-            meta: {title: '固定资产-详情'},
-            component: () => import('@/views/asset/fixed/detail-fixed.vue'),
-          },
-          {
             path: '/asset/management/edit-shop/:shopId',
             meta: {title: '商业-编辑'},
             component: () => import('@/views/asset/shop/edit-shop.vue'),
@@ -167,7 +155,7 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '商业-详情'},
             component: () => import('@/views/asset/shop/detail-shop.vue'),
           },
-
+          // 点位资源管理
           {
             path: '/asset/management/point',
             meta: {title: '点位资源管理', menu: true},
@@ -188,11 +176,7 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '点位-详情'},
             component: () => import('@/views/asset/point/detail-point.vue'),
           },
-          {
-            path: 'management/fixed',
-            meta: {title: '固定资产管理', menu: true},
-            component: () => import('@/views/asset/fixed/index.vue'),
-          },
+          // 建筑物管理
           {
             path: '/asset/management/parking',
             meta: {title: '建筑物管理', menu: true},
@@ -222,6 +206,27 @@ const assetRoutes: RouteRecordRaw[] = [
             path: '/asset/management/detail-parking-space/:id',
             meta: {title: '停车位-详情'},
             component: () => import('@/views/asset/parking/space/detail-space.vue'),
+          },
+          // 固定资产管理
+          {
+            path: 'management/fixed',
+            meta: {title: '固定资产管理', menu: true},
+            component: () => import('@/views/asset/fixed/index.vue'),
+          },
+          {
+            path: 'management/fixed/add',
+            meta: {title: '固定资产-新增'},
+            component: () => import('@/views/asset/fixed/add-fixed.vue'),
+          },
+          {
+            path: 'management/fixed/edit-fixed/:id',
+            meta: {title: '固定资产-编辑'},
+            component: () => import('@/views/asset/fixed/edit-fixed.vue'),
+          },
+          {
+            path: 'management/fixed/detail-fixed/:id',
+            meta: {title: '固定资产-详情'},
+            component: () => import('@/views/asset/fixed/detail-fixed.vue'),
           },
         ],
       },

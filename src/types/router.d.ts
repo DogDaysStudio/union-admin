@@ -222,27 +222,6 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/asset/management/fixed/add': RouteRecordInfo<
-    '/asset/management/fixed/add', // name
-    '/asset/management/fixed/add', // path
-    any,
-    any,
-    never
-  >
-  '/asset/management/fixed/edit-fixed/:id': RouteRecordInfo<
-    '/asset/management/fixed/edit-fixed/:id', // name
-    '/asset/management/fixed/edit-fixed/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
-    never
-  >
-  '/asset/management/fixed/detail-fixed/:id': RouteRecordInfo<
-    '/asset/management/fixed/detail-fixed/:id', // name
-    '/asset/management/fixed/detail-fixed/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
-    never
-  >
   '/asset/management/edit-shop/:shopId': RouteRecordInfo<
     '/asset/management/edit-shop/:shopId', // name
     '/asset/management/edit-shop/:shopId', // path
@@ -285,13 +264,6 @@ export interface RouteNamedMap {
     {resourceId: ParamValue<false>},
     never
   >
-  '/asset/management/fixed': RouteRecordInfo<
-    '/asset/management/fixed', // name
-    '/asset/management/fixed', // path
-    any,
-    any,
-    never
-  >
   '/asset/management/parking': RouteRecordInfo<
     '/asset/management/parking', // name
     '/asset/management/parking', // path
@@ -330,6 +302,34 @@ export interface RouteNamedMap {
   '/asset/management/detail-parking-space/:id': RouteRecordInfo<
     '/asset/management/detail-parking-space/:id', // name
     '/asset/management/detail-parking-space/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/fixed': RouteRecordInfo<
+    '/asset/management/fixed', // name
+    '/asset/management/fixed', // path
+    any,
+    any,
+    never
+  >
+  '/asset/management/fixed/add': RouteRecordInfo<
+    '/asset/management/fixed/add', // name
+    '/asset/management/fixed/add', // path
+    any,
+    any,
+    never
+  >
+  '/asset/management/fixed/edit-fixed/:id': RouteRecordInfo<
+    '/asset/management/fixed/edit-fixed/:id', // name
+    '/asset/management/fixed/edit-fixed/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
+  '/asset/management/fixed/detail-fixed/:id': RouteRecordInfo<
+    '/asset/management/fixed/detail-fixed/:id', // name
+    '/asset/management/fixed/detail-fixed/:id', // path
     {id: ParamValue<true>},
     {id: ParamValue<false>},
     never
