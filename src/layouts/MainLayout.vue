@@ -46,28 +46,7 @@ const tabsStore = useTabStore()
 
 const handleTabRemove = (name: TabPaneName) => {
   const tabName = name as string
-  const currentPath = route.path
-
-  // 找到要删除的tab的索引
-  const tabIndex = tabsStore.tabs.findIndex(tab => tab.path === tabName)
-
-  // 移除tab
-  tabsStore.removeTab(tabName)
-
-  // 如果删除的是当前激活的tab，且还有其他tab
-  if (tabName === currentPath && tabsStore.tabs.length > 0) {
-    // 计算要激活的tab的索引
-    let activeIndex = tabIndex
-    if (activeIndex >= tabsStore.tabs.length) {
-      // 如果删除的是最后一个tab，激活前一个
-      activeIndex = tabsStore.tabs.length - 1
-    }
-
-    // 跳转到对应的tab
-    if (activeIndex >= 0) {
-      router.push(tabsStore.tabs[activeIndex].path)
-    }
-  }
+  tabsStore.close(tabName)
 }
 
 // 标注 name 的类型为 tabs 的 @tab-change 事件的入参

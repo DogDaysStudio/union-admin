@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import {useTabStore} from '@/stores/tabs'
+
+const tabsStore = useTabStore()
+</script>
+
 <template>
   <el-card>
     <template #header>导入项目</template>
@@ -12,7 +18,7 @@
         upload: '上传填好的员工信息表',
         // uploadDesc: '文件后缀名必须为xls或xlsx（即Excel格式），文件大小不得大于10M',
       }"
-      @finish="console.log('finish')"
+      @finish="tabsStore.close()"
     ></import-data>
   </el-card>
 </template>
