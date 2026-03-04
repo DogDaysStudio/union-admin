@@ -14,7 +14,7 @@ const formData = reactive({} as AssetEnclosureVO)
 onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
-  const {data} = await enclosureGet({enclosureId: route.params.id})
+  const {data} = await enclosureGet({enclosureId: route.params.enclosureId})
   Object.assign(formData, data)
 }
 

@@ -108,29 +108,19 @@ const detailEnclosure = (enclosureId: string) =>
   router.push(`/asset/management/detail-enclosure/${enclosureId}`)
 
 // 修改状态
-const toggleStatus = (enclosureId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}围合?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await enclosureEnable({enclosureId, enable: enable ? false : true})
-    ElMessage.success('修改成功')
-    getData()
-  })
+const toggleStatus = async (enclosureId: string, enable: number) => {
+  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}围合?`, '确认提示')
+  await enclosureEnable({enclosureId, enable: enable ? false : true})
+  ElMessage.success('修改成功')
+  getData()
 }
 
 // 删除
-const deleteEnclosure = (enclosureId: string): void => {
-  ElMessageBox.confirm(`是否确定删除围合?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await enclosureDelete({enclosureId})
-    ElMessage.success('删除成功')
-    getData()
-  })
+const deleteEnclosure = async (enclosureId: string) => {
+  await ElMessageBox.confirm(`是否确定删除围合?`, '确认提示')
+  await enclosureDelete({enclosureId})
+  ElMessage.success('删除成功')
+  getData()
 }
 </script>
 

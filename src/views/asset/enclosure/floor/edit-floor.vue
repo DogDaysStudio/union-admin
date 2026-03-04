@@ -46,7 +46,7 @@ onMounted(() => getOptions())
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...project)
-  const {data: floorDetail} = await getFloor({floorId: route.params.id})
+  const {data: floorDetail} = await getFloor({floorId: route.params.floorId})
   Object.assign(formData, floorDetail)
 }
 

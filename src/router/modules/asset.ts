@@ -87,12 +87,12 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/enclosure/enclosure/add-enclosure.vue'),
           },
           {
-            path: '/asset/management/edit-enclosure/:id',
+            path: '/asset/management/edit-enclosure/:enclosureId',
             meta: {title: '围合-编辑'},
             component: () => import('@/views/asset/enclosure/enclosure/edit-enclosure.vue'),
           },
           {
-            path: '/asset/management/detail-enclosure/:id',
+            path: '/asset/management/detail-enclosure/:enclosureId',
             meta: {title: '围合-详情'},
             component: () => import('@/views/asset/enclosure/enclosure/detail-enclosure.vue'),
           },
@@ -102,12 +102,12 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/enclosure/floor/add-floor.vue'),
           },
           {
-            path: '/asset/management/edit-enclosure-floor/:id',
+            path: '/asset/management/edit-enclosure-floor/:floorId',
             meta: {title: '围合-楼层-编辑'},
             component: () => import('@/views/asset/enclosure/floor/edit-floor.vue'),
           },
           {
-            path: '/asset/management/detail-enclosure-floor/:id',
+            path: '/asset/management/detail-enclosure-floor/:floorId',
             meta: {title: '围合-楼层-详情'},
             component: () => import('@/views/asset/enclosure/floor/detail-floor.vue'),
           },

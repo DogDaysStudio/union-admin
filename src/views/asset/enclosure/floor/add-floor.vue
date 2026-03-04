@@ -235,7 +235,6 @@ const handleSubmit = () => {
                     placeholder="请填写每层商铺数"
                     :precision="0"
                     :min="1"
-                    :step="1"
                   />
                   <el-button type="primary" class="ml-4" @click="handleGenerateShops">
                     生成
@@ -271,6 +270,7 @@ const handleSubmit = () => {
                     class="w-40!"
                     v-model="data.shopHeight"
                     placeholder="请输入层高"
+                    :min="0"
                   />
                 </span>
                 <span class="ml-2">

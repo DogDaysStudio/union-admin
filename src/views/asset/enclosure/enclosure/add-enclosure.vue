@@ -262,6 +262,7 @@ const handleSubmit = () => {
                     v-model="formData.aboveground"
                     placeholder="请填写地面（层）"
                     :min="0"
+                    :precision="0"
                   />
                 </div>
               </el-form-item>
@@ -273,6 +274,7 @@ const handleSubmit = () => {
                     v-model="formData.underground"
                     placeholder="请填写地下（层）"
                     :min="0"
+                    :precision="0"
                   />
                 </div>
               </el-form-item>
@@ -284,6 +286,7 @@ const handleSubmit = () => {
                     v-model="formData.shopNumber"
                     placeholder="请填写每层商铺数"
                     :min="0"
+                    :precision="0"
                   />
                   <el-button type="primary" class="ml-4" @click="generateFloorAndShop">
                     生成

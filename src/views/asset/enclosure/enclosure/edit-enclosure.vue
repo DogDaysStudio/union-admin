@@ -42,7 +42,7 @@ onMounted(() => getOptions())
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...project)
-  const {data: detail} = await enclosureGet({enclosureId: route.params.id})
+  const {data: detail} = await enclosureGet({enclosureId: route.params.enclosureId})
   Object.assign(formData, detail)
 }
 
