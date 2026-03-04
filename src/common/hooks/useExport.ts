@@ -51,6 +51,8 @@ export function useExport<URL extends keyof ApiType>(options: {meta: string; url
       customClass: 'min-w-[600px]',
       showCancelButton: true,
       confirmButtonText: '导出',
+      draggable: true,
+      overflow: true,
       message: () =>
         h(ExportData, {
           modelValue: exportFields.value,

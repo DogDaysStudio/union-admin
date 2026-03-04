@@ -27,7 +27,7 @@ const handleCheckAllChange = (value: CheckboxValueType) => {
 </script>
 
 <template>
-  <div class="flex flex-row justify-between">
+  <el-space size="large">
     <el-checkbox
       :model-value="checkAll"
       :indeterminate="isIndeterminate"
@@ -36,7 +36,7 @@ const handleCheckAllChange = (value: CheckboxValueType) => {
       全选
     </el-checkbox>
     <el-button text type="danger" @click="$emit('save', modelValue)">保存配置</el-button>
-  </div>
+  </el-space>
   <el-checkbox-group v-model="modelValue">
     <el-row>
       <el-col v-for="item in meta" :key="item.k" :span="6">
