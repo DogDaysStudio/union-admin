@@ -15,6 +15,12 @@ interface ApiType {
   '/iam/sys-action-log/list': {Req: SysActionLogListDTO; Res: SysActionLogVO[]}
 
   /* 【日志管理】
+  // 日志列表导出
+  export function iamSysActionLogListExport(payload: SysActionLogListDTO) {return http.post<Res<>>('/iam/sys-action-log/list-export', payload)}
+  */
+  '/iam/sys-action-log/list-export': {Req: SysActionLogListDTO}
+
+  /* 【日志管理】
   // 清空日志
   export function iamSysActionLogClear(payload: SysActionLogListDTO) {return http.post<Res<Record<string, any>>>('/iam/sys-action-log/clear', payload)}
   */
@@ -2143,6 +2149,7 @@ interface AssetFloorVO {
 
 // 资产管理-固定资产
 interface AssetFixedUpsertDTO {
+  fixedId: string // 固定资产编码
   projectId: string // 项目编码
   assetId: string // 楼栋/围合/停车场id
   assetType: string // 楼栋/围合/停车场

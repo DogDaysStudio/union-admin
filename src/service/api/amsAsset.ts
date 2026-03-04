@@ -199,6 +199,26 @@ export function amsAssetParkingDelete(payload: {parkingId: any}) {
 export function amsAssetParkingEnable(payload: {parkingId: any; enable: boolean}) {
   return http.post<Res<Record<string, any>>>('/ams/asset-parking/enable', payload)
 }
+// 停车位列表
+export function amsAssetParkingSpaceList(payload: AssetParkingSpaceListDTO) {
+  return http.post<Res<AssetParkingSpaceVO[]>>('/ams/asset-parking-space/list', payload)
+}
+// 新增停车位
+export function amsAssetParkingSpaceInsert(payload: AssetParkingSpaceDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/insert', payload)
+}
+// 更新停车位
+export function amsAssetParkingSpaceUpdate(payload: AssetParkingSpaceDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/update', payload)
+}
+// 停车位详情
+export function amsAssetParkingSpaceGet(payload: Record<string, any>) {
+  return http.post<Res<AssetParkingSpaceVO>>('/ams/asset-parking-space/get', payload)
+}
+// 删除停车位 | object:{parkingSpaceId:停车位编码}
+export function amsAssetParkingSpaceDelete(payload: {parkingSpaceId: any}) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/delete', payload)
+}
 
 // 根据项目查询围合/楼栋
 export function amsAssetBuildingSelectBuildingEnclosure(payload: Record<string, any>) {

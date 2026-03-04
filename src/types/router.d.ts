@@ -320,6 +320,20 @@ export interface RouteNamedMap {
     {id: ParamValue<false>},
     never
   >
+  '/asset/management/add-parking-space': RouteRecordInfo<
+    '/asset/management/add-parking-space', // name
+    '/asset/management/add-parking-space', // path
+    any,
+    any,
+    never
+  >
+  '/asset/management/detail-parking-space/:id': RouteRecordInfo<
+    '/asset/management/detail-parking-space/:id', // name
+    '/asset/management/detail-parking-space/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
   '/asset/statistics': RouteRecordInfo<
     '/asset/statistics', // name
     '/asset/statistics', // path

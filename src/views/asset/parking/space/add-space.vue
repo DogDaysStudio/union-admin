@@ -1,33 +1,30 @@
 <script setup lang="ts">
 import {ref, reactive, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
-import type {FormInstance, FormRules, UploadFile, UploadFiles} from 'element-plus'
+import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {useDicListTree} from '@/common/hooks/useDicTree'
-import {amsAssetProjectList, amsAssetParkingUpsert} from '@/service/api/amsAsset'
+import {
+  amsAssetProjectList,
+  amsAssetParkingSpaceInsert,
+  amsAssetParkingList,
+} from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
 // import {findValueByCustomId} from '@/utils/array-util'
-import UniUpload from '@/components/upload/UploadFile.vue'
-declare module 'element-plus' {
-  interface UploadFile {
-    bizData?: {
-      id: string
-    }
-  }
-}
 
 const router = useRouter()
 
 // 项目列表
 const {runAsync: projectList} = useRequest(amsAssetProjectList)
 const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 字典 [停车场位置1013 停车方式1026 车位类别1014 区域类别1025]
-const parkingLocationOptions = useDicListTree({dicType: 1013})
-const parkingMethodOptions = useDicListTree({dicType: 1026})
-const parkingCategoryOptions = useDicListTree({dicType: 1014})
-const regionCategoryOptions = useDicListTree({dicType: 1025})
-// 新增停车场
-const {runAsync: parkingUpsert, loading: insertLoading} = useRequest(amsAssetParkingUpsert)
+// 停车场列表
+const {runAsync: parkingList} = useRequest(amsAssetParkingList)
+const parkingOptions = reactive<{parkingId: string; parkingName: string}[]>([])
+// 字典 [车位属性1016 是否充电车位1015]
+const parkingSpaceAttributeOptions = useDicListTree({dicType: 1016})
+const chargingPortOptions = useDicListTree({dicType: 1015})
+// 新增停车位
+const {runAsync: parkingUpsert, loading: insertLoading} = useRequest(amsAssetParkingSpaceInsert)
 
 const formRef = ref<FormInstance>()
 
@@ -49,7 +46,6 @@ const formRules = reactive({
     parkingCategoryCode: {required: true, message: '请选择车位类别', trigger: 'blur'},
     parkingSpaceQuantity: {required: true, message: '请输入停车位数', trigger: 'blur'},
     regionCategoryCode: {required: true, message: '请选择区域类别', trigger: 'blur'},
-    parkingSpaceRegionJson: {required: true, message: '请输入车位区域', trigger: 'blur'},
   },
 
   // 停车位信息部分
@@ -63,6 +59,8 @@ onMounted(() => getOptions())
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...project)
+  const {data: parking} = await parkingList({pageable: false} as AssetParkingListDTO)
+  parkingOptions.push(...parking)
 }
 
 const handleAddSpace = () => {
@@ -106,21 +104,11 @@ const handleDeletePoint = async (parkingSpaceName: string) => {
   ElMessage.success('删除成功!')
 }
 
-const fileList = ref<UploadFile[]>([])
-const handleFileChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
-  fileList.value = uploadFiles as UploadFile[]
-  // console.log(fileList.value, 'fileList.value')
-}
-
 const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
     if (valid) {
       const paramsData = JSON.parse(JSON.stringify(formData)) as AssetParkingInsertDTO & AddLot
-      if (fileList.value?.length) {
-        const fileResponse = fileList.value[0]?.response as {data: {id: string}} | undefined
-        paramsData.parking.regionMapFid = fileResponse?.data?.id || fileList.value[0]?.bizData?.id
-      }
       console.log(paramsData, 'paramsData')
       const {msg} = await parkingUpsert({...paramsData})
       ElMessage.success(msg)
@@ -166,18 +154,37 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="停车场" prop="parking.parkingName" required>
-                <el-input v-model="formData.parking.parkingName" placeholder="请输入停车场" />
+              <el-form-item label="停车场" prop="parking.parkingId" required>
+                <el-select v-model="formData.parking.parkingId" placeholder="请选择停车场">
+                  <el-option
+                    v-for="item in parkingOptions"
+                    :key="item.parkingId"
+                    :label="item.parkingName"
+                    :value="item.parkingId"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="停车场位置" prop="parking.parkingLocationCode" required>
+              <el-form-item label="车位区域" prop="parking.parkingId" required>
+                <el-select v-model="formData.parking.parkingId" placeholder="请选择车位区域">
+                  <el-option
+                    v-for="item in parkingOptions"
+                    :key="item.parkingId"
+                    :label="item.parkingName"
+                    :value="item.parkingId"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="车位属性" prop="parking.parkingSpaceAttributeCode" required>
                 <el-select
-                  v-model="formData.parking.parkingLocationCode"
-                  placeholder="请选择停车场位置"
+                  v-model="formData.parking.parkingSpaceAttributeCode"
+                  placeholder="请选择车位属性"
                 >
                   <el-option
-                    v-for="item in parkingLocationOptions"
+                    v-for="item in parkingSpaceAttributeOptions"
                     :key="item.dicCode"
                     :label="item.dicName"
                     :value="item.dicCode"
@@ -186,13 +193,10 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="停车方式" prop="parking.parkingMethodCode" required>
-                <el-select
-                  v-model="formData.parking.parkingMethodCode"
-                  placeholder="请选择停车方式"
-                >
+              <el-form-item label="是否充电车位" prop="parking.chargingPort" required>
+                <el-select v-model="formData.parking.chargingPort" placeholder="请选择是否充电车位">
                   <el-option
-                    v-for="item in parkingMethodOptions"
+                    v-for="item in chargingPortOptions"
                     :key="item.dicCode"
                     :label="item.dicName"
                     :value="item.dicCode"
@@ -201,61 +205,20 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="车位类别" prop="parking.parkingCategoryCode" required>
+              <el-form-item label="车位状态" prop="parking.parkingSpaceState" required>
                 <el-select
-                  v-model="formData.parking.parkingCategoryCode"
-                  placeholder="请选择车位类别"
-                >
-                  <el-option
-                    v-for="item in parkingCategoryOptions"
-                    :key="item.dicCode"
-                    :label="item.dicName"
-                    :value="item.dicCode"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="停车位数" prop="parking.parkingSpaceQuantity" required>
-                <el-input-number
-                  v-model="formData.parking.parkingSpaceQuantity"
-                  placeholder="请输入停车位数"
-                  :min="0"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="区域类别" prop="parking.regionCategoryCode" required>
-                <el-select
-                  v-model="formData.parking.regionCategoryCode"
-                  placeholder="请选择区域类别"
-                >
-                  <el-option
-                    v-for="item in regionCategoryOptions"
-                    :key="item.dicCode"
-                    :label="item.dicName"
-                    :value="item.dicCode"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="16">
-              <el-form-item label="车位区域" prop="parking.parkingSpaceRegionJson" required>
-                <el-input
-                  type="textarea"
-                  autosize
-                  v-model="formData.parking.parkingSpaceRegionJson"
-                  placeholder="请输入车位区域"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="封面图片">
-                <uni-upload
-                  v-model:file-list="fileList"
-                  :limit="1"
-                  :accept="'.jpg,.png,.pdf'"
-                  @change="handleFileChange"
+                  v-model="formData.parking.parkingSpaceState"
+                  :options="[
+                    {
+                      value: 0,
+                      label: '空闲',
+                    },
+                    {
+                      value: 1,
+                      label: '出租中',
+                    },
+                  ]"
+                  placeholder="请选择车位状态"
                 />
               </el-form-item>
             </el-col>
