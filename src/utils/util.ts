@@ -32,7 +32,7 @@ export async function downloadBlob({url, body, headers, name, ...options}: Downl
     return
   }
 
-  let filename = response.headers.get('nyg8-filename')
+  let filename = response.headers.get('union-filename')
   filename = filename ? decodeURIComponent(filename) : name || '导出.xlsx'
   const blob = await response.blob()
   const a = document.createElement('a')
