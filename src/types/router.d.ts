@@ -243,18 +243,18 @@ export interface RouteNamedMap {
     {id: ParamValue<false>},
     never
   >
-  '/asset/management/edit-shop/:id': RouteRecordInfo<
-    '/asset/management/edit-shop/:id', // name
-    '/asset/management/edit-shop/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/edit-shop/:shopId': RouteRecordInfo<
+    '/asset/management/edit-shop/:shopId', // name
+    '/asset/management/edit-shop/:shopId', // path
+    {shopId: ParamValue<true>},
+    {shopId: ParamValue<false>},
     never
   >
-  '/asset/management/detail-shop/:id': RouteRecordInfo<
-    '/asset/management/detail-shop/:id', // name
-    '/asset/management/detail-shop/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/detail-shop/:shopId': RouteRecordInfo<
+    '/asset/management/detail-shop/:shopId', // name
+    '/asset/management/detail-shop/:shopId', // path
+    {shopId: ParamValue<true>},
+    {shopId: ParamValue<false>},
     never
   >
   '/asset/management/point': RouteRecordInfo<

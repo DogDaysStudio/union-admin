@@ -158,12 +158,12 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/fixed/detail-fixed.vue'),
           },
           {
-            path: '/asset/management/edit-shop/:id',
+            path: '/asset/management/edit-shop/:shopId',
             meta: {title: '商业-编辑'},
             component: () => import('@/views/asset/shop/edit-shop.vue'),
           },
           {
-            path: '/asset/management/detail-shop/:id',
+            path: '/asset/management/detail-shop/:shopId',
             meta: {title: '商业-详情'},
             component: () => import('@/views/asset/shop/detail-shop.vue'),
           },

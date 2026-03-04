@@ -317,7 +317,7 @@ const handleSubmit = () => {
                 </span>
                 <span class="ml-2">
                   新增商铺数：
-                  <el-input-number class="w-40!" v-model="data.count" :min="1" />
+                  <el-input-number class="w-40!" v-model="data.count" :min="1" :precision="0" />
                   <el-button class="ml-2" type="primary" @click="handleAddRoom(data)">
                     生成商铺
                   </el-button>
@@ -326,7 +326,7 @@ const handleSubmit = () => {
               <div :gutter="24" v-else>
                 <span class="ml-2">
                   商铺名称：
-                  <el-input class="w-40!" v-model="data.shopName" :min="0" />
+                  <el-input class="w-40!" v-model="data.shopName" />
                 </span>
                 <span class="ml-2">
                   商铺号：

@@ -308,15 +308,15 @@ const handleSubmit = () => {
               <div :gutter="24" v-if="data.children">
                 <span class="ml-2">
                   楼层：
-                  <el-input class="w-50!" v-model="data.floorName" disabled />
+                  <el-input class="w-40!" v-model="data.floorName" disabled />
                 </span>
                 <span class="ml-2">
                   已有房间数：
-                  <el-input class="w-50!" v-model="data.roomNumber" disabled />
+                  <el-input class="w-40!" v-model="data.roomNumber" disabled />
                 </span>
                 <span class="ml-2">
                   户型：
-                  <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
+                  <el-select class="w-40!" v-model="data.roomLayoutCode" placeholder="请选择户型">
                     <el-option
                       v-for="item in roomOptions"
                       :key="item.dicCode"
@@ -327,7 +327,7 @@ const handleSubmit = () => {
                 </span>
                 <span class="ml-2">
                   新增房间数：
-                  <el-input-number class="w-50!" v-model="data.count" :min="1" :precision="0" />
+                  <el-input-number class="w-40!" v-model="data.count" :min="1" :precision="0" />
                   <el-button class="ml-2" type="primary" @click="handleAddRoom(data)">
                     生成房间
                   </el-button>
@@ -336,11 +336,11 @@ const handleSubmit = () => {
               <div :gutter="24" v-else>
                 <span class="ml-2">
                   房号：
-                  <el-input class="w-50!" v-model="data.roomNumber" />
+                  <el-input class="w-40!" v-model="data.roomNumber" />
                 </span>
                 <span class="ml-2">
                   户型：
-                  <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
+                  <el-select class="w-40!" v-model="data.roomLayoutCode" placeholder="请选择户型">
                     <el-option
                       v-for="item in roomOptions"
                       :key="item.dicCode"
@@ -352,7 +352,7 @@ const handleSubmit = () => {
                 <span class="ml-2">
                   产权单位：
                   <el-cascader
-                    class="w-50!"
+                    class="w-40!"
                     v-model="data.ownershipUnitCode"
                     placeholder="请选择产权单位"
                     :options="companyOptions"
@@ -366,7 +366,7 @@ const handleSubmit = () => {
                 </span>
                 <span class="ml-2">
                   面积：
-                  <el-input-number class="w-50!" v-model="data.buildingArea" :min="0" />
+                  <el-input-number class="w-40!" v-model="data.buildingArea" :min="0" />
                 </span>
               </div>
             </template>

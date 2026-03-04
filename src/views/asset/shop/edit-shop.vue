@@ -93,7 +93,7 @@ const getOptions = async (): Promise<void> => {
 }
 
 const getDetail = async () => {
-  const {data: shopDetail} = await shopGet({shopId: route.params.id})
+  const {data: shopDetail} = await shopGet({shopId: route.params.shopId})
   Object.assign(formData, shopDetail)
   const {data: asset} = await assetList({
     projectId: shopDetail.projectId,

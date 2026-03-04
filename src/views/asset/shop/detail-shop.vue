@@ -14,7 +14,7 @@ const formData = reactive({} as AssetShopVO)
 onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await shopGet({shopId: route.params.id})
+  const {data} = await shopGet({shopId: route.params.shopId})
   data.shopState = (data.shopState == 0
     ? '空闲'
     : data.shopState == 1

@@ -157,29 +157,21 @@ const editShop = (shopId: string) => router.push(`/asset/management/edit-shop/${
 const detailShop = (shopId: string) => router.push(`/asset/management/detail-shop/${shopId}`)
 
 // 修改状态
-const toggleStatus = (shopId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}商铺?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+const toggleStatus = async (shopId: string, enable: number) => {
+  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}商铺?`, '确认提示', {
     type: 'warning',
-  }).then(async () => {
-    await shopEnable({shopId, enable: enable ? false : true})
-    ElMessage.success('修改成功')
-    getData()
   })
+  await shopEnable({shopId, enable: enable ? false : true})
+  ElMessage.success('修改成功')
+  getData()
 }
 
 // 删除
-const deleteShop = (shopId: string): void => {
-  ElMessageBox.confirm(`是否确定删除商铺?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await shopDelete({shopId})
-    ElMessage.success('删除成功')
-    getData()
-  })
+const deleteShop = async (shopId: string) => {
+  await ElMessageBox.confirm(`是否确定删除商铺?`, '确认提示', {type: 'warning'})
+  await shopDelete({shopId})
+  ElMessage.success('删除成功')
+  getData()
 }
 </script>
 
