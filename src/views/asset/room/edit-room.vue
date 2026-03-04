@@ -42,11 +42,22 @@ const formData = reactive({} as AssetRoomUpsertDTO)
 
 const formRules = reactive<FormRules>({
   roomNumber: {required: true, message: '请填写房间号', trigger: 'blur'},
+  roomLayoutCode: {required: true, message: '请选择户型', trigger: 'blur'},
   projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
+  assetId: {required: true, message: '请选择所属楼栋', trigger: 'blur'},
+  floorId: {required: true, message: '请选择所属楼层', trigger: 'blur'},
+  ownershipUnitCode: {required: true, message: '请选择产权单位', trigger: 'blur'},
+  roomTypeCode: {required: true, message: '请选择房间类型', trigger: 'blur'},
+  businessModelCode: {required: true, message: '请选择经营模式', trigger: 'blur'},
+  roomHeight: {required: true, message: '请填写房间层高', trigger: 'blur'},
+  buildingArea: {required: true, message: '请填写建筑面积', trigger: 'blur'},
+  rentalArea: {required: true, message: '请填写计租面积', trigger: 'blur'},
+  propertyFeeArea: {required: true, message: '请填写物业收费面积', trigger: 'blur'},
   waterServiceNo: {required: true, message: '请填写水务户号', trigger: 'blur'},
   powerGridNo: {required: true, message: '请填写电网户号', trigger: 'blur'},
   gasNo: {required: true, message: '请填写燃气户号', trigger: 'blur'},
   decorationLevel: {required: true, message: '请填写房源装修等级', trigger: 'blur'},
+  leaseType: {required: true, message: '请选择租赁方式', trigger: 'blur'},
 })
 
 onMounted(() => {
@@ -71,6 +82,30 @@ const getDetail = async () => {
     pageable: false,
     assetType: '1',
     assetId: floorDetail.assetId,
+  } as AssetFloorListDTO)
+  floorOptions.push(...floor)
+}
+
+const changeProjectId = async (projectId: string) => {
+  buildingOptions.length = 0
+  formData.assetId = ''
+  formData.floorId = ''
+  floorOptions.length = 0
+  const {data: asset} = await buildingList({
+    pageable: false,
+    projectId,
+  } as AssetBuildingListDTO)
+  buildingOptions.push(...Object.values(asset))
+}
+
+const changeAssetId = async (assetId: string) => {
+  floorOptions.length = 0
+  formData.floorId = ''
+  formData.assetType = ''
+  const {data: floor} = await floorList({
+    pageable: false,
+    assetType: '1',
+    assetId,
   } as AssetFloorListDTO)
   floorOptions.push(...floor)
 }
@@ -128,8 +163,8 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="户型" required>
-                <el-select v-model="formData.roomLayoutCode" placeholder="请选择户型" disabled>
+              <el-form-item label="户型" prop="roomLayoutCode" required>
+                <el-select v-model="formData.roomLayoutCode" placeholder="请选择户型">
                   <el-option
                     v-for="item in roomOptions"
                     :key="item.dicCode"
@@ -141,7 +176,11 @@ const handleSubmit = () => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="所属项目" prop="projectId" required>
-                <el-select v-model="formData.projectId" placeholder="请选择所属项目" disabled>
+                <el-select
+                  v-model="formData.projectId"
+                  placeholder="请选择所属项目"
+                  @change="changeProjectId"
+                >
                   <el-option
                     v-for="item in projectOptions"
                     :key="item.projectId"
@@ -152,8 +191,12 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="所属楼栋" required>
-                <el-select v-model="formData.assetId" placeholder="请选择所属楼栋" disabled>
+              <el-form-item label="所属楼栋" prop="assetId" required>
+                <el-select
+                  v-model="formData.assetId"
+                  placeholder="请选择所属楼栋"
+                  @change="changeAssetId"
+                >
                   <el-option
                     v-for="item in buildingOptions"
                     :key="item.buildingId"
@@ -164,8 +207,8 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="所属楼层" required>
-                <el-select v-model="formData.floorId" placeholder="请选择所属楼层" disabled>
+              <el-form-item label="所属楼层" prop="floorId" required>
+                <el-select v-model="formData.floorId" placeholder="请选择所属楼层">
                   <el-option
                     v-for="item in floorOptions"
                     :key="item.floorId"
@@ -176,7 +219,7 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="产权单位" required>
+              <el-form-item label="产权单位" prop="ownershipUnitCode" required>
                 <el-cascader
                   v-model="formData.ownershipUnitCode"
                   placeholder="请选择产权单位"
@@ -186,8 +229,6 @@ const handleSubmit = () => {
                     value: 'dicCode',
                     label: 'dicName',
                   }"
-                  clearable
-                  disabled
                 />
               </el-form-item>
             </el-col>
@@ -196,8 +237,8 @@ const handleSubmit = () => {
         <section-group title="其他信息" inline>
           <el-row :gutter="24">
             <el-col :span="8">
-              <el-form-item label="房间类型" required>
-                <el-select v-model="formData.roomTypeCode" placeholder="请选择房间类型" disabled>
+              <el-form-item label="房间类型" prop="roomTypeCode" required>
+                <el-select v-model="formData.roomTypeCode" placeholder="请选择房间类型">
                   <el-option
                     v-for="item in roomTypeOptions"
                     :key="item.dicCode"
@@ -208,12 +249,8 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="经营模式" required>
-                <el-select
-                  v-model="formData.businessModelCode"
-                  placeholder="请选择经营模式"
-                  disabled
-                >
+              <el-form-item label="经营模式" prop="businessModelCode" required>
+                <el-select v-model="formData.businessModelCode" placeholder="请选择经营模式">
                   <el-option
                     v-for="item in businessModelOptions"
                     :key="item.dicCode"
@@ -224,38 +261,38 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="房间层高（m）" required>
+              <el-form-item label="房间层高（m）" prop="roomHeight" required>
                 <el-input-number
                   v-model="formData.roomHeight"
                   placeholder="请填写房间层高"
-                  disabled
+                  :min="0"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="建筑面积（m）" required>
+              <el-form-item label="建筑面积（㎡）" prop="buildingArea" required>
                 <el-input-number
                   v-model="formData.buildingArea"
                   placeholder="请填写建筑面积"
-                  disabled
+                  :min="0"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="计租面积（m）" required>
+              <el-form-item label="计租面积（㎡）" prop="rentalArea" required>
                 <el-input-number
                   v-model="formData.rentalArea"
                   placeholder="请填写计租面积"
-                  disabled
+                  :min="0"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="物业收费面积（m）" required>
+              <el-form-item label="物业收费面积（㎡）" prop="propertyFeeArea" required>
                 <el-input-number
                   v-model="formData.propertyFeeArea"
                   placeholder="请填写物业收费面积"
-                  disabled
+                  :min="0"
                 />
               </el-form-item>
             </el-col>
@@ -280,7 +317,7 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="租赁方式" required>
+              <el-form-item label="租赁方式" prop="leaseType" required>
                 <el-select
                   v-model="formData.leaseType"
                   :options="[
@@ -294,7 +331,6 @@ const handleSubmit = () => {
                     },
                   ]"
                   placeholder="请选择租赁方式"
-                  disabled
                 />
               </el-form-item>
             </el-col>
