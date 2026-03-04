@@ -6,7 +6,7 @@ import {ElMessage} from 'element-plus'
 import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetProjectList,
-  amsAssetParkingSpaceInsert,
+  // amsAssetParkingSpaceInsert,
   amsAssetParkingList,
 } from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
@@ -24,7 +24,7 @@ const parkingOptions = reactive<{parkingId: string; parkingName: string}[]>([])
 const parkingSpaceAttributeOptions = useDicListTree({dicType: 1016})
 const chargingPortOptions = useDicListTree({dicType: 1015})
 // 新增停车位
-const {runAsync: parkingUpsert, loading: insertLoading} = useRequest(amsAssetParkingSpaceInsert)
+// const {runAsync: parkingUpsert, loading: insertLoading} = useRequest(amsAssetParkingSpaceInsert)
 
 const formRef = ref<FormInstance>()
 
@@ -104,18 +104,18 @@ const handleDeletePoint = async (parkingSpaceName: string) => {
   ElMessage.success('删除成功!')
 }
 
-const handleSubmit = () => {
-  if (!formRef.value) return
-  formRef.value.validate(async valid => {
-    if (valid) {
-      const paramsData = JSON.parse(JSON.stringify(formData)) as AssetParkingInsertDTO & AddLot
-      console.log(paramsData, 'paramsData')
-      const {msg} = await parkingUpsert({...paramsData})
-      ElMessage.success(msg)
-      router.push('/asset/management/parking')
-    }
-  })
-}
+// const handleSubmit = () => {
+//   if (!formRef.value) return
+//   formRef.value.validate(async valid => {
+//     if (valid) {
+//       const paramsData = JSON.parse(JSON.stringify(formData)) as AssetParkingInsertDTO & AddLot
+//       console.log(paramsData, 'paramsData')
+//       const {msg} = await parkingUpsert({...paramsData})
+//       ElMessage.success(msg)
+//       router.push('/asset/management/parking')
+//     }
+//   })
+// }
 </script>
 
 <template>
@@ -179,10 +179,7 @@ const handleSubmit = () => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="车位属性" prop="parking.parkingSpaceAttributeCode" required>
-                <el-select
-                  v-model="formData.parking.parkingSpaceAttributeCode"
-                  placeholder="请选择车位属性"
-                >
+                <el-select v-model="formData.parking.parkingId" placeholder="请选择车位属性">
                   <el-option
                     v-for="item in parkingSpaceAttributeOptions"
                     :key="item.dicCode"
@@ -194,7 +191,7 @@ const handleSubmit = () => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="是否充电车位" prop="parking.chargingPort" required>
-                <el-select v-model="formData.parking.chargingPort" placeholder="请选择是否充电车位">
+                <el-select v-model="formData.parking.parkingId" placeholder="请选择是否充电车位">
                   <el-option
                     v-for="item in chargingPortOptions"
                     :key="item.dicCode"
@@ -207,7 +204,7 @@ const handleSubmit = () => {
             <el-col :span="8">
               <el-form-item label="车位状态" prop="parking.parkingSpaceState" required>
                 <el-select
-                  v-model="formData.parking.parkingSpaceState"
+                  v-model="formData.parking.parkingId"
                   :options="[
                     {
                       value: 0,
@@ -275,7 +272,7 @@ const handleSubmit = () => {
 
         <div class="flex justify-center mt-6">
           <el-button @click="router.push('/asset/management/point')">返回</el-button>
-          <el-button type="primary" @click="handleSubmit" :loading="insertLoading">确定</el-button>
+          <!-- <el-button type="primary" @click="handleSubmit" :loading="insertLoading">确定</el-button> -->
         </div>
       </el-form>
     </div>
