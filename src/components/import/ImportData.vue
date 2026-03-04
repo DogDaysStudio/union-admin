@@ -6,10 +6,10 @@
     check-url="/iam/auth-user/template-check"
     check-export-url="/iam/auth-user/template-check-export"
     import-url="/iam/auth-user/template-import"
-    :props="{
-      templateTitle: '填写导入员工的信息',
+    :title="{
+      template: '填写导入员工的信息',
       // templateDesc: '请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除',
-      uploadTitle: '上传填好的员工信息表',
+      upload: '上传填好的员工信息表',
       // uploadDesc: '文件后缀名必须为xls或xlsx（即Excel格式），文件大小不得大于10M',
     }"
     @finish="console.log('finish')"
@@ -21,10 +21,10 @@ import type {UploadUserFile} from 'element-plus'
 import http from '@/service/service'
 import {downloadBlob} from '@/utils/util'
 
-interface Props {
-  templateTitle?: string // 模板标题
+interface Title {
+  template?: string // 模板标题
   templateDesc?: string // 模板描述
-  uploadTitle?: string // 上传标题
+  upload?: string // 上传标题
   uploadDesc?: string // 上传描述
 }
 
@@ -48,7 +48,7 @@ const props = defineProps<{
   /**
    * 页面描述
    */
-  props?: Props
+  title?: Title
   /**
    * 文件上传地址
    */
@@ -133,10 +133,10 @@ const step2 = async () => {
       <div class="flex items-center justify-between">
         <el-icon size="50" color="var(--el-color-primary)"><Document /></el-icon>
         <div class="pl-4 flex-1">
-          <div class="font-bold mb-1">{{ props.props?.templateTitle || '填写导入项目的信息' }}</div>
+          <div class="font-bold mb-1">{{ title?.template || '填写导入项目的信息' }}</div>
           <span class="text-gray-400 text-sm">
             {{
-              props.props?.templateDesc ||
+              title?.templateDesc ||
               '请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除'
             }}
           </span>
@@ -151,11 +151,10 @@ const step2 = async () => {
       <div class="flex items-center justify-between">
         <el-icon size="50" color="var(--el-color-primary)"><UploadFilled /></el-icon>
         <div class="pl-4 flex-1">
-          <div class="font-bold mb-1">{{ props.props?.uploadTitle || '上传填好的项目信息表' }}</div>
+          <div class="font-bold mb-1">{{ title?.upload || '上传填好的项目信息表' }}</div>
           <div class="text-gray-400 text-sm">
             {{
-              props.props?.uploadDesc ||
-              '文件后缀名必须为xls或xlsx（即Excel格式），文件大小不得大于10M'
+              title?.uploadDesc || '文件后缀名必须为xls或xlsx（即Excel格式），文件大小不得大于10M'
             }}
           </div>
         </div>
