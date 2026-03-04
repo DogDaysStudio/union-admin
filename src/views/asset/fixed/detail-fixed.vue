@@ -118,7 +118,7 @@ onMounted(loadDetail)
       </div>
     </template>
 
-    <el-skeleton v-if="loading" rows="10" animated />
+    <el-skeleton v-if="loading" :rows="10" animated />
     <div v-else class="space-y-6">
       <section-group v-for="group in detailConfig" :key="group.title" :title="group.title" inline>
         <el-row v-for="(row, rowIdx) in group.fields" :key="rowIdx" :gutter="24">
