@@ -4,6 +4,7 @@ import {usePagination, useRequest} from 'vue-request'
 import {ElMessage} from 'element-plus'
 import {defineField, defineSchema} from '@/components'
 import {iamSysActionLogClear, iamSysActionLogList} from '@/service/api/iamSys'
+import {useExport} from '@/common/hooks'
 
 // 筛选条件
 const searchForm = reactive({
@@ -24,6 +25,10 @@ const {
 } = usePagination(iamSysActionLogList, {
   manual: false,
   defaultParams: [searchForm],
+})
+
+const {exportData, loading: exportLoading} = useExport({
+  url: '/iam/sys-action-log/list-export',
 })
 
 // 请求清空日志
@@ -54,11 +59,6 @@ const handleClear = async () => {
   await ElMessageBox.confirm('确认清空所有日志吗？', '提示')
   await reqClearLog.run(searchForm)
   refreshLogList()
-}
-
-// 导出
-const handleExport = () => {
-  ElMessage.info('导出功能开发中')
 }
 
 // 搜索表单 schema
@@ -101,7 +101,7 @@ const searchFormSchema = defineSchema({
   <!-- 数据列表区域 -->
   <section-group title="数据列表">
     <template #extra>
-      <el-button @click="handleExport">导出</el-button>
+      <el-button @click="exportData(searchForm)" :loading="exportLoading">导出</el-button>
       <el-button type="danger" @click="handleClear">清空</el-button>
     </template>
 
