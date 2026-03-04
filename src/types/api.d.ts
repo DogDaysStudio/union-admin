@@ -243,6 +243,12 @@ interface ApiType {
   '/iam/auth-user/list-export': {Req: AuthUserListDTO}
 
   /* 【人员管理】
+  // 人员列表导出(字段元数据)
+  export function iamAuthUserListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/iam/auth-user/list-export-meta', payload)}
+  */
+  '/iam/auth-user/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
+
+  /* 【人员管理】
   // 是否当前手机号已存在 | object:{mobile:手机号}
   export function iamAuthUserIsMobileExist(payload: {mobile: any}) {return http.post<Res<boolean>>('/iam/auth-user/is-mobile-exist', payload)}
   */
@@ -1051,6 +1057,7 @@ interface SysActionLogListDTO {
   pageable: boolean
   pageNum: number
   pageSize: number
+  exportFields: string[]
   uname: string // 操作人姓名
   sysId: string // 系统ID
   client: string // 终端设备
@@ -1303,6 +1310,7 @@ interface AuthUserVO {
   orgList: AuthOrgVO[] // 用户部门
   orgName: string // 用户部门名称
   permIdList: string[] // 用户权限Id列表
+  online: boolean // 用户是否在线
 }
 
 interface AuthUserUpsertDTO {

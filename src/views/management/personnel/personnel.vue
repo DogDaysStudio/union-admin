@@ -14,6 +14,7 @@ import {
 } from '@/service/api/imaAuthUser'
 import {rules} from '@/common/rules'
 import {ElMessage} from 'element-plus'
+import {useExport} from '@/common/hooks/useExport'
 
 const router = useRouter()
 
@@ -70,6 +71,10 @@ const handleAdd = () => {
 const handleImport = () => {
   router.push('/management/personnel/import')
 }
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/iam/auth-user/list-export-meta',
+  url: '/iam/auth-user/list-export',
+})
 
 // 处理详情
 const handleDetail = (user: AuthUserVO) => {
@@ -192,7 +197,7 @@ const schema = computed(() =>
         options: orgList?.value?.data,
       }),
       defineField.Input({label: '账户状态', prop: 'enable'}),
-      defineField.DateRangePicker({
+      defineField.DateTimeRangePicker({
         label: '添加时间',
         propMapping: ['insertTimeBegin', 'insertTimeEnd'],
       }),
@@ -220,7 +225,8 @@ const gender = useDicListTree({dicType: 9002})
       <el-space>
         <el-button type="primary" @click="handleAdd">+ 添加</el-button>
         <el-button @click="handleImport">导入</el-button>
-        <el-dropdown>
+        <el-button @click="exportData(searchForm)" :loading="exportLoading">导出</el-button>
+        <!-- <el-dropdown>
           <el-button>导出 ▼</el-button>
           <template #dropdown>
             <el-dropdown-menu>
@@ -228,7 +234,7 @@ const gender = useDicListTree({dicType: 9002})
               <el-dropdown-item>导出CSV</el-dropdown-item>
             </el-dropdown-menu>
           </template>
-        </el-dropdown>
+        </el-dropdown> -->
         <el-button @click="handleBatchUpdate('updateDept')">修改部门</el-button>
         <el-button @click="handleBatchUpdate('updateRole')">修改角色</el-button>
         <el-button @click="handleBatchUpdate('disable')">停用</el-button>

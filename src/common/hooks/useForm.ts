@@ -2,14 +2,14 @@ import {reactive, type TemplateRef} from 'vue'
 
 /**
  * @example
- * const modelFormRef = useTemplateRef('modelFormRef')
- * const [form, resetForm] = useForm(
- *   {dicType: 1001, dicLevel: 1} as SysDicUpsertDTO,
- *   modelFormRef
- * )
- *
- * // *重置表单状态
- * resetForm()
+   const modelFormRef = useTemplateRef('modelFormRef')
+   const [form, resetForm] = useForm(
+     {dicType: 1001, dicLevel: 1} as SysDicUpsertDTO,
+     modelFormRef
+   )
+
+   // *重置表单状态
+   resetForm()
  */
 export const useForm = <T extends Record<string, any>, R extends TemplateRef<any>>(
   initialState: T,

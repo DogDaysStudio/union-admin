@@ -2,6 +2,8 @@ import {onActivated, onDeactivated, onMounted, ref} from 'vue'
 
 /**
  * 组件再次激活时执行 hook 函数（首次激活不执行）
+ * @example
+ * useActivated(refreshPersonnelList)
  */
 export function useActivated(hook: Function, options?: {immediate?: boolean}) {
   const enabled = ref(false)
