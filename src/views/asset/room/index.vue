@@ -146,29 +146,19 @@ const editRoom = (roomId: string) => router.push(`/asset/management/edit-room/${
 const detailRoom = (roomId: string) => router.push(`/asset/management/detail-room/${roomId}`)
 
 // 修改状态
-const toggleStatus = (roomId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}房间?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await roomEnable({roomId, enable: enable ? false : true})
-    ElMessage.success('修改成功')
-    getData()
-  })
+const toggleStatus = async (roomId: string, enable: number) => {
+  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}房间?`, '确认提示')
+  await roomEnable({roomId, enable: enable ? false : true})
+  ElMessage.success('修改成功')
+  getData()
 }
 
 // 删除
-const deleteRoom = (roomId: string): void => {
-  ElMessageBox.confirm(`是否确定删除房间?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await roomDelete({roomId})
-    ElMessage.success('删除成功')
-    getData()
-  })
+const deleteRoom = async (roomId: string) => {
+  await ElMessageBox.confirm(`是否确定删除房间?`, '确认提示')
+  await roomDelete({roomId})
+  ElMessage.success('删除成功')
+  getData()
 }
 </script>
 

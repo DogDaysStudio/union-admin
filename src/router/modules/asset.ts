@@ -123,12 +123,12 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/room/add-room.vue'),
           },
           {
-            path: '/asset/management/edit-room/:id',
+            path: '/asset/management/edit-room/:roomId',
             meta: {title: '房屋-编辑'},
             component: () => import('@/views/asset/room/edit-room.vue'),
           },
           {
-            path: '/asset/management/detail-room/:id',
+            path: '/asset/management/detail-room/:roomId',
             meta: {title: '房屋-详情'},
             component: () => import('@/views/asset/room/detail-room.vue'),
           },

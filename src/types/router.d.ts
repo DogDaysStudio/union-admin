@@ -194,18 +194,18 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/asset/management/edit-room/:id': RouteRecordInfo<
-    '/asset/management/edit-room/:id', // name
-    '/asset/management/edit-room/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/edit-room/:roomId': RouteRecordInfo<
+    '/asset/management/edit-room/:roomId', // name
+    '/asset/management/edit-room/:roomId', // path
+    {roomId: ParamValue<true>},
+    {roomId: ParamValue<false>},
     never
   >
-  '/asset/management/detail-room/:id': RouteRecordInfo<
-    '/asset/management/detail-room/:id', // name
-    '/asset/management/detail-room/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/detail-room/:roomId': RouteRecordInfo<
+    '/asset/management/detail-room/:roomId', // name
+    '/asset/management/detail-room/:roomId', // path
+    {roomId: ParamValue<true>},
+    {roomId: ParamValue<false>},
     never
   >
   '/asset/management/shop': RouteRecordInfo<

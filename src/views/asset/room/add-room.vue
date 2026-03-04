@@ -327,7 +327,7 @@ const handleSubmit = () => {
                 </span>
                 <span class="ml-2">
                   新增房间数：
-                  <el-input-number class="w-50!" v-model="data.count" :min="1" />
+                  <el-input-number class="w-50!" v-model="data.count" :min="1" :precision="0" />
                   <el-button class="ml-2" type="primary" @click="handleAddRoom(data)">
                     生成房间
                   </el-button>

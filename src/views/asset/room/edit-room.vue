@@ -71,7 +71,7 @@ const getOptions = async (): Promise<void> => {
 }
 
 const getDetail = async () => {
-  const {data: floorDetail} = await getRoom({roomId: route.params.id})
+  const {data: floorDetail} = await getRoom({roomId: route.params.roomId})
   Object.assign(formData, floorDetail)
   const {data: building} = await buildingList({
     projectId: floorDetail.projectId,
@@ -95,7 +95,7 @@ const changeProjectId = async (projectId: string) => {
     pageable: false,
     projectId,
   } as AssetBuildingListDTO)
-  buildingOptions.push(...Object.values(asset))
+  buildingOptions.push(...asset)
 }
 
 const changeAssetId = async (assetId: string) => {

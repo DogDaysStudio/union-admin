@@ -14,7 +14,7 @@ const formData = reactive({} as AssetRoomVO)
 onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await roomGet({roomId: route.params.id})
+  const {data} = await roomGet({roomId: route.params.roomId})
   const cloneData = JSON.parse(JSON.stringify(data))
   cloneData.leaseType =
     cloneData.leaseType == '0' ? '整租' : cloneData.leaseType == '1' ? '合租' : '-'
