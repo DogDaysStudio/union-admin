@@ -15,7 +15,7 @@ onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
   const {data} = await resourceGet({
-    resourceId: route.params.id,
+    resourceId: route.params.resourceId,
   } as AssetResourceVO)
   const cloneData = JSON.parse(JSON.stringify(data))
   cloneData.enable = cloneData.enable == '0' ? '禁用' : cloneData.enable == '1' ? '启用' : '-'
@@ -96,7 +96,7 @@ const formConfig = computed(() => [
           </el-row>
         </section-group>
         <div class="flex justify-center mt-6">
-          <el-button type="primary" @click="router.push('/asset/management/room')">返回</el-button>
+          <el-button type="primary" @click="router.push('/asset/management/point')">返回</el-button>
         </div>
       </el-form>
     </div>

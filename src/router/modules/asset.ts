@@ -179,12 +179,12 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/point/add-point.vue'),
           },
           {
-            path: '/asset/management/edit-point/:id',
+            path: '/asset/management/edit-point/:resourceId',
             meta: {title: '点位-编辑'},
             component: () => import('@/views/asset/point/edit-point.vue'),
           },
           {
-            path: '/asset/management/detail-point/:id',
+            path: '/asset/management/detail-point/:resourceId',
             meta: {title: '点位-详情'},
             component: () => import('@/views/asset/point/detail-point.vue'),
           },

@@ -125,29 +125,19 @@ const detailPoint = (resourceId: string) =>
   router.push(`/asset/management/detail-point/${resourceId}`)
 
 // 修改状态
-const toggleStatus = (resourceId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}点位?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await resourceEnable({resourceId, enable: enable ? false : true})
-    ElMessage.success('修改成功')
-    getData()
-  })
+const toggleStatus = async (resourceId: string, enable: number) => {
+  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}点位?`, '确认提示')
+  await resourceEnable({resourceId, enable: enable ? false : true})
+  ElMessage.success('修改成功')
+  getData()
 }
 
 // 删除
-const deleteRoom = (resourceId: string): void => {
-  ElMessageBox.confirm(`是否确定删除点位?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await resourceDelete({resourceId})
-    ElMessage.success('删除成功')
-    getData()
-  })
+const deleteRoom = async (resourceId: string) => {
+  await ElMessageBox.confirm(`是否确定删除点位?`, '确认提示')
+  await resourceDelete({resourceId})
+  ElMessage.success('删除成功')
+  getData()
 }
 </script>
 

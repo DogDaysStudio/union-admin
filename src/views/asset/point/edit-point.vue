@@ -51,7 +51,7 @@ onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
   const {data: resource} = await resourceGet({
-    resourceId: route.params.id,
+    resourceId: route.params.resourceId,
   } as AssetResourceVO)
   Object.assign(formData, resource)
 }
@@ -255,7 +255,11 @@ const handleSubmit = () => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="面积（㎡）" prop="resourceArea" required>
-                <el-input-number v-model="formData.resourceArea" placeholder="请选填写面积（㎡）" />
+                <el-input-number
+                  v-model="formData.resourceArea"
+                  placeholder="请选填写面积（㎡）"
+                  :min="0"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="8">

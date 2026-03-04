@@ -271,18 +271,18 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/asset/management/edit-point/:id': RouteRecordInfo<
-    '/asset/management/edit-point/:id', // name
-    '/asset/management/edit-point/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/edit-point/:resourceId': RouteRecordInfo<
+    '/asset/management/edit-point/:resourceId', // name
+    '/asset/management/edit-point/:resourceId', // path
+    {resourceId: ParamValue<true>},
+    {resourceId: ParamValue<false>},
     never
   >
-  '/asset/management/detail-point/:id': RouteRecordInfo<
-    '/asset/management/detail-point/:id', // name
-    '/asset/management/detail-point/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/detail-point/:resourceId': RouteRecordInfo<
+    '/asset/management/detail-point/:resourceId', // name
+    '/asset/management/detail-point/:resourceId', // path
+    {resourceId: ParamValue<true>},
+    {resourceId: ParamValue<false>},
     never
   >
   '/asset/management/fixed': RouteRecordInfo<

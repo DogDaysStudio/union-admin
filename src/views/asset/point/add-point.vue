@@ -490,7 +490,11 @@ const handleSubmit = () => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="面积（㎡）" prop="resourceArea" required>
-                <el-input-number v-model="formData.resourceArea" placeholder="请选填写面积（㎡）" />
+                <el-input-number
+                  v-model="formData.resourceArea"
+                  placeholder="请选填写面积（㎡）"
+                  :min="0"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -507,7 +511,6 @@ const handleSubmit = () => {
           </el-row>
           <el-table :data="formData.resourceList" border>
             <el-table-column label="序号" type="index" width="60" />
-
             <el-table-column label="点位资源名称" prop="resourceName">
               <template #default="{row}">
                 <el-input v-model="row.resourceName" />
@@ -523,18 +526,11 @@ const handleSubmit = () => {
                 <el-input v-model="row.resourceSpecs" />
               </template>
             </el-table-column>
-
             <el-table-column label="面积" prop="resourceArea">
               <template #default="{row}">
-                <el-input-number
-                  v-model="row.resourceArea"
-                  :precision="2"
-                  :min="0"
-                  style="width: 100%"
-                />
+                <el-input-number v-model="row.resourceArea" :min="0" />
               </template>
             </el-table-column>
-
             <el-table-column label="点位状态" prop="resourceState">
               <template #default="{row}">
                 <el-select
@@ -546,7 +542,6 @@ const handleSubmit = () => {
                 ></el-select>
               </template>
             </el-table-column>
-
             <el-table-column fixed="right" label="操作" width="100">
               <template #default="{row}">
                 <el-button link type="danger" @click="handleDeletePoint(row.resourceNumber)">
