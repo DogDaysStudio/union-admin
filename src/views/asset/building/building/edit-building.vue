@@ -45,7 +45,7 @@ const getOptions = async (): Promise<void> => {
 }
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await buildingGet({buildingId: route.params.id})
+  const {data} = await buildingGet({buildingId: route.params.buildingId})
   Object.assign(formData, data)
 }
 

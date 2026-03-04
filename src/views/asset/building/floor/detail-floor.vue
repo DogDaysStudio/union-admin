@@ -14,7 +14,7 @@ const formData = reactive({} as AssetFloorVO)
 onMounted(() => getOptions())
 
 const getOptions = async (): Promise<void> => {
-  const {data} = await getFloor({floorId: route.params.id})
+  const {data} = await getFloor({floorId: route.params.floorId})
   Object.assign(formData, data)
 }
 

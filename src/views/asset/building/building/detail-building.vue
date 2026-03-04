@@ -14,7 +14,7 @@ const formData = reactive({} as AssetBuildingVO)
 onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await buildingGet({buildingId: route.params.id})
+  const {data} = await buildingGet({buildingId: route.params.buildingId})
   Object.assign(formData, data)
 }
 

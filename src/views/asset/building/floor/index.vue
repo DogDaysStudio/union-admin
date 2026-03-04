@@ -118,29 +118,19 @@ const editFloor = (floorId: string) => router.push(`/asset/management/edit-floor
 const detailFloor = (floorId: string) => router.push(`/asset/management/detail-floor/${floorId}`)
 
 // 修改状态
-const toggleStatus = (floorId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}楼层?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await toggleStatusFloor({floorId, enable: enable ? 0 : 1})
-    ElMessage.success('修改成功')
-    getData()
-  })
+const toggleStatus = async (floorId: string, enable: number) => {
+  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}楼层?`, '确认提示')
+  await toggleStatusFloor({floorId, enable: enable ? 0 : 1})
+  ElMessage.success('修改成功')
+  getData()
 }
 
 // 删除
-const deleteData = (floorId: string): void => {
-  ElMessageBox.confirm(`是否确定删除楼层?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await deleteFloor({floorId})
-    ElMessage.success('删除成功')
-    getData()
-  })
+const deleteData = async (floorId: string) => {
+  await ElMessageBox.confirm(`是否确定删除楼层?`, '确认提示')
+  await deleteFloor({floorId})
+  ElMessage.success('删除成功')
+  getData()
 }
 </script>
 

@@ -52,12 +52,12 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/building/building/add-building.vue'),
           },
           {
-            path: '/asset/management/edit-building/:id',
+            path: '/asset/management/edit-building/:buildingId',
             meta: {title: '楼栋-编辑'},
             component: () => import('@/views/asset/building/building/edit-building.vue'),
           },
           {
-            path: '/asset/management/detail-building/:id',
+            path: '/asset/management/detail-building/:buildingId',
             meta: {title: '楼栋-详情'},
             component: () => import('@/views/asset/building/building/detail-building.vue'),
           },
@@ -67,12 +67,12 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/building/floor/add-floor.vue'),
           },
           {
-            path: '/asset/management/edit-floor/:id',
+            path: '/asset/management/edit-floor/:floorId',
             meta: {title: '楼层-编辑'},
             component: () => import('@/views/asset/building/floor/edit-floor.vue'),
           },
           {
-            path: '/asset/management/detail-floor/:id',
+            path: '/asset/management/detail-floor/:floorId',
             meta: {title: '楼层-详情'},
             component: () => import('@/views/asset/building/floor/detail-floor.vue'),
           },

@@ -96,18 +96,18 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/asset/management/edit-building/:id': RouteRecordInfo<
-    '/asset/management/edit-building/:id', // name
-    '/asset/management/edit-building/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/edit-building/:buildingId': RouteRecordInfo<
+    '/asset/management/edit-building/:buildingId', // name
+    '/asset/management/edit-building/:buildingId', // path
+    {buildingId: ParamValue<true>},
+    {buildingId: ParamValue<false>},
     never
   >
-  '/asset/management/detail-building/:id': RouteRecordInfo<
-    '/asset/management/detail-building/:id', // name
-    '/asset/management/detail-building/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/detail-building/:buildingId': RouteRecordInfo<
+    '/asset/management/detail-building/:buildingId', // name
+    '/asset/management/detail-building/:buildingId', // path
+    {buildingId: ParamValue<true>},
+    {buildingId: ParamValue<false>},
     never
   >
   '/asset/management/add-floor': RouteRecordInfo<
@@ -117,18 +117,18 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/asset/management/edit-floor/:id': RouteRecordInfo<
-    '/asset/management/edit-floor/:id', // name
-    '/asset/management/edit-floor/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/edit-floor/:floorId': RouteRecordInfo<
+    '/asset/management/edit-floor/:floorId', // name
+    '/asset/management/edit-floor/:floorId', // path
+    {floorId: ParamValue<true>},
+    {floorId: ParamValue<false>},
     never
   >
-  '/asset/management/detail-floor/:id': RouteRecordInfo<
-    '/asset/management/detail-floor/:id', // name
-    '/asset/management/detail-floor/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/detail-floor/:floorId': RouteRecordInfo<
+    '/asset/management/detail-floor/:floorId', // name
+    '/asset/management/detail-floor/:floorId', // path
+    {floorId: ParamValue<true>},
+    {floorId: ParamValue<false>},
     never
   >
   '/asset/management/enclosure-floor': RouteRecordInfo<
@@ -166,18 +166,18 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/asset/management/edit-enclosure-floor/:id': RouteRecordInfo<
-    '/asset/management/edit-enclosure-floor/:id', // name
-    '/asset/management/edit-enclosure-floor/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/edit-enclosure-floor/:floorId': RouteRecordInfo<
+    '/asset/management/edit-enclosure-floor/:floorId', // name
+    '/asset/management/edit-enclosure-floor/:floorId', // path
+    {floorId: ParamValue<true>},
+    {floorId: ParamValue<false>},
     never
   >
-  '/asset/management/detail-enclosure-floor/:id': RouteRecordInfo<
-    '/asset/management/detail-enclosure-floor/:id', // name
-    '/asset/management/detail-enclosure-floor/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/detail-enclosure-floor/:floorId': RouteRecordInfo<
+    '/asset/management/detail-enclosure-floor/:floorId', // name
+    '/asset/management/detail-enclosure-floor/:floorId', // path
+    {floorId: ParamValue<true>},
+    {floorId: ParamValue<false>},
     never
   >
   '/asset/management/room': RouteRecordInfo<

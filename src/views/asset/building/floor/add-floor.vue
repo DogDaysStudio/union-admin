@@ -84,37 +84,30 @@ interface RoomItem {
 
 // 生成房间数据：点击生成按钮触发
 const handleGenerateRooms = () => {
-  // 1. 校验层高和房间数是否有效
-  const floorHeight = Number(formData.floorHeight) // 转数字（兼容输入框字符串）
-  const roomCount = formData.roomNumber // 每层房间数（el-input-number绑定的数字）
+  formRef.value.validate(async valid => {
+    if (!valid) return
+    // 1. 校验层高和房间数是否有效
+    const floorHeight = Number(formData.floorHeight) // 转数字（兼容输入框字符串）
+    const roomCount = formData.roomNumber // 每层房间数（el-input-number绑定的数字）
 
-  // 校验规则：层高必须是有效数字、房间数必须是正整数、两者都不能为空
-  if (!roomCount || roomCount < 1) {
-    ElMessage.warning('请填写有效的每层房间数（正整数）')
-    return
-  }
-  if (isNaN(floorHeight) || floorHeight <= 0) {
-    ElMessage.warning('请填写有效的层高（大于0的数字）')
-    return
-  }
-
-  // 2. 生成房间数据数组
-  const roomList: RoomItem[] = []
-  for (let i = 1; i <= roomCount; i++) {
-    // 补零生成房间名/房间号（001、002、003...格式）
-    const roomNo = String(i).padStart(3, '0')
-    roomList.push({
-      roomNumber: roomNo,
-      roomLayoutCode: '', // 户型编码初始为空，留待用户选择
-      roomHeight: floorHeight, // 房间层高与表单填写的层高一致
-      assetType: '1',
-      ownershipUnitCode:
-        typeof formData.ownershipUnitCode === 'string'
-          ? [formData.ownershipUnitCode]
-          : formData.ownershipUnitCode,
-    })
-  }
-  formData.roomList = roomList as unknown as AssetRoomUpsertDTO[]
+    // 2. 生成房间数据数组
+    const roomList: RoomItem[] = []
+    for (let i = 1; i <= roomCount; i++) {
+      // 补零生成房间名/房间号（001、002、003...格式）
+      const roomNo = String(i).padStart(3, '0')
+      roomList.push({
+        roomNumber: roomNo,
+        roomLayoutCode: '', // 户型编码初始为空，留待用户选择
+        roomHeight: floorHeight, // 房间层高与表单填写的层高一致
+        assetType: '1',
+        ownershipUnitCode:
+          typeof formData.ownershipUnitCode === 'string'
+            ? [formData.ownershipUnitCode]
+            : formData.ownershipUnitCode,
+      })
+    }
+    formData.roomList = roomList as unknown as AssetRoomUpsertDTO[]
+  })
 }
 
 interface Room {
@@ -204,7 +197,7 @@ const handleSubmit = () => {
             </el-col>
             <el-col :span="8">
               <el-form-item label="层高（m）" prop="floorHeight" required>
-                <el-input-number v-model="formData.floorHeight" placeholder="请填写层高" />
+                <el-input-number v-model="formData.floorHeight" placeholder="请填写层高" :min="1" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -258,7 +251,12 @@ const handleSubmit = () => {
             <el-col :span="8">
               <el-form-item label="每层房间数">
                 <div class="flex w-full">
-                  <el-input-number v-model="formData.roomNumber" placeholder="请填写每层房间数" />
+                  <el-input-number
+                    v-model="formData.roomNumber"
+                    placeholder="请填写每层房间数"
+                    :min="1"
+                    :precision="0"
+                  />
                   <el-button type="primary" class="ml-4" @click="handleGenerateRooms">
                     生成
                   </el-button>
@@ -281,19 +279,20 @@ const handleSubmit = () => {
               <el-row :gutter="24">
                 <el-col :span="6">
                   房间：
-                  <el-input class="w-50!" v-model="data.roomNumber" />
+                  <el-input class="w-40!" v-model="data.roomNumber" />
                 </el-col>
                 <el-col :span="6">
                   层高：
                   <el-input-number
-                    class="w-50!"
+                    class="w-40!"
                     v-model="data.roomHeight"
                     placeholder="请输入层高"
+                    :min="1"
                   />
                 </el-col>
                 <el-col :span="6">
                   户型：
-                  <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
+                  <el-select class="w-40!" v-model="data.roomLayoutCode" placeholder="请选择户型">
                     <el-option
                       v-for="item in roomOptions"
                       :key="item.dicCode"

@@ -97,29 +97,19 @@ const detailBuilding = (buildingId: string) =>
   router.push(`/asset/management/detail-building/${buildingId}`)
 
 // 修改状态
-const toggleStatus = (buildingId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}楼栋?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await toggleStatusBuilding({buildingId, enable: !enable})
-    ElMessage.success('修改成功')
-    getData()
-  })
+const toggleStatus = async (buildingId: string, enable: number) => {
+  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}楼栋?`, '确认提示')
+  await toggleStatusBuilding({buildingId, enable: !enable})
+  ElMessage.success('修改成功')
+  getData()
 }
 
 // 删除
-const deleteData = (buildingId: string): void => {
-  ElMessageBox.confirm(`是否确定删除楼栋?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await deleteBuilding({buildingId})
-    ElMessage.success('删除成功')
-    getData()
-  })
+const deleteData = async (buildingId: string) => {
+  await ElMessageBox.confirm(`是否确定删除楼栋?`, '确认提示')
+  await deleteBuilding({buildingId})
+  ElMessage.success('删除成功')
+  getData()
 }
 </script>
 

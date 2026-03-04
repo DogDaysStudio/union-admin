@@ -91,13 +91,18 @@ const getOptions = async (): Promise<void> => {
 
 // 新增楼栋
 const addBuildingItem = (index: number) => {
-  const lastBuilding = formData.buildingList[index]
-  if (!lastBuilding) return
-  const newBuilding: AssetBuildingCompleteDTO = JSON.parse(JSON.stringify(lastBuilding))
-  newBuilding.floorList = [] // 楼层数据清空，全新空数组，无任何引用
-  formData.buildingList.push(newBuilding)
-  updateFormRules() // 新增后更新规则，生成新楼栋的所有字段规则
-  ElMessage.success('已新增楼栋，继承上一楼栋信息')
+  formRef.value.validate(async valid => {
+    if (!valid) {
+      ElMessage.warning('请先填写完整信息')
+      return
+    }
+    const lastBuilding = formData.buildingList[index]
+    if (!lastBuilding) return
+    const newBuilding: AssetBuildingCompleteDTO = JSON.parse(JSON.stringify(lastBuilding))
+    newBuilding.floorList = [] // 楼层数据清空，全新空数组，无任何引用
+    formData.buildingList.push(newBuilding)
+    updateFormRules() // 新增后更新规则，生成新楼栋的所有字段规则
+  })
 }
 
 // 删除楼栋
@@ -116,75 +121,70 @@ const deleteBuildingItem = (index: number) => {
  * @param index 当前楼栋在buildingList中的索引
  */
 const generateFloorAndRoom = (index: number) => {
-  const currentBuilding = formData.buildingList[index]
-  const {aboveground, underground, roomNumber, ownershipUnitCode} = currentBuilding
+  formRef.value.validate(async valid => {
+    if (!valid) return
 
-  // 1. 输入值校验：非空、非负整数
-  if (
-    aboveground === null ||
-    aboveground < 0 ||
-    underground === null ||
-    underground < 0 ||
-    roomNumber === null ||
-    roomNumber < 1
-  ) {
-    ElMessage.warning('请填写有效的数值：地上层/地下层≥0，每层房间数≥1')
-    return
-  }
+    const currentBuilding = formData.buildingList[index]
+    const {aboveground, underground, roomNumber, ownershipUnitCode} = currentBuilding
+    if (aboveground === undefined || underground === undefined || roomNumber === undefined) {
+      ElMessage.warning('请填写有效的数值：地上层/地下层≥0，每层商铺数≥1')
+      return
+    }
 
-  const floorData = []
-  const defaultHeight = null // 房间默认层高（保持原有逻辑）
+    const floorData = []
+    const defaultHeight = null // 房间默认层高（保持原有逻辑）
 
-  // 3. 生成地上楼层（倒序：如2层→1层，符合示例要求）
-  for (let f = aboveground; f >= 1; f--) {
-    const roomChildren = []
-    // 生成当前楼层的房间
-    for (let r = 1; r <= roomNumber; r++) {
-      roomChildren.push({
+    // 3. 生成地上楼层（倒序：如2层→1层，符合示例要求）
+    for (let f = aboveground; f >= 1; f--) {
+      const roomChildren = []
+      // 生成当前楼层的房间
+      for (let r = 1; r <= roomNumber; r++) {
+        roomChildren.push({
+          assetType: '1',
+          roomName: `${f}${r.toString().padStart(2, '0')}`,
+          roomHeight: defaultHeight,
+          roomList: undefined,
+          ownershipUnitCode, // 赋值：房间继承楼栋的产权单位编码
+        })
+      }
+      // 推入地上楼层（新增ownershipUnitCode赋值）
+      floorData.push({
         assetType: '1',
-        roomName: `${f}${r.toString().padStart(2, '0')}`,
-        roomHeight: defaultHeight,
-        roomList: undefined,
-        ownershipUnitCode, // 赋值：房间继承楼栋的产权单位编码
+        floorName: `${f}层`,
+        floorHeight: defaultHeight,
+        roomList: roomChildren,
+        ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
       })
     }
-    // 推入地上楼层（新增ownershipUnitCode赋值）
-    floorData.push({
-      assetType: '1',
-      floorName: `${f}层`,
-      floorHeight: defaultHeight,
-      roomList: roomChildren,
-      ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
-    })
-  }
 
-  // 4. 生成地下楼层（正序：B1层→B2层，符合示例要求）
-  for (let f = 1; f <= underground; f++) {
-    const roomChildren = []
-    // 生成当前地下楼层的房间
-    for (let r = 1; r <= roomNumber; r++) {
-      roomChildren.push({
+    // 4. 生成地下楼层（正序：B1层→B2层，符合示例要求）
+    for (let f = 1; f <= underground; f++) {
+      const roomChildren = []
+      // 生成当前地下楼层的房间
+      for (let r = 1; r <= roomNumber; r++) {
+        roomChildren.push({
+          assetType: '1',
+          roomName: `B${f}-${r.toString().padStart(3, '0')}`,
+          roomHeight: defaultHeight,
+          roomList: undefined,
+          ownershipUnitCode, // 赋值：房间继承楼栋的产权单位编码
+        })
+      }
+      // 推入地下楼层（新增ownershipUnitCode赋值）
+      floorData.push({
         assetType: '1',
-        roomName: `B${f}-${r.toString().padStart(3, '0')}`,
-        roomHeight: defaultHeight,
-        roomList: undefined,
-        ownershipUnitCode, // 赋值：房间继承楼栋的产权单位编码
+        floorName: `B${f}层`,
+        floorHeight: defaultHeight,
+        roomList: roomChildren,
+        ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
       })
     }
-    // 推入地下楼层（新增ownershipUnitCode赋值）
-    floorData.push({
-      assetType: '1',
-      floorName: `B${f}层`,
-      floorHeight: defaultHeight,
-      roomList: roomChildren,
-      ownershipUnitCode, // 赋值：楼层继承楼栋的产权单位编码
-    })
-  }
 
-  // 5. 更新当前楼栋的floorData，ElTree会自动重新渲染并回显产权单位
-  currentBuilding.floorList = floorData
-  currentBuilding.totalFloor = aboveground + underground
-  currentBuilding.totalRoom = (aboveground + underground) * roomNumber
+    // 5. 更新当前楼栋的floorData，ElTree会自动重新渲染并回显产权单位
+    currentBuilding.floorList = floorData
+    currentBuilding.totalFloor = aboveground + underground
+    currentBuilding.totalRoom = (aboveground + underground) * roomNumber
+  })
 }
 
 // 先完善TS接口：补全Floor、Room的产权单位相关字段，保证类型匹配
@@ -349,12 +349,14 @@ const handleSubmit = () => {
 
           <el-row :gutter="24">
             <el-col :span="8">
-              <el-form-item label="总楼层" :prop="`buildingList[${index}].totalFloor`" required>
+              <!-- :prop="`buildingList[${index}].totalFloor`" -->
+              <el-form-item label="总楼层" required>
                 <el-input v-model="item.totalFloor" placeholder="请填写总楼层" disabled />
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="总房间数" :prop="`buildingList[${index}].totalRoom`" required>
+              <!-- :prop="`buildingList[${index}].totalRoom`" -->
+              <el-form-item label="总房间数" required>
                 <el-input v-model="item.totalRoom" placeholder="请填写总房间数" disabled />
               </el-form-item>
             </el-col>
@@ -368,7 +370,12 @@ const handleSubmit = () => {
                   :prop="`buildingList[${index}].aboveground`"
                   required
                 >
-                  <el-input-number v-model="item.aboveground" placeholder="请填写地面（层）" />
+                  <el-input-number
+                    v-model="item.aboveground"
+                    placeholder="请填写地面（层）"
+                    :min="0"
+                    :precision="0"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -377,7 +384,12 @@ const handleSubmit = () => {
                   :prop="`buildingList[${index}].underground`"
                   required
                 >
-                  <el-input-number v-model="item.underground" placeholder="请填写地下（层）" />
+                  <el-input-number
+                    v-model="item.underground"
+                    placeholder="请填写地下（层）"
+                    :min="0"
+                    :precision="0"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -387,7 +399,12 @@ const handleSubmit = () => {
                   required
                 >
                   <div class="flex w-full">
-                    <el-input-number v-model="item.roomNumber" placeholder="请填写每层房间数" />
+                    <el-input-number
+                      v-model="item.roomNumber"
+                      placeholder="请填写每层房间数"
+                      :min="0"
+                      :precision="0"
+                    />
                     <el-button type="primary" class="ml-4" @click="generateFloorAndRoom(index)">
                       生成
                     </el-button>
@@ -410,20 +427,21 @@ const handleSubmit = () => {
                 <el-row v-if="data.roomList" :gutter="24">
                   <el-col :span="8">
                     楼层：
-                    <el-input class="w-50!" v-model="data.floorName" />
+                    <el-input class="w-40!" v-model="data.floorName" />
                   </el-col>
                   <el-col :span="8">
                     层高：
                     <el-input-number
-                      class="w-50!"
+                      class="w-40!"
                       v-model="data.floorHeight"
                       placeholder="请输入层高"
+                      :min="0"
                     />
                   </el-col>
                   <el-col :span="8">
                     产权单位：
                     <el-cascader
-                      class="w-50!"
+                      class="w-40!"
                       v-model="data.ownershipUnitCode"
                       placeholder="请选择产权单位"
                       :options="companyOptions"
@@ -439,19 +457,19 @@ const handleSubmit = () => {
                 <el-row v-else :gutter="24">
                   <el-col :span="6">
                     房间：
-                    <el-input class="w-50!" v-model="data.roomName" />
+                    <el-input class="w-40!" v-model="data.roomName" />
                   </el-col>
                   <el-col :span="6">
                     层高：
                     <el-input-number
-                      class="w-50!"
+                      class="w-40!"
                       v-model="data.roomHeight"
                       placeholder="请输入层高"
                     />
                   </el-col>
                   <el-col :span="6">
                     户型：
-                    <el-select class="w-50!" v-model="data.roomLayoutCode" placeholder="请选择户型">
+                    <el-select class="w-40!" v-model="data.roomLayoutCode" placeholder="请选择户型">
                       <el-option
                         v-for="item in roomOptions"
                         :key="item.dicCode"
@@ -463,7 +481,7 @@ const handleSubmit = () => {
                   <el-col :span="6">
                     产权单位：
                     <el-cascader
-                      class="w-50!"
+                      class="w-40!"
                       v-model="data.ownershipUnitCode"
                       placeholder="请选择产权单位"
                       :options="companyOptions"
