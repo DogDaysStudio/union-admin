@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive, watch} from 'vue'
+import {computed, onMounted, reactive} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useRequest} from 'vue-request'
 import {amsAssetFixedGet} from '@/service/api/amsAsset'
@@ -17,15 +17,6 @@ const loadDetail = async () => {
 }
 
 onMounted(loadDetail)
-
-watch(
-  () => route.params.id,
-  newId => {
-    if (newId) {
-      loadDetail()
-    }
-  }
-)
 
 const detailConfig = computed(() => [
   {

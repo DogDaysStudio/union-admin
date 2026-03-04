@@ -149,12 +149,12 @@ const assetRoutes: RouteRecordRaw[] = [
           },
           {
             path: 'management/fixed/edit-fixed/:id',
-            meta: {title: '固定资产-编辑', keepAlive: false},
+            meta: {title: '固定资产-编辑'},
             component: () => import('@/views/asset/fixed/edit-fixed.vue'),
           },
           {
             path: 'management/fixed/detail-fixed/:id',
-            meta: {title: '固定资产-详情', keepAlive: false},
+            meta: {title: '固定资产-详情'},
             component: () => import('@/views/asset/fixed/detail-fixed.vue'),
           },
           {

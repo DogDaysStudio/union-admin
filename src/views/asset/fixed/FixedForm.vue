@@ -345,6 +345,7 @@ watch(
     const isNonPublic = locationTypeOptions.some(
       item => item.dicCode === locationCode && item.dicName?.includes('非公')
     )
+    if (initializing.value) return
     if (!isNonPublic) {
       formData.locationId = ''
     }
@@ -493,13 +494,7 @@ const handleRouteChange = async () => {
   }
 }
 
-onMounted(() => {
-  handleRouteChange()
-})
-
-watch([() => route.params.id, () => props.fixedId], () => {
-  handleRouteChange()
-})
+onMounted(handleRouteChange)
 
 const submitting = computed(() => insertLoading.value || updateLoading.value)
 
