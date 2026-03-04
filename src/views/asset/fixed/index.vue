@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {onMounted, reactive, ref} from 'vue'
-import {useRouter} from 'vue-router'
+import {onMounted, reactive, ref, watch} from 'vue'
+import {useRouter, useRoute} from 'vue-router'
 import {defineField, defineSchema, UploadFile} from '@/components'
 import {useRequest} from 'vue-request'
 import {ElMessage, ElMessageBox} from 'element-plus'
@@ -54,6 +54,15 @@ const tableData = reactive<AssetFixedVO[]>([])
 const selectedRows = ref<AssetFixedVO[]>([])
 
 const router = useRouter()
+const route = useRoute()
+
+// 监听路由参数变化，触发刷新
+watch(
+  () => route.query.refresh,
+  () => {
+    getData()
+  }
+)
 
 const handleFinish = () => {
   formState.pageNum = 1
@@ -256,7 +265,7 @@ onMounted(() => getData())
     <template #header>
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
-        <div class="flex gap-2">
+        <div class="flex">
           <el-button type="primary" @click="router.push('/asset/management/fixed/add')">
             新增
           </el-button>
@@ -283,11 +292,11 @@ onMounted(() => getData())
       <el-table-column label="固定资产编码" prop="fixedId" min-width="150" />
       <el-table-column label="固定资产名称" prop="fixedName" min-width="150" />
       <el-table-column label="资产分类" prop="fixedTypeName" min-width="120" />
-      <el-table-column label="资产类型" prop="deviceTypeName" min-width="120" />
+      <el-table-column label="资产类型" prop="fixedTypeName" min-width="120" />
       <el-table-column label="所属项目" prop="projectName" min-width="140" />
       <el-table-column label="楼栋名称" prop="buildingName" min-width="140" />
       <el-table-column label="楼层名称" prop="floorName" min-width="140" />
-      <el-table-column label="房间" prop="roomName" min-width="120" />
+      <el-table-column label="房间" prop="locationId" min-width="120" />
       <el-table-column label="拆分房间" prop="splitRoomName" min-width="120" />
       <el-table-column label="位置" prop="locationName" min-width="160" />
       <el-table-column label="启停状态" prop="enable" width="100">
@@ -301,8 +310,14 @@ onMounted(() => getData())
       <el-table-column label="设备安装日期" prop="deviceInstallDate" min-width="140" />
       <el-table-column label="设备质保到期日" prop="warrantyExpireDate" min-width="150" />
       <el-table-column label="设备管理方" prop="deviceManageUser" min-width="140" />
-      <el-table-column label="设备状态" prop="deviceWorkState" min-width="120" />
-      <el-table-column label="操作" fixed="right" min-width="180">
+      <el-table-column label="设备状态" prop="deviceWorkState" min-width="120">
+        <template #default="{row}">
+          <el-tag :type="row.deviceWorkState === 1 ? 'success' : 'danger'">
+            {{ row.deviceWorkState === 1 ? '启用' : '禁用' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" fixed="right" min-width="230">
         <template #default="{row}">
           <el-button link type="primary" @click="goFixedDetail(row.fixedId)">查看详情</el-button>
           <el-button link type="primary" @click="goFixedEdit(row.fixedId)">编辑</el-button>

@@ -46,6 +46,7 @@ const locationTypeOptions = useDicListTree({dicType: 1004})
 const businessModelOptions = useDicListTree({dicType: 1020})
 const attachmentFileList = ref<UploadUserFile[]>([])
 const initializing = ref(false)
+const projectsLoaded = ref(false)
 
 const locationDisplay = reactive({
   area: '',
@@ -377,8 +378,6 @@ watch(
   }
 )
 
-const isEdit = computed(() => props.mode === 'edit')
-
 const fetchDetail = async () => {
   if (!props.fixedId && !route.params.id) return
   initializing.value = true
@@ -416,11 +415,90 @@ const fetchDetail = async () => {
   }
 }
 
-onMounted(async () => {
-  await loadProjects()
-  if (isEdit.value) {
-    await fetchDetail()
+const isEdit = computed(() => props.mode === 'edit')
+
+const resetFormForCreate = () => {
+  initializing.value = true
+  Object.assign(formData, {
+    fixedId: '',
+    projectId: '',
+    assetId: '',
+    assetType: '',
+    floorId: '',
+    locationCode: '',
+    locationName: '',
+    locationId: '',
+    fixedName: '',
+    serialNumber: '',
+    fixedTypeCode: '',
+    fixedTypeName: '',
+    deviceTypeCode: '',
+    deviceTypeName: '',
+    fixedBrand: '',
+    fixedSpecs: '',
+    fixedModel: '',
+    fixedSource: '',
+    purchaseDate: '',
+    assetAmount: undefined,
+    elevatorSpeed: undefined,
+    parkingSpaceNo: '',
+    ownershipUnitCode: '',
+    ownershipUnitName: '',
+    deviceWorkState: undefined,
+    deviceManageUser: '',
+    deviceMajordomoUser: '',
+    deviceCheckDate: '',
+    deviceInstallDate: '',
+    acceptanceDate: '',
+    registerDate: '',
+    warrantyExpireDate: '',
+    warrantyCompany: '',
+    warrantyLinkman: '',
+    warrantyPhone: '',
+    maintenanceCompany: '',
+    maintenanceLinkman: '',
+    maintenancePhone: '',
+    maintenanceExpireDate: '',
+    nextPatrolDate: '',
+    nextMaintenanceDate: '',
+    label: '',
+    drawingFid: '',
+    deviceContractFid: '',
+    deviceInformationFid: '',
+    contractFid: '',
+    attachmentFid: '',
+    enable: 1,
+    businessModelCode: '',
+    businessModelName: '',
+  })
+  initializing.value = false
+}
+
+const ensureProjectsLoaded = async () => {
+  if (!projectsLoaded.value) {
+    await loadProjects()
+    projectsLoaded.value = true
   }
+}
+
+const handleRouteChange = async () => {
+  await ensureProjectsLoaded()
+  const targetId = (props.fixedId as string) || (route.params.id as string)
+  if (isEdit.value && targetId) {
+    await fetchDetail()
+    return
+  }
+  if (props.mode === 'create') {
+    resetFormForCreate()
+  }
+}
+
+onMounted(() => {
+  handleRouteChange()
+})
+
+watch([() => route.params.id, () => props.fixedId], () => {
+  handleRouteChange()
 })
 
 const submitting = computed(() => insertLoading.value || updateLoading.value)
@@ -465,7 +543,10 @@ const handleSubmit = () => {
       await insertFixed({...payload})
       ElMessage.success('新增成功')
     }
-    router.push('/asset/management/fixed')
+    router.push({
+      path: '/asset/management/fixed',
+      query: {refresh: Date.now()},
+    })
   })
 }
 </script>

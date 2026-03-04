@@ -23,7 +23,7 @@
           />
         </el-tabs>
         <router-view v-slot="{Component}">
-          <keep-alive :include="tabsStore.tabs.map(item => item.componentName)">
+          <keep-alive :include="cacheInclude">
             <component :is="Component" />
           </keep-alive>
         </router-view>
@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, onUnmounted} from 'vue'
+import {computed, onMounted, onUnmounted} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useTabStore} from '@/stores/tabs'
 import type {TabPaneName} from 'element-plus'
@@ -43,6 +43,13 @@ import AppSidebar from '@/components/layout/AppSidebar.vue'
 const route = useRoute()
 const router = useRouter()
 const tabsStore = useTabStore()
+
+const cacheInclude = computed(() =>
+  tabsStore.tabs
+    .filter(tab => tab.meta?.keepAlive !== false)
+    .map(tab => tab.componentName)
+    .filter(Boolean)
+)
 
 const handleTabRemove = (name: TabPaneName) => {
   const tabName = name as string

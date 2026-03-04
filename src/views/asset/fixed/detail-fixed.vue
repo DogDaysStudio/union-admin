@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive} from 'vue'
+import {computed, onMounted, reactive, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useRequest} from 'vue-request'
 import {amsAssetFixedGet} from '@/service/api/amsAsset'
@@ -15,6 +15,17 @@ const loadDetail = async () => {
   const {data} = await fetchDetail({fixedId})
   Object.assign(detail, data)
 }
+
+onMounted(loadDetail)
+
+watch(
+  () => route.params.id,
+  newId => {
+    if (newId) {
+      loadDetail()
+    }
+  }
+)
 
 const detailConfig = computed(() => [
   {
@@ -99,8 +110,6 @@ const detailConfig = computed(() => [
     ],
   },
 ])
-
-onMounted(loadDetail)
 </script>
 
 <template>
@@ -111,7 +120,7 @@ onMounted(loadDetail)
         <el-button
           type="primary"
           link
-          @click="router.push(`/asset/management/fixed/edit/${detail.fixedId}`)"
+          @click="router.push(`/asset/management/fixed/edit-fixed/${detail.fixedId}`)"
         >
           编辑
         </el-button>

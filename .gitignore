@@ -27,6 +27,7 @@ coverage
 *.tsbuildinfo
 
 .eslintcache
+.windsurf
 
 # Cypress
 /cypress/videos/
