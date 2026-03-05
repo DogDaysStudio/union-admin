@@ -57,7 +57,7 @@ const getOptions = async (): Promise<void> => {
 
 const dialogVisible = ref(false)
 const openMap = (): void => {
-  dialogVisible.value = true
+  // dialogVisible.value = true
 }
 
 const handleSubmit = () => {

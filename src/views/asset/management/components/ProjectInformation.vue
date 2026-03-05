@@ -145,7 +145,7 @@ const formConfig = computed(() => [
 onMounted(() => getDetail())
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await projectGet({projectId: route.params.id})
+  const {data} = await projectGet({projectId: route.params.projectId})
   const cloneData = JSON.parse(JSON.stringify(data))
   Object.assign(formData, cloneData)
 }

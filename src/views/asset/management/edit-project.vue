@@ -128,7 +128,7 @@ const getOptions = async (): Promise<void> => {
 }
 
 const getDetail = async (): Promise<void> => {
-  const {data} = await projectGet({projectId: route.params.id})
+  const {data} = await projectGet({projectId: route.params.projectId})
   const cloneData = JSON.parse(JSON.stringify(data))
   cloneData.provinceCityDistrictCode = [data.provinceCode, data.cityCode, data.districtCode]
   cloneData.warrantyContract = [data.warrantyContractBegin, data.warrantyContractEnd]
@@ -453,7 +453,6 @@ const props: CascaderProps = {
                   v-model="formData.totalLandArea"
                   placeholder="请填写总占地面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -463,7 +462,6 @@ const props: CascaderProps = {
                   v-model="formData.totalArea"
                   placeholder="请填写总建筑面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -473,7 +471,6 @@ const props: CascaderProps = {
                   v-model="formData.groundArea"
                   placeholder="请填写地上建筑面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -483,7 +480,6 @@ const props: CascaderProps = {
                   v-model="formData.undergroundArea"
                   placeholder="请填写地下建筑面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -493,7 +489,6 @@ const props: CascaderProps = {
                   v-model="formData.roomArea"
                   placeholder="请填写住宅建筑面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -503,7 +498,6 @@ const props: CascaderProps = {
                   v-model="formData.roomUtilityArea"
                   placeholder="请填写住宅实用面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -513,7 +507,6 @@ const props: CascaderProps = {
                   v-model="formData.shopArea"
                   placeholder="请填写商业建筑面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -523,7 +516,6 @@ const props: CascaderProps = {
                   v-model="formData.shopUtilityArea"
                   placeholder="请填写商业实用面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -533,7 +525,6 @@ const props: CascaderProps = {
                   v-model="formData.manageRoomArea"
                   placeholder="请填写管理用房面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -543,7 +534,6 @@ const props: CascaderProps = {
                   v-model="formData.deviceRoomArea"
                   placeholder="请填写设备用房面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -553,7 +543,6 @@ const props: CascaderProps = {
                   v-model="formData.greenArea"
                   placeholder="请填写绿化面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -563,7 +552,6 @@ const props: CascaderProps = {
                   v-model="formData.propertyFeeArea"
                   placeholder="请填写物业费收费面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -573,13 +561,12 @@ const props: CascaderProps = {
                   v-model="formData.roadArea"
                   placeholder="请填写道路面积"
                   :min="0"
-                  clearable
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="容积率" prop="plotRatio">
-                <el-input v-model="formData.plotRatio" placeholder="请填写容积率" clearable />
+                <el-input v-model="formData.plotRatio" placeholder="请填写容积率" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -589,7 +576,6 @@ const props: CascaderProps = {
                   type="date"
                   placeholder="请选择竣工时间"
                   value-format="YYYY-MM-DD"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -600,7 +586,6 @@ const props: CascaderProps = {
                   type="date"
                   placeholder="请选择竣备时间"
                   value-format="YYYY-MM-DD"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -615,7 +600,7 @@ const props: CascaderProps = {
                   v-model="formData.totalHouseholds"
                   placeholder="请填写总户数"
                   :min="0"
-                  clearable
+                  :precision="0"
                 />
               </el-form-item>
             </el-col>
@@ -625,7 +610,7 @@ const props: CascaderProps = {
                   v-model="formData.groundParkingSpace"
                   placeholder="请填写地上车位数量"
                   :min="0"
-                  clearable
+                  :precision="0"
                 />
               </el-form-item>
             </el-col>
@@ -635,7 +620,7 @@ const props: CascaderProps = {
                   v-model="formData.undergroundParkingSpace"
                   placeholder="请填写地下车位数量"
                   :min="0"
-                  clearable
+                  :precision="0"
                 />
               </el-form-item>
             </el-col>
@@ -645,17 +630,13 @@ const props: CascaderProps = {
                   v-model="formData.machineryParkingSpace"
                   placeholder="请填写机械车位数量"
                   :min="0"
-                  clearable
+                  :precision="0"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="车位配比" prop="parkingSpaceRatio">
-                <el-input
-                  v-model="formData.parkingSpaceRatio"
-                  placeholder="请填写车位配比"
-                  clearable
-                />
+                <el-input v-model="formData.parkingSpaceRatio" placeholder="请填写车位配比" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -664,7 +645,7 @@ const props: CascaderProps = {
                   v-model="formData.staffEntrance"
                   placeholder="请填写人行出入口数量"
                   :min="0"
-                  clearable
+                  :precision="0"
                 />
               </el-form-item>
             </el-col>
@@ -674,7 +655,7 @@ const props: CascaderProps = {
                   v-model="formData.carEntrance"
                   placeholder="请填写车辆出入口数量"
                   :min="0"
-                  clearable
+                  :precision="0"
                 />
               </el-form-item>
             </el-col>
@@ -684,7 +665,7 @@ const props: CascaderProps = {
                   v-model="formData.customElevator"
                   placeholder="请填写客梯数量"
                   :min="0"
-                  clearable
+                  :precision="0"
                 />
               </el-form-item>
             </el-col>
@@ -694,7 +675,7 @@ const props: CascaderProps = {
                   v-model="formData.goodsElevator"
                   placeholder="请填写货梯数量"
                   :min="0"
-                  clearable
+                  :precision="0"
                 />
               </el-form-item>
             </el-col>
@@ -704,7 +685,7 @@ const props: CascaderProps = {
                   v-model="formData.firefightElevator"
                   placeholder="请填写消防梯数量"
                   :min="0"
-                  clearable
+                  :precision="0"
                 />
               </el-form-item>
             </el-col>
@@ -738,7 +719,6 @@ const props: CascaderProps = {
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   value-format="YYYY-MM-DD"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -749,7 +729,6 @@ const props: CascaderProps = {
                   type="date"
                   placeholder="请选择入伙时间"
                   value-format="YYYY-MM-DD"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -760,7 +739,6 @@ const props: CascaderProps = {
                   type="date"
                   placeholder="请选择生效日期"
                   value-format="YYYY-MM-DD"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -771,17 +749,12 @@ const props: CascaderProps = {
                   type="date"
                   placeholder="请选择终止日期"
                   value-format="YYYY-MM-DD"
-                  clearable
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="物业费收费模式" prop="propertyFeeModel">
-                <el-select
-                  v-model="formData.propertyFeeModel"
-                  placeholder="请选择收费模式"
-                  clearable
-                >
+                <el-select v-model="formData.propertyFeeModel" placeholder="请选择收费模式">
                   <el-option label="包干制" value="baogan" />
                   <el-option label="酬金制" value="choujin" />
                   <el-option label="按面积收费" value="byArea" />
@@ -790,20 +763,12 @@ const props: CascaderProps = {
             </el-col>
             <el-col :span="8">
               <el-form-item label="住宅物业收费标准" prop="roomStandard">
-                <el-input
-                  v-model="formData.roomStandard"
-                  placeholder="请填写住宅收费标准"
-                  clearable
-                />
+                <el-input v-model="formData.roomStandard" placeholder="请填写住宅收费标准" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="底商物业收费标准" prop="shopStandard">
-                <el-input
-                  v-model="formData.shopStandard"
-                  placeholder="请填写底商收费标准"
-                  clearable
-                />
+                <el-input v-model="formData.shopStandard" placeholder="请填写底商收费标准" />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -811,7 +776,6 @@ const props: CascaderProps = {
                 <el-input
                   v-model="formData.independentShopStandard"
                   placeholder="请填写独立商业收费标准"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -820,7 +784,6 @@ const props: CascaderProps = {
                 <el-input
                   v-model="formData.groundParkingStandard"
                   placeholder="请填写地上车位收费标准"
-                  clearable
                 />
               </el-form-item>
             </el-col>
@@ -829,7 +792,6 @@ const props: CascaderProps = {
                 <el-input
                   v-model="formData.undergroundParkingStandard"
                   placeholder="请填写地下车位收费标准"
-                  clearable
                 />
               </el-form-item>
             </el-col>

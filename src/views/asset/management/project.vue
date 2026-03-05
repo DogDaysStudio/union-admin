@@ -169,28 +169,18 @@ const addProject = () => router.push('/asset/management/add')
 const editProject = (projectId: string) => router.push(`/asset/management/edit/${projectId}`)
 const detailProject = (projectId: string) => router.push(`/asset/management/detail/${projectId}`)
 
-const deleteProject = (projectId: string): void => {
-  ElMessageBox.confirm(`是否确定删除项目?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await projectDelete({projectId})
-    getData()
-    ElMessage.success('删除成功')
-  })
+const deleteProject = async (projectId: string) => {
+  await ElMessageBox.confirm(`是否确定删除项目?`, '确认提示')
+  await projectDelete({projectId})
+  getData()
+  ElMessage.success('删除成功')
 }
 
-const toggleStatus = (projectId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}项目?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await toggleStatusProject({projectId, enable: !enable})
-    getData()
-    ElMessage.success('修改成功')
-  })
+const toggleStatus = async (projectId: string, enable: number) => {
+  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}项目?`, '确认提示')
+  await toggleStatusProject({projectId, enable: !enable})
+  getData()
+  ElMessage.success('修改成功')
 }
 </script>
 
