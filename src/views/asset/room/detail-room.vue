@@ -32,7 +32,7 @@ const formConfig = computed(() => [
       ],
       [
         {label: '所属项目', field: formData.projectName, required: true},
-        {label: '所属楼栋', field: formData.buildingName, required: true},
+        {label: '所属楼栋', field: formData.assetName, required: true},
         {label: '所属楼层', field: formData.floorName, required: true},
       ],
       [{label: '产权单位', field: formData.ownershipUnitName, required: true}],
