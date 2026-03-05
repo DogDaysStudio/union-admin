@@ -78,29 +78,19 @@ const detailLot = (parkingId: string) =>
   router.push(`/asset/management/detail-parking-lot/${parkingId}`)
 
 // 修改状态
-const toggleStatus = (parkingId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}停车场?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await toggleStatusParking({parkingId, enable: !enable})
-    ElMessage.success('修改成功')
-    getData()
-  })
+const toggleStatus = async (parkingId: string, enable: number) => {
+  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}停车场?`, '确认提示')
+  await toggleStatusParking({parkingId, enable: !enable})
+  ElMessage.success('修改成功')
+  getData()
 }
 
 // 删除
-const deleteLot = (parkingId: string): void => {
-  ElMessageBox.confirm(`是否确定删除停车场?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await deleteParking({parkingId})
-    ElMessage.success('删除成功')
-    getData()
-  })
+const deleteLot = async (parkingId: string) => {
+  await ElMessageBox.confirm(`是否确定删除停车场?`, '确认提示')
+  await deleteParking({parkingId})
+  ElMessage.success('删除成功')
+  getData()
 }
 </script>
 
@@ -126,19 +116,17 @@ const deleteLot = (parkingId: string): void => {
       <el-table-column label="序号" type="index" width="60" />
       <el-table-column label="停车场编码" prop="parkingId" />
       <el-table-column label="停车场" prop="parkingName" />
-      <el-table-column label="车位编码" prop="projectName" />
-      <el-table-column label="车位区域" prop="projectTypeName" />
-      <el-table-column label="所属项目" prop="ownershipUnitName" />
-      <el-table-column label="停车场位置" prop="ownershipUnitName" />
-      <el-table-column label="停车方式" prop="ownershipUnitName" />
-      <el-table-column label="车位类别" prop="ownershipUnitName" />
-      <el-table-column label="区域类别" prop="ownershipUnitName" />
+      <el-table-column label="所属项目" prop="projectName" />
+      <el-table-column label="停车场位置" prop="parkingLocationName" />
+      <el-table-column label="停车方式" prop="parkingMethodName" />
+      <el-table-column label="车位类别" prop="parkingCategoryName" />
+      <el-table-column label="停车位数" prop="parkingSpaceQuantity" />
       <el-table-column label="状态" prop="enable">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="105">
+      <el-table-column fixed="right" label="操作" min-width="140">
         <template #default="{row}">
           <el-button
             link

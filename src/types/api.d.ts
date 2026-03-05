@@ -507,10 +507,22 @@ interface ApiType {
   '/ams/asset-shop/insert': {Req: AssetShopInsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-商业管理】
+  // 导入步骤4: 导入商业 | object:{fid:文件ID,assetType:资产类型}
+  export function amsAssetShopImportTemplate(payload: {fid: any; assetType: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/import-template', payload)}
+  */
+  '/ams/asset-shop/import-template': {Req: {fid: any; assetType: any}; Res: Record<string, any>}
+
+  /* 【资产管理-商业管理】
   // 商铺详情
   export function amsAssetShopGet(payload: Record<string, any>) {return http.post<Res<AssetShopVO>>('/ams/asset-shop/get', payload)}
   */
   '/ams/asset-shop/get': {Req: Record<string, any>; Res: AssetShopVO}
+
+  /* 【资产管理-商业管理】
+  // 导入步骤1: 导出上传模板
+  export function amsAssetShopExportTemplate(payload: Record<string, any>) {return http.post<Res<>>('/ams/asset-shop/export-template', payload)}
+  */
+  '/ams/asset-shop/export-template': {Req: Record<string, any>}
 
   /* 【资产管理-商业管理】
   // 启用/禁用商铺 | object:{shopId:住宅编码,enable:bool}
@@ -523,6 +535,18 @@ interface ApiType {
   export function amsAssetShopDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/delete', payload)}
   */
   '/ams/asset-shop/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-商业管理】
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
+  export function amsAssetShopCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-shop/check-template', payload)}
+  */
+  '/ams/asset-shop/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【资产管理-商业管理】
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
+  export function amsAssetShopCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-shop/check-template-export', payload)}
+  */
+  '/ams/asset-shop/check-template-export': {Req: {fid: any}}
 
   /* 【资产管理-住宅管理】
   // 新增/更新住宅
@@ -706,21 +730,21 @@ interface ApiType {
 
   /* 【资产管理-停车场管理】
   // 新增停车场
-  export function amsAssetParkingUpsert(payload: AssetParkingInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/upsert', payload)}
+  export function amsAssetParkingUpsert(payload: AssetParkingUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/upsert', payload)}
   */
-  '/ams/asset-parking/upsert': {Req: AssetParkingInsertDTO; Res: Record<string, any>}
+  '/ams/asset-parking/upsert': {Req: AssetParkingUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 更新停车场
-  export function amsAssetParkingUpdate(payload: AssetParkingDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/update', payload)}
+  export function amsAssetParkingUpdate(payload: AssetParkingUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/update', payload)}
   */
-  '/ams/asset-parking/update': {Req: AssetParkingDTO; Res: Record<string, any>}
+  '/ams/asset-parking/update': {Req: AssetParkingUpsertDTO; Res: Record<string, any>}
 
   /* 【资产管理-停车场管理】
   // 根据停车场id查询停车场区域 | object:{parkingId:停车场编码}
-  export function amsAssetParkingSelectParkingRegion(payload: {parkingId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/select-parking-region', payload)}
+  export function amsAssetParkingSelectParkingRegion(payload: {parkingId: any}) {return http.post<Res<AssetParkingRegionVO[]>>('/ams/asset-parking/select-parking-region', payload)}
   */
-  '/ams/asset-parking/select-parking-region': {Req: {parkingId: any}; Res: Record<string, any>}
+  '/ams/asset-parking/select-parking-region': {Req: {parkingId: any}; Res: AssetParkingRegionVO[]}
 
   /* 【资产管理-停车场管理】
   // 停车场列表
@@ -733,12 +757,6 @@ interface ApiType {
   export function amsAssetParkingGet(payload: {parkingId: any}) {return http.post<Res<AssetParkingVO>>('/ams/asset-parking/get', payload)}
   */
   '/ams/asset-parking/get': {Req: {parkingId: any}; Res: AssetParkingVO}
-
-  /* 【资产管理-停车场管理】
-  // 生成车位区域编码 | object:{"parkingId":"P0001_plt001","regionJson":[{"regionId":"P0001_plt001_pa001","regionName":"负一楼B区"}]}
-  export function amsAssetParkingGenerateParkingRegionId(payload: {parkingId: any; regionJson: any[]}) {return http.post<Res<string>>('/ams/asset-parking/generate-parking-region-id', payload)}
-  */
-  '/ams/asset-parking/generate-parking-region-id': {Req: {parkingId: any; regionJson: any[]}; Res: string}
 
   /* 【资产管理-停车场管理】
   // 生成停车场编码 | object:{projectId:项目编码}
@@ -757,6 +775,12 @@ interface ApiType {
   export function amsAssetParkingDelete(payload: {parkingId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/delete', payload)}
   */
   '/ams/asset-parking/delete': {Req: {parkingId: any}; Res: Record<string, any>}
+
+  /* 【资产管理-停车场管理】
+  // 校验停车场区域编码是否被使用 | object:{parkingSpaceRegionId:停车场区域编码l}
+  export function amsAssetParkingCheckParkingSpaceRegionIsUse(payload: {parkingSpaceRegionId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/check-parkingSpaceRegion-isUse', payload)}
+  */
+  '/ams/asset-parking/check-parkingSpaceRegion-isUse': {Req: {parkingSpaceRegionId: any}; Res: Record<string, any>}
 
   /* 【资产管理-停车位管理】
   // 更新停车位
@@ -1386,7 +1410,6 @@ interface AuthUserLoginLogListDTO {
 interface AuthUserLoginLogVO {
   logId: string // 记录ID
   userId: string // 用户ID
-  token: string // TOKEN
   appType: string // 终端类型
   appVersion: string // 终端版本
   browser: string // 浏览器(UA)
@@ -1679,7 +1702,7 @@ interface AssetRoomVO {
   projectId: string // 项目编码
   projectName: string // 项目名称
   assetId: string // 楼栋编码
-  buildingName: string // 楼栋名称
+  assetName: string // 楼栋名称
   floorId: string // 楼层编码
   floorName: string // 楼层名称
   businessModelCode: string // 经营模式编码
@@ -1994,17 +2017,60 @@ interface AssetParkingDTO {
   parkingLocationName: string // 停车场位置名称
   parkingCategoryCode: string // 车位类别编码
   parkingCategoryName: string // 车位类别名称
-  regionCategoryCode: string // 区域类别编码
-  regionCategoryName: string // 区域类别名称
-  parkingSpaceRegionJson: string // 车位区域
   parkingSpaceQuantity: number // 停车位数
-  regionMapFid: string // 区域地图图片
 }
 
-// 资产管理-新增停车场DTO
-interface AssetParkingInsertDTO {
+interface AssetParkingRegionDTO {
+  regionCategoryCode: string // 区域类别编码
+  regionCategoryName: string // 区域类别名称
+  regionMapFid: string // 区域地图图片文件ID
+  regionId: string // 车位区域编码
+  regionName: string // 车位区域名称
+}
+
+// 资产管理-新增/更新停车场DTO
+interface AssetParkingUpsertDTO {
   parking: AssetParkingDTO // 停车场信息
-  parkingSpaces: AssetParkingSpaceDTO[] // 车位信息
+  parkingSpaceRegions: AssetParkingRegionDTO[] // 车位区域信息
+}
+
+interface AssetParkingRegionVO {
+  regionCategoryCode: string // 区域类别编码
+  regionCategoryName: string // 区域类别名称
+  regionName: string // 车位区域名称
+  regionMapFileModel: FileModel // 区域地图图片文件 Model
+}
+
+// 资产管理-停车场管理
+interface AssetParkingListDTO {
+  pageable: boolean
+  pageNum: number
+  pageSize: number
+  exportFields: string[]
+  parkingId: string // 停车场编码
+  parkingName: string // 停车场名称
+  projectName: string // 项目名称
+  parkingMethodCode: string // 停车方式编码
+  parkingLocationCode: string // 停车场位置编码
+  parkingCategoryCode: string // 车位类别编码
+  enable: number // 是否启用;0-禁用;1-启用
+}
+
+// 资产管理-停车场
+interface AssetParkingVO {
+  projectId: string // 项目编码
+  projectName: string // 项目名称
+  parkingId: string // 停车场编码
+  parkingName: string // 停车场名称
+  parkingMethodCode: string // 停车方式编码
+  parkingMethodName: string // 停车方式名称
+  parkingLocationCode: string // 停车场位置编码
+  parkingLocationName: string // 停车场位置名称
+  parkingCategoryCode: string // 车位类别编码
+  parkingCategoryName: string // 车位类别名称
+  parkingSpaceQuantity: number // 停车位数
+  parkingRegions: AssetParkingRegionVO[] // 车位区域信息
+  enable: number // 是否启用;0-禁用;1-启用
 }
 
 // 资产管理-停车位
@@ -2024,37 +2090,6 @@ interface AssetParkingSpaceDTO {
   leaseTerm: number // 租期
   licensePlate: string // 车牌号
   chargingPort: number // 是否充电位
-}
-
-// 资产管理-停车场管理
-interface AssetParkingListDTO {
-  pageable: boolean
-  pageNum: number
-  pageSize: number
-  exportFields: string[]
-  parkingId: string // 停车场编码
-  parkingName: string // 停车场名称
-  projectName: string // 项目名称
-  parkingMethodCode: string // 停车方式编码
-  parkingLocationCode: string // 停车场位置编码
-  parkingCategoryCode: string // 车位类别编码
-  regionCategoryCode: string // 区域类别编码
-  enable: number // 是否启用;0-禁用;1-启用
-}
-
-// 资产管理-停车场
-interface AssetParkingVO {
-  parkingId: string // 停车场编码
-  parkingName: string // 停车场名称
-  parkingMethodName: string // 停车方式名称
-  parkingLocationName: string // 停车场位置名称
-  parkingCategoryName: string // 车位类别名称
-  regionCategoryName: string // 区域类别名称
-  parkingSpaceRegionJson: string // 车位区域
-  parkingSpaceQuantity: number // 停车位数
-  enable: number // 是否启用;0-禁用;1-启用
-  regionMapFid: string // 区域地图图片文件 Fid
-  regionMapFileModel: FileModel // 区域地图图片文件 Model
 }
 
 // 资产管理-停车位管理
@@ -2207,10 +2242,11 @@ interface AssetFixedListDTO {
   pageSize: number
   exportFields: string[]
   projectName: string // 项目名称
-  buildingName: string // 楼栋名称
+  assetName: string // 资产名称
   floorName: string // 楼层名称
   deviceType: string // 设备类型
   fixedName: string // 固定资产名称
+  fixedTypeName: string // 资产类型名称
   enable: number // 0-禁用;1-启用
 }
 
@@ -2268,6 +2304,7 @@ interface AssetFixedVO {
   deviceInformationFid: string // 设备技术资料
   contractFid: string // 合同
   attachmentFid: string // 其他附件
+  enable: number // 0-禁用;1-启用
 }
 
 interface AssetFixedIdGenerateDTO {
@@ -2298,7 +2335,7 @@ interface AssetFixedBatchUpdateDTO {
 
 interface AssetFixedBatchEnableDTO {
   fixedIdList: string[] // 固定资产编码列表
-  enable: boolean // 启用状态（1：启用、0：禁用）
+  enable?: boolean // 启用状态（1：启用、0：禁用）
 }
 
 interface AssetEnclosureUpdateDTO {

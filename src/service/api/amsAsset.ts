@@ -180,12 +180,19 @@ export function amsAssetParkingList(payload: AssetParkingListDTO) {
   return http.post<Res<AssetParkingVO[]>>('/ams/asset-parking/list', payload)
 }
 // 新增停车场
-export function amsAssetParkingUpsert(payload: AssetParkingInsertDTO) {
+export function amsAssetParkingUpsert(payload: AssetParkingUpsertDTO) {
   return http.post<Res<Record<string, any>>>('/ams/asset-parking/upsert', payload)
 }
 // 更新停车场
-export function amsAssetParkingUpdate(payload: AssetParkingDTO) {
+export function amsAssetParkingUpdate(payload: AssetParkingUpsertDTO) {
   return http.post<Res<Record<string, any>>>('/ams/asset-parking/update', payload)
+}
+// 校验停车场区域编码是否被使用 | object:{parkingSpaceRegionId:停车场区域编码l}
+export function amsAssetParkingCheckParkingSpaceRegionIsUse(payload: {parkingSpaceRegionId: any}) {
+  return http.post<Res<Record<string, any>>>(
+    '/ams/asset-parking/check-parkingSpaceRegion-isUse',
+    payload
+  )
 }
 // 停车场详情 | object:{parkingId:停车场编码}
 export function amsAssetParkingGet(payload: {parkingId: any}) {
