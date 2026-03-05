@@ -107,8 +107,6 @@ const handleSubmit = () => {
           regionItem.regionMapFid = response?.data?.id
         }
       })
-
-      console.log(formData, 'formData')
       const {msg} = await parkingUpsert({...formData})
       ElMessage.success(msg)
       router.push('/asset/management/parking')
