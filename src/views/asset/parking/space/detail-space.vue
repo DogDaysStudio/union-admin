@@ -1,4 +1,7 @@
-<script lang="ts" setup>
+<template>
+  <div>1</div>
+</template>
+<!-- <script lang="ts" setup>
 import {reactive, onMounted, computed} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useRequest} from 'vue-request'
@@ -76,4 +79,4 @@ const formConfig = computed(() => [
       </div>
     </el-form>
   </el-card>
-</template>
+</template> -->
