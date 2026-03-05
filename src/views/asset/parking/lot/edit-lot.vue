@@ -111,9 +111,6 @@ const handleDelete = async (parkingSpaceRegionId: string | undefined, index: num
   } else {
     formData.parkingSpaceRegions.splice(index, 1)
   }
-
-  // spaceRegionIsUse
-  // formData.parkingSpaceRegions.splice(index, 1)
 }
 
 const handleSubmit = () => {
