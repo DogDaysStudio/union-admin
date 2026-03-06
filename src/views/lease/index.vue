@@ -3,7 +3,7 @@ import {iamAuthSsoTicket} from '@/service/api/iamAuth'
 import {onMounted, ref} from 'vue'
 
 const appId = 'OMS'
-const url = 'https://oms-uat.anjueasy.com/sso'
+const url = 'https://szaj-uat.anjueasy.com/sso'
 // const url = 'http://127.0.0.1:3000/sso'
 
 const source = ref('')
