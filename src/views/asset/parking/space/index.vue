@@ -78,12 +78,12 @@ const detailLot = (parkingSpaceId: string) =>
   router.push(`/asset/management/detail-parking-space/${parkingSpaceId}`)
 
 // 修改状态
-const toggleStatus = async (parkingSpaceId: string, enable: number) => {
-  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}车位?`, '确认提示')
-  // await toggleStatusParking({parkingSpaceId, enable: !enable})
-  ElMessage.success('修改成功')
-  getData()
-}
+// const toggleStatus = async (parkingSpaceId: string, enable: number) => {
+//   await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}车位?`, '确认提示')
+//   // await toggleStatusParking({parkingSpaceId, enable: !enable})
+//   ElMessage.success('修改成功')
+//   getData()
+// }
 
 // 删除
 const deleteSpace = async (parkingSpaceId: string) => {
@@ -129,15 +129,15 @@ const deleteSpace = async (parkingSpaceId: string) => {
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="225">
+      <el-table-column fixed="right" label="操作" min-width="180">
         <template #default="{row}">
-          <el-button
+          <!-- <el-button
             link
             :type="row.enable ? 'danger' : 'primary'"
             @click="toggleStatus(row.parkingSpaceId, row.enable)"
           >
             {{ row.enable ? '停用' : '启用' }}
-          </el-button>
+          </el-button> -->
           <el-button link type="primary" @click="detailLot(row.parkingSpaceId)">查看详情</el-button>
           <el-button link type="primary" @click="editSpace(row.parkingSpaceId)">编辑</el-button>
           <el-button link type="danger" @click="deleteSpace(row.parkingSpaceId)">删除</el-button>
