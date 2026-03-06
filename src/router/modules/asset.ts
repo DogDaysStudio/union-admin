@@ -203,7 +203,12 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/parking/space/add-space.vue'),
           },
           {
-            path: '/asset/management/detail-parking-space/:id',
+            path: '/asset/management/edit-parking-space/:parkingSpaceId',
+            meta: {title: '停车位-编辑'},
+            component: () => import('@/views/asset/parking/space/edit-space.vue'),
+          },
+          {
+            path: '/asset/management/detail-parking-space/:parkingSpaceId',
             meta: {title: '停车位-详情'},
             component: () => import('@/views/asset/parking/space/detail-space.vue'),
           },

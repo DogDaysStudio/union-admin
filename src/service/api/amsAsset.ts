@@ -211,7 +211,7 @@ export function amsAssetParkingSpaceList(payload: AssetParkingSpaceListDTO) {
   return http.post<Res<AssetParkingSpaceVO[]>>('/ams/asset-parking-space/list', payload)
 }
 // 新增停车位
-export function amsAssetParkingSpaceInsert(payload: AssetParkingSpaceDTO) {
+export function amsAssetParkingSpaceInsert(payload: AssetParkingSpaceInsertDTO) {
   return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/insert', payload)
 }
 // 更新停车位
@@ -225,6 +225,10 @@ export function amsAssetParkingSpaceGet(payload: Record<string, any>) {
 // 删除停车位 | object:{parkingSpaceId:停车位编码}
 export function amsAssetParkingSpaceDelete(payload: {parkingSpaceId: any}) {
   return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/delete', payload)
+}
+// 根据停车场id查询停车场区域 | object:{parkingId:停车场编码}
+export function amsAssetParkingSelectParkingRegion(payload: {parkingId: any}) {
+  return http.post<Res<AssetParkingRegionVO[]>>('/ams/asset-parking/select-parking-region', payload)
 }
 
 // 根据项目查询围合/楼栋

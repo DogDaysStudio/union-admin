@@ -501,6 +501,18 @@ interface ApiType {
   '/ams/asset-shop/list': {Req: AssetShopListDTO; Res: AssetShopVO[]}
 
   /* 【资产管理-商业管理】
+  // 商铺列表导出
+  export function amsAssetShopListExport(payload: AssetShopListDTO) {return http.post<Res<>>('/ams/asset-shop/list-export', payload)}
+  */
+  '/ams/asset-shop/list-export': {Req: AssetShopListDTO}
+
+  /* 【资产管理-商业管理】
+  // 商铺列表导出(字段元数据)
+  export function amsAssetShopListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-shop/list-export-meta', payload)}
+  */
+  '/ams/asset-shop/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
+
+  /* 【资产管理-商业管理】
   // 新增商铺 | {shopList:[{商铺信息}]}
   export function amsAssetShopInsert(payload: AssetShopInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-shop/insert', payload)}
   */
@@ -561,6 +573,18 @@ interface ApiType {
   '/ams/asset-room/list': {Req: AssetRoomListDTO; Res: AssetRoomVO[]}
 
   /* 【资产管理-住宅管理】
+  // 住宅列表导出
+  export function amsAssetRoomListExport(payload: AssetRoomListDTO) {return http.post<Res<>>('/ams/asset-room/list-export', payload)}
+  */
+  '/ams/asset-room/list-export': {Req: AssetRoomListDTO}
+
+  /* 【资产管理-住宅管理】
+  // 住宅列表导出(字段元数据)
+  export function amsAssetRoomListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-room/list-export-meta', payload)}
+  */
+  '/ams/asset-room/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
+
+  /* 【资产管理-住宅管理】
   // 新增/更新住宅 | {roomList:[{住宅信息}]}
   export function amsAssetRoomInsert(payload: AssetRoomInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-room/insert', payload)}
   */
@@ -608,56 +632,92 @@ interface ApiType {
   */
   '/ams/asset-room/check-template-export': {Req: {fid: any}}
 
-  /* 【资产管理-资源管理】
-  // 更新资源
+  /* 【资产管理-空间点位资源管理】
+  // 更新空间点位资源
   export function amsAssetResourceUpdate(payload: AssetResourceUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/update', payload)}
   */
   '/ams/asset-resource/update': {Req: AssetResourceUpsertDTO; Res: Record<string, any>}
 
-  /* 【资产管理-资源管理】
-  // 根据楼层查询商铺号/房间号
+  /* 【资产管理-空间点位资源管理】
+  // 根据空间点位资源楼层查询商铺号/房间号
   export function amsAssetResourceSelectLocationId(payload: AssetLocationIdListDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/select-location-id', payload)}
   */
   '/ams/asset-resource/select-location-id': {Req: AssetLocationIdListDTO; Res: Record<string, any>}
 
-  /* 【资产管理-资源管理】
-  // 资源列表
+  /* 【资产管理-空间点位资源管理】
+  // 空间点位资源列表
   export function amsAssetResourceList(payload: AssetResourceListDTO) {return http.post<Res<AssetResourceVO[]>>('/ams/asset-resource/list', payload)}
   */
   '/ams/asset-resource/list': {Req: AssetResourceListDTO; Res: AssetResourceVO[]}
 
-  /* 【资产管理-资源管理】
-  // 新增资源
+  /* 【资产管理-空间点位资源管理】
+  // 空间点位资源列表导出
+  export function amsAssetResourceListExport(payload: AssetResourceListDTO) {return http.post<Res<>>('/ams/asset-resource/list-export', payload)}
+  */
+  '/ams/asset-resource/list-export': {Req: AssetResourceListDTO}
+
+  /* 【资产管理-空间点位资源管理】
+  // 空间点位资源列表导出(字段元数据)
+  export function amsAssetResourceListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-resource/list-export-meta', payload)}
+  */
+  '/ams/asset-resource/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
+
+  /* 【资产管理-空间点位资源管理】
+  // 新增空间点位资源
   export function amsAssetResourceInsert(payload: AssetResourceInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/insert', payload)}
   */
   '/ams/asset-resource/insert': {Req: AssetResourceInsertDTO; Res: Record<string, any>}
 
-  /* 【资产管理-资源管理】
-  // 资源详情
+  /* 【资产管理-空间点位资源管理】
+  // 导入步骤4: 导入空间点位资源 | object:{fid:文件ID,assetType:资产类型}
+  export function amsAssetResourceImportTemplate(payload: {fid: any; assetType: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/import-template', payload)}
+  */
+  '/ams/asset-resource/import-template': {Req: {fid: any; assetType: any}; Res: Record<string, any>}
+
+  /* 【资产管理-空间点位资源管理】
+  // 空间点位资源详情
   export function amsAssetResourceGet(payload: Record<string, any>) {return http.post<Res<AssetResourceVO>>('/ams/asset-resource/get', payload)}
   */
   '/ams/asset-resource/get': {Req: Record<string, any>; Res: AssetResourceVO}
 
-  /* 【资产管理-资源管理】
-  // 生成资源编码
+  /* 【资产管理-空间点位资源管理】
+  // 生成空间点位资源编码
   export function amsAssetResourceGenerateResourceId(payload: AssetResourceIdGenerateDTO) {return http.post<Res<string>>('/ams/asset-resource/generate-resource-id', payload)}
   */
   '/ams/asset-resource/generate-resource-id': {Req: AssetResourceIdGenerateDTO; Res: string}
 
-  /* 【资产管理-资源管理】
-  // 启用/禁用资源 | object:{resourceId:资源编码,enable:bool}
+  /* 【资产管理-空间点位资源管理】
+  // 导入步骤1: 导出空间点位资源上传模板
+  export function amsAssetResourceExportTemplate(payload: Record<string, any>) {return http.post<Res<>>('/ams/asset-resource/export-template', payload)}
+  */
+  '/ams/asset-resource/export-template': {Req: Record<string, any>}
+
+  /* 【资产管理-空间点位资源管理】
+  // 启用/禁用空间点位资源 | object:{resourceId:空间点位资源编码,enable:bool}
   export function amsAssetResourceEnable(payload: {resourceId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/enable', payload)}
   */
   '/ams/asset-resource/enable': {Req: {resourceId: any; enable: boolean}; Res: Record<string, any>}
 
-  /* 【资产管理-资源管理】
-  // 删除资源
+  /* 【资产管理-空间点位资源管理】
+  // 删除空间点位资源
   export function amsAssetResourceDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/delete', payload)}
   */
   '/ams/asset-resource/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
-  /* 【资产管理-资源管理】
-  // 批量启用/禁用资源
+  /* 【资产管理-空间点位资源管理】
+  // 导入步骤2: 校验空间点位资源上传模板 | object:{fid:文件ID}
+  export function amsAssetResourceCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-resource/check-template', payload)}
+  */
+  '/ams/asset-resource/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【资产管理-空间点位资源管理】
+  // 导入步骤3: 下载空间点位资源校验后的模板 | object:{fid:文件ID`}
+  export function amsAssetResourceCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-resource/check-template-export', payload)}
+  */
+  '/ams/asset-resource/check-template-export': {Req: {fid: any}}
+
+  /* 【资产管理-空间点位资源管理】
+  // 批量启用/禁用空间点位资源
   export function amsAssetResourceBatchEnable(payload: AssetResourceBatchEnableDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-resource/batch-enable', payload)}
   */
   '/ams/asset-resource/batch-enable': {Req: AssetResourceBatchEnableDTO; Res: Record<string, any>}
@@ -673,6 +733,18 @@ interface ApiType {
   export function amsAssetProjectList(payload: AssetProjectListDTO) {return http.post<Res<AssetProjectVO[]>>('/ams/asset-project/list', payload)}
   */
   '/ams/asset-project/list': {Req: AssetProjectListDTO; Res: AssetProjectVO[]}
+
+  /* 【资产管理-项目管理】
+  // 项目列表导出
+  export function amsAssetProjectListExport(payload: AssetProjectListDTO) {return http.post<Res<>>('/ams/asset-project/list-export', payload)}
+  */
+  '/ams/asset-project/list-export': {Req: AssetProjectListDTO}
+
+  /* 【资产管理-项目管理】
+  // 项目列表导出(字段元数据)
+  export function amsAssetProjectListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-project/list-export-meta', payload)}
+  */
+  '/ams/asset-project/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
 
   /* 【资产管理-项目管理】
   // 新增项目
@@ -753,6 +825,24 @@ interface ApiType {
   '/ams/asset-parking/list': {Req: AssetParkingListDTO; Res: AssetParkingVO[]}
 
   /* 【资产管理-停车场管理】
+  // 停车场列表导出
+  export function amsAssetParkingListExport(payload: AssetParkingListDTO) {return http.post<Res<>>('/ams/asset-parking/list-export', payload)}
+  */
+  '/ams/asset-parking/list-export': {Req: AssetParkingListDTO}
+
+  /* 【资产管理-停车场管理】
+  // 停车场列表导出(字段元数据)
+  export function amsAssetParkingListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-parking/list-export-meta', payload)}
+  */
+  '/ams/asset-parking/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
+
+  /* 【资产管理-停车场管理】
+  // 导入步骤4: 导入停车场 | object:{fid:文件ID}
+  export function amsAssetParkingImportTemplate(payload: {fid: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/import-template', payload)}
+  */
+  '/ams/asset-parking/import-template': {Req: {fid: any}; Res: Record<string, any>}
+
+  /* 【资产管理-停车场管理】
   // 停车场详情 | object:{parkingId:停车场编码}
   export function amsAssetParkingGet(payload: {parkingId: any}) {return http.post<Res<AssetParkingVO>>('/ams/asset-parking/get', payload)}
   */
@@ -765,6 +855,12 @@ interface ApiType {
   '/ams/asset-parking/generate-parking-id': {Req: {projectId: any}; Res: string}
 
   /* 【资产管理-停车场管理】
+  // 导入步骤1: 导出上传模板
+  export function amsAssetParkingExportTemplate(payload: Record<string, any>) {return http.post<Res<>>('/ams/asset-parking/export-template', payload)}
+  */
+  '/ams/asset-parking/export-template': {Req: Record<string, any>}
+
+  /* 【资产管理-停车场管理】
   // 启用/禁用停车场 | object:{parkingId:停车场编码,enable:bool}
   export function amsAssetParkingEnable(payload: {parkingId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/enable', payload)}
   */
@@ -775,6 +871,18 @@ interface ApiType {
   export function amsAssetParkingDelete(payload: {parkingId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking/delete', payload)}
   */
   '/ams/asset-parking/delete': {Req: {parkingId: any}; Res: Record<string, any>}
+
+  /* 【资产管理-停车场管理】
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
+  export function amsAssetParkingCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-parking/check-template', payload)}
+  */
+  '/ams/asset-parking/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【资产管理-停车场管理】
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
+  export function amsAssetParkingCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-parking/check-template-export', payload)}
+  */
+  '/ams/asset-parking/check-template-export': {Req: {fid: any}}
 
   /* 【资产管理-停车场管理】
   // 校验停车场区域编码是否被使用 | object:{parkingSpaceRegionId:停车场区域编码l}
@@ -795,10 +903,28 @@ interface ApiType {
   '/ams/asset-parking-space/list': {Req: AssetParkingSpaceListDTO; Res: AssetParkingSpaceVO[]}
 
   /* 【资产管理-停车位管理】
-  // 新增停车位
-  export function amsAssetParkingSpaceInsert(payload: AssetParkingSpaceDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/insert', payload)}
+  // 停车位列表导出
+  export function amsAssetParkingSpaceListExport(payload: AssetParkingSpaceListDTO) {return http.post<Res<>>('/ams/asset-parking-space/list-export', payload)}
   */
-  '/ams/asset-parking-space/insert': {Req: AssetParkingSpaceDTO; Res: Record<string, any>}
+  '/ams/asset-parking-space/list-export': {Req: AssetParkingSpaceListDTO}
+
+  /* 【资产管理-停车位管理】
+  // 停车位列表导出(字段元数据)
+  export function amsAssetParkingSpaceListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-parking-space/list-export-meta', payload)}
+  */
+  '/ams/asset-parking-space/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
+
+  /* 【资产管理-停车位管理】
+  // 新增停车位
+  export function amsAssetParkingSpaceInsert(payload: AssetParkingSpaceInsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/insert', payload)}
+  */
+  '/ams/asset-parking-space/insert': {Req: AssetParkingSpaceInsertDTO; Res: Record<string, any>}
+
+  /* 【资产管理-停车位管理】
+  // 导入步骤4: 导入停车位 | object:{fid:文件ID}
+  export function amsAssetParkingSpaceImportTemplate(payload: {fid: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/import-template', payload)}
+  */
+  '/ams/asset-parking-space/import-template': {Req: {fid: any}; Res: Record<string, any>}
 
   /* 【资产管理-停车位管理】
   // 停车位详情
@@ -813,10 +939,28 @@ interface ApiType {
   '/ams/asset-parking-space/generate-parking-space-id': {Req: {parkingRegionId: any}; Res: string}
 
   /* 【资产管理-停车位管理】
+  // 导入步骤1: 导出上传模板
+  export function amsAssetParkingSpaceExportTemplate(payload: Record<string, any>) {return http.post<Res<>>('/ams/asset-parking-space/export-template', payload)}
+  */
+  '/ams/asset-parking-space/export-template': {Req: Record<string, any>}
+
+  /* 【资产管理-停车位管理】
   // 删除停车位 | object:{parkingSpaceId:停车位编码}
   export function amsAssetParkingSpaceDelete(payload: {parkingSpaceId: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-parking-space/delete', payload)}
   */
   '/ams/asset-parking-space/delete': {Req: {parkingSpaceId: any}; Res: Record<string, any>}
+
+  /* 【资产管理-停车位管理】
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
+  export function amsAssetParkingSpaceCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-parking-space/check-template', payload)}
+  */
+  '/ams/asset-parking-space/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【资产管理-停车位管理】
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
+  export function amsAssetParkingSpaceCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-parking-space/check-template-export', payload)}
+  */
+  '/ams/asset-parking-space/check-template-export': {Req: {fid: any}}
 
   /* 【资产管理-楼层管理】
   // 更新楼层
@@ -829,6 +973,18 @@ interface ApiType {
   export function amsAssetFloorList(payload: AssetFloorListDTO) {return http.post<Res<AssetFloorVO[]>>('/ams/asset-floor/list', payload)}
   */
   '/ams/asset-floor/list': {Req: AssetFloorListDTO; Res: AssetFloorVO[]}
+
+  /* 【资产管理-楼层管理】
+  // 楼层列表导出
+  export function amsAssetFloorListExport(payload: AssetFloorListDTO) {return http.post<Res<>>('/ams/asset-floor/list-export', payload)}
+  */
+  '/ams/asset-floor/list-export': {Req: AssetFloorListDTO}
+
+  /* 【资产管理-楼层管理】
+  // 楼层列表导出(字段元数据)
+  export function amsAssetFloorListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-floor/list-export-meta', payload)}
+  */
+  '/ams/asset-floor/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
 
   /* 【资产管理-楼层管理】
   // 新增楼层
@@ -897,10 +1053,28 @@ interface ApiType {
   '/ams/asset-fixed/list': {Req: AssetFixedListDTO; Res: AssetFixedVO[]}
 
   /* 【资产管理-固定资产管理】
+  // 固定资产列表导出
+  export function amsAssetFixedListExport(payload: AssetFixedListDTO) {return http.post<Res<>>('/ams/asset-fixed/list-export', payload)}
+  */
+  '/ams/asset-fixed/list-export': {Req: AssetFixedListDTO}
+
+  /* 【资产管理-固定资产管理】
+  // 固定资产列表导出(字段元数据)
+  export function amsAssetFixedListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-fixed/list-export-meta', payload)}
+  */
+  '/ams/asset-fixed/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
+
+  /* 【资产管理-固定资产管理】
   // 新增固定资产
   export function amsAssetFixedInsert(payload: AssetFixedUpsertDTO) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/insert', payload)}
   */
   '/ams/asset-fixed/insert': {Req: AssetFixedUpsertDTO; Res: Record<string, any>}
+
+  /* 【资产管理-固定资产管理】
+  // 导入步骤4: 导入固定资产 | object:{fid:文件ID}
+  export function amsAssetFixedImportTemplate(payload: {fid: any}) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/import-template', payload)}
+  */
+  '/ams/asset-fixed/import-template': {Req: {fid: any}; Res: Record<string, any>}
 
   /* 【资产管理-固定资产管理】
   // 固定资产详情
@@ -915,6 +1089,12 @@ interface ApiType {
   '/ams/asset-fixed/generate-fixed-id': {Req: AssetFixedIdGenerateDTO; Res: string}
 
   /* 【资产管理-固定资产管理】
+  // 导入步骤1: 导出上传模板
+  export function amsAssetFixedExportTemplate(payload: Record<string, any>) {return http.post<Res<>>('/ams/asset-fixed/export-template', payload)}
+  */
+  '/ams/asset-fixed/export-template': {Req: Record<string, any>}
+
+  /* 【资产管理-固定资产管理】
   // 启用/禁用固定资产 | object:{fixedId:固定资产编码,enable:bool}
   export function amsAssetFixedEnable(payload: {fixedId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/enable', payload)}
   */
@@ -925,6 +1105,18 @@ interface ApiType {
   export function amsAssetFixedDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/ams/asset-fixed/delete', payload)}
   */
   '/ams/asset-fixed/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【资产管理-固定资产管理】
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
+  export function amsAssetFixedCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-fixed/check-template', payload)}
+  */
+  '/ams/asset-fixed/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+
+  /* 【资产管理-固定资产管理】
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
+  export function amsAssetFixedCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-fixed/check-template-export', payload)}
+  */
+  '/ams/asset-fixed/check-template-export': {Req: {fid: any}}
 
   /* 【资产管理-固定资产管理】
   // 批量维护质保信息
@@ -955,6 +1147,18 @@ interface ApiType {
   export function amsAssetEnclosureList(payload: AssetEnclosureListDTO) {return http.post<Res<AssetEnclosureVO[]>>('/ams/asset-enclosure/list', payload)}
   */
   '/ams/asset-enclosure/list': {Req: AssetEnclosureListDTO; Res: AssetEnclosureVO[]}
+
+  /* 【资产管理-围合管理】
+  // 围合列表导出
+  export function amsAssetEnclosureListExport(payload: AssetEnclosureListDTO) {return http.post<Res<>>('/ams/asset-enclosure/list-export', payload)}
+  */
+  '/ams/asset-enclosure/list-export': {Req: AssetEnclosureListDTO}
+
+  /* 【资产管理-围合管理】
+  // 围合列表导出(字段元数据)
+  export function amsAssetEnclosureListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-enclosure/list-export-meta', payload)}
+  */
+  '/ams/asset-enclosure/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
 
   /* 【资产管理-围合管理】
   // 新增围合
@@ -1027,6 +1231,18 @@ interface ApiType {
   export function amsAssetBuildingList(payload: AssetBuildingListDTO) {return http.post<Res<AssetBuildingVO[]>>('/ams/asset-building/list', payload)}
   */
   '/ams/asset-building/list': {Req: AssetBuildingListDTO; Res: AssetBuildingVO[]}
+
+  /* 【资产管理-楼栋管理】
+  // 楼栋列表导出
+  export function amsAssetBuildingListExport(payload: AssetBuildingListDTO) {return http.post<Res<>>('/ams/asset-building/list-export', payload)}
+  */
+  '/ams/asset-building/list-export': {Req: AssetBuildingListDTO}
+
+  /* 【资产管理-楼栋管理】
+  // 楼栋列表导出(字段元数据)
+  export function amsAssetBuildingListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-building/list-export-meta', payload)}
+  */
+  '/ams/asset-building/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
 
   /* 【资产管理-楼栋管理】
   // 新增楼栋
@@ -1767,6 +1983,7 @@ interface AssetResourceListDTO {
   pageNum: number
   pageSize: number
   exportFields: string[]
+  projectId: string // 项目编码
   resourceId: string // 资源编码
   resourceName: string // 资源名称
   resourceNumber: string // 资源编号
@@ -2037,6 +2254,7 @@ interface AssetParkingUpsertDTO {
 interface AssetParkingRegionVO {
   regionCategoryCode: string // 区域类别编码
   regionCategoryName: string // 区域类别名称
+  regionId: string // 车位区域编码
   regionName: string // 车位区域名称
   regionMapFileModel: FileModel // 区域地图图片文件 Model
 }
@@ -2047,6 +2265,7 @@ interface AssetParkingListDTO {
   pageNum: number
   pageSize: number
   exportFields: string[]
+  projectId: string // 项目编码
   parkingId: string // 停车场编码
   parkingName: string // 停车场名称
   projectName: string // 项目名称
@@ -2084,12 +2303,9 @@ interface AssetParkingSpaceDTO {
   parkingSpaceAttributeCode: string // 车位属性编码
   parkingSpaceAttributeName: string // 车位属性名称
   parkingSpaceArea: number // 车位面积
+  chargingPortCode: string // 充电位编码
+  chargingPortName: string // 充电位名称
   parkingSpaceState: string // 车位状态
-  ownershipInfo: string // 权属方信息
-  userInfo: string // 使用方信息
-  leaseTerm: number // 租期
-  licensePlate: string // 车牌号
-  chargingPort: number // 是否充电位
 }
 
 // 资产管理-停车位管理
@@ -2121,6 +2337,7 @@ interface AssetParkingSpaceVO {
   parkingName: string // 停车场名称
   parkingSpaceRegionId: string // 车位区域编码
   parkingSpaceRegionName: string // 车位区域名称
+  projectId: string // 项目编码
   projectName: string // 项目名称
   parkingSpaceAttributeCode: string // 车位属性编码
   parkingSpaceAttributeName: string // 车位属性名称
@@ -2130,8 +2347,14 @@ interface AssetParkingSpaceVO {
   userInfo: string // 使用方信息
   leaseTerm: number // 租期
   licensePlate: string // 车牌号
-  chargingPort: number // 是否充电位
+  chargingPortCode: string // 充电位编码
+  chargingPortName: string // 充电位名称
   enable: number // 启停状态
+}
+
+// 资产管理-停车位
+interface AssetParkingSpaceInsertDTO {
+  parkingSpaceList: AssetParkingSpaceDTO[] // 车位列表
 }
 
 // 资产管理-楼层管理
@@ -2241,6 +2464,7 @@ interface AssetFixedListDTO {
   pageNum: number
   pageSize: number
   exportFields: string[]
+  projectId: string // 项目编码
   projectName: string // 项目名称
   assetName: string // 资产名称
   floorName: string // 楼层名称

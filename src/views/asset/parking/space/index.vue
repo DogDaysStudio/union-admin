@@ -25,14 +25,14 @@ const formState = reactive({
 const formSchema = defineSchema({
   fields: [
     defineField.Input({label: '所属项目', prop: 'projectName', clearable: true}),
-    defineField.Input({label: '停车场', prop: 'buildingName', clearable: true}),
-    defineField.Input({label: '停车区域', prop: 'parkingName', clearable: true}),
+    defineField.Input({label: '停车场', prop: 'parkingName', clearable: true}),
+    defineField.Input({label: '停车区域', prop: 'parkingSpaceRegionName', clearable: true}),
     defineField.Select({
       label: '状态',
       prop: 'enable',
       options: [
-        {value: '0', label: '禁用'},
-        {value: '1', label: '启用'},
+        {value: 0, label: '禁用'},
+        {value: 1, label: '启用'},
       ],
       clearable: true,
     }),
@@ -78,29 +78,19 @@ const detailLot = (parkingSpaceId: string) =>
   router.push(`/asset/management/detail-parking-space/${parkingSpaceId}`)
 
 // 修改状态
-const toggleStatus = (parkingSpaceId: string, enable: number): void => {
-  ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}车位?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    // await toggleStatusParking({parkingSpaceId, enable: !enable})
-    ElMessage.success('修改成功')
-    getData()
-  })
+const toggleStatus = async (parkingSpaceId: string, enable: number) => {
+  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}车位?`, '确认提示')
+  // await toggleStatusParking({parkingSpaceId, enable: !enable})
+  ElMessage.success('修改成功')
+  getData()
 }
 
 // 删除
-const deleteSpace = (parkingSpaceId: string): void => {
-  ElMessageBox.confirm(`是否确定删除车位?`, '确认提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).then(async () => {
-    await spaceDelete({parkingSpaceId})
-    ElMessage.success('删除成功')
-    getData()
-  })
+const deleteSpace = async (parkingSpaceId: string) => {
+  await ElMessageBox.confirm(`是否确定删除车位?`, '确认提示')
+  await spaceDelete({parkingSpaceId})
+  ElMessage.success('删除成功')
+  getData()
 }
 </script>
 
@@ -123,23 +113,23 @@ const deleteSpace = (parkingSpaceId: string): void => {
     </template>
 
     <el-table v-loading="loading" :data="tableData" border>
-      <el-table-column label="序号" type="index" width="60" />
-      <el-table-column label="车位名称" prop="parkingSpaceName" />
-      <el-table-column label="车位编码" prop="parkingSpaceId" />
-      <el-table-column label="停车场编码" prop="parkingId" width="100" />
-      <el-table-column label="停车场" prop="parkingName" />
-      <el-table-column label="车位区域" prop="parkingSpaceRegionName" />
+      <el-table-column label="序号" type="index" width="60" fixed="left" />
+      <el-table-column label="车位名称" prop="parkingSpaceName" width="120" />
+      <el-table-column label="车位编码" prop="parkingSpaceId" width="220" />
+      <el-table-column label="停车场" prop="parkingName" width="120" />
+      <el-table-column label="停车场编码" prop="parkingId" width="120" />
+      <el-table-column label="车位区域" prop="parkingSpaceRegionName" width="120" />
       <el-table-column label="所属项目" prop="projectName" width="100" />
       <el-table-column label="权属方信息" prop="ownershipInfo" width="100" />
       <el-table-column label="使用方信息" prop="userInfo" width="100" />
       <el-table-column label="使用方租期" prop="leaseTerm" width="100" />
-      <el-table-column label="车牌" prop="licensePlate" />
-      <el-table-column label="车位状态" prop="enable">
+      <el-table-column label="车牌" prop="licensePlate" width="100" />
+      <el-table-column label="车位状态" prop="enable" width="100">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="105">
+      <el-table-column fixed="right" label="操作" min-width="225">
         <template #default="{row}">
           <el-button
             link

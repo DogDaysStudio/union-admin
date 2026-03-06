@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref, reactive, onMounted} from 'vue'
-import {useRouter} from 'vue-router'
+import {useRouter, useRoute} from 'vue-router'
 import type {FormInstance, FormRules} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {useDicListTree} from '@/common/hooks/useDicTree'
@@ -8,12 +8,14 @@ import {
   amsAssetProjectList,
   amsAssetParkingList,
   amsAssetParkingSelectParkingRegion,
-  amsAssetParkingSpaceInsert,
+  amsAssetParkingSpaceUpdate,
+  amsAssetParkingSpaceGet,
 } from '@/service/api/amsAsset'
 import {useRequest} from 'vue-request'
 import {findValueByCustomId} from '@/utils/array-util'
 
 const router = useRouter()
+const route = useRoute()
 
 // 项目列表
 const {runAsync: projectList} = useRequest(amsAssetProjectList)
@@ -28,43 +30,50 @@ const parkingSpaceRegionOptions = reactive<AssetParkingRegionVO[]>([])
 const parkingSpaceAttributeOptions = useDicListTree({dicType: 1016})
 const chargingPortOptions = useDicListTree({dicType: 1015})
 // 新增停车位
-const {runAsync: parkingSpaceInsert, loading: insertLoading} = useRequest(
-  amsAssetParkingSpaceInsert
+const {runAsync: parkingSpaceUpdate, loading: updateLoading} = useRequest(
+  amsAssetParkingSpaceUpdate
 )
+// 车位详情
+const {runAsync: parkingSpaceGet} = useRequest(amsAssetParkingSpaceGet)
 
 const formRef = ref<FormInstance>()
 
-interface AddSpace {
-  projectId: string
-  parkingId: string
-  parkingSpaceRegionId: string
-  parkingSpaceAttributeCode: string
-  chargingPortCode: string
-  parkingSpaceState: string
-  lotNum: number
-  start: string
-  area: number
-}
-
-const formData = reactive({parkingSpaceList: []} as AssetParkingSpaceInsertDTO & AddSpace)
+const formData = reactive({} as AssetParkingSpaceDTO)
 
 const formRules = reactive({
+  parkingSpaceName: {required: true, message: '请选填写车位名称', trigger: 'blur'},
+  parkingSpaceArea: {required: true, message: '请选填写车位面积', trigger: 'blur'},
   projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
   parkingId: {required: true, message: '请选择停车场', trigger: 'blur'},
   parkingSpaceRegionId: {required: true, message: '请选择车位区域', trigger: 'blur'},
   parkingSpaceAttributeCode: {required: true, message: '请选择车位属性', trigger: 'blur'},
   chargingPortCode: {required: true, message: '请选择是否充电车位', trigger: 'blur'},
   parkingSpaceState: {required: true, message: '请选择车位状态', trigger: 'blur'},
-  lotNum: {required: true, message: '请选填写区域车位数', trigger: 'blur'},
-  start: {required: true, message: '请选填写车位名称前缀前缀', trigger: 'blur'},
-  area: {required: true, message: '请选填写面积', trigger: 'blur'},
 } as FormRules)
 
-onMounted(() => getOptions())
+onMounted(() => {
+  getOptions()
+  getDetail()
+})
 
 const getOptions = async (): Promise<void> => {
   const {data: project} = await projectList({pageable: false} as AssetProjectListDTO)
   projectOptions.push(...project)
+}
+
+const getDetail = async (): Promise<void> => {
+  const {data: parkingDetail} = await parkingSpaceGet({parkingSpaceId: route.params.parkingSpaceId})
+  const cloneData = JSON.parse(JSON.stringify(parkingDetail))
+  Object.assign(formData, cloneData)
+  const {data: parking} = await parkingList({
+    pageable: false,
+    projectId: cloneData.projectId,
+  } as AssetParkingListDTO)
+  parkingOptions.push(...parking)
+  const {data: parkingSpaceRegion} = await parkingRegionList({
+    parkingId: cloneData.parkingId,
+  })
+  parkingSpaceRegionOptions.push(...parkingSpaceRegion)
 }
 
 const changeProjectId = async (projectId: string) => {
@@ -88,67 +97,29 @@ const changeParkingId = async (parkingId: string) => {
   parkingSpaceRegionOptions.push(...parkingSpaceRegion)
 }
 
-const handleAddSpace = () => {
-  if (!formRef.value) return
-  formRef.value.validate(async valid => {
-    if (valid) {
-      const {lotNum, start, area} = formData
-      formData.parkingSpaceList.length = 0
-      const spaces = []
-      for (let num = 1; num <= lotNum; num++) {
-        const serialNumber = String(num).padStart(4, '0')
-        const name = `${start}${serialNumber}`
-        // 检查编号是否重复
-        const isDuplicate = formData.parkingSpaceList.some(p => p.parkingSpaceName === name)
-        if (isDuplicate) {
-          ElMessage.warning(`车位名称 ${name} 已存在，跳过生成`)
-          continue
-        }
-        spaces.push({
-          projectId: formData.projectId,
-          parkingId: formData.parkingId,
-          parkingSpaceRegionId: formData.parkingSpaceRegionId,
-          parkingSpaceRegionName: findValueByCustomId(
-            formData.parkingSpaceRegionId,
-            'regionId',
-            'regionCategoryName',
-            parkingSpaceRegionOptions
-          ),
-          parkingSpaceAttributeCode: formData.parkingSpaceAttributeCode,
-          parkingSpaceAttributeName: findValueByCustomId(
-            formData.parkingSpaceAttributeCode,
-            'dicCode',
-            'dicName',
-            parkingSpaceAttributeOptions
-          ),
-          chargingPortCode: formData.chargingPortCode,
-          chargingPortName: findValueByCustomId(
-            formData.chargingPortCode,
-            'dicCode',
-            'dicName',
-            chargingPortOptions
-          ),
-          parkingSpaceState: formData.parkingSpaceState,
-          parkingSpaceId: '',
-          parkingSpaceName: name,
-          parkingSpaceArea: area,
-        })
-      }
-      formData.parkingSpaceList = spaces
-    }
-  })
-}
-
-const handleDeleteSpace = async (index: number) => {
-  formData.parkingSpaceList.splice(index, 1)
-  ElMessage.success('删除成功!')
-}
-
 const handleSubmit = () => {
   if (!formRef.value) return
   formRef.value.validate(async valid => {
     if (valid) {
-      const {msg} = await parkingSpaceInsert({parkingSpaceList: formData.parkingSpaceList})
+      formData.parkingSpaceRegionName = findValueByCustomId(
+        formData.parkingSpaceRegionId,
+        'regionId',
+        'regionCategoryName',
+        parkingSpaceRegionOptions
+      )
+      formData.parkingSpaceAttributeName = findValueByCustomId(
+        formData.parkingSpaceAttributeCode,
+        'dicCode',
+        'dicName',
+        parkingSpaceAttributeOptions
+      )
+      formData.chargingPortName = findValueByCustomId(
+        formData.chargingPortCode,
+        'dicCode',
+        'dicName',
+        chargingPortOptions
+      )
+      const {msg} = await parkingSpaceUpdate({...formData})
       ElMessage.success(msg)
       router.push('/asset/management/parking')
     }
@@ -179,6 +150,20 @@ const handleSubmit = () => {
       >
         <section-group title="基本信息" inline>
           <el-row :gutter="24">
+            <el-col :span="8">
+              <el-form-item label="车位名称" prop="parkingSpaceName" required>
+                <el-input v-model="formData.parkingSpaceName" placeholder="请选填写车位名称" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="车位面积" prop="parkingSpaceArea" required>
+                <el-input-number
+                  v-model="formData.parkingSpaceArea"
+                  placeholder="请选填写车位面积"
+                  :min="0"
+                />
+              </el-form-item>
+            </el-col>
             <el-col :span="8">
               <el-form-item label="所属项目" prop="projectId" required>
                 <el-select
@@ -271,55 +256,9 @@ const handleSubmit = () => {
           </el-row>
         </section-group>
 
-        <section-group title="停车位信息" inline>
-          <template #extra>
-            <el-button type="primary" @click="handleAddSpace">生成</el-button>
-          </template>
-          <el-row :gutter="24">
-            <el-col :span="8">
-              <el-form-item label="区域车位数" prop="lotNum" required>
-                <el-input-number
-                  v-model="formData.lotNum"
-                  placeholder="请选填写区域车位数"
-                  :precision="0"
-                  :min="0"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="车位名称前缀" prop="start" required>
-                <el-input v-model="formData.start" placeholder="请选填写车位名称前缀" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="面积(㎡)" prop="area" required>
-                <el-input-number v-model="formData.area" placeholder="请选填写面积" :min="0" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-table :data="formData.parkingSpaceList" border>
-            <el-table-column label="序号" type="index" width="60" />
-            <el-table-column label="车位名称" prop="parkingSpaceName">
-              <template #default="{row}">
-                <el-input v-model="row.parkingSpaceName" />
-              </template>
-            </el-table-column>
-            <el-table-column label="面积（㎡）" prop="parkingSpaceArea">
-              <template #default="{row}">
-                <el-input-number v-model="row.parkingSpaceArea" :min="0" style="width: 100%" />
-              </template>
-            </el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
-              <template #default="{$index}">
-                <el-button link type="danger" @click="handleDeleteSpace($index)">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </section-group>
-
         <div class="flex justify-center mt-6">
           <el-button @click="router.push('/asset/management/parking')">返回</el-button>
-          <el-button type="primary" @click="handleSubmit" :loading="insertLoading">确定</el-button>
+          <el-button type="primary" @click="handleSubmit" :loading="updateLoading">确定</el-button>
         </div>
       </el-form>
     </div>

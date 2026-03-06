@@ -299,11 +299,18 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/asset/management/detail-parking-space/:id': RouteRecordInfo<
-    '/asset/management/detail-parking-space/:id', // name
-    '/asset/management/detail-parking-space/:id', // path
-    {id: ParamValue<true>},
-    {id: ParamValue<false>},
+  '/asset/management/edit-parking-space/:parkingSpaceId': RouteRecordInfo<
+    '/asset/management/edit-parking-space/:parkingSpaceId', // name
+    '/asset/management/edit-parking-space/:parkingSpaceId', // path
+    {parkingSpaceId: ParamValue<true>},
+    {parkingSpaceId: ParamValue<false>},
+    never
+  >
+  '/asset/management/detail-parking-space/:parkingSpaceId': RouteRecordInfo<
+    '/asset/management/detail-parking-space/:parkingSpaceId', // name
+    '/asset/management/detail-parking-space/:parkingSpaceId', // path
+    {parkingSpaceId: ParamValue<true>},
+    {parkingSpaceId: ParamValue<false>},
     never
   >
   '/asset/management/fixed': RouteRecordInfo<
