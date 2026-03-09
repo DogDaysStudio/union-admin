@@ -4,7 +4,7 @@ import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {useRequest} from 'vue-request'
-import {useDicListTree} from '@/common/hooks/useDicTree'
+import {useDicListTree, useExport} from '@/common/hooks'
 import {
   amsAssetBuildingList,
   amsAssetFloorDelete,
@@ -90,16 +90,21 @@ const getOptions = async (): Promise<void> => {
 const tableData = reactive<AssetFloorVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
+  const params = getParams()
+  const {total: resTotal, data} = await floorList({...params})
+  total.value = resTotal
+  tableData.length = 0
+  tableData.push(...data)
+  loading.value = false
+}
+
+const getParams = () => {
   const cloneformState = {...formState}
   if (cloneformState.ownershipUnitCode?.length) {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await floorList({...cloneformState})
-  total.value = resTotal
-  tableData.length = 0
-  tableData.push(...data)
-  loading.value = false
+  return cloneformState
 }
 
 const handleSizeChange = (val: number): void => {
@@ -132,6 +137,15 @@ const deleteData = async (floorId: string) => {
   ElMessage.success('删除成功')
   getData()
 }
+
+const handleImport = () => {
+  router.push('/asset/management/import-floor')
+}
+
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/ams/asset-floor/list-export-meta',
+  url: '/ams/asset-floor/list-export',
+})
 </script>
 
 <template>
@@ -146,8 +160,8 @@ const deleteData = async (floorId: string) => {
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
           <el-button type="primary" size="default" @click="addFloor">新增楼层</el-button>
-          <el-button type="primary" size="default">导入</el-button>
-          <el-button type="primary" size="default">导出</el-button>
+          <el-button @click="handleImport">导入</el-button>
+          <el-button @click="exportData(getParams())" :loading="exportLoading">导出</el-button>
         </div>
       </div>
     </template>

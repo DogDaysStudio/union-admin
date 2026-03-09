@@ -64,6 +64,11 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/building/building/detail-building.vue'),
           },
           {
+            path: '/asset/management/import-building/',
+            meta: {title: '楼栋-导入'},
+            component: () => import('@/views/asset/building/building/import-building.vue'),
+          },
+          {
             path: '/asset/management/add-floor',
             meta: {title: '楼层-新增'},
             component: () => import('@/views/asset/building/floor/add-floor.vue'),
@@ -77,6 +82,11 @@ const assetRoutes: RouteRecordRaw[] = [
             path: '/asset/management/detail-floor/:floorId',
             meta: {title: '楼层-详情'},
             component: () => import('@/views/asset/building/floor/detail-floor.vue'),
+          },
+          {
+            path: '/asset/management/import-floor/',
+            meta: {title: '楼层-导入'},
+            component: () => import('@/views/asset/building/floor/import-floor.vue'),
           },
           // 围合管理
           {

@@ -147,6 +147,15 @@ const getOptions = async (): Promise<void> => {
 const tableData = reactive<AssetProjectVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
+  const params = getParams()
+  const {total: resTotal, data} = await projectList({...params})
+  total.value = resTotal
+  tableData.length = 0
+  tableData.push(...data)
+  loading.value = false
+}
+
+const getParams = () => {
   const cloneformState = {...formState}
   cloneformState.cityCode = cloneformState?.provinceCode?.[1]
   cloneformState.districtCode = cloneformState?.provinceCode?.[2]
@@ -155,11 +164,7 @@ const getData = async (): Promise<void> => {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await projectList({...cloneformState})
-  total.value = resTotal
-  tableData.length = 0
-  tableData.push(...data)
-  loading.value = false
+  return cloneformState
 }
 
 const handleSizeChange = (val: number): void => {
@@ -212,9 +217,9 @@ const {exportData, loading: exportLoading} = useExport({
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addProject">新增项目</el-button>
-          <el-button size="default" @click="handleImport">导入</el-button>
-          <el-button @click="exportData(formState)" :loading="exportLoading">导出</el-button>
+          <el-button type="primary" @click="addProject">新增项目</el-button>
+          <el-button @click="handleImport">导入</el-button>
+          <el-button @click="exportData(getParams())" :loading="exportLoading">导出</el-button>
         </div>
       </div>
     </template>

@@ -110,6 +110,13 @@ export interface RouteNamedMap {
     {buildingId: ParamValue<false>},
     never
   >
+  '/asset/management/import-building/': RouteRecordInfo<
+    '/asset/management/import-building/', // name
+    '/asset/management/import-building/', // path
+    any,
+    any,
+    never
+  >
   '/asset/management/add-floor': RouteRecordInfo<
     '/asset/management/add-floor', // name
     '/asset/management/add-floor', // path
@@ -129,6 +136,13 @@ export interface RouteNamedMap {
     '/asset/management/detail-floor/:floorId', // path
     {floorId: ParamValue<true>},
     {floorId: ParamValue<false>},
+    never
+  >
+  '/asset/management/import-floor/': RouteRecordInfo<
+    '/asset/management/import-floor/', // name
+    '/asset/management/import-floor/', // path
+    any,
+    any,
     never
   >
   '/asset/management/enclosure-floor': RouteRecordInfo<
