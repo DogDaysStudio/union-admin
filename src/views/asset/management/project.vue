@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import {defineField, defineSchema} from '@/components'
+import {useDicListTree} from '@/common/hooks'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {useRequest} from 'vue-request'
-import {useDicListTree} from '@/common/hooks/useDicTree'
+// import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetProjectDelete,
   amsAssetProjectEnable,
   amsAssetProjectList,
 } from '@/service/api/amsAsset'
 import {iamCommonAreaList} from '@/service/api/iamCommon'
+import {useExport} from '@/common/hooks/useExport'
 
 // 所属省市区
 const {runAsync: areaList} = useRequest(iamCommonAreaList)
@@ -31,6 +33,12 @@ const formState = reactive({
   pageNum: 1,
   pageSize: 10,
 } as AssetProjectListDTO)
+
+// const [searchForm] = useForm({
+//   pageable: true,
+//   pageNum: 1,
+//   pageSize: 10,
+// } as AssetProjectListDTO)
 
 const formSchema = defineSchema({
   fields: [
@@ -182,6 +190,15 @@ const toggleStatus = async (projectId: string, enable: number) => {
   getData()
   ElMessage.success('修改成功')
 }
+
+const handleImport = () => {
+  router.push('/asset/management/import')
+}
+
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/ams/asset-project/list-export-meta',
+  url: '/ams/asset-project/list-export',
+})
 </script>
 
 <template>
@@ -196,8 +213,8 @@ const toggleStatus = async (projectId: string, enable: number) => {
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
           <el-button type="primary" size="default" @click="addProject">新增项目</el-button>
-          <el-button type="primary" size="default">导入</el-button>
-          <el-button type="primary" size="default">导出</el-button>
+          <el-button size="default" @click="handleImport">导入</el-button>
+          <el-button @click="exportData(formState)" :loading="exportLoading">导出</el-button>
         </div>
       </div>
     </template>

@@ -3,7 +3,7 @@
  * @example
    <upload-file ref="uploadRef" v-model:file-list="form.avatarFid as any"></upload-file>
  */
-import {ref, useAttrs, useTemplateRef} from 'vue'
+import {ref, useAttrs, useTemplateRef, computed} from 'vue'
 import {baseUrl} from '@/common/config'
 import {createHeaders} from '@/service/service'
 import {type UploadPropsPublic, type UploadUserFile} from 'element-plus'
@@ -11,13 +11,25 @@ import {Plus} from '@element-plus/icons-vue'
 import {validateFileList} from './utils'
 
 const attrs = useAttrs()
-const props = withDefaults(defineProps<UploadPropsPublic>(), {
-  action: '/ams/common/file/upload',
-  showFileList: true,
-  listType: 'picture-card',
-  data: () => ({type: 1000}),
-  autoUpload: true,
-})
+const props = withDefaults(
+  defineProps<
+    UploadPropsPublic & {
+      type?: number
+    }
+  >(),
+  {
+    action: '/ams/common/file/upload',
+    showFileList: true,
+    listType: 'picture-card',
+    // data: () => ({type: 1000}),
+    autoUpload: true,
+    type: 1000,
+  }
+)
+
+const uploadData = computed(() => ({
+  type: props.type,
+}))
 
 const uploadRef = useTemplateRef('uploadRef')
 defineExpose({
@@ -58,6 +70,7 @@ const dialogImageUrl = ref('')
     v-bind="{...attrs, ...props}"
     :headers="createHeaders()"
     :action="action?.startsWith('http') ? action : baseUrl + action"
+    :data="uploadData"
   >
     <template v-for="(_, slot) in $slots" #[slot]="scope">
       <slot :name="slot" v-bind="scope" />

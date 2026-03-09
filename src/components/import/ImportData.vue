@@ -53,6 +53,10 @@ const props = defineProps<{
    * 文件上传地址
    */
   uploadUrl?: string
+  /**
+   * 文件上传类型，透传给 UploadFile
+   */
+  type?: number
 }>()
 
 defineEmits<{
@@ -163,6 +167,7 @@ const step2 = async () => {
           ref="uploadRef"
           v-model:file-list="fileList"
           :limit="1"
+          :type="type"
           list-type="text"
           class="upload-template"
         >
