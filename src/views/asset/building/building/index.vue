@@ -152,12 +152,12 @@ const {exportData, loading: exportLoading} = useExport({
       <el-table-column label="所属项目" prop="projectName" />
       <el-table-column label="项目类型" prop="projectTypeName" />
       <el-table-column label="产权单位" prop="ownershipUnitName" />
-      <el-table-column label="状态" prop="enable">
+      <el-table-column label="状态" prop="enable" width="60">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="105">
+      <el-table-column fixed="right" label="操作" min-width="95">
         <template #default="{row}">
           <el-button
             link

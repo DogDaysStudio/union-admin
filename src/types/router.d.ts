@@ -173,6 +173,13 @@ export interface RouteNamedMap {
     {enclosureId: ParamValue<false>},
     never
   >
+  '/asset/management/import-enclosure': RouteRecordInfo<
+    '/asset/management/import-enclosure', // name
+    '/asset/management/import-enclosure', // path
+    any,
+    any,
+    never
+  >
   '/asset/management/add-enclosure-floor': RouteRecordInfo<
     '/asset/management/add-enclosure-floor', // name
     '/asset/management/add-enclosure-floor', // path
@@ -192,6 +199,13 @@ export interface RouteNamedMap {
     '/asset/management/detail-enclosure-floor/:floorId', // path
     {floorId: ParamValue<true>},
     {floorId: ParamValue<false>},
+    never
+  >
+  '/asset/management/import-enclosure-floor': RouteRecordInfo<
+    '/asset/management/import-enclosure-floor', // name
+    '/asset/management/import-enclosure-floor', // path
+    any,
+    any,
     never
   >
   '/asset/management/room': RouteRecordInfo<

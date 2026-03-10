@@ -8,7 +8,7 @@ import {
   amsAssetEnclosureEnable,
   amsAssetEnclosureDelete,
 } from '@/service/api/amsAsset'
-import {useDicListTree} from '@/common/hooks/useDicTree'
+import {useDicListTree, useExport} from '@/common/hooks'
 import {useRequest} from 'vue-request'
 
 // 字典 产权单位/公司 围合类型
@@ -78,16 +78,21 @@ onMounted(() => getData())
 const tableData = reactive<AssetEnclosureVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
+  const params = getParams()
+  const {total: resTotal, data} = await enclosureList({...params})
+  total.value = resTotal
+  tableData.length = 0
+  tableData.push(...data)
+  loading.value = false
+}
+
+const getParams = () => {
   const cloneformState = {...formState}
   if (cloneformState.ownershipUnitCode?.length) {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await enclosureList({...cloneformState})
-  total.value = resTotal
-  tableData.length = 0
-  tableData.push(...data)
-  loading.value = false
+  return cloneformState
 }
 
 const handleSizeChange = (val: number): void => {
@@ -122,6 +127,15 @@ const deleteEnclosure = async (enclosureId: string) => {
   ElMessage.success('删除成功')
   getData()
 }
+
+const handleImport = () => {
+  router.push('/asset/management/import-enclosure')
+}
+
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/ams/asset-enclosure/list-export-meta',
+  url: '/ams/asset-enclosure/list-export',
+})
 </script>
 
 <template>
@@ -135,9 +149,9 @@ const deleteEnclosure = async (enclosureId: string) => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addEnclosure">新增围合</el-button>
-          <el-button type="primary" size="default">导入</el-button>
-          <el-button type="primary" size="default">导出</el-button>
+          <el-button type="primary" @click="addEnclosure">新增围合</el-button>
+          <el-button @click="handleImport">导入</el-button>
+          <el-button @click="exportData(getParams())" :loading="exportLoading">导出</el-button>
         </div>
       </div>
     </template>
@@ -148,12 +162,12 @@ const deleteEnclosure = async (enclosureId: string) => {
       <el-table-column label="围合类型" prop="enclosureTypeName" />
       <el-table-column label="所属项目" prop="projectName" />
       <el-table-column label="产权单位" prop="ownershipUnitName" />
-      <el-table-column label="状态" prop="enable">
+      <el-table-column label="状态" prop="enable" width="60">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="105">
+      <el-table-column fixed="right" label="操作" min-width="95">
         <template #default="{row}">
           <el-button
             link

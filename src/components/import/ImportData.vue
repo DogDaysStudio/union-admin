@@ -56,7 +56,7 @@ const props = defineProps<{
   /**
    * 文件上传类型，透传给 UploadFile
    */
-  type?: number
+  customData?: Record<string, any>
 }>()
 
 defineEmits<{
@@ -91,6 +91,7 @@ const step1 = async () => {
     checkLoading.value = true
     const {data} = await http.post<Res<UserTemplateImportCheckVO>>(props.checkUrl, {
       fid: fid.value,
+      ...props.customData,
     })
     checkData.value = data
   } finally {
@@ -115,6 +116,7 @@ const step2 = async () => {
     importLoading.value = true
     const {data: count} = await http.post<Res<number>>(props.importUrl, {
       fid: fid.value,
+      ...props.customData,
     })
     importCount.value = count || 0
     active.value = 3
@@ -167,7 +169,7 @@ const step2 = async () => {
           ref="uploadRef"
           v-model:file-list="fileList"
           :limit="1"
-          :type="type"
+          :customData="props.customData"
           list-type="text"
           class="upload-template"
         >

@@ -14,7 +14,7 @@ const attrs = useAttrs()
 const props = withDefaults(
   defineProps<
     UploadPropsPublic & {
-      type?: number
+      customData?: Record<string, any>
     }
   >(),
   {
@@ -23,12 +23,12 @@ const props = withDefaults(
     listType: 'picture-card',
     // data: () => ({type: 1000}),
     autoUpload: true,
-    type: 1000,
   }
 )
 
 const uploadData = computed(() => ({
-  type: props.type,
+  type: 1000,
+  ...props.customData,
 }))
 
 const uploadRef = useTemplateRef('uploadRef')

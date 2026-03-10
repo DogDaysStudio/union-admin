@@ -3,7 +3,7 @@ import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
-import {useDicListTree} from '@/common/hooks/useDicTree'
+import {useDicListTree, useExport} from '@/common/hooks'
 import {
   amsAssetEnclosureList,
   amsAssetFloorList,
@@ -90,16 +90,21 @@ const getOptions = async (): Promise<void> => {
 const tableData = reactive<AssetFloorVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
+  const params = getParams()
+  const {total: resTotal, data} = await floorList({...params})
+  total.value = resTotal
+  tableData.length = 0
+  tableData.push(...data)
+  loading.value = false
+}
+
+const getParams = () => {
   const cloneformState = {...formState}
   if (cloneformState.ownershipUnitCode?.length) {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await floorList({...cloneformState})
-  total.value = resTotal
-  tableData.length = 0
-  tableData.push(...data)
-  loading.value = false
+  return cloneformState
 }
 
 const handleSizeChange = (val: number): void => {
@@ -134,6 +139,15 @@ const deleteData = async (floorId: string) => {
   ElMessage.success('删除成功')
   getData()
 }
+
+const handleImport = () => {
+  router.push('/asset/management/import-enclosure-floor')
+}
+
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/ams/asset-building/list-export-meta',
+  url: '/ams/asset-building/list-export',
+})
 </script>
 
 <template>
@@ -147,9 +161,9 @@ const deleteData = async (floorId: string) => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addFloor">新增楼层</el-button>
-          <el-button type="primary" size="default">导入</el-button>
-          <el-button type="primary" size="default">导出</el-button>
+          <el-button type="primary" @click="addFloor">新增楼层</el-button>
+          <el-button @click="handleImport">导入</el-button>
+          <el-button @click="exportData(getParams())" :loading="exportLoading">导出</el-button>
         </div>
       </div>
     </template>
@@ -161,12 +175,12 @@ const deleteData = async (floorId: string) => {
       <el-table-column label="所属围合" prop="assetName" />
       <el-table-column label="所属项目" prop="projectName" />
       <el-table-column label="产权单位" prop="ownershipUnitName" />
-      <el-table-column label="状态" prop="enable">
+      <el-table-column label="状态" prop="enable" width="60">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="105">
+      <el-table-column fixed="right" label="操作" min-width="95">
         <template #default="{row}">
           <el-button
             link

@@ -110,6 +110,11 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/enclosure/enclosure/detail-enclosure.vue'),
           },
           {
+            path: '/asset/management/import-enclosure',
+            meta: {title: '围合-导入'},
+            component: () => import('@/views/asset/enclosure/enclosure/import-enclosure.vue'),
+          },
+          {
             path: '/asset/management/add-enclosure-floor',
             meta: {title: '围合-楼层-新增'},
             component: () => import('@/views/asset/enclosure/floor/add-floor.vue'),
@@ -123,6 +128,11 @@ const assetRoutes: RouteRecordRaw[] = [
             path: '/asset/management/detail-enclosure-floor/:floorId',
             meta: {title: '围合-楼层-详情'},
             component: () => import('@/views/asset/enclosure/floor/detail-floor.vue'),
+          },
+          {
+            path: '/asset/management/import-enclosure-floor',
+            meta: {title: '围合-楼层-导入'},
+            component: () => import('@/views/asset/enclosure/floor/import-floor.vue'),
           },
           // 房屋（住宅）管理
           {

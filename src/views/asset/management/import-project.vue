@@ -15,7 +15,7 @@ const router = useRouter()
       check-url="/ams/asset-project/check-template"
       check-export-url="/ams/asset-project/check-template-export"
       import-url="/ams/asset-project/import-template"
-      :type="1001"
+      :customData="{type: 1001}"
       :title="{
         template: '填写导入项目的信息',
         // templateDesc: '请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除',
