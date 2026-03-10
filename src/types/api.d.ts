@@ -490,9 +490,9 @@ interface ApiType {
 
   /* 【资产管理-商业管理】
   // 拆分商铺
-  export function amsAssetShopSplit(payload: Record<string, any>) {return http.post<Res<string>>('/ams/asset-shop/split', payload)}
+  export function amsAssetShopSplit(payload: AssetShopSplitDTO) {return http.post<Res<string>>('/ams/asset-shop/split', payload)}
   */
-  '/ams/asset-shop/split': {Req: Record<string, any>; Res: string}
+  '/ams/asset-shop/split': {Req: AssetShopSplitDTO; Res: string}
 
   /* 【资产管理-商业管理】
   // 商铺列表
@@ -1029,16 +1029,16 @@ interface ApiType {
   '/ams/asset-floor/delete': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【资产管理-楼层管理】
-  // 导入步骤2: 校验上传模板 | object:{fid:文件ID}
-  export function amsAssetFloorCheckTemplate(payload: {fid: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-floor/check-template', payload)}
+  // 导入步骤2: 校验上传模板 | object:{fid:文件ID,assetType:资产类型}
+  export function amsAssetFloorCheckTemplate(payload: {fid: any; assetType: any}) {return http.post<Res<UserTemplateImportCheckVO>>('/ams/asset-floor/check-template', payload)}
   */
-  '/ams/asset-floor/check-template': {Req: {fid: any}; Res: UserTemplateImportCheckVO}
+  '/ams/asset-floor/check-template': {Req: {fid: any; assetType: any}; Res: UserTemplateImportCheckVO}
 
   /* 【资产管理-楼层管理】
-  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID}
-  export function amsAssetFloorCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-floor/check-template-export', payload)}
+  // 导入步骤3: 下载校验后的模板 | object:{fid:文件ID,assetType:资产类型}
+  export function amsAssetFloorCheckTemplateExport(payload: {fid: any; assetType: any}) {return http.post<Res<>>('/ams/asset-floor/check-template-export', payload)}
   */
-  '/ams/asset-floor/check-template-export': {Req: {fid: any}}
+  '/ams/asset-floor/check-template-export': {Req: {fid: any; assetType: any}}
 
   /* 【资产管理-固定资产管理】
   // 更新固定资产
@@ -1779,8 +1779,22 @@ interface AssetShopUpsertDTO {
   powerGridNo: string // 电表号
   gasNo: string // 燃气号
   voltage: string // 电压
+  splitNumber: number // 拆分数量
   effectiveTime: string // 生效时间
   expireTime: string // 失效时间
+}
+
+interface AssetShopSplitDTO {
+  shopId: string // 商铺编码
+  shopSplitList: AssetShopSplitDetailDTO[] // 商铺拆分数据
+}
+
+// 资产管理-商铺
+interface AssetShopSplitDetailDTO {
+  shopName: string // 商铺名称
+  shopNumber: string // 商铺号
+  buildingArea: number // 建筑面积
+  usableArea: number // 实用面积
 }
 
 // 资产管理-商业管理
@@ -1835,6 +1849,7 @@ interface AssetShopVO {
   shopTypeName: string // 商铺类型名称
   shopHeight: number // 商铺层高
   shopState: number // 0-空闲;1-出租中
+  splitState: number // 0-未拆分;1-已拆分
   rentalArea: number // 计租面积
   propertyFeeArea: number // 物业费收费面积
   decorationLevel: string // 装修等级
@@ -1850,6 +1865,7 @@ interface AssetShopVO {
   voltage: string // 电压
   effectiveTime: string // 生效时间
   expireTime: string // 失效时间
+  children: AssetShopVO[] // 子商铺
 }
 
 interface AssetShopInsertDTO {
@@ -2235,6 +2251,9 @@ interface AssetParkingDTO {
   parkingCategoryCode: string // 车位类别编码
   parkingCategoryName: string // 车位类别名称
   parkingSpaceQuantity: number // 停车位数
+  parkingArea: number // 面积
+  ownershipUnitCode: string // 产权单位编码
+  ownershipUnitName: string // 产权单位名称
 }
 
 interface AssetParkingRegionDTO {
@@ -2288,7 +2307,10 @@ interface AssetParkingVO {
   parkingCategoryCode: string // 车位类别编码
   parkingCategoryName: string // 车位类别名称
   parkingSpaceQuantity: number // 停车位数
+  parkingArea: number // 面积
   parkingRegions: AssetParkingRegionVO[] // 车位区域信息
+  ownershipUnitCode: string // 产权单位编码
+  ownershipUnitName: string // 产权单位名称
   enable: number // 是否启用;0-禁用;1-启用
 }
 
@@ -2306,6 +2328,8 @@ interface AssetParkingSpaceDTO {
   chargingPortCode: string // 充电位编码
   chargingPortName: string // 充电位名称
   parkingSpaceState: string // 车位状态
+  ownershipUnitCode: string // 产权单位编码
+  ownershipUnitName: string // 产权单位名称
 }
 
 // 资产管理-停车位管理
@@ -2343,7 +2367,8 @@ interface AssetParkingSpaceVO {
   parkingSpaceAttributeName: string // 车位属性名称
   parkingSpaceArea: number // 车位面积
   parkingSpaceState: string // 车位状态
-  ownershipInfo: string // 权属方信息
+  ownershipUnitCode: string // 产权单位编码
+  ownershipUnitName: string // 产权单位名称
   userInfo: string // 使用方信息
   leaseTerm: number // 租期
   licensePlate: string // 车牌号

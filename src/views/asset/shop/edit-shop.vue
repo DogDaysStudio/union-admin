@@ -450,7 +450,7 @@ const handleSubmit = () => {
         </section-group>
 
         <div class="flex justify-center mt-6">
-          <el-button @click="router.push('/asset/management/room')">返回</el-button>
+          <el-button @click="router.push('/asset/management/shop')">返回</el-button>
           <el-button type="primary" @click="handleSubmit" :loading="updateLoading">确定</el-button>
         </div>
       </el-form>

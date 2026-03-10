@@ -145,6 +145,10 @@ export function amsAssetShopGet(payload: Record<string, any>) {
 export function amsAssetShopDelete(payload: Record<string, any>) {
   return http.post<Res<Record<string, any>>>('/ams/asset-shop/delete', payload)
 }
+// 拆分商铺
+export function amsAssetShopSplit(payload: AssetShopSplitDTO) {
+  return http.post<Res<string>>('/ams/asset-shop/split', payload)
+}
 // 启用/禁用商业 | object:{shopId:住宅编码,enable:bool}
 export function amsAssetShopEnable(payload: {shopId: any; enable: boolean}) {
   return http.post<Res<Record<string, any>>>('/ams/asset-shop/enable', payload)

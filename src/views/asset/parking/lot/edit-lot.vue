@@ -26,12 +26,22 @@ const route = useRoute()
 
 // 项目列表
 const {runAsync: projectList} = useRequest(amsAssetProjectList)
-const projectOptions = reactive<{projectId: string; projectName: string}[]>([])
-// 字典 [停车场位置1013 停车方式1026 车位类别1014 区域类别1025]
+const projectOptions = reactive<
+  {
+    projectId: string
+    projectName: string
+    areaName: string
+    address: string
+    lng: number
+    lat: number
+  }[]
+>([])
+// 字典 [停车场位置1013 停车方式1026 车位类别1014 区域类别1025 产权单位1001]
 const parkingLocationOptions = useDicListTree({dicType: 1013})
 const parkingMethodOptions = useDicListTree({dicType: 1026})
 const parkingCategoryOptions = useDicListTree({dicType: 1014})
 const regionCategoryOptions = useDicListTree({dicType: 1025})
+const companyOptions = useDicListTree({dicType: 1001})
 // 编辑停车场
 const {runAsync: parkingUpdate, loading: updateLoding} = useRequest(amsAssetParkingUpdate)
 // 停车场详情
@@ -46,11 +56,13 @@ const formRef = ref<FormInstance>()
 const formData = reactive({
   parking: {},
   parkingSpaceRegions: [{regionCategoryCode: '', regionName: '', regionMapFid: ''}],
-} as AssetParkingUpsertDTO)
+} as AssetParkingUpsertDTO & {
+  parking: AssetParkingDTO & {address: string; lng: number; lat: number}
+})
 
 const formRules = reactive({
   parking: {
-    projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
+    projectId: {required: true, message: '请选择项目名称', trigger: 'blur'},
     parkingName: {required: true, message: '请输入停车场名称', trigger: 'blur'},
     parkingLocationCode: {required: true, message: '请选择停车场位置', trigger: 'blur'},
     parkingMethodCode: {required: true, message: '请选择停车方式', trigger: 'blur'},
@@ -92,6 +104,14 @@ const getDetail = async (): Promise<void> => {
   }
   formData.parkingSpaceRegions = [...cloneData.parkingRegions]
   formData.parking = {...cloneData}
+  changeProjectId(formData.parking.projectId)
+}
+
+const changeProjectId = (projectId: string) => {
+  const findItem = projectOptions.filter(item => item.projectId == projectId)
+  formData.parking.address = `${findItem[0].areaName || ''}${findItem[0].address || ''}`
+  formData.parking.lng = findItem[0].lng || null
+  formData.parking.lat = findItem[0].lat || null
 }
 
 const handleAdd = () => {
@@ -154,7 +174,27 @@ const handleSubmit = () => {
           regionItem.regionMapFid = response?.data?.id || regionItem.imgList[0]?.bizData?.id
         }
       })
-      const {msg} = await parkingUpdate({...formData})
+      let ownershipUnitCode = ''
+      if (Array.isArray(formData.parking.ownershipUnitCode)) {
+        ownershipUnitCode =
+          formData.parking.ownershipUnitCode[formData.parking.ownershipUnitCode.length - 1] ?? ''
+        formData.parking.ownershipUnitName = findValueByCustomId(
+          ownershipUnitCode,
+          'dicCode',
+          'dicName',
+          companyOptions
+        )
+      } else {
+        ownershipUnitCode = formData.parking.ownershipUnitCode
+      }
+      const {msg} = await parkingUpdate({
+        parkingSpaceRegions: formData.parkingSpaceRegions,
+        parking: {
+          ...formData.parking,
+          ownershipUnitCode,
+        },
+      })
+
       ElMessage.success(msg)
       router.push('/asset/management/parking')
     }
@@ -186,8 +226,12 @@ const handleSubmit = () => {
         <section-group title="基本信息" inline>
           <el-row :gutter="24">
             <el-col :span="8">
-              <el-form-item label="所属项目" prop="parking.projectId" required>
-                <el-select v-model="formData.parking.projectId" placeholder="请选择所属项目">
+              <el-form-item label="项目名称" prop="parking.projectId" required>
+                <el-select
+                  v-model="formData.parking.projectId"
+                  placeholder="请选择项目名称"
+                  @change="changeProjectId"
+                >
                   <el-option
                     v-for="item in projectOptions"
                     :key="item.projectId"
@@ -198,8 +242,43 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
             <el-col :span="8">
+              <el-form-item label="项目地址" required>
+                <el-input
+                  v-model="formData.parking.address"
+                  placeholder="请填写项目地址"
+                  disabled
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="经纬度" required>
+                <el-row :gutter="12">
+                  <el-col :span="12">
+                    <el-input-number v-model="formData.parking.lng" placeholder="经度" disabled />
+                  </el-col>
+                  <el-col :span="12">
+                    <el-input-number v-model="formData.parking.lat" placeholder="纬度" disabled />
+                  </el-col>
+                </el-row>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
               <el-form-item label="停车场名称" prop="parking.parkingName" required>
                 <el-input v-model="formData.parking.parkingName" placeholder="请输入停车场名称" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="产权单位" prop="parking.ownershipUnitCode" required>
+                <el-cascader
+                  v-model="formData.parking.ownershipUnitCode"
+                  placeholder="请选择产权单位"
+                  :options="companyOptions"
+                  :props="{
+                    checkStrictly: true,
+                    value: 'dicCode',
+                    label: 'dicName',
+                  }"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -254,6 +333,15 @@ const handleSubmit = () => {
                   placeholder="请输入停车位数"
                   :min="0"
                   :precision="0"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="面积">
+                <el-input-number
+                  v-model="formData.parking.parkingArea"
+                  placeholder="请输入面积"
+                  :min="0"
                 />
               </el-form-item>
             </el-col>

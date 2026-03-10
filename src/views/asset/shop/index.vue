@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import {defineField, defineSchema} from '@/components'
-import {onMounted, reactive, ref} from 'vue'
+import {onMounted, reactive, ref, useTemplateRef, watch} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {useDicListTree} from '@/common/hooks/useDicTree'
-import {amsAssetShopList, amsAssetShopEnable, amsAssetShopDelete} from '@/service/api/amsAsset'
+import {
+  amsAssetShopList,
+  amsAssetShopEnable,
+  amsAssetShopDelete,
+  amsAssetShopGet,
+  amsAssetShopSplit,
+} from '@/service/api/amsAsset'
 import {iamCommonAreaList} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
 
@@ -21,6 +27,10 @@ const {runAsync: shopList} = useRequest(amsAssetShopList)
 const {runAsync: shopEnable} = useRequest(amsAssetShopEnable)
 // 删除数据
 const {runAsync: shopDelete} = useRequest(amsAssetShopDelete)
+// 商铺详情
+const {runAsync: shopGet} = useRequest(amsAssetShopGet)
+// 商铺拆分
+const {runAsync: shopSplit, loading: splitLoading} = useRequest(amsAssetShopSplit)
 
 const formState = reactive({
   pageNum: 1,
@@ -173,6 +183,64 @@ const deleteShop = async (shopId: string) => {
   ElMessage.success('删除成功')
   getData()
 }
+
+// 弹窗
+const dialogVisible = ref(false)
+const splitFormRef = useTemplateRef('splitFormRef')
+
+interface AssetShopSplitMoreDTO {
+  shopNumber: string
+  shopName: string
+  buildingArea: number
+  usableArea: number
+  splitNumber: number
+}
+// 表单
+const splitForm = reactive({shopSplitList: []} as AssetShopSplitDTO & AssetShopSplitMoreDTO)
+
+const splitShop = async (shopId: string) => {
+  dialogVisible.value = true
+  const {data} = await shopGet({shopId})
+  Object.assign(splitForm, data)
+  splitForm.shopSplitList.length = 0
+  addShopSplitList()
+  console.log(data)
+}
+
+const addShopSplitList = () => {
+  splitForm.shopSplitList.push({
+    shopName: '', // 商铺名称
+    shopNumber: '', // 商铺号
+    buildingArea: null, // 建筑面积
+    usableArea: null, // 实用面积
+  })
+}
+
+const deleteShopSplitList = (index: number) => {
+  splitForm.shopSplitList.splice(index, 1)
+}
+
+watch(splitForm.shopSplitList, () => {
+  splitForm.splitNumber = splitForm.shopSplitList.length
+})
+
+const handleSplitConfirm = async () => {
+  await splitFormRef.value?.validate()
+  let Flag = true
+  splitForm.shopSplitList.map(item => {
+    if (!item.shopName || !item.shopNumber || !item.buildingArea || !item.usableArea) Flag = false
+  })
+  if (Flag) {
+    const {msg} = await shopSplit({...splitForm})
+    ElMessage.success(msg)
+    dialogVisible.value = false
+    getData()
+  } else {
+    ElMessage.warning('请填写完整数据')
+  }
+}
+
+const handleSplitCancel = () => (dialogVisible.value = false)
 </script>
 
 <template>
@@ -186,29 +254,35 @@ const deleteShop = async (shopId: string) => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addShop">新增房屋（商业）</el-button>
-          <el-button type="primary" size="default">导入</el-button>
-          <el-button type="primary" size="default">导出</el-button>
+          <el-button type="primary" @click="addShop">新增房屋（商业）</el-button>
+          <el-button>导入</el-button>
+          <el-button>导出</el-button>
         </div>
       </div>
     </template>
-    <el-table v-loading="loading" :data="tableData" border>
-      <el-table-column label="序号" type="index" width="60" />
-      <el-table-column label="商铺编码" prop="shopId" />
-      <el-table-column label="商铺名称" prop="shopNumber" />
+    <el-table v-loading="loading" :data="tableData" border row-key="shopId" default-expand-all>
+      <el-table-column label="序号" type="index" width="55" fixed="left" />
+      <el-table-column label="商铺编码" prop="shopId" width="240" />
+      <el-table-column label="商铺号" prop="shopNumber" width="150" />
+      <el-table-column label="商铺名称" prop="shopName" width="150" />
       <el-table-column label="建筑面积（㎡）" prop="buildingArea" width="125" />
       <el-table-column label="实用面积（㎡）" prop="usableArea" width="125" />
-      <el-table-column label="所属项目" prop="projectName" />
+      <el-table-column label="所属项目" prop="projectName" width="120" />
       <el-table-column label="所属楼栋/围合" prop="assetName" width="125" />
       <el-table-column label="所属楼层" prop="floorName" width="90" />
-      <el-table-column label="经营模式" prop="businessModelName" />
-      <el-table-column label="产权单位" prop="ownershipUnitName" />
+      <el-table-column label="经营模式" prop="businessModelName" width="100" />
+      <el-table-column label="产权单位" prop="ownershipUnitName" width="240" />
+      <el-table-column label="拆分状态" prop="splitState" width="90">
+        <template #default="scope">
+          <div>{{ scope?.row?.splitState ? '已拆分' : '未拆分' }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="状态" prop="enable" width="70">
         <template #default="scope">
           <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="180">
+      <el-table-column fixed="right" label="操作" min-width="300">
         <template #default="{row}">
           <el-button
             link
@@ -219,6 +293,7 @@ const deleteShop = async (shopId: string) => {
           </el-button>
           <el-button link type="primary" @click="detailShop(row.shopId)">查看详情</el-button>
           <el-button link type="primary" @click="editShop(row.shopId)">编辑</el-button>
+          <el-button link type="primary" @click="splitShop(row.shopId)">商铺拆分</el-button>
           <el-button link type="danger" @click="deleteShop(row.shopId)">删除</el-button>
         </template>
       </el-table-column>
@@ -232,4 +307,67 @@ const deleteShop = async (shopId: string) => {
       @current-change="handleCurrentChange"
     />
   </el-card>
+
+  <!-- 添加部门弹窗 -->
+  <el-dialog v-model="dialogVisible" title="商铺拆分" @closed="splitFormRef?.resetFields()">
+    <el-form :model="splitForm" ref="splitFormRef" label-width="90px">
+      <el-form-item label="商铺号" required>
+        <el-input v-model="splitForm.shopNumber" disabled />
+      </el-form-item>
+      <el-form-item label="商铺编码" required>
+        <el-input v-model="splitForm.shopId" disabled />
+      </el-form-item>
+      <el-form-item label="商铺名称" required>
+        <el-input v-model="splitForm.shopName" disabled />
+      </el-form-item>
+      <el-form-item label="建筑面积" required>
+        <el-input-number v-model="splitForm.buildingArea" disabled :min="0" />
+      </el-form-item>
+      <el-form-item label="实用面积" required>
+        <el-input-number v-model="splitForm.usableArea" disabled :min="0" />
+      </el-form-item>
+      <el-form-item label="拆分间数" required>
+        <el-input-number v-model="splitForm.splitNumber" disabled :min="0" :precision="0" />
+      </el-form-item>
+      <el-table :data="splitForm.shopSplitList" border>
+        <el-table-column label="拆分商铺名称" prop="shopName">
+          <template #default="{row}">
+            <el-input v-model="row.shopName" />
+          </template>
+        </el-table-column>
+        <el-table-column label="拆分商铺号" prop="shopNumber">
+          <template #default="{row}">
+            <el-input v-model="row.shopNumber" />
+          </template>
+        </el-table-column>
+        <el-table-column label="建筑面积" prop="buildingArea">
+          <template #default="{row}">
+            <el-input-number v-model="row.buildingArea" :min="0" />
+          </template>
+        </el-table-column>
+        <el-table-column label="实用面积" prop="usableArea">
+          <template #default="{row}">
+            <el-input-number v-model="row.usableArea" :min="0" />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="120">
+          <template #default="{$index}">
+            <el-button link type="primary" @click="addShopSplitList">添加</el-button>
+            <el-button
+              link
+              type="danger"
+              @click="deleteShopSplitList($index)"
+              :disabled="$index === 0"
+            >
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-form>
+    <template #footer>
+      <el-button @click="handleSplitCancel">取消</el-button>
+      <el-button type="primary" @click="handleSplitConfirm" :loading="splitLoading">确定</el-button>
+    </template>
+  </el-dialog>
 </template>
