@@ -26,9 +26,10 @@ const parkingOptions = reactive<{parkingId: string; parkingName: string}[]>([])
 // 车位区域列表
 const {runAsync: parkingRegionList} = useRequest(amsAssetParkingSelectParkingRegion)
 const parkingSpaceRegionOptions = reactive<AssetParkingRegionVO[]>([])
-// 字典 [车位属性1016 是否充电车位1015]
+// 字典 [车位属性1016 是否充电车位1015 产权单位1001]
 const parkingSpaceAttributeOptions = useDicListTree({dicType: 1016})
 const chargingPortOptions = useDicListTree({dicType: 1015})
+const companyOptions = useDicListTree({dicType: 1001})
 // 新增停车位
 const {runAsync: parkingSpaceUpdate, loading: updateLoading} = useRequest(
   amsAssetParkingSpaceUpdate
@@ -45,6 +46,7 @@ const formRules = reactive({
   parkingSpaceArea: {required: true, message: '请选填写车位面积', trigger: 'blur'},
   projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
   parkingId: {required: true, message: '请选择停车场', trigger: 'blur'},
+  ownershipUnitCode: {required: true, message: '请选择产权单位', trigger: 'blur'},
   parkingSpaceRegionId: {required: true, message: '请选择车位区域', trigger: 'blur'},
   parkingSpaceAttributeCode: {required: true, message: '请选择车位属性', trigger: 'blur'},
   chargingPortCode: {required: true, message: '请选择是否充电车位', trigger: 'blur'},
@@ -119,7 +121,19 @@ const handleSubmit = () => {
         'dicName',
         chargingPortOptions
       )
-      const {msg} = await parkingSpaceUpdate({...formData})
+      let ownershipUnitCode = ''
+      if (Array.isArray(formData.ownershipUnitCode)) {
+        ownershipUnitCode = formData.ownershipUnitCode[formData.ownershipUnitCode.length - 1] ?? ''
+        formData.ownershipUnitName = findValueByCustomId(
+          ownershipUnitCode,
+          'dicCode',
+          'dicName',
+          companyOptions
+        )
+      } else {
+        ownershipUnitCode = formData.ownershipUnitCode
+      }
+      const {msg} = await parkingSpaceUpdate({...formData, ownershipUnitCode})
       ElMessage.success(msg)
       router.push('/asset/management/parking')
     }
@@ -131,7 +145,7 @@ const handleSubmit = () => {
   <el-card>
     <template #header>
       <div class="flex justify-between">
-        新增
+        编辑
         <p class="text-red-600">
           <span>*</span>
           为必填项
@@ -194,6 +208,20 @@ const handleSubmit = () => {
                     :value="item.parkingId"
                   />
                 </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="产权单位" prop="ownershipUnitCode" required>
+                <el-cascader
+                  v-model="formData.ownershipUnitCode"
+                  placeholder="请选择产权单位"
+                  :options="companyOptions"
+                  :props="{
+                    checkStrictly: true,
+                    value: 'dicCode',
+                    label: 'dicName',
+                  }"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="8">

@@ -24,9 +24,10 @@ const parkingOptions = reactive<{parkingId: string; parkingName: string}[]>([])
 // 车位区域列表
 const {runAsync: parkingRegionList} = useRequest(amsAssetParkingSelectParkingRegion)
 const parkingSpaceRegionOptions = reactive<AssetParkingRegionVO[]>([])
-// 字典 [车位属性1016 是否充电车位1015]
+// 字典 [车位属性1016 是否充电车位1015 产权单位1001]
 const parkingSpaceAttributeOptions = useDicListTree({dicType: 1016})
 const chargingPortOptions = useDicListTree({dicType: 1015})
+const companyOptions = useDicListTree({dicType: 1001})
 // 新增停车位
 const {runAsync: parkingSpaceInsert, loading: insertLoading} = useRequest(
   amsAssetParkingSpaceInsert
@@ -37,6 +38,7 @@ const formRef = ref<FormInstance>()
 interface AddSpace {
   projectId: string
   parkingId: string
+  ownershipUnitCode: string[]
   parkingSpaceRegionId: string
   parkingSpaceAttributeCode: string
   chargingPortCode: string
@@ -51,6 +53,7 @@ const formData = reactive({parkingSpaceList: []} as AssetParkingSpaceInsertDTO &
 const formRules = reactive({
   projectId: {required: true, message: '请选择所属项目', trigger: 'blur'},
   parkingId: {required: true, message: '请选择停车场', trigger: 'blur'},
+  ownershipUnitCode: {required: true, message: '请选择产权单位', trigger: 'blur'},
   parkingSpaceRegionId: {required: true, message: '请选择车位区域', trigger: 'blur'},
   parkingSpaceAttributeCode: {required: true, message: '请选择车位属性', trigger: 'blur'},
   chargingPortCode: {required: true, message: '请选择是否充电车位', trigger: 'blur'},
@@ -113,6 +116,13 @@ const handleAddSpace = () => {
             'regionId',
             'regionCategoryName',
             parkingSpaceRegionOptions
+          ),
+          ownershipUnitCode: formData.ownershipUnitCode[formData.ownershipUnitCode.length - 1],
+          ownershipUnitName: findValueByCustomId(
+            formData.ownershipUnitCode[formData.ownershipUnitCode.length - 1],
+            'dicCode',
+            'dicName',
+            companyOptions
           ),
           parkingSpaceAttributeCode: formData.parkingSpaceAttributeCode,
           parkingSpaceAttributeName: findValueByCustomId(
@@ -209,6 +219,20 @@ const handleSubmit = () => {
                     :value="item.parkingId"
                   />
                 </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="产权单位" prop="ownershipUnitCode" required>
+                <el-cascader
+                  v-model="formData.ownershipUnitCode"
+                  placeholder="请选择产权单位"
+                  :options="companyOptions"
+                  :props="{
+                    checkStrictly: true,
+                    value: 'dicCode',
+                    label: 'dicName',
+                  }"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="8">
