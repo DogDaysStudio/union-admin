@@ -143,8 +143,8 @@ const handleImport = () => {
 }
 
 const {exportData, loading: exportLoading} = useExport({
-  meta: '/ams/asset-floor/list-export-meta',
-  url: '/ams/asset-floor/list-export',
+  meta: '/ams/asset-floor/building-list-export-meta',
+  url: '/ams/asset-floor/building-list-export',
 })
 </script>
 
