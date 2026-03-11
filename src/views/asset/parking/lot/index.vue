@@ -9,6 +9,7 @@ import {
   amsAssetParkingEnable,
   amsAssetParkingList,
 } from '@/service/api/amsAsset'
+import {useExport} from '@/common/hooks'
 
 // 列表数据
 const {runAsync: parkingList} = useRequest(amsAssetParkingList)
@@ -53,11 +54,16 @@ onMounted(() => getData())
 const tableData = reactive<AssetParkingVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
-  const {total: resTotal, data} = await parkingList({...formState})
+  const params = getParams()
+  const {total: resTotal, data} = await parkingList({...params})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
   loading.value = false
+}
+
+const getParams = () => {
+  return {...formState}
 }
 
 const handleSizeChange = (val: number): void => {
@@ -92,6 +98,15 @@ const deleteLot = async (parkingId: string) => {
   ElMessage.success('删除成功')
   getData()
 }
+
+const handleImport = () => {
+  router.push('/asset/management/import-parking-lot')
+}
+
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/ams/asset-parking/list-export-meta',
+  url: '/ams/asset-parking/list-export',
+})
 </script>
 
 <template>
@@ -105,36 +120,32 @@ const deleteLot = async (parkingId: string) => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addLot">新增停车场</el-button>
-          <el-button type="primary" size="default">导入</el-button>
-          <el-button type="primary" size="default">导出</el-button>
+          <el-button type="primary" @click="addLot">新增停车场</el-button>
+          <el-button @click="handleImport">导入</el-button>
+          <el-button @click="exportData(getParams())" :loading="exportLoading">导出</el-button>
         </div>
       </div>
     </template>
 
     <el-table v-loading="loading" :data="tableData" border>
-      <el-table-column label="序号" type="index" width="60" />
-      <el-table-column label="停车场编码" prop="parkingId" />
-      <el-table-column label="停车场" prop="parkingName" />
-      <el-table-column label="所属项目" prop="projectName" />
-      <el-table-column label="停车场位置" prop="parkingLocationName" />
-      <el-table-column label="停车方式" prop="parkingMethodName" />
-      <el-table-column label="车位类别" prop="parkingCategoryName" />
-      <el-table-column label="停车位数" prop="parkingSpaceQuantity" />
-      <el-table-column label="状态" prop="enable">
-        <template #default="scope">
-          <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
+      <el-table-column label="序号" type="index" width="55" fixed="left" />
+      <el-table-column label="停车场编码" prop="parkingId" min-width="130" />
+      <el-table-column label="停车场" prop="parkingName" width="160" />
+      <el-table-column label="所属项目" prop="projectName" width="140" />
+      <el-table-column label="停车场位置" prop="parkingLocationName" width="120" />
+      <el-table-column label="停车方式" prop="parkingMethodName" width="120" />
+      <el-table-column label="车位类别" prop="parkingCategoryName" width="150" />
+      <el-table-column label="停车位数" prop="parkingSpaceQuantity" width="85" />
+      <el-table-column label="状态" prop="enable" width="70">
+        <template #default="{row}">
+          <el-switch
+            :model-value="row.enable === 1"
+            @change="toggleStatus(row.parkingId, row.enable)"
+          />
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="140">
+      <el-table-column fixed="right" label="操作" width="180">
         <template #default="{row}">
-          <el-button
-            link
-            :type="row.enable ? 'danger' : 'primary'"
-            @click="toggleStatus(row.parkingId, row.enable)"
-          >
-            {{ row.enable ? '停用' : '启用' }}
-          </el-button>
           <el-button link type="primary" @click="detailLot(row.parkingId)">查看详情</el-button>
           <el-button link type="primary" @click="editLot(row.parkingId)">编辑</el-button>
           <el-button link type="danger" @click="deleteLot(row.parkingId)">删除</el-button>

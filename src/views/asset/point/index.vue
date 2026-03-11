@@ -3,7 +3,7 @@ import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
-import {useDicListTree} from '@/common/hooks/useDicTree'
+import {useDicListTree, useExport} from '@/common/hooks'
 import {
   amsAssetResourceList,
   amsAssetResourceEnable,
@@ -100,12 +100,17 @@ onMounted(() => getData())
 const tableData = reactive<AssetResourceVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
-  const cloneformState = {...formState}
-  const {total: resTotal, data} = await resourceList({...cloneformState})
+  const params = getParams()
+  const {total: resTotal, data} = await resourceList({...params})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
   loading.value = false
+}
+
+const getParams = () => {
+  const cloneformState = {...formState}
+  return cloneformState
 }
 
 const handleSizeChange = (val: number): void => {
@@ -139,6 +144,15 @@ const deleteRoom = async (resourceId: string) => {
   ElMessage.success('删除成功')
   getData()
 }
+
+const handleImport = () => {
+  router.push('/asset/management/import-point')
+}
+
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/ams/asset-resource/list-export-meta',
+  url: '/ams/asset-resource/list-export',
+})
 </script>
 
 <template>
@@ -152,16 +166,16 @@ const deleteRoom = async (resourceId: string) => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addPoint">新增</el-button>
-          <el-button type="primary" size="default">导入</el-button>
-          <el-button type="primary" size="default">导出</el-button>
+          <el-button type="primary" @click="addPoint">新增</el-button>
+          <el-button @click="handleImport">导入</el-button>
+          <el-button @click="exportData(getParams())" :loading="exportLoading">导出</el-button>
         </div>
       </div>
     </template>
     <el-table v-loading="loading" :data="tableData" border>
-      <el-table-column label="序号" type="index" width="60" fixed="left" />
-      <el-table-column label="点位编码" prop="resourceId" width="180" />
-      <el-table-column label="点位名称" prop="resourceName" width="120" />
+      <el-table-column label="序号" type="index" width="55" fixed="left" />
+      <el-table-column label="点位编码" prop="resourceId" width="300" />
+      <el-table-column label="点位名称" prop="resourceName" width="180" />
       <el-table-column label="点位编号" prop="resourceNumber" width="120" />
       <el-table-column label="业务类型" prop="resourceBusinessType" width="120" />
       <el-table-column label="点位类型" prop="resourceType" width="120" />
@@ -174,20 +188,16 @@ const deleteRoom = async (resourceId: string) => {
       <el-table-column label="规格" prop="resourceSpecs" width="80" />
       <el-table-column label="面积（㎡）" prop="resourceArea" width="100" />
       <el-table-column label="点位状态" prop="resourceState" width="90" />
-      <el-table-column label="启停状态" prop="enable" width="90">
-        <template #default="scope">
-          <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
+      <el-table-column label="状态" prop="enable" width="70">
+        <template #default="{row}">
+          <el-switch
+            :model-value="row.enable === 1"
+            @change="toggleStatus(row.resourceId, row.enable)"
+          />
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="230">
+      <el-table-column fixed="right" label="操作" width="180">
         <template #default="{row}">
-          <el-button
-            link
-            :type="row.enable ? 'danger' : 'primary'"
-            @click="toggleStatus(row.resourceId, row.enable)"
-          >
-            {{ row.enable ? '停用' : '启用' }}
-          </el-button>
           <el-button link type="primary" @click="detailPoint(row.resourceId)">查看详情</el-button>
           <el-button link type="primary" @click="editPoint(row.resourceId)">编辑</el-button>
           <el-button link type="danger" @click="deleteRoom(row.resourceId)">删除</el-button>

@@ -975,18 +975,6 @@ interface ApiType {
   '/ams/asset-floor/list': {Req: AssetFloorListDTO; Res: AssetFloorVO[]}
 
   /* 【资产管理-楼层管理】
-  // 楼层列表导出
-  export function amsAssetFloorListExport(payload: AssetFloorListDTO) {return http.post<Res<>>('/ams/asset-floor/list-export', payload)}
-  */
-  '/ams/asset-floor/list-export': {Req: AssetFloorListDTO}
-
-  /* 【资产管理-楼层管理】
-  // 楼层列表导出(字段元数据)
-  export function amsAssetFloorListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-floor/list-export-meta', payload)}
-  */
-  '/ams/asset-floor/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
-
-  /* 【资产管理-楼层管理】
   // 新增楼层
   export function amsAssetFloorInsert(payload: AssetFloorDTO) {return http.post<Res<string>>('/ams/asset-floor/insert', payload)}
   */
@@ -1017,6 +1005,18 @@ interface ApiType {
   '/ams/asset-floor/export-template': {Req: Record<string, any>}
 
   /* 【资产管理-楼层管理】
+  // 围合楼层列表导出
+  export function amsAssetFloorEnclosureListExport(payload: AssetFloorListDTO) {return http.post<Res<>>('/ams/asset-floor/enclosure-list-export', payload)}
+  */
+  '/ams/asset-floor/enclosure-list-export': {Req: AssetFloorListDTO}
+
+  /* 【资产管理-楼层管理】
+  // 围合楼层列表导出(字段元数据)
+  export function amsAssetFloorEnclosureListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-floor/enclosure-list-export-meta', payload)}
+  */
+  '/ams/asset-floor/enclosure-list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
+
+  /* 【资产管理-楼层管理】
   // 启用/禁用楼层 | object:{floorId:楼层编码,enable:bool}
   export function amsAssetFloorEnable(payload: {floorId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/ams/asset-floor/enable', payload)}
   */
@@ -1039,6 +1039,18 @@ interface ApiType {
   export function amsAssetFloorCheckTemplateExport(payload: {fid: any; assetType: any}) {return http.post<Res<>>('/ams/asset-floor/check-template-export', payload)}
   */
   '/ams/asset-floor/check-template-export': {Req: {fid: any; assetType: any}}
+
+  /* 【资产管理-楼层管理】
+  // 楼栋楼层列表导出
+  export function amsAssetFloorBuildingListExport(payload: AssetFloorListDTO) {return http.post<Res<>>('/ams/asset-floor/building-list-export', payload)}
+  */
+  '/ams/asset-floor/building-list-export': {Req: AssetFloorListDTO}
+
+  /* 【资产管理-楼层管理】
+  // 楼栋楼层列表导出(字段元数据)
+  export function amsAssetFloorBuildingListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/ams/asset-floor/building-list-export-meta', payload)}
+  */
+  '/ams/asset-floor/building-list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
 
   /* 【资产管理-固定资产管理】
   // 更新固定资产
@@ -1866,7 +1878,6 @@ interface AssetShopVO {
   effectiveTime: string // 生效时间
   expireTime: string // 失效时间
   children: AssetShopVO[] // 子商铺
-  enableName: string // 状态
 }
 
 interface AssetShopInsertDTO {
@@ -1954,7 +1965,6 @@ interface AssetRoomVO {
   powerGridNo: string // 电网户号
   gasNo: string // 燃气户号
   decorationLevel: string // 房屋装修等级
-  enableName: string // 状态
 }
 
 interface AssetRoomInsertDTO {
@@ -2047,7 +2057,6 @@ interface AssetResourceVO {
   resourceBusinessTagCode: string // 业务标签编码
   locationId: string // 房间号/商铺号
   enable: number // 0-禁用;1-启用
-  enableName: string // 状态
 }
 
 interface AssetResourceInsertDTO {
@@ -2230,7 +2239,6 @@ interface AssetProjectVO {
   warrantyContractBegin: string // 质保合同生效日期
   warrantyContractEnd: string // 质保合同终止日期
   enable: number // 0-禁用;1-启用
-  enableName: string // 状态
   buildingCount: number // 楼栋数量
   floorCount: number // 楼层数量
   roomCount: number // 住宅数量
@@ -2316,7 +2324,6 @@ interface AssetParkingVO {
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位
   enable: number // 是否启用;0-禁用;1-启用
-  enableName: string // 状态
 }
 
 // 资产管理-停车位
@@ -2380,7 +2387,6 @@ interface AssetParkingSpaceVO {
   chargingPortCode: string // 是否充电位编码
   chargingPortName: string // 是否充电位
   enable: number // 启停状态
-  enableName: string // 状态
 }
 
 // 资产管理-停车位
@@ -2434,7 +2440,6 @@ interface AssetFloorVO {
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位
   enable: number // 0-禁用;1-启用
-  enableName: string // 状态
 }
 
 // 资产管理-固定资产
@@ -2503,6 +2508,9 @@ interface AssetFixedListDTO {
   deviceType: string // 设备类型
   fixedName: string // 固定资产名称
   fixedTypeName: string // 资产类型名称
+  deviceTypeCode: string // 设备类型编码
+  locationCode: string // 位置编码
+  deviceWorkState: number // 设备工作状态
   enable: number // 0-禁用;1-启用
 }
 
@@ -2515,7 +2523,7 @@ interface AssetFixedVO {
   assetName: string // 楼栋/围合/停车场
   assetType: string // 楼栋/围合/停车场
   floorId: string // 楼层编码
-  floorName: string // 楼层编码
+  floorName: string // 楼层名称
   locationCode: string // 位置编码
   locationName: string // 位置
   businessModelCode: string // 经营模式编码
@@ -2555,13 +2563,12 @@ interface AssetFixedVO {
   nextPatrolDate: string // 下次巡检日期
   nextMaintenanceDate: string // 下次保养日期
   label: string // 标签
-  drawingFid: string // 图纸
-  deviceContractFid: string // 设备合同
-  deviceInformationFid: string // 设备技术资料
-  contractFid: string // 合同
-  attachmentFid: string // 其他附件
+  drawingFileModel: FileModel // 图纸
+  deviceContractFileModel: FileModel // 设备合同
+  deviceInformationFileModel: FileModel // 设备技术资料
+  contractFileModel: FileModel // 合同
+  attachmentFileModel: FileModel // 其他附件
   enable: number // 0-禁用;1-启用
-  enableName: string // 状态
 }
 
 interface AssetFixedIdGenerateDTO {
@@ -2604,6 +2611,7 @@ interface AssetEnclosureUpdateDTO {
   enclosureTypeName: string // 围合类型名称
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
+  totalFloor: number // 总楼层
 }
 
 interface AssetEnclosureListDTO {
@@ -2630,8 +2638,8 @@ interface AssetEnclosureVO {
   projectName: string // 所属项目
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位
+  totalFloor: number // 总楼层
   enable: number // 0-禁用;1-启用
-  enableName: string // 状态
 }
 
 // 资产管理-围合
@@ -2643,6 +2651,7 @@ interface AssetEnclosureInsertDTO {
   enclosureTypeName: string // 围合类型名称
   ownershipUnitCode: string // 产权单位编码
   ownershipUnitName: string // 产权单位名称
+  totalFloor: number // 总楼层
   floorList: AssetFloorDTO[] // 楼层信息
 }
 
@@ -2681,7 +2690,6 @@ interface AssetBuildingVO {
   totalFloor: number // 总层数
   totalRoom: number // 总房间
   enable: number // 0-禁用;1-启用
-  enableName: string // 状态
 }
 
 interface AssetBuildingDTO {

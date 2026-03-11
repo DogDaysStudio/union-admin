@@ -3,7 +3,7 @@ import {defineField, defineSchema} from '@/components'
 import {onMounted, reactive, ref, useTemplateRef, watch} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
-import {useDicListTree} from '@/common/hooks/useDicTree'
+import {useDicListTree, useExport} from '@/common/hooks'
 import {
   amsAssetShopList,
   amsAssetShopEnable,
@@ -136,6 +136,15 @@ const getOptions = async (): Promise<void> => {
 const tableData = reactive<AssetShopVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
+  const params = getParams()
+  const {total: resTotal, data} = await shopList({...params})
+  total.value = resTotal
+  tableData.length = 0
+  tableData.push(...data)
+  loading.value = false
+}
+
+const getParams = () => {
   const cloneformState = {...formState}
   cloneformState.cityCode = cloneformState?.provinceCode?.[1]
   cloneformState.districtCode = cloneformState?.provinceCode?.[2]
@@ -144,11 +153,7 @@ const getData = async (): Promise<void> => {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await shopList({...cloneformState})
-  total.value = resTotal
-  tableData.length = 0
-  tableData.push(...data)
-  loading.value = false
+  return cloneformState
 }
 
 const handleSizeChange = (val: number): void => {
@@ -184,6 +189,15 @@ const deleteShop = async (shopId: string) => {
   getData()
 }
 
+const handleImport = () => {
+  router.push('/asset/management/import-shop')
+}
+
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/ams/asset-shop/list-export-meta',
+  url: '/ams/asset-shop/list-export',
+})
+
 // 弹窗
 const dialogVisible = ref(false)
 const splitFormRef = useTemplateRef('splitFormRef')
@@ -204,7 +218,6 @@ const splitShop = async (shopId: string) => {
   Object.assign(splitForm, data)
   splitForm.shopSplitList.length = 0
   addShopSplitList()
-  console.log(data)
 }
 
 const addShopSplitList = () => {
@@ -255,8 +268,8 @@ const handleSplitCancel = () => (dialogVisible.value = false)
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
           <el-button type="primary" @click="addShop">新增房屋（商业）</el-button>
-          <el-button>导入</el-button>
-          <el-button>导出</el-button>
+          <el-button @click="handleImport">导入</el-button>
+          <el-button @click="exportData(getParams())" :loading="exportLoading">导出</el-button>
         </div>
       </div>
     </template>
@@ -278,19 +291,15 @@ const handleSplitCancel = () => (dialogVisible.value = false)
         </template>
       </el-table-column>
       <el-table-column label="状态" prop="enable" width="70">
-        <template #default="scope">
-          <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
+        <template #default="{row}">
+          <el-switch
+            :model-value="row.enable === 1"
+            @change="toggleStatus(row.shopId, row.enable)"
+          />
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="300">
+      <el-table-column fixed="right" label="操作" width="250">
         <template #default="{row}">
-          <el-button
-            link
-            :type="row.enable ? 'danger' : 'primary'"
-            @click="toggleStatus(row.shopId, row.enable)"
-          >
-            {{ row.enable ? '停用' : '启用' }}
-          </el-button>
           <el-button link type="primary" @click="detailShop(row.shopId)">查看详情</el-button>
           <el-button link type="primary" @click="editShop(row.shopId)">编辑</el-button>
           <el-button link type="primary" @click="splitShop(row.shopId)">商铺拆分</el-button>

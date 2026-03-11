@@ -271,6 +271,13 @@ export interface RouteNamedMap {
     {shopId: ParamValue<false>},
     never
   >
+  '/asset/management/import-shop': RouteRecordInfo<
+    '/asset/management/import-shop', // name
+    '/asset/management/import-shop', // path
+    any,
+    any,
+    never
+  >
   '/asset/management/point': RouteRecordInfo<
     '/asset/management/point', // name
     '/asset/management/point', // path
@@ -297,6 +304,13 @@ export interface RouteNamedMap {
     '/asset/management/detail-point/:resourceId', // path
     {resourceId: ParamValue<true>},
     {resourceId: ParamValue<false>},
+    never
+  >
+  '/asset/management/import-point': RouteRecordInfo<
+    '/asset/management/import-point', // name
+    '/asset/management/import-point', // path
+    any,
+    any,
     never
   >
   '/asset/management/parking': RouteRecordInfo<
@@ -327,6 +341,13 @@ export interface RouteNamedMap {
     {parkingId: ParamValue<false>},
     never
   >
+  '/asset/management/import-parking-lot': RouteRecordInfo<
+    '/asset/management/import-parking-lot', // name
+    '/asset/management/import-parking-lot', // path
+    any,
+    any,
+    never
+  >
   '/asset/management/add-parking-space': RouteRecordInfo<
     '/asset/management/add-parking-space', // name
     '/asset/management/add-parking-space', // path
@@ -346,6 +367,13 @@ export interface RouteNamedMap {
     '/asset/management/detail-parking-space/:parkingSpaceId', // path
     {parkingSpaceId: ParamValue<true>},
     {parkingSpaceId: ParamValue<false>},
+    never
+  >
+  '/asset/management/import-parking-space': RouteRecordInfo<
+    '/asset/management/import-parking-space', // name
+    '/asset/management/import-parking-space', // path
+    any,
+    any,
     never
   >
   '/asset/management/fixed': RouteRecordInfo<

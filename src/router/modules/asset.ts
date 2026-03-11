@@ -180,6 +180,11 @@ const assetRoutes: RouteRecordRaw[] = [
             meta: {title: '商业-详情'},
             component: () => import('@/views/asset/shop/detail-shop.vue'),
           },
+          {
+            path: '/asset/management/import-shop',
+            meta: {title: '商铺-导入'},
+            component: () => import('@/views/asset/shop/import-shop.vue'),
+          },
           // 点位资源管理
           {
             path: '/asset/management/point',
@@ -200,6 +205,11 @@ const assetRoutes: RouteRecordRaw[] = [
             path: '/asset/management/detail-point/:resourceId',
             meta: {title: '点位-详情'},
             component: () => import('@/views/asset/point/detail-point.vue'),
+          },
+          {
+            path: '/asset/management/import-point',
+            meta: {title: '点位-导入'},
+            component: () => import('@/views/asset/point/import-point.vue'),
           },
           // 建筑物管理
           {
@@ -223,6 +233,11 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/parking/lot/detail-lot.vue'),
           },
           {
+            path: '/asset/management/import-parking-lot',
+            meta: {title: '停车场-导入'},
+            component: () => import('@/views/asset/parking/lot/import-lot.vue'),
+          },
+          {
             path: '/asset/management/add-parking-space',
             meta: {title: '停车位-新增'},
             component: () => import('@/views/asset/parking/space/add-space.vue'),
@@ -236,6 +251,11 @@ const assetRoutes: RouteRecordRaw[] = [
             path: '/asset/management/detail-parking-space/:parkingSpaceId',
             meta: {title: '停车位-详情'},
             component: () => import('@/views/asset/parking/space/detail-space.vue'),
+          },
+          {
+            path: '/asset/management/import-parking-space',
+            meta: {title: '停车位-导入'},
+            component: () => import('@/views/asset/parking/space/import-space.vue'),
           },
           // 固定资产管理
           {

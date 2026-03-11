@@ -9,6 +9,7 @@ import {
   // amsAssetParkingEnable,
   amsAssetParkingSpaceList,
 } from '@/service/api/amsAsset'
+import {useExport} from '@/common/hooks'
 
 // 列表数据
 const {runAsync: spaceList} = useRequest(amsAssetParkingSpaceList)
@@ -53,11 +54,16 @@ onMounted(() => getData())
 const tableData = reactive<AssetParkingSpaceVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
-  const {total: resTotal, data} = await spaceList({...formState})
+  const params = getParams()
+  const {total: resTotal, data} = await spaceList({...params})
   total.value = resTotal
   tableData.length = 0
   tableData.push(...data)
   loading.value = false
+}
+
+const getParams = () => {
+  return {...formState}
 }
 
 const handleSizeChange = (val: number): void => {
@@ -92,6 +98,15 @@ const deleteSpace = async (parkingSpaceId: string) => {
   ElMessage.success('删除成功')
   getData()
 }
+
+const handleImport = () => {
+  router.push('/asset/management/import-parking-space')
+}
+
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/ams/asset-parking-space/list-export-meta',
+  url: '/ams/asset-parking-space/list-export',
+})
 </script>
 
 <template>
@@ -105,17 +120,17 @@ const deleteSpace = async (parkingSpaceId: string) => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addSpace">新增车位</el-button>
-          <el-button type="primary" size="default">导入</el-button>
-          <el-button type="primary" size="default">导出</el-button>
+          <el-button type="primary" @click="addSpace">新增车位</el-button>
+          <el-button @click="handleImport">导入</el-button>
+          <el-button @click="exportData(getParams())" :loading="exportLoading">导出</el-button>
         </div>
       </div>
     </template>
 
     <el-table v-loading="loading" :data="tableData" border>
-      <el-table-column label="序号" type="index" width="60" fixed="left" />
+      <el-table-column label="序号" type="index" width="55" fixed="left" />
       <el-table-column label="车位名称" prop="parkingSpaceName" width="120" />
-      <el-table-column label="车位编码" prop="parkingSpaceId" width="220" />
+      <el-table-column label="车位编码" prop="parkingSpaceId" min-width="220" />
       <el-table-column label="停车场" prop="parkingName" width="120" />
       <el-table-column label="停车场编码" prop="parkingId" width="120" />
       <el-table-column label="车位区域" prop="parkingSpaceRegionName" width="120" />
@@ -124,20 +139,14 @@ const deleteSpace = async (parkingSpaceId: string) => {
       <el-table-column label="使用方信息" prop="userInfo" width="100" />
       <el-table-column label="使用方租期" prop="leaseTerm" width="100" />
       <el-table-column label="车牌" prop="licensePlate" width="100" />
-      <el-table-column label="车位状态" prop="enable" width="100">
-        <template #default="scope">
-          <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
+      <el-table-column label="状态" prop="enable" width="70">
+        <template #default="{row}">
+          <el-switch disabled :model-value="row.enable === 1" />
+          <!-- @change="toggleStatus(row.parkingSpaceId, row.enable)" -->
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="180">
+      <el-table-column fixed="right" label="操作" width="180">
         <template #default="{row}">
-          <!-- <el-button
-            link
-            :type="row.enable ? 'danger' : 'primary'"
-            @click="toggleStatus(row.parkingSpaceId, row.enable)"
-          >
-            {{ row.enable ? '停用' : '启用' }}
-          </el-button> -->
           <el-button link type="primary" @click="detailLot(row.parkingSpaceId)">查看详情</el-button>
           <el-button link type="primary" @click="editSpace(row.parkingSpaceId)">编辑</el-button>
           <el-button link type="danger" @click="deleteSpace(row.parkingSpaceId)">删除</el-button>
