@@ -7,6 +7,7 @@ import {useDicListTree} from '@/common/hooks/useDicTree'
 import {amsAssetRoomList, amsAssetRoomEnable, amsAssetRoomDelete} from '@/service/api/amsAsset'
 import {iamCommonAreaList} from '@/service/api/iamCommon'
 import {useRequest} from 'vue-request'
+import {useExport} from '@/common/hooks/useExport'
 
 // 字典 [产权单位1001 经营模式1020]
 const companyOptions = useDicListTree({dicType: 1001})
@@ -115,6 +116,15 @@ const getOptions = async (): Promise<void> => {
 const tableData = reactive<AssetRoomVO[]>([])
 const getData = async (): Promise<void> => {
   loading.value = true
+  const params = getParams()
+  const {total: resTotal, data} = await roomList({...params})
+  total.value = resTotal
+  tableData.length = 0
+  tableData.push(...data)
+  loading.value = false
+}
+
+const getParams = () => {
   const cloneformState = {...formState}
   cloneformState.cityCode = cloneformState?.provinceCode?.[1]
   cloneformState.districtCode = cloneformState?.provinceCode?.[2]
@@ -123,11 +133,7 @@ const getData = async (): Promise<void> => {
     cloneformState.ownershipUnitCode =
       cloneformState.ownershipUnitCode[cloneformState.ownershipUnitCode.length - 1]
   }
-  const {total: resTotal, data} = await roomList({...cloneformState})
-  total.value = resTotal
-  tableData.length = 0
-  tableData.push(...data)
-  loading.value = false
+  return cloneformState
 }
 
 const handleSizeChange = (val: number): void => {
@@ -160,6 +166,15 @@ const deleteRoom = async (roomId: string) => {
   ElMessage.success('删除成功')
   getData()
 }
+
+const handleImport = () => {
+  router.push('/asset/management/import-room')
+}
+
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/ams/asset-room/list-export-meta',
+  url: '/ams/asset-room/list-export',
+})
 </script>
 
 <template>
@@ -173,37 +188,33 @@ const deleteRoom = async (roomId: string) => {
       <div class="flex items-center justify-between w-full">
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
-          <el-button type="primary" size="default" @click="addRoom">新增房屋</el-button>
-          <el-button type="primary" size="default">导入</el-button>
-          <el-button type="primary" size="default">导出</el-button>
+          <el-button type="primary" @click="addRoom">新增房屋</el-button>
+          <el-button @click="handleImport">导入</el-button>
+          <el-button @click="exportData(getParams())" :loading="exportLoading">导出</el-button>
         </div>
       </div>
     </template>
     <el-table v-loading="loading" :data="tableData" border>
-      <el-table-column label="序号" type="index" width="60" />
-      <el-table-column label="房间编码" prop="roomId" />
-      <el-table-column label="房间号" prop="roomNumber" />
-      <el-table-column label="户型" prop="roomLayoutName" />
+      <el-table-column label="序号" type="index" width="55" fixed="left" />
+      <el-table-column label="房间编码" prop="roomId" width="200" />
+      <el-table-column label="房间号" prop="roomNumber" width="100" />
+      <el-table-column label="户型" prop="roomLayoutName" width="140" />
       <el-table-column label="建筑面积（㎡）" prop="buildingArea" width="130" />
-      <el-table-column label="所属项目" prop="projectName" />
-      <el-table-column label="所属楼栋" prop="buildingName" />
-      <el-table-column label="所属楼层" prop="floorName" />
-      <el-table-column label="经营模式" prop="businessModelName" />
-      <el-table-column label="产权单位" prop="ownershipUnitName" />
-      <el-table-column label="状态" prop="enable">
-        <template #default="scope">
-          <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
+      <el-table-column label="所属项目" prop="projectName" width="140" />
+      <el-table-column label="所属楼栋" prop="buildingName" width="120" />
+      <el-table-column label="所属楼层" prop="floorName" width="100" />
+      <el-table-column label="经营模式" prop="businessModelName" width="120" />
+      <el-table-column label="产权单位" prop="ownershipUnitName" width="240" />
+      <el-table-column label="状态" prop="enable" width="70">
+        <template #default="{row}">
+          <el-switch
+            :model-value="row.enable === 1"
+            @change="toggleStatus(row.roomId, row.enable)"
+          />
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="175">
+      <el-table-column fixed="right" label="操作" min-width="180">
         <template #default="{row}">
-          <el-button
-            link
-            :type="row.enable ? 'danger' : 'primary'"
-            @click="toggleStatus(row.roomId, row.enable)"
-          >
-            {{ row.enable ? '停用' : '启用' }}
-          </el-button>
           <el-button link type="primary" @click="detailRoom(row.roomId)">查看详情</el-button>
           <el-button link type="primary" @click="editRoom(row.roomId)">编辑</el-button>
           <el-button link type="danger" @click="deleteRoom(row.roomId)">删除</el-button>

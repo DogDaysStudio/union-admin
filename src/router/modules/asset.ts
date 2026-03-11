@@ -156,6 +156,11 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/room/detail-room.vue'),
           },
           {
+            path: '/asset/management/import-room',
+            meta: {title: '房屋-导入'},
+            component: () => import('@/views/asset/room/import-room.vue'),
+          },
+          {
             path: '/asset/management/shop',
             meta: {title: '房屋（商业）管理', menu: true},
             component: () => import('@/views/asset/shop/index.vue'),

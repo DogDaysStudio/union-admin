@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {defineField, defineSchema} from '@/components'
-import {useDicListTree} from '@/common/hooks'
 import {onMounted, reactive, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {useRequest} from 'vue-request'
-// import {useDicListTree} from '@/common/hooks/useDicTree'
+import {useDicListTree} from '@/common/hooks'
 import {
   amsAssetProjectDelete,
   amsAssetProjectEnable,
@@ -33,12 +32,6 @@ const formState = reactive({
   pageNum: 1,
   pageSize: 10,
 } as AssetProjectListDTO)
-
-// const [searchForm] = useForm({
-//   pageable: true,
-//   pageNum: 1,
-//   pageSize: 10,
-// } as AssetProjectListDTO)
 
 const formSchema = defineSchema({
   fields: [
@@ -225,31 +218,27 @@ const {exportData, loading: exportLoading} = useExport({
     </template>
 
     <el-table v-loading="loading" :data="tableData" border>
-      <el-table-column label="序号" type="index" width="60" />
-      <el-table-column label="项目编码" prop="projectId" />
-      <el-table-column label="项目名称" prop="projectName" />
-      <el-table-column label="项目简称" prop="projectShortName" />
-      <el-table-column label="筹集方式" prop="collectWayName" />
-      <el-table-column label="项目类型" prop="projectTypeName" />
-      <el-table-column label="产权单位" prop="ownershipUnitName" />
-      <el-table-column label="产权性质" prop="ownershipPropertyName" />
-      <el-table-column label="经营模式" prop="businessModelName" />
-      <el-table-column label="所属省市区" prop="areaName" />
-      <el-table-column label="详细地址" prop="address" />
-      <el-table-column label="状态" prop="enable">
-        <template #default="scope">
-          <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
+      <el-table-column label="序号" type="index" width="55" fixed="left" />
+      <el-table-column label="项目编码" prop="projectId" width="140" />
+      <el-table-column label="项目名称" prop="projectName" width="140" />
+      <el-table-column label="项目简称" prop="projectShortName" width="100" />
+      <el-table-column label="筹集方式" prop="collectWayName" width="100" />
+      <el-table-column label="项目类型" prop="projectTypeName" width="120" />
+      <el-table-column label="产权单位" prop="ownershipUnitName" width="240" />
+      <el-table-column label="产权性质" prop="ownershipPropertyName" width="120" />
+      <el-table-column label="经营模式" prop="businessModelName" width="140" />
+      <el-table-column label="所属省市区" prop="areaName" width="180" />
+      <el-table-column label="详细地址" prop="address" width="240" />
+      <el-table-column label="状态" prop="enable" width="70">
+        <template #default="{row}">
+          <el-switch
+            :model-value="row.enable === 1"
+            @change="toggleStatus(row.projectId, row.enable)"
+          />
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="185">
+      <el-table-column fixed="right" label="操作" width="180">
         <template #default="{row}">
-          <el-button
-            link
-            :type="row.enable ? 'danger' : 'primary'"
-            @click="toggleStatus(row.projectId, row.enable)"
-          >
-            {{ row.enable ? '停用' : '启用' }}
-          </el-button>
           <el-button link type="primary" @click="detailProject(row.projectId)">查看详情</el-button>
           <el-button link type="primary" @click="editProject(row.projectId)">编辑</el-button>
           <el-button link type="danger" @click="deleteProject(row.projectId)">删除</el-button>

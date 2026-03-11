@@ -236,6 +236,13 @@ export interface RouteNamedMap {
     {roomId: ParamValue<false>},
     never
   >
+  '/asset/management/import-room': RouteRecordInfo<
+    '/asset/management/import-room', // name
+    '/asset/management/import-room', // path
+    any,
+    any,
+    never
+  >
   '/asset/management/shop': RouteRecordInfo<
     '/asset/management/shop', // name
     '/asset/management/shop', // path

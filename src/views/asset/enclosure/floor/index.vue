@@ -169,26 +169,22 @@ const {exportData, loading: exportLoading} = useExport({
     </template>
 
     <el-table v-loading="loading" :data="tableData" border>
-      <el-table-column label="序号" type="index" width="60" />
+      <el-table-column label="序号" type="index" width="55" fixed="left" />
       <el-table-column label="楼层编码" prop="floorId" />
       <el-table-column label="楼层名称" prop="floorName" />
       <el-table-column label="所属围合" prop="assetName" />
       <el-table-column label="所属项目" prop="projectName" />
-      <el-table-column label="产权单位" prop="ownershipUnitName" />
-      <el-table-column label="状态" prop="enable" width="60">
-        <template #default="scope">
-          <div>{{ scope?.row?.enable ? '启用' : '禁用' }}</div>
+      <el-table-column label="产权单位" prop="ownershipUnitName" width="240" />
+      <el-table-column label="状态" prop="enable" width="70">
+        <template #default="{row}">
+          <el-switch
+            :model-value="row.enable === 1"
+            @change="toggleStatus(row.floorId, row.enable)"
+          />
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="95">
+      <el-table-column fixed="right" label="操作" width="180">
         <template #default="{row}">
-          <el-button
-            link
-            :type="row.enable ? 'danger' : 'primary'"
-            @click="toggleStatus(row.floorId, row.enable)"
-          >
-            {{ row.enable ? '停用' : '启用' }}
-          </el-button>
           <el-button link type="primary" @click="detailFloor(row.floorId)">查看详情</el-button>
           <el-button link type="primary" @click="editFloor(row.floorId)">编辑</el-button>
           <el-button link type="danger" @click="deleteData(row.floorId)">删除</el-button>
