@@ -3,6 +3,8 @@ import {onMounted, reactive, ref, watch} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
 import {defineField, defineSchema, UploadFile} from '@/components'
 import {useRequest} from 'vue-request'
+import {useExport} from '@/common/hooks/useExport'
+import {getFileListId} from '@/components/upload/utils'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import type {FormInstance, FormRules, UploadUserFile} from 'element-plus'
 import {
@@ -10,6 +12,8 @@ import {
   amsAssetFixedEnable,
   amsAssetFixedDelete,
   amsAssetFixedBatchEnable,
+  amsAssetFixedBatchWarranty,
+  amsAssetFixedBatchUpdate,
 } from '@/service/api/amsAsset'
 
 type AssetFixedListForm = AssetFixedListDTO & {
@@ -26,7 +30,7 @@ const formState = reactive({
 
 const formSchema = defineSchema({
   fields: [
-    defineField.Input({label: '楼栋名称', prop: 'buildingName', clearable: true}),
+    defineField.Input({label: '楼栋名称', prop: 'assetName', clearable: true}),
     defineField.Input({label: '楼层名称', prop: 'floorName', clearable: true}),
     defineField.Input({label: '所属项目', prop: 'projectName', clearable: true}),
     defineField.Input({label: '设备分类', prop: 'deviceType', clearable: true}),
@@ -48,6 +52,15 @@ const {runAsync: fetchFixedList} = useRequest(amsAssetFixedList)
 const {runAsync: fixedEnable} = useRequest(amsAssetFixedEnable)
 const {runAsync: fixedDelete} = useRequest(amsAssetFixedDelete)
 const {runAsync: fixedBatchEnable} = useRequest(amsAssetFixedBatchEnable)
+const {runAsync: fixedBatchWarranty, loading: warrantySubmitting} = useRequest(
+  amsAssetFixedBatchWarranty
+)
+const {runAsync: fixedBatchUpdate, loading: batchEditSubmitting} =
+  useRequest(amsAssetFixedBatchUpdate)
+const {exportData, loading: exportLoading} = useExport({
+  meta: '/ams/asset-fixed/list-export-meta',
+  url: '/ams/asset-fixed/list-export',
+})
 const loading = ref(false)
 const total = ref(0)
 const tableData = reactive<AssetFixedVO[]>([])
@@ -130,13 +143,12 @@ const ensureSelection = () => {
 }
 
 const handleExport = () => {
-  if (!ensureSelection()) return
-  ElMessage.success('导出任务已创建（示例）')
+  exportData(formState)
 }
 
 const handleBatchEdit = () => {
   if (!ensureSelection()) return
-  ElMessage.info('批量编辑功能待接入接口，请根据业务补充实现')
+  batchEditDialogVisible.value = true
 }
 
 // 修改状态
@@ -198,40 +210,49 @@ const handleBatchDisable = () => {
   })
 }
 
-const handleBatchDelete = async () => {
-  if (!ensureSelection()) return
-  await ElMessageBox.confirm('确认批量删除选中的固定资产吗？', '提示')
-
-  // 循环调用删除接口实现批量删除（根据后端接口要求一次传一个 fixedId）
-  const deletePromises = selectedRows.value.map(item => fixedDelete({fixedId: item.fixedId}))
-  await Promise.all(deletePromises)
-  ElMessage.success('批量删除成功')
-  getData()
-}
-
 const warrantyDialogVisible = ref(false)
 const warrantyFormRef = ref<FormInstance>()
 const warrantyForm = reactive({
   warrantyCompany: '',
-  contactPerson: '',
-  contactMethod: '',
+  warrantyLinkman: '',
+  warrantyPhone: '',
   warrantyExpireDate: '',
   contractFiles: [] as UploadUserFile[],
 })
 
+const batchEditDialogVisible = ref(false)
+const batchEditFormRef = ref<FormInstance>()
+const batchEditForm = reactive({
+  label: '',
+  drawingFiles: [] as UploadUserFile[],
+  deviceContractFiles: [] as UploadUserFile[],
+  deviceInformationFiles: [] as UploadUserFile[],
+})
+
 const warrantyFormRules: FormRules = {
   warrantyCompany: [{required: true, message: '请选择设备质保方名称', trigger: 'blur'}],
-  contactPerson: [{required: true, message: '请选择设备质保方联系人', trigger: 'blur'}],
-  contactMethod: [{required: true, message: '请选择设备质保方联系方式', trigger: 'blur'}],
+  warrantyLinkman: [{required: true, message: '请选择设备质保方联系人', trigger: 'blur'}],
+  warrantyPhone: [{required: true, message: '请选择设备质保方联系方式', trigger: 'blur'}],
   warrantyExpireDate: [{required: true, message: '请选择设备质保到期日', trigger: 'change'}],
+}
+
+const batchEditFormRules: FormRules = {
+  label: [{required: true, message: '请输入标签', trigger: 'blur'}],
 }
 
 const resetWarrantyForm = () => {
   warrantyForm.warrantyCompany = ''
-  warrantyForm.contactPerson = ''
-  warrantyForm.contactMethod = ''
+  warrantyForm.warrantyLinkman = ''
+  warrantyForm.warrantyPhone = ''
   warrantyForm.warrantyExpireDate = ''
   warrantyForm.contractFiles = []
+}
+
+const resetBatchEditForm = () => {
+  batchEditForm.label = ''
+  batchEditForm.drawingFiles = []
+  batchEditForm.deviceContractFiles = []
+  batchEditForm.deviceInformationFiles = []
 }
 
 const openWarrantyDialog = () => {
@@ -242,14 +263,45 @@ const openWarrantyDialog = () => {
 const handleWarrantyConfirm = async () => {
   if (!ensureSelection()) return
   await warrantyFormRef.value?.validate()
+  const contractFid = getFileListId(warrantyForm.contractFiles)?.[0] || ''
+  await fixedBatchWarranty({
+    fixedIdList: selectedRows.value.map(item => item.fixedId),
+    warrantyCompany: warrantyForm.warrantyCompany,
+    warrantyLinkman: warrantyForm.warrantyLinkman,
+    warrantyPhone: warrantyForm.warrantyPhone,
+    warrantyExpireDate: warrantyForm.warrantyExpireDate,
+    contractFid,
+  })
   ElMessage.success('维护质保信息已提交')
   warrantyDialogVisible.value = false
   resetWarrantyForm()
+  getData()
 }
 
 const handleWarrantyDialogClosed = () => {
   warrantyFormRef.value?.clearValidate()
   resetWarrantyForm()
+}
+
+const handleBatchEditConfirm = async () => {
+  if (!ensureSelection()) return
+  await batchEditFormRef.value?.validate()
+  await fixedBatchUpdate({
+    fixedIdList: selectedRows.value.map(item => item.fixedId),
+    label: batchEditForm.label,
+    drawingFid: getFileListId(batchEditForm.drawingFiles)?.[0] || '',
+    deviceContractFid: getFileListId(batchEditForm.deviceContractFiles)?.[0] || '',
+    deviceInformationFid: getFileListId(batchEditForm.deviceInformationFiles)?.[0] || '',
+  })
+  ElMessage.success('批量编辑成功')
+  batchEditDialogVisible.value = false
+  resetBatchEditForm()
+  getData()
+}
+
+const handleBatchEditDialogClosed = () => {
+  batchEditFormRef.value?.clearValidate()
+  resetBatchEditForm()
 }
 
 onMounted(() => getData())
@@ -267,15 +319,14 @@ onMounted(() => getData())
         <span class="text-base font-medium">数据列表</span>
         <div class="flex">
           <el-button type="primary" @click="router.push('/asset/management/fixed/add')">
-            新增
+            + 添加
           </el-button>
-          <el-button type="primary" plain>导入</el-button>
-          <el-button type="primary" plain @click="handleExport">导出</el-button>
-          <el-button type="primary" plain @click="handleBatchEdit">批量编辑</el-button>
-          <el-button type="primary" plain @click="openWarrantyDialog">维护质保信息</el-button>
-          <el-button type="primary" plain @click="handleBatchEnable">批量启用</el-button>
-          <el-button type="danger" plain @click="handleBatchDisable">批量停用</el-button>
-          <el-button type="danger" plain @click="handleBatchDelete">批量删除</el-button>
+          <el-button @click="router.push('/asset/management/fixed/import')">导入</el-button>
+          <el-button @click="handleExport" :loading="exportLoading">导出</el-button>
+          <el-button @click="handleBatchEdit">批量编辑</el-button>
+          <el-button @click="openWarrantyDialog">维护质保信息</el-button>
+          <el-button @click="handleBatchEnable">批量启用</el-button>
+          <el-button @click="handleBatchDisable">批量停用</el-button>
         </div>
       </div>
     </template>
@@ -292,12 +343,11 @@ onMounted(() => getData())
       <el-table-column label="固定资产编码" prop="fixedId" min-width="150" />
       <el-table-column label="固定资产名称" prop="fixedName" min-width="150" />
       <el-table-column label="资产分类" prop="fixedTypeName" min-width="120" />
-      <el-table-column label="资产类型" prop="fixedTypeName" min-width="120" />
+      <el-table-column label="设备类型" prop="fixedTypeName" min-width="120" />
       <el-table-column label="所属项目" prop="projectName" min-width="140" />
-      <el-table-column label="楼栋名称" prop="buildingName" min-width="140" />
+      <el-table-column label="楼栋名称" prop="assetName" min-width="140" />
       <el-table-column label="楼层名称" prop="floorName" min-width="140" />
       <el-table-column label="房间" prop="locationId" min-width="120" />
-      <el-table-column label="拆分房间" prop="splitRoomName" min-width="120" />
       <el-table-column label="位置" prop="locationName" min-width="160" />
       <el-table-column label="启停状态" prop="enable" width="100">
         <template #default="{row}">
@@ -346,6 +396,60 @@ onMounted(() => getData())
   </el-card>
 
   <el-dialog
+    v-model="batchEditDialogVisible"
+    title="批量编辑"
+    width="520px"
+    @closed="handleBatchEditDialogClosed"
+  >
+    <el-form
+      ref="batchEditFormRef"
+      :model="batchEditForm"
+      :rules="batchEditFormRules"
+      label-width="120px"
+    >
+      <el-form-item label="标签" prop="label">
+        <el-input v-model="batchEditForm.label" placeholder="请输入" />
+      </el-form-item>
+      <el-form-item label="图纸">
+        <upload-file v-model:file-list="batchEditForm.drawingFiles" list-type="text">
+          <template #trigger>
+            <el-button type="primary" plain>上传文件</el-button>
+          </template>
+        </upload-file>
+        <div class="text-xs text-gray-500 ml-2">
+          支持 .rar .zip .doc .docx .pdf .jpg 等，单个文件不超过20MB
+        </div>
+      </el-form-item>
+      <el-form-item label="设备合同">
+        <upload-file v-model:file-list="batchEditForm.deviceContractFiles" list-type="text">
+          <template #trigger>
+            <el-button type="primary" plain>上传文件</el-button>
+          </template>
+        </upload-file>
+        <div class="text-xs text-gray-500 ml-2">
+          支持 .rar .zip .doc .docx .pdf .jpg 等，单个文件不超过20MB
+        </div>
+      </el-form-item>
+      <el-form-item label="设备技术资料">
+        <upload-file v-model:file-list="batchEditForm.deviceInformationFiles" list-type="text">
+          <template #trigger>
+            <el-button type="primary" plain>上传文件</el-button>
+          </template>
+        </upload-file>
+        <div class="text-xs text-gray-500 ml-2">
+          支持 .rar .zip .doc .docx .pdf .jpg 等，单个文件不超过20MB
+        </div>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="batchEditDialogVisible = false">取消</el-button>
+      <el-button type="primary" :loading="batchEditSubmitting" @click="handleBatchEditConfirm">
+        确定
+      </el-button>
+    </template>
+  </el-dialog>
+
+  <el-dialog
     v-model="warrantyDialogVisible"
     title="批量维护质保信息"
     width="520px"
@@ -360,16 +464,17 @@ onMounted(() => getData())
       <el-form-item label="设备质保方名称" prop="warrantyCompany">
         <el-input v-model="warrantyForm.warrantyCompany" placeholder="请选择" />
       </el-form-item>
-      <el-form-item label="设备质保方联系人" prop="contactPerson">
-        <el-input v-model="warrantyForm.contactPerson" placeholder="请选择" />
+      <el-form-item label="设备质保方联系人" prop="warrantyLinkman">
+        <el-input v-model="warrantyForm.warrantyLinkman" placeholder="请选择" />
       </el-form-item>
-      <el-form-item label="设备质保方联系方式" prop="contactMethod">
-        <el-input v-model="warrantyForm.contactMethod" placeholder="请选择" />
+      <el-form-item label="设备质保方联系方式" prop="warrantyPhone">
+        <el-input v-model="warrantyForm.warrantyPhone" placeholder="请选择" />
       </el-form-item>
       <el-form-item label="设备质保到期日" prop="warrantyExpireDate">
         <el-date-picker
           v-model="warrantyForm.warrantyExpireDate"
           type="date"
+          value-format="YYYY-MM-DD"
           placeholder="请选择"
         />
       </el-form-item>
@@ -386,7 +491,9 @@ onMounted(() => getData())
     </el-form>
     <template #footer>
       <el-button @click="warrantyDialogVisible = false">取消</el-button>
-      <el-button type="primary" @click="handleWarrantyConfirm">确定</el-button>
+      <el-button type="primary" :loading="warrantySubmitting" @click="handleWarrantyConfirm">
+        确定
+      </el-button>
     </template>
   </el-dialog>
 </template>

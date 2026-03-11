@@ -249,6 +249,11 @@ const assetRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/asset/fixed/add-fixed.vue'),
           },
           {
+            path: 'management/fixed/import',
+            meta: {title: '固定资产-导入'},
+            component: () => import('@/views/asset/fixed/import-fixed.vue'),
+          },
+          {
             path: 'management/fixed/edit-fixed/:id',
             meta: {title: '固定资产-编辑'},
             component: () => import('@/views/asset/fixed/edit-fixed.vue'),

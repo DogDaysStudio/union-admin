@@ -275,6 +275,16 @@ export function amsAssetFixedBatchEnable(payload: AssetFixedBatchEnableDTO) {
   return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-enable', payload)
 }
 
+// 批量维护质保信息
+export function amsAssetFixedBatchWarranty(payload: AssetFixedBatchWarrantyDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-warranty', payload)
+}
+
+// 批量更新固定资产
+export function amsAssetFixedBatchUpdate(payload: AssetFixedBatchUpdateDTO) {
+  return http.post<Res<Record<string, any>>>('/ams/asset-fixed/batch-update', payload)
+}
+
 // 生成固定资产编码
 export function amsAssetFixedGenerateFixedId(payload: AssetFixedIdGenerateDTO) {
   return http.post<Res<string>>('/ams/asset-fixed/generate-fixed-id', payload)

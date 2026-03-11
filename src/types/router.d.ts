@@ -362,6 +362,13 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/asset/management/fixed/import': RouteRecordInfo<
+    '/asset/management/fixed/import', // name
+    '/asset/management/fixed/import', // path
+    any,
+    any,
+    never
+  >
   '/asset/management/fixed/edit-fixed/:id': RouteRecordInfo<
     '/asset/management/fixed/edit-fixed/:id', // name
     '/asset/management/fixed/edit-fixed/:id', // path

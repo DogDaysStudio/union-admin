@@ -23,6 +23,16 @@ import {FORMAT_DATE} from '@/common/date'
 
 const props = defineProps<{mode: 'create' | 'edit'; fixedId?: string}>()
 
+type DetailFileModel = {
+  id?: string
+  name?: string
+  path?: string
+  url?: string
+  size?: number
+  type?: number
+  md5?: string
+}
+
 const router = useRouter()
 const route = useRoute()
 const formRef = ref<FormInstance>()
@@ -195,6 +205,32 @@ const toNumberOrZero = (value: unknown) => {
 
 const ensureValue = (value: string | undefined, fallback = '') => (value ? value : fallback)
 
+const createUploadUid = (id?: string) => {
+  if (!id) return Date.now()
+  const numericId = Number(id)
+  if (Number.isFinite(numericId)) return numericId
+  return Array.from(id).reduce((total, char) => total + char.charCodeAt(0), 0)
+}
+
+const createUploadFileList = (fileModel?: DetailFileModel | null): UploadUserFile[] => {
+  if (!fileModel?.id) return []
+  return [
+    {
+      uid: createUploadUid(fileModel.id),
+      name: fileModel.name || fileModel.id,
+      url: fileModel.path || fileModel.url || '',
+      status: 'success',
+      size: fileModel.size,
+      response: {
+        code: 200,
+        data: {
+          id: fileModel.id,
+        },
+      } as Res,
+    },
+  ]
+}
+
 const buildGenerateFixedIdPayload = (): AssetFixedIdGenerateDTO | null => {
   const {projectId, floorId, locationCode, locationId, fixedTypeCode, deviceTypeCode} = formData
   if (!projectId || !floorId || !locationCode || !locationId || !fixedTypeCode || !deviceTypeCode) {
@@ -264,7 +300,7 @@ const loadAssets = async (projectId: string, options?: {keepSelection?: boolean}
   assetOptions.push(
     ...list.map(item => ({
       id: item.id ?? item.assetId ?? item.buildingId,
-      name: item.name ?? item.buildingName ?? item.enclosureName,
+      name: item.name ?? item.assetName ?? item.enclosureName,
       assetType: item.assetType,
       totalFloor: item.totalFloor ?? item.floorCount ?? item.totalFloors ?? '',
     }))
@@ -387,6 +423,20 @@ const fetchDetail = async () => {
     const {data} = await getFixedDetail({fixedId})
     Object.assign(formData, data)
     normalizeDateFields(formData)
+    attachmentFileList.value = createUploadFileList(
+      (
+        data as AssetFixedVO & {
+          attachmentFileModel?: DetailFileModel
+          drawingFileModel?: DetailFileModel
+        }
+      ).attachmentFileModel ||
+        (
+          data as AssetFixedVO & {
+            attachmentFileModel?: DetailFileModel
+            drawingFileModel?: DetailFileModel
+          }
+        ).drawingFileModel
+    )
 
     // 依次加载级联数据，并开启 keepSelection
     if (formData.projectId) {
@@ -472,6 +522,7 @@ const resetFormForCreate = () => {
     businessModelCode: '',
     businessModelName: '',
   })
+  attachmentFileList.value = []
   initializing.value = false
 }
 

@@ -1824,29 +1824,29 @@ interface AssetShopListDTO {
 // 资产管理-商铺
 interface AssetShopVO {
   shopId: string // 商铺编码
-  shopName: string // 商铺名称
+  shopName: string // 商铺
   shopNumber: string // 商铺号
   buildingArea: number // 建筑面积
   usableArea: number // 实用面积
   projectId: string // 项目编码
-  projectName: string // 项目名称
+  projectName: string // 所属项目
   assetId: string // 楼栋/围合编码
   assetType: string // 楼栋/围合类型
-  assetName: string // 楼栋/围合名称
+  assetName: string // 楼栋/围合
   floorId: string // 楼层编码
-  floorName: string // 楼层名称
+  floorName: string // 楼层
   businessModelCode: string // *经营模式编码
-  businessModelName: string // 经营模式名称
+  businessModelName: string // 经营模式
   ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
+  ownershipUnitName: string // 产权单位
   enable: number // 0-禁用;1-启用
   ownershipTypeCode: string // 产权类型编码
-  ownershipTypeName: string // 产权类型名称
+  ownershipTypeName: string // 产权类型
   ownershipYear: number // 产权年限
   ownershipRatio: number // 产权比例
   realEstateNumber: string // 不动产编号
   shopTypeCode: string // 商铺类型编码
-  shopTypeName: string // 商铺类型名称
+  shopTypeName: string // 商铺类型
   shopHeight: number // 商铺层高
   shopState: number // 0-空闲;1-出租中
   splitState: number // 0-未拆分;1-已拆分
@@ -1866,6 +1866,7 @@ interface AssetShopVO {
   effectiveTime: string // 生效时间
   expireTime: string // 失效时间
   children: AssetShopVO[] // 子商铺
+  enableName: string // 状态
 }
 
 interface AssetShopInsertDTO {
@@ -1929,22 +1930,22 @@ interface AssetRoomVO {
   roomId: string // 住宅编码
   roomNumber: string // 房间号
   roomLayoutCode: string // 户型编码
-  roomLayoutName: string // 户型名称
+  roomLayoutName: string // 户型
   buildingArea: number // 建筑面积
   projectId: string // 项目编码
-  projectName: string // 项目名称
+  projectName: string // 所属项目
   assetId: string // 楼栋编码
-  assetName: string // 楼栋名称
+  assetName: string // 楼栋
   floorId: string // 楼层编码
-  floorName: string // 楼层名称
+  floorName: string // 楼层
   businessModelCode: string // 经营模式编码
-  businessModelName: string // 经营模式名称
+  businessModelName: string // 经营模式
   ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
+  ownershipUnitName: string // 产权单位
   leaseType: string // 租赁方式 0-整租;1-合租
   enable: number // 0-禁用;1-启用
   roomTypeCode: string // 房屋类型编码
-  roomTypeName: string // 房屋类型名称
+  roomTypeName: string // 房屋类型
   roomHeight: number // 房间层高
   rentalArea: number // 计租面积
   propertyFeeArea: number // 物业费收费面积
@@ -1953,6 +1954,7 @@ interface AssetRoomVO {
   powerGridNo: string // 电网户号
   gasNo: string // 燃气户号
   decorationLevel: string // 房屋装修等级
+  enableName: string // 状态
 }
 
 interface AssetRoomInsertDTO {
@@ -2020,7 +2022,7 @@ interface AssetResourceListDTO {
 // 资产管理-空间点位资源
 interface AssetResourceVO {
   resourceId: string // 点位编码
-  resourceName: string // 点位名称
+  resourceName: string // 点位
   resourceNumber: string // 点位编号
   resourceType: string // 点位类型
   resourceTypeCode: string // 点位类型编码
@@ -2031,20 +2033,21 @@ interface AssetResourceVO {
   resourceMediaType: string // 媒体类型
   resourceMediaTypeCode: string // 媒体类型编码
   projectId: string // 项目编码
-  projectName: string // 项目名称
-  assetName: string // 楼栋/围合名称
-  floorName: string // 楼层名称
+  projectName: string // 所属项目
+  assetName: string // 楼栋/围合
+  floorName: string // 楼层
   resourceSpecs: string // 规格
   resourceArea: number // 面积
   resourceState: number // 状态，0-待租;1-已租
   locationCode: string // 位置编码
-  locationName: string // 位置名称
+  locationName: string // 位置
   businessModelCode: string // 经营模式编码
-  businessModelName: string // 经营模式名称
+  businessModelName: string // 经营模式
   resourceBusinessTag: string // 业务标签
   resourceBusinessTagCode: string // 业务标签编码
   locationId: string // 房间号/商铺号
   enable: number // 0-禁用;1-启用
+  enableName: string // 状态
 }
 
 interface AssetResourceInsertDTO {
@@ -2163,29 +2166,29 @@ interface AssetProjectVO {
   projectName: string // 项目名称
   projectShortName: string // 项目简称
   areaName: string // 所在省市区
-  provinceCode: string // 所在区域-省 code
-  provinceName: string // 所在区域-省名称
-  cityCode: string // 所在区域-城市 code
-  cityName: string // 所在区域-城市名称
-  districtCode: string // 地址-区域 code
-  districtName: string // 地址-区域名称
+  provinceCode: string // 省份编码
+  provinceName: string // 省份
+  cityCode: string // 城市编码
+  cityName: string // 城市
+  districtCode: string // 区域编码
+  districtName: string // 区域
   address: string // 详细地址
   lng: number // 经度
   lat: number // 纬度
   landNumber: string // 宗地号
   ownershipPropertyCode: string // 产权性质编码
-  ownershipPropertyName: string // 产权性质名称
+  ownershipPropertyName: string // 产权性质
   ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
+  ownershipUnitName: string // 产权单位
   collectWayCode: string // 筹集方式编码
-  collectWayName: string // 筹集方式名称
+  collectWayName: string // 筹集方式
   collectSubjectCode: string // 筹集主体编码
-  collectSubjectName: string // 筹集主体名称
+  collectSubjectName: string // 筹集主体
   collectDate: string // 筹集日期
   businessModelCode: string // 经营模式编码
-  businessModelName: string // 经营模式名称
+  businessModelName: string // 经营模式
   projectTypeCode: string // 项目类型编码
-  projectTypeName: string // 项目类型名称
+  projectTypeName: string // 项目类型
   projectManager: string // 项目负责人
   projectPhone: string // 项目电话
   totalLandArea: number // 总占地面积
@@ -2223,10 +2226,11 @@ interface AssetProjectVO {
   checkInDate: string // 入伙时间
   contractBegin: string // 物业合同生效日期
   contractEnd: string // 物业合同终止日期
-  propertyCompany: string // 物业公司名称
+  propertyCompany: string // 物业公司
   warrantyContractBegin: string // 质保合同生效日期
   warrantyContractEnd: string // 质保合同终止日期
   enable: number // 0-禁用;1-启用
+  enableName: string // 状态
   buildingCount: number // 楼栋数量
   floorCount: number // 楼层数量
   roomCount: number // 住宅数量
@@ -2297,21 +2301,22 @@ interface AssetParkingListDTO {
 // 资产管理-停车场
 interface AssetParkingVO {
   projectId: string // 项目编码
-  projectName: string // 项目名称
+  projectName: string // 所属项目
   parkingId: string // 停车场编码
-  parkingName: string // 停车场名称
+  parkingName: string // 停车场
   parkingMethodCode: string // 停车方式编码
-  parkingMethodName: string // 停车方式名称
+  parkingMethodName: string // 停车方式
   parkingLocationCode: string // 停车场位置编码
-  parkingLocationName: string // 停车场位置名称
+  parkingLocationName: string // 停车场位置
   parkingCategoryCode: string // 车位类别编码
-  parkingCategoryName: string // 车位类别名称
+  parkingCategoryName: string // 车位类别
   parkingSpaceQuantity: number // 停车位数
   parkingArea: number // 面积
   parkingRegions: AssetParkingRegionVO[] // 车位区域信息
   ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
+  ownershipUnitName: string // 产权单位
   enable: number // 是否启用;0-禁用;1-启用
+  enableName: string // 状态
 }
 
 // 资产管理-停车位
@@ -2355,26 +2360,27 @@ interface AssetParkingSpaceListDTO {
 
 // 资产管理-停车位
 interface AssetParkingSpaceVO {
-  parkingSpaceName: string // 车位名称
+  parkingSpaceName: string // 车位
   parkingSpaceId: string // 车位编码
   parkingId: string // 停车场编码
-  parkingName: string // 停车场名称
+  parkingName: string // 停车场
   parkingSpaceRegionId: string // 车位区域编码
-  parkingSpaceRegionName: string // 车位区域名称
+  parkingSpaceRegionName: string // 车位区域
   projectId: string // 项目编码
-  projectName: string // 项目名称
+  projectName: string // 所属项目
   parkingSpaceAttributeCode: string // 车位属性编码
-  parkingSpaceAttributeName: string // 车位属性名称
+  parkingSpaceAttributeName: string // 车位属性
   parkingSpaceArea: number // 车位面积
   parkingSpaceState: string // 车位状态
   ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
+  ownershipUnitName: string // 产权单位
   userInfo: string // 使用方信息
   leaseTerm: number // 租期
   licensePlate: string // 车牌号
-  chargingPortCode: string // 充电位编码
-  chargingPortName: string // 充电位名称
+  chargingPortCode: string // 是否充电位编码
+  chargingPortName: string // 是否充电位
   enable: number // 启停状态
+  enableName: string // 状态
 }
 
 // 资产管理-停车位
@@ -2418,16 +2424,17 @@ interface AssetFloorListDTO {
 interface AssetFloorVO {
   floorId: string // 楼层编码
   projectId: string // 项目编码
-  projectName: string // 项目名称
+  projectName: string // 所属项目
   assetId: string // 楼栋/围合/停车场编码
-  assetName: string // 楼栋/围合/停车场名称
+  assetName: string // 所属楼栋/围合
   enclosureTypeCode: string // 围合类型编码
   enclosureTypeName: string // 围合类型
   floorName: string // 楼层名称
   floorHeight: number // 楼层层高
   ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
+  ownershipUnitName: string // 产权单位
   enable: number // 0-禁用;1-启用
+  enableName: string // 状态
 }
 
 // 资产管理-固定资产
@@ -2503,23 +2510,23 @@ interface AssetFixedListDTO {
 interface AssetFixedVO {
   fixedId: string // 固定资产编码
   projectId: string // 项目编码
-  projectName: string // 项目名称
+  projectName: string // 所属项目
   assetId: string // 楼栋/围合/停车场id
-  assetName: string // 楼栋/围合/停车场名称
+  assetName: string // 楼栋/围合/停车场
   assetType: string // 楼栋/围合/停车场
   floorId: string // 楼层编码
   floorName: string // 楼层编码
   locationCode: string // 位置编码
-  locationName: string // 位置名称
+  locationName: string // 位置
   businessModelCode: string // 经营模式编码
-  businessModelName: string // 经营模式名称
+  businessModelName: string // 经营模式
   locationId: string // 房间号/商铺号
-  fixedName: string // 固定资产名称
+  fixedName: string // 固定资产
   serialNumber: string // 序列号
   fixedTypeCode: string // 资产类型编码
-  fixedTypeName: string // 资产类型名称
+  fixedTypeName: string // 资产类型
   deviceTypeCode: string // 设备类型编码
-  deviceTypeName: string // 设备类型名称
+  deviceTypeName: string // 设备类型
   fixedBrand: string // 固定资产品牌
   fixedSpecs: string // 固定资产规格
   fixedModel: string // 固定资产型号
@@ -2529,7 +2536,7 @@ interface AssetFixedVO {
   elevatorSpeed: number // 电梯速度(固定资产为电梯时有值)
   parkingSpaceNo: string // 关联车位号(固定资产为充电桩时有值)
   ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
+  ownershipUnitName: string // 产权单位
   deviceWorkState: number // 设备工作状态
   deviceManageUser: string // 设备管理人员
   deviceMajordomoUser: string // 设备总监
@@ -2538,10 +2545,10 @@ interface AssetFixedVO {
   acceptanceDate: string // 验收日期
   registerDate: string // 注册登记日期
   warrantyExpireDate: string // 设备质保到期日
-  warrantyCompany: string // 设备质保方名称
+  warrantyCompany: string // 设备质保方
   warrantyLinkman: string // 设备质保方联系人
   warrantyPhone: string // 设备质保方联系方式
-  maintenanceCompany: string // 设备维保方名称
+  maintenanceCompany: string // 设备维保方
   maintenanceLinkman: string // 设备维保方联系人
   maintenancePhone: string // 设备维保方联系方式
   maintenanceExpireDate: string // 设备维保到期日
@@ -2554,6 +2561,7 @@ interface AssetFixedVO {
   contractFid: string // 合同
   attachmentFid: string // 其他附件
   enable: number // 0-禁用;1-启用
+  enableName: string // 状态
 }
 
 interface AssetFixedIdGenerateDTO {
@@ -2615,14 +2623,15 @@ interface AssetEnclosureListDTO {
 // 资产管理-围合
 interface AssetEnclosureVO {
   enclosureId: string // 围合编码
-  enclosureName: string // 围合名称
+  enclosureName: string // 围合
   enclosureTypeCode: string // 围合类型编码
-  enclosureTypeName: string // 围合类型名称
+  enclosureTypeName: string // 围合类型
   projectId: string // 项目编码
-  projectName: string // 项目名称
+  projectName: string // 所属项目
   ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
+  ownershipUnitName: string // 产权单位
   enable: number // 0-禁用;1-启用
+  enableName: string // 状态
 }
 
 // 资产管理-围合
@@ -2663,15 +2672,16 @@ interface AssetBuildingListDTO {
 // 资产管理-楼栋管理
 interface AssetBuildingVO {
   buildingId: string // 楼栋编码
-  buildingName: string // 楼栋名称
+  buildingName: string // 楼栋
   projectId: string // 项目编码
-  projectName: string // 项目名称
+  projectName: string // 所属项目
   projectTypeName: string // 项目类型
   ownershipUnitCode: string // 产权单位编码
-  ownershipUnitName: string // 产权单位名称
+  ownershipUnitName: string // 产权单位
   totalFloor: number // 总层数
   totalRoom: number // 总房间
   enable: number // 0-禁用;1-启用
+  enableName: string // 状态
 }
 
 interface AssetBuildingDTO {
