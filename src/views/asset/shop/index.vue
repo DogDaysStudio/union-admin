@@ -273,7 +273,7 @@ const handleSplitCancel = () => (dialogVisible.value = false)
         </div>
       </div>
     </template>
-    <el-table v-loading="loading" :data="tableData" border row-key="shopId" default-expand-all>
+    <el-table v-loading="loading" :data="tableData" border row-key="shopId">
       <el-table-column label="序号" type="index" width="55" fixed="left" />
       <el-table-column label="商铺编码" prop="shopId" width="240" />
       <el-table-column label="商铺号" prop="shopNumber" width="150" />
@@ -302,7 +302,9 @@ const handleSplitCancel = () => (dialogVisible.value = false)
         <template #default="{row}">
           <el-button link type="primary" @click="detailShop(row.shopId)">查看详情</el-button>
           <el-button link type="primary" @click="editShop(row.shopId)">编辑</el-button>
-          <el-button link type="primary" @click="splitShop(row.shopId)">商铺拆分</el-button>
+          <el-button link type="primary" @click="splitShop(row.shopId)" :disabled="row.splitState">
+            商铺拆分
+          </el-button>
           <el-button link type="danger" @click="deleteShop(row.shopId)">删除</el-button>
         </template>
       </el-table-column>

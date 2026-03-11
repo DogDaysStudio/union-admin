@@ -277,11 +277,11 @@ const handleSubmit = () => {
           >
             <template #default="{data}">
               <el-row :gutter="24">
-                <el-col :span="6">
+                <span class="ml-2">
                   房间：
                   <el-input class="w-40!" v-model="data.roomNumber" />
-                </el-col>
-                <el-col :span="6">
+                </span>
+                <span class="ml-2">
                   层高：
                   <el-input-number
                     class="w-40!"
@@ -289,8 +289,8 @@ const handleSubmit = () => {
                     placeholder="请输入层高"
                     :min="1"
                   />
-                </el-col>
-                <el-col :span="6">
+                </span>
+                <span class="ml-2">
                   户型：
                   <el-select class="w-40!" v-model="data.roomLayoutCode" placeholder="请选择户型">
                     <el-option
@@ -300,8 +300,8 @@ const handleSubmit = () => {
                       :value="item.dicCode"
                     />
                   </el-select>
-                </el-col>
-                <el-col :span="6">
+                </span>
+                <span class="ml-2">
                   产权单位：
                   <el-cascader
                     v-model="data.ownershipUnitCode"
@@ -314,7 +314,7 @@ const handleSubmit = () => {
                     }"
                     clearable
                   />
-                </el-col>
+                </span>
               </el-row>
             </template>
           </el-tree>

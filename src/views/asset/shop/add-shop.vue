@@ -43,6 +43,8 @@ interface ShopInfo {
   shopNumber: string
   projectId: string
   buildingArea: number
+  usableArea: number
+  splitNumber: number
   shopName: string
   ownershipUnitCode: string
   ownershipUnitName: string
@@ -177,6 +179,8 @@ const handleAddRoom = (data: FloorInfo) => {
     floorId: data.floorId,
     shopNumber: '',
     buildingArea: null,
+    usableArea: null,
+    splitNumber: null,
     shopName: '',
     ownershipUnitCode: '',
     ownershipUnitName: '',
@@ -197,7 +201,14 @@ const handleSubmit = () => {
       paramsData.shopList = []
       paramsData?.floorList.map(e => {
         e.children.map(k => {
-          if (!k?.shopName || !k?.shopNumber || !k?.buildingArea || !k?.ownershipUnitCode)
+          if (
+            !k?.shopName ||
+            !k?.shopNumber ||
+            !k?.buildingArea ||
+            !k?.usableArea ||
+            !k?.splitNumber ||
+            !k?.ownershipUnitCode
+          )
             flag = false
           paramsData.shopList.push(k as unknown as AssetShopUpsertDTO)
           if (Array.isArray(k.ownershipUnitCode)) {
@@ -214,7 +225,7 @@ const handleSubmit = () => {
         ElMessage.success(msg)
         router.push('/asset/management/shop')
       } else {
-        ElMessage.warning('请填写商铺名称、商铺号、产权、建筑面积！')
+        ElMessage.warning('请填写商铺名称、商铺号、产权单位、建筑面积、实用面积、拆分数量！')
       }
     }
   })
@@ -325,19 +336,19 @@ const handleSubmit = () => {
               </div>
               <div :gutter="24" v-else>
                 <span class="ml-2">
-                  商铺名称：
-                  <el-input class="w-40!" v-model="data.shopName" />
+                  <!-- 商铺名称： -->
+                  <el-input class="w-44!" v-model="data.shopName" placeholder="商铺名称" />
                 </span>
                 <span class="ml-2">
-                  商铺号：
-                  <el-input class="w-40!" v-model="data.shopNumber" />
+                  <!-- 商铺号： -->
+                  <el-input class="w-44!" v-model="data.shopNumber" placeholder="商铺号" />
                 </span>
                 <span class="ml-2">
-                  产权单位：
+                  <!-- 产权单位： -->
                   <el-cascader
-                    class="w-40!"
+                    class="w-44!"
                     v-model="data.ownershipUnitCode"
-                    placeholder="请选择产权单位"
+                    placeholder="产权单位"
                     :options="companyOptions"
                     :props="{
                       checkStrictly: true,
@@ -348,8 +359,32 @@ const handleSubmit = () => {
                   />
                 </span>
                 <span class="ml-2">
-                  建筑面积(㎡)：
-                  <el-input-number class="w-40!" v-model="data.buildingArea" :min="0" />
+                  <!-- 建筑面积(㎡)： -->
+                  <el-input-number
+                    class="w-44!"
+                    v-model="data.buildingArea"
+                    :min="0"
+                    placeholder="建筑面积(㎡)"
+                  />
+                </span>
+                <span class="ml-2">
+                  <!-- 实用面积(㎡)： -->
+                  <el-input-number
+                    class="w-44!"
+                    v-model="data.usableArea"
+                    :min="0"
+                    placeholder="实用面积(㎡)"
+                  />
+                </span>
+                <span class="ml-2">
+                  <!-- 拆分数量： -->
+                  <el-input-number
+                    class="w-44!"
+                    v-model="data.splitNumber"
+                    :min="0"
+                    :precision="0"
+                    placeholder="拆分数量"
+                  />
                 </span>
               </div>
             </template>
@@ -368,7 +403,7 @@ const handleSubmit = () => {
 <style lang="scss" scoped>
 :deep() {
   .el-tree-node__content {
-    height: 44px;
+    min-height: 40px;
     line-height: 30px;
   }
 }

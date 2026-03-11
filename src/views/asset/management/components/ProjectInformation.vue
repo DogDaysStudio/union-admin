@@ -171,7 +171,7 @@ const getDetail = async (): Promise<void> => {
         </section-group>
       </el-form>
     </el-tab-pane>
-    <el-tab-pane label="项目接收">Config</el-tab-pane>
-    <el-tab-pane label="察验移交">Role</el-tab-pane>
+    <!-- <el-tab-pane label="项目接收">Config</el-tab-pane>
+    <el-tab-pane label="察验移交">Role</el-tab-pane> -->
   </el-tabs>
 </template>

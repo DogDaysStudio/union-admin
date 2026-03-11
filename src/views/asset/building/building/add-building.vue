@@ -425,11 +425,11 @@ const handleSubmit = () => {
             >
               <template #default="{data}">
                 <el-row v-if="data.roomList" :gutter="24">
-                  <el-col :span="8">
+                  <span class="ml-2">
                     楼层：
                     <el-input class="w-40!" v-model="data.floorName" />
-                  </el-col>
-                  <el-col :span="8">
+                  </span>
+                  <span class="ml-2">
                     层高：
                     <el-input-number
                       class="w-40!"
@@ -437,8 +437,8 @@ const handleSubmit = () => {
                       placeholder="请输入层高"
                       :min="0"
                     />
-                  </el-col>
-                  <el-col :span="8">
+                  </span>
+                  <span class="ml-2">
                     产权单位：
                     <el-cascader
                       class="w-40!"
@@ -452,22 +452,22 @@ const handleSubmit = () => {
                       }"
                       clearable
                     />
-                  </el-col>
+                  </span>
                 </el-row>
                 <el-row v-else :gutter="24">
-                  <el-col :span="6">
+                  <span class="ml-2">
                     房间：
                     <el-input class="w-40!" v-model="data.roomName" />
-                  </el-col>
-                  <el-col :span="6">
+                  </span>
+                  <span class="ml-2">
                     层高：
                     <el-input-number
                       class="w-40!"
                       v-model="data.roomHeight"
                       placeholder="请输入层高"
                     />
-                  </el-col>
-                  <el-col :span="6">
+                  </span>
+                  <span class="ml-2">
                     户型：
                     <el-select class="w-40!" v-model="data.roomLayoutCode" placeholder="请选择户型">
                       <el-option
@@ -477,8 +477,8 @@ const handleSubmit = () => {
                         :value="item.dicCode"
                       />
                     </el-select>
-                  </el-col>
-                  <el-col :span="6">
+                  </span>
+                  <span class="ml-2">
                     产权单位：
                     <el-cascader
                       class="w-40!"
@@ -492,7 +492,7 @@ const handleSubmit = () => {
                       }"
                       clearable
                     />
-                  </el-col>
+                  </span>
                 </el-row>
               </template>
             </el-tree>

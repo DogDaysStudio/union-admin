@@ -25,7 +25,7 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
       <el-tab-pane label="项目信息" name="first">
         <project-information />
       </el-tab-pane>
-      <el-tab-pane label="楼栋" name="second">楼栋</el-tab-pane>
+      <!-- <el-tab-pane label="楼栋" name="second">楼栋</el-tab-pane> -->
     </el-tabs>
   </el-card>
 </template>
