@@ -81,7 +81,7 @@ const dialogImageUrl = ref('')
     </template>
   </el-upload>
 
-  <el-dialog v-model="dialogVisible">
+  <el-dialog v-model="dialogVisible" append-to-body>
     <el-image :src="dialogImageUrl" />
   </el-dialog>
 </template>
