@@ -154,11 +154,6 @@ const formRules = reactive<FormRules>({
   nextMaintenanceDate: [{required: true, message: '请选择下次保养日期', trigger: 'change'}],
 })
 
-const enableOptions = [
-  {value: 1, label: '启用'},
-  {value: 0, label: '停用'},
-]
-
 const deviceWorkStateOptions = [
   {value: 1, label: '正常'},
   {value: 0, label: '故障'},
@@ -843,7 +838,7 @@ const handleSubmit = () => {
               />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <!-- <el-col :span="8">
             <el-form-item label="设备启停状态" prop="enable" required>
               <el-select v-model="formData.enable" placeholder="请选择启停状态">
                 <el-option
@@ -854,7 +849,7 @@ const handleSubmit = () => {
                 />
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="8">
             <el-form-item label="设备工作状态" prop="deviceWorkState" required>
               <el-select v-model="formData.deviceWorkState" placeholder="请选择设备工作状态">

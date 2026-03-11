@@ -20,6 +20,7 @@ type AssetFixedListForm = AssetFixedListDTO & {
   // enable?: number
   deviceWorkState?: number | string
   locationName?: string
+  deviceTypeCode?: string
 }
 
 const formState = reactive({
@@ -33,7 +34,7 @@ const formSchema = defineSchema({
     defineField.Input({label: '楼栋名称', prop: 'assetName', clearable: true}),
     defineField.Input({label: '楼层名称', prop: 'floorName', clearable: true}),
     defineField.Input({label: '所属项目', prop: 'projectName', clearable: true}),
-    defineField.Input({label: '设备分类', prop: 'deviceType', clearable: true}),
+    defineField.Input({label: '设备分类', prop: 'deviceTypeCode', clearable: true}),
     defineField.Input({label: '固定资产名称', prop: 'fixedName', clearable: true}),
     defineField.Select({
       label: '设备状态',
