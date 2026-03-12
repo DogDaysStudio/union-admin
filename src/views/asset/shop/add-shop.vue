@@ -206,7 +206,6 @@ const handleSubmit = () => {
             !k?.shopNumber ||
             !k?.buildingArea ||
             !k?.usableArea ||
-            !k?.splitNumber ||
             !k?.ownershipUnitCode
           )
             flag = false
@@ -306,89 +305,74 @@ const handleSubmit = () => {
           <template #extra>
             <el-button type="primary" @click="handleAddFloor">生成楼层</el-button>
           </template>
-          <el-tree
-            ref="treeRef"
+
+          <!-- table -->
+          <el-table
             :data="formData.floorList"
-            node-key="shopId"
+            border
             default-expand-all
-            :props="{
-              children: 'children',
-            }"
-            :expand-on-click-node="false"
+            :preserve-expanded-content="true"
+            :row-key="row => row.floorId"
           >
-            <template #default="{data}">
-              <div :gutter="24" v-if="data.children">
-                <span class="ml-2">
-                  楼层：
-                  <el-input class="w-40!" v-model="data.floorName" disabled />
-                </span>
-                <span class="ml-2">
-                  已有商铺数：
-                  <el-input class="w-40!" v-model="data.shopNumber" disabled />
-                </span>
-                <span class="ml-2">
-                  新增商铺数：
-                  <el-input-number class="w-40!" v-model="data.count" :min="1" :precision="0" />
-                  <el-button class="ml-2" type="primary" @click="handleAddRoom(data)">
-                    生成商铺
-                  </el-button>
-                </span>
-              </div>
-              <div :gutter="24" v-else>
-                <span class="ml-2">
-                  <!-- 商铺名称： -->
-                  <el-input class="w-44!" v-model="data.shopName" placeholder="商铺名称" />
-                </span>
-                <span class="ml-2">
-                  <!-- 商铺号： -->
-                  <el-input class="w-44!" v-model="data.shopNumber" placeholder="商铺号" />
-                </span>
-                <span class="ml-2">
-                  <!-- 产权单位： -->
-                  <el-cascader
-                    class="w-44!"
-                    v-model="data.ownershipUnitCode"
-                    placeholder="产权单位"
-                    :options="companyOptions"
-                    :props="{
-                      checkStrictly: true,
-                      value: 'dicCode',
-                      label: 'dicName',
-                    }"
-                    clearable
-                  />
-                </span>
-                <span class="ml-2">
-                  <!-- 建筑面积(㎡)： -->
-                  <el-input-number
-                    class="w-44!"
-                    v-model="data.buildingArea"
-                    :min="0"
-                    placeholder="建筑面积(㎡)"
-                  />
-                </span>
-                <span class="ml-2">
-                  <!-- 实用面积(㎡)： -->
-                  <el-input-number
-                    class="w-44!"
-                    v-model="data.usableArea"
-                    :min="0"
-                    placeholder="实用面积(㎡)"
-                  />
-                </span>
-                <span class="ml-2">
-                  <!-- 拆分数量： -->
-                  <el-input-number
-                    class="w-44!"
-                    v-model="data.splitNumber"
-                    :min="0"
-                    :precision="0"
-                    placeholder="拆分数量"
-                  />
-                </span>
-              </div>
-            </template>
-          </el-tree>
+            <el-table-column type="expand">
+              <template #default="{row}">
+                <div class="py-2 px-4 pl-12">
+                  <el-table :data="row.children" border>
+                    <el-table-column label="商铺名称">
+                      <template #default="{row}">
+                        <el-input v-model="row.shopName" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="商铺号">
+                      <template #default="{row}">
+                        <el-input v-model="row.shopNumber" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="产权单位">
+                      <template #default="{row}">
+                        <el-cascader
+                          v-model="row.ownershipUnitCode"
+                          :options="companyOptions"
+                          :props="{
+                            checkStrictly: true,
+                            value: 'dicCode',
+                            label: 'dicName',
+                          }"
+                        />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="建筑面积(㎡)">
+                      <template #default="{row}">
+                        <el-input-number v-model="row.buildingArea" :min="0" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="实用面积(㎡)">
+                      <template #default="{row}">
+                        <el-input-number v-model="row.usableArea" :min="0" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="拆分数量">
+                      <template #default="{row}">
+                        <el-input-number v-model="row.splitNumber" :min="0" :precision="0" />
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="楼层" prop="floorName" />
+            <el-table-column label="已有商铺数" prop="shopNumber" />
+            <el-table-column label="新增商铺数">
+              <template #default="{row}">
+                <el-input-number v-model="row.count" :min="1" :precision="0" />
+              </template>
+            </el-table-column>
+            <el-table-column fixed="right" label="操作" width="90">
+              <template #default="{row}">
+                <el-button link type="primary" @click="handleAddRoom(row)">生成商铺</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </section-group>
 
         <div class="flex justify-center mt-6">

@@ -294,83 +294,83 @@ const handleSubmit = () => {
           <template #extra>
             <el-button type="primary" @click="handleAddFloor">生成楼层</el-button>
           </template>
-          <el-tree
-            ref="treeRef"
+
+          <!-- table -->
+          <el-table
             :data="formData.floorList"
-            node-key="shopId"
+            border
             default-expand-all
-            :props="{
-              children: 'children',
-            }"
-            :expand-on-click-node="false"
+            :preserve-expanded-content="true"
+            :row-key="row => row.floorId"
           >
-            <template #default="{data}">
-              <div :gutter="24" v-if="data.children">
-                <span class="ml-2">
-                  楼层：
-                  <el-input class="w-40!" v-model="data.floorName" disabled />
-                </span>
-                <span class="ml-2">
-                  已有房间数：
-                  <el-input class="w-40!" v-model="data.roomNumber" disabled />
-                </span>
-                <span class="ml-2">
-                  户型：
-                  <el-select class="w-40!" v-model="data.roomLayoutCode" placeholder="请选择户型">
-                    <el-option
-                      v-for="item in roomOptions"
-                      :key="item.dicCode"
-                      :label="item.dicName"
-                      :value="item.dicCode"
-                    />
-                  </el-select>
-                </span>
-                <span class="ml-2">
-                  新增房间数：
-                  <el-input-number class="w-40!" v-model="data.count" :min="1" :precision="0" />
-                  <el-button class="ml-2" type="primary" @click="handleAddRoom(data)">
-                    生成房间
-                  </el-button>
-                </span>
-              </div>
-              <div :gutter="24" v-else>
-                <span class="ml-2">
-                  房号：
-                  <el-input class="w-40!" v-model="data.roomNumber" />
-                </span>
-                <span class="ml-2">
-                  户型：
-                  <el-select class="w-40!" v-model="data.roomLayoutCode" placeholder="请选择户型">
-                    <el-option
-                      v-for="item in roomOptions"
-                      :key="item.dicCode"
-                      :label="item.dicName"
-                      :value="item.dicCode"
-                    />
-                  </el-select>
-                </span>
-                <span class="ml-2">
-                  产权单位：
-                  <el-cascader
-                    class="w-40!"
-                    v-model="data.ownershipUnitCode"
-                    placeholder="请选择产权单位"
-                    :options="companyOptions"
-                    :props="{
-                      checkStrictly: true,
-                      value: 'dicCode',
-                      label: 'dicName',
-                    }"
-                    clearable
+            <el-table-column type="expand">
+              <template #default="{row}">
+                <div class="py-2 px-4 pl-12">
+                  <el-table :data="row.children" border>
+                    <el-table-column label="房号">
+                      <template #default="{row}">
+                        <el-input v-model="row.roomNumber" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="户型">
+                      <template #default="{row}">
+                        <el-select v-model="row.roomLayoutCode">
+                          <el-option
+                            v-for="item in roomOptions"
+                            :key="item.dicCode"
+                            :label="item.dicName"
+                            :value="item.dicCode"
+                          />
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="产权单位">
+                      <template #default="{row}">
+                        <el-cascader
+                          v-model="row.ownershipUnitCode"
+                          :options="companyOptions"
+                          :props="{
+                            checkStrictly: true,
+                            value: 'dicCode',
+                            label: 'dicName',
+                          }"
+                        />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="面积">
+                      <template #default="{row}">
+                        <el-input-number v-model="row.buildingArea" :min="0" />
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="楼层" prop="floorName" />
+            <el-table-column label="已有房间数" prop="roomNumber" />
+            <el-table-column label="户型">
+              <template #default="{row}">
+                <el-select v-model="row.roomLayoutCode">
+                  <el-option
+                    v-for="item in roomOptions"
+                    :key="item.dicCode"
+                    :label="item.dicName"
+                    :value="item.dicCode"
                   />
-                </span>
-                <span class="ml-2">
-                  面积：
-                  <el-input-number class="w-40!" v-model="data.buildingArea" :min="0" />
-                </span>
-              </div>
-            </template>
-          </el-tree>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column label="新增房间数">
+              <template #default="{row}">
+                <el-input-number v-model="row.count" :min="1" :precision="0" />
+              </template>
+            </el-table-column>
+            <el-table-column fixed="right" label="操作" width="90">
+              <template #default="{row}">
+                <el-button link type="primary" @click="handleAddRoom(row)">生成房间</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </section-group>
 
         <div class="flex justify-center mt-6">

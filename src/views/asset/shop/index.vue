@@ -173,9 +173,7 @@ const detailShop = (shopId: string) => router.push(`/asset/management/detail-sho
 
 // 修改状态
 const toggleStatus = async (shopId: string, enable: number) => {
-  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}商铺?`, '确认提示', {
-    type: 'warning',
-  })
+  await ElMessageBox.confirm(`是否确定${enable ? '停用' : '启用'}商铺?`, '确认提示')
   await shopEnable({shopId, enable: enable ? false : true})
   ElMessage.success('修改成功')
   getData()
@@ -183,7 +181,7 @@ const toggleStatus = async (shopId: string, enable: number) => {
 
 // 删除
 const deleteShop = async (shopId: string) => {
-  await ElMessageBox.confirm(`是否确定删除商铺?`, '确认提示', {type: 'warning'})
+  await ElMessageBox.confirm(`是否确定删除商铺?`, '确认提示')
   await shopDelete({shopId})
   ElMessage.success('删除成功')
   getData()
@@ -293,6 +291,7 @@ const handleSplitCancel = () => (dialogVisible.value = false)
       <el-table-column label="状态" prop="enable" width="70">
         <template #default="{row}">
           <el-switch
+            :disabled="row.splitState && row?.children ? true : false"
             :model-value="row.enable === 1"
             @change="toggleStatus(row.shopId, row.enable)"
           />
@@ -302,7 +301,12 @@ const handleSplitCancel = () => (dialogVisible.value = false)
         <template #default="{row}">
           <el-button link type="primary" @click="detailShop(row.shopId)">查看详情</el-button>
           <el-button link type="primary" @click="editShop(row.shopId)">编辑</el-button>
-          <el-button link type="primary" @click="splitShop(row.shopId)" :disabled="row.splitState">
+          <el-button
+            link
+            type="primary"
+            @click="splitShop(row.shopId)"
+            :disabled="row.splitState ? true : false"
+          >
             商铺拆分
           </el-button>
           <el-button link type="danger" @click="deleteShop(row.shopId)">删除</el-button>
