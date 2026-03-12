@@ -2,12 +2,25 @@
 import {computed, onMounted, reactive} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useRequest} from 'vue-request'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {amsAssetFixedGet} from '@/service/api/amsAsset'
 
 const route = useRoute()
 const router = useRouter()
 const detail = reactive<Partial<AssetFixedVO>>({})
 const {runAsync: fetchDetail, loading} = useRequest(amsAssetFixedGet)
+const labelDicOptions = useDicListTree({dicType: 1027})
+const labelDicMap = computed(() =>
+  labelDicOptions.reduce<Record<string, string>>((acc, item) => {
+    if (item.dicCode) acc[item.dicCode] = item.dicName
+    return acc
+  }, {})
+)
+
+const labelDisplay = computed(() => {
+  if (!Array.isArray(detail.labelList) || !detail.labelList.length) return '-'
+  return detail.labelList.map(code => labelDicMap.value[code] || code).join(', ')
+})
 
 type AttachmentFileModel = {
   id?: string
@@ -21,6 +34,7 @@ type DetailFieldConfig = {
   field?: string | number | null | undefined
   type?: 'file'
   files?: AttachmentFileModel | AttachmentFileModel[]
+  span?: number
 }
 
 type DetailGroupConfig = {
@@ -124,7 +138,7 @@ const detailConfig = computed<DetailGroupConfig[]>(() => [
       [
         {
           label: '标签',
-          field: Array.isArray(detail.labelList) ? detail.labelList.join(', ') : detail.labelList,
+          field: labelDisplay.value,
         },
       ],
     ],
@@ -137,18 +151,35 @@ const detailConfig = computed<DetailGroupConfig[]>(() => [
           label: '设备合同',
           type: 'file',
           files: detail.deviceContractFileModel,
+          span: 12,
         },
         {
-          label: '设备技术资料',
+          label: '合同',
           type: 'file',
-          files: detail.deviceInformationFileModel,
+          files: detail.contractFileModel,
+          span: 12,
         },
       ],
       [
         {
+          label: '设备技术资料',
+          type: 'file',
+          files: detail.deviceInformationFileModel,
+          span: 12,
+        },
+        {
           label: '图纸',
           type: 'file',
           files: detail.drawingFileModel,
+          span: 12,
+        },
+      ],
+      [
+        {
+          label: '其他附件',
+          type: 'file',
+          files: detail.attachmentFileModel,
+          span: 24,
         },
       ],
     ],
@@ -175,7 +206,7 @@ const detailConfig = computed<DetailGroupConfig[]>(() => [
     <div v-else class="space-y-6">
       <section-group v-for="group in detailConfig" :key="group.title" :title="group.title" inline>
         <el-row v-for="(row, rowIdx) in group.fields" :key="rowIdx" :gutter="24">
-          <el-col v-for="(item, colIdx) in row" :key="colIdx" :span="8">
+          <el-col v-for="(item, colIdx) in row" :key="colIdx" :span="item.span || 8">
             <el-form-item :label="item.label">
               <template v-if="item.type === 'file'">
                 <div class="ml-4 space-y-1">
