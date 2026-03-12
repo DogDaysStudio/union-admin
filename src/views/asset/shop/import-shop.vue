@@ -15,7 +15,7 @@ const router = useRouter()
       check-url="/ams/asset-shop/check-template"
       check-export-url="/ams/asset-shop/check-template-export"
       import-url="/ams/asset-shop/import-template"
-      :customData="{type: 1001}"
+      :upload-props="{data: {type: 1001}}"
       :title="{
         template: '填写导入商铺的信息',
         // templateDesc: '请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除',

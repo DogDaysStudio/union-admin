@@ -15,7 +15,8 @@ const router = useRouter()
       check-url="/ams/asset-floor/check-template"
       check-export-url="/ams/asset-floor/check-template-export"
       import-url="/ams/asset-floor/import-template"
-      :customData="{type: 1001, assetType: '2'}"
+      :before-request="payload => ({...payload, assetType: '2'})"
+      :upload-props="{data: {type: 1001}}"
       :title="{
         template: '填写导入楼层的信息',
         // templateDesc: '请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除',

@@ -3,33 +3,21 @@
  * @example
    <upload-file ref="uploadRef" v-model:file-list="form.avatarFid as any"></upload-file>
  */
-import {ref, useAttrs, useTemplateRef, computed} from 'vue'
+import {ref, useTemplateRef} from 'vue'
 import {baseUrl} from '@/common/config'
 import {createHeaders} from '@/service/service'
 import {type UploadPropsPublic, type UploadUserFile} from 'element-plus'
 import {Plus} from '@element-plus/icons-vue'
 import {validateFileList} from './utils'
 
-const attrs = useAttrs()
-const props = withDefaults(
-  defineProps<
-    UploadPropsPublic & {
-      customData?: Record<string, any>
-    }
-  >(),
-  {
-    action: '/ams/common/file/upload',
-    showFileList: true,
-    listType: 'picture-card',
-    // data: () => ({type: 1000}),
-    autoUpload: true,
-  }
-)
-
-const uploadData = computed(() => ({
-  type: 1000,
-  ...props.customData,
-}))
+const {
+  action = '/ams/common/file/upload',
+  showFileList = true,
+  listType = 'picture-card',
+  data = {type: 1000},
+  autoUpload = true,
+  ...rest
+} = defineProps<UploadPropsPublic>()
 
 const uploadRef = useTemplateRef('uploadRef')
 defineExpose({
@@ -39,7 +27,7 @@ defineExpose({
    * @returns 文件 ID 列表
    */
   validate() {
-    return validateFileList(props.fileList)
+    return validateFileList(rest.fileList)
   },
 })
 
@@ -67,10 +55,13 @@ const dialogImageUrl = ref('')
     ref="uploadRef"
     @preview="handlePreview"
     @success="handleSuccess"
-    v-bind="{...attrs, ...props}"
+    v-bind="{...$attrs, ...rest}"
     :headers="createHeaders()"
     :action="action?.startsWith('http') ? action : baseUrl + action"
-    :data="uploadData"
+    :show-file-list="showFileList"
+    :list-type="listType"
+    :data="data"
+    :auto-upload="autoUpload"
   >
     <template v-for="(_, slot) in $slots" #[slot]="scope">
       <slot :name="slot" v-bind="scope" />

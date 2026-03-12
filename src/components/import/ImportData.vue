@@ -6,18 +6,20 @@
     check-url="/iam/auth-user/template-check"
     check-export-url="/iam/auth-user/template-check-export"
     import-url="/iam/auth-user/template-import"
+    :before-request="payload => ({...payload, assetType: '1'})"
+    :upload-props="{data: {type: 1001}}"
     :title="{
       template: '填写导入员工的信息',
       // templateDesc: '请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除',
       upload: '上传填好的员工信息表',
       // uploadDesc: '文件后缀名必须为xls或xlsx（即Excel格式），文件大小不得大于10M',
     }"
-    @finish="console.log('finish')"
+    @finish="tabsStore.close()"
   ></import-data>
  */
 import {computed, ref, useTemplateRef} from 'vue'
 import {Document, UploadFilled, CircleCheck, Warning} from '@element-plus/icons-vue'
-import type {UploadUserFile} from 'element-plus'
+import type {UploadPropsPublic, UploadUserFile} from 'element-plus'
 import http from '@/service/service'
 import {downloadBlob} from '@/utils/util'
 
@@ -50,13 +52,13 @@ const props = defineProps<{
    */
   title?: Title
   /**
-   * 文件上传地址
+   * 上传组件的属性
    */
-  uploadUrl?: string
+  uploadProps?: UploadPropsPublic
   /**
-   * 文件上传类型，透传给 UploadFile
+   * 每一步请求前执行，一般用于修改请求参数，也可以抛出异常阻止下一步
    */
-  customData?: Record<string, any>
+  beforeRequest?: <T extends {fid: string}>(data: T, step: number) => T
 }>()
 
 defineEmits<{
@@ -88,16 +90,16 @@ const step1 = async () => {
   if (!props.checkUrl) return
 
   try {
+    let payload = {fid: fid.value}
+    payload = props.beforeRequest?.(payload, 1) ?? payload
+
     checkLoading.value = true
-    const {data} = await http.post<Res<UserTemplateImportCheckVO>>(props.checkUrl, {
-      fid: fid.value,
-      ...props.customData,
-    })
+    const {data} = await http.post<Res<UserTemplateImportCheckVO>>(props.checkUrl, payload)
     checkData.value = data
+    active.value = 2
   } finally {
     checkLoading.value = false
   }
-  active.value = 2
 }
 
 const exportLoading = ref(false)
@@ -113,11 +115,11 @@ const importLoading = ref(false)
 const step2 = async () => {
   if (!props.importUrl) return
   try {
+    let payload = {fid: fid.value}
+    payload = props.beforeRequest?.(payload, 2) ?? payload
+
     importLoading.value = true
-    const {data: count} = await http.post<Res<number>>(props.importUrl, {
-      fid: fid.value,
-      ...props.customData,
-    })
+    const {data: count} = await http.post<Res<number>>(props.importUrl, payload)
     importCount.value = count || 0
     active.value = 3
   } finally {
@@ -165,13 +167,12 @@ const step2 = async () => {
           </div>
         </div>
         <upload-file
-          :action="uploadUrl"
           ref="uploadRef"
           v-model:file-list="fileList"
           :limit="1"
-          :customData="props.customData"
           list-type="text"
           class="upload-template"
+          v-bind="props.uploadProps"
         >
           <template #trigger>
             <el-button type="danger">↑上传文件</el-button>
