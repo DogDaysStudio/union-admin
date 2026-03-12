@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, reactive, ref, watch} from 'vue'
+import {computed, onMounted, reactive, ref, watch} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
 import {defineField, defineSchema, UploadFile} from '@/components'
 import {useRequest} from 'vue-request'
@@ -7,6 +7,7 @@ import {useExport} from '@/common/hooks/useExport'
 import {getFileListId} from '@/components/upload/utils'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import type {FormInstance, FormRules, UploadUserFile} from 'element-plus'
+import {useDicListTree} from '@/common/hooks/useDicTree'
 import {
   amsAssetFixedList,
   amsAssetFixedEnable,
@@ -29,25 +30,37 @@ const formState = reactive({
   pageSize: 10,
 } as AssetFixedListForm)
 
-const formSchema = defineSchema({
-  fields: [
-    defineField.Input({label: '楼栋名称', prop: 'assetName', clearable: true}),
-    defineField.Input({label: '楼层名称', prop: 'floorName', clearable: true}),
-    defineField.Input({label: '所属项目', prop: 'projectName', clearable: true}),
-    defineField.Input({label: '设备分类', prop: 'deviceTypeCode', clearable: true}),
-    defineField.Input({label: '固定资产名称', prop: 'fixedName', clearable: true}),
-    defineField.Select({
-      label: '设备状态',
-      prop: 'deviceWorkState',
-      options: [
-        {value: 1, label: '正常'},
-        {value: 0, label: '故障'},
-      ],
-      clearable: true,
-    }),
-    defineField.Input({label: '设备位置', prop: 'locationName', clearable: true}),
-  ],
-})
+const deviceTypeOptions = useDicListTree({dicType: 1008})
+const deviceTypeSelectOptions = computed(() =>
+  deviceTypeOptions.map(item => ({label: item.dicName, value: item.dicCode}))
+)
+
+const formSchema = computed(() =>
+  defineSchema({
+    fields: [
+      defineField.Input({label: '楼栋名称', prop: 'assetName', clearable: true}),
+      defineField.Input({label: '楼层名称', prop: 'floorName', clearable: true}),
+      defineField.Input({label: '所属项目', prop: 'projectName', clearable: true}),
+      defineField.Select({
+        label: '设备类型',
+        prop: 'deviceTypeCode',
+        options: deviceTypeSelectOptions.value,
+        clearable: true,
+      }),
+      defineField.Input({label: '固定资产名称', prop: 'fixedName', clearable: true}),
+      defineField.Select({
+        label: '设备状态',
+        prop: 'deviceWorkState',
+        options: [
+          {value: 1, label: '正常'},
+          {value: 0, label: '故障'},
+        ],
+        clearable: true,
+      }),
+      defineField.Input({label: '设备位置', prop: 'locationName', clearable: true}),
+    ],
+  })
+)
 
 const {runAsync: fetchFixedList} = useRequest(amsAssetFixedList)
 const {runAsync: fixedEnable} = useRequest(amsAssetFixedEnable)
@@ -66,6 +79,7 @@ const loading = ref(false)
 const total = ref(0)
 const tableData = reactive<AssetFixedVO[]>([])
 const selectedRows = ref<AssetFixedVO[]>([])
+const labelOptions = useDicListTree({dicType: 1027})
 
 const router = useRouter()
 const route = useRoute()
@@ -224,7 +238,7 @@ const warrantyForm = reactive({
 const batchEditDialogVisible = ref(false)
 const batchEditFormRef = ref<FormInstance>()
 const batchEditForm = reactive({
-  label: '',
+  labelList: [] as string[],
   drawingFiles: [] as UploadUserFile[],
   deviceContractFiles: [] as UploadUserFile[],
   deviceInformationFiles: [] as UploadUserFile[],
@@ -238,7 +252,7 @@ const warrantyFormRules: FormRules = {
 }
 
 const batchEditFormRules: FormRules = {
-  label: [{required: true, message: '请输入标签', trigger: 'blur'}],
+  labelList: [{required: true, message: '请选择标签', trigger: 'change'}],
 }
 
 const resetWarrantyForm = () => {
@@ -250,7 +264,7 @@ const resetWarrantyForm = () => {
 }
 
 const resetBatchEditForm = () => {
-  batchEditForm.label = ''
+  batchEditForm.labelList = []
   batchEditForm.drawingFiles = []
   batchEditForm.deviceContractFiles = []
   batchEditForm.deviceInformationFiles = []
@@ -264,14 +278,14 @@ const openWarrantyDialog = () => {
 const handleWarrantyConfirm = async () => {
   if (!ensureSelection()) return
   await warrantyFormRef.value?.validate()
-  const contractFid = getFileListId(warrantyForm.contractFiles)?.[0] || ''
+  const contractFids = getFileListId(warrantyForm.contractFiles) || []
   await fixedBatchWarranty({
     fixedIdList: selectedRows.value.map(item => item.fixedId),
     warrantyCompany: warrantyForm.warrantyCompany,
     warrantyLinkman: warrantyForm.warrantyLinkman,
     warrantyPhone: warrantyForm.warrantyPhone,
     warrantyExpireDate: warrantyForm.warrantyExpireDate,
-    contractFid,
+    contractFidList: contractFids,
   })
   ElMessage.success('维护质保信息已提交')
   warrantyDialogVisible.value = false
@@ -289,10 +303,10 @@ const handleBatchEditConfirm = async () => {
   await batchEditFormRef.value?.validate()
   await fixedBatchUpdate({
     fixedIdList: selectedRows.value.map(item => item.fixedId),
-    label: batchEditForm.label,
-    drawingFid: getFileListId(batchEditForm.drawingFiles)?.[0] || '',
-    deviceContractFid: getFileListId(batchEditForm.deviceContractFiles)?.[0] || '',
-    deviceInformationFid: getFileListId(batchEditForm.deviceInformationFiles)?.[0] || '',
+    labelList: batchEditForm.labelList,
+    drawingFidList: getFileListId(batchEditForm.drawingFiles) || [],
+    deviceContractFidList: getFileListId(batchEditForm.deviceContractFiles) || [],
+    deviceInformationFidList: getFileListId(batchEditForm.deviceInformationFiles) || [],
   })
   ElMessage.success('批量编辑成功')
   batchEditDialogVisible.value = false
@@ -350,13 +364,6 @@ onMounted(() => getData())
       <el-table-column label="楼层名称" prop="floorName" min-width="140" />
       <el-table-column label="房间" prop="locationId" min-width="120" />
       <el-table-column label="位置" prop="locationName" min-width="160" />
-      <el-table-column label="启停状态" prop="enable" width="100">
-        <template #default="{row}">
-          <el-tag :type="row.enable ? 'success' : 'danger'">
-            {{ row.enable ? '启用' : '禁用' }}
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column label="设备质保方" prop="warrantyCompany" min-width="140" />
       <el-table-column label="设备安装日期" prop="deviceInstallDate" min-width="140" />
       <el-table-column label="设备质保到期日" prop="warrantyExpireDate" min-width="150" />
@@ -368,17 +375,18 @@ onMounted(() => getData())
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column label="状态" prop="enable" width="70">
+        <template #default="{row}">
+          <el-switch
+            :model-value="row.enable === 1"
+            @change="() => toggleStatus(row.fixedId, row.enable)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="操作" fixed="right" min-width="230">
         <template #default="{row}">
           <el-button link type="primary" @click="goFixedDetail(row.fixedId)">查看详情</el-button>
           <el-button link type="primary" @click="goFixedEdit(row.fixedId)">编辑</el-button>
-          <el-button
-            link
-            :type="row.enable ? 'danger' : 'primary'"
-            @click="toggleStatus(row.fixedId, row.enable)"
-          >
-            {{ row.enable ? '停用' : '启用' }}
-          </el-button>
           <el-button link type="danger" @click="handleDelete(row.fixedId)">删除</el-button>
         </template>
       </el-table-column>
@@ -408,11 +416,30 @@ onMounted(() => getData())
       :rules="batchEditFormRules"
       label-width="120px"
     >
-      <el-form-item label="标签" prop="label">
-        <el-input v-model="batchEditForm.label" placeholder="请输入" />
+      <el-form-item label="标签" prop="labelList">
+        <el-select
+          v-model="batchEditForm.labelList"
+          multiple
+          collapse-tags
+          collapse-tags-tooltip
+          placeholder="请选择标签"
+          clearable
+        >
+          <el-option
+            v-for="item in labelOptions"
+            :key="item.dicCode"
+            :label="item.dicName"
+            :value="item.dicCode"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="图纸">
-        <upload-file v-model:file-list="batchEditForm.drawingFiles" list-type="text">
+        <upload-file
+          v-model:file-list="batchEditForm.drawingFiles"
+          list-type="text"
+          multiple
+          :limit="10"
+        >
           <template #trigger>
             <el-button type="primary" plain>上传文件</el-button>
           </template>
@@ -422,7 +449,12 @@ onMounted(() => getData())
         </div>
       </el-form-item>
       <el-form-item label="设备合同">
-        <upload-file v-model:file-list="batchEditForm.deviceContractFiles" list-type="text">
+        <upload-file
+          v-model:file-list="batchEditForm.deviceContractFiles"
+          list-type="text"
+          multiple
+          :limit="10"
+        >
           <template #trigger>
             <el-button type="primary" plain>上传文件</el-button>
           </template>
@@ -432,7 +464,12 @@ onMounted(() => getData())
         </div>
       </el-form-item>
       <el-form-item label="设备技术资料">
-        <upload-file v-model:file-list="batchEditForm.deviceInformationFiles" list-type="text">
+        <upload-file
+          v-model:file-list="batchEditForm.deviceInformationFiles"
+          list-type="text"
+          multiple
+          :limit="10"
+        >
           <template #trigger>
             <el-button type="primary" plain>上传文件</el-button>
           </template>
@@ -460,7 +497,7 @@ onMounted(() => getData())
       ref="warrantyFormRef"
       :model="warrantyForm"
       :rules="warrantyFormRules"
-      label-width="150px"
+      label-width="170px"
     >
       <el-form-item label="设备质保方名称" prop="warrantyCompany">
         <el-input v-model="warrantyForm.warrantyCompany" placeholder="请选择" />
@@ -480,7 +517,7 @@ onMounted(() => getData())
         />
       </el-form-item>
       <el-form-item label="合同">
-        <upload-file v-model:file-list="warrantyForm.contractFiles">
+        <upload-file v-model:file-list="warrantyForm.contractFiles" multiple :limit="10">
           <template #trigger>
             <el-button type="primary" plain>上传文件</el-button>
           </template>

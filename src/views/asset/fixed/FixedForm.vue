@@ -54,7 +54,13 @@ const floorOptions = reactive<{floorId: string; floorName: string}[]>([])
 const locationOptions = reactive<string[]>([])
 const locationTypeOptions = useDicListTree({dicType: 1004})
 const businessModelOptions = useDicListTree({dicType: 1020})
+const deviceTypeOptions = useDicListTree({dicType: 1008})
+const labelOptions = useDicListTree({dicType: 1027})
 const attachmentFileList = ref<UploadUserFile[]>([])
+const drawingFileList = ref<UploadUserFile[]>([])
+const deviceContractFileList = ref<UploadUserFile[]>([])
+const deviceInformationFileList = ref<UploadUserFile[]>([])
+const contractFileList = ref<UploadUserFile[]>([])
 const initializing = ref(false)
 const projectsLoaded = ref(false)
 
@@ -113,12 +119,12 @@ const formData = reactive<AssetFixedFormData>({
   maintenanceExpireDate: '',
   nextPatrolDate: '',
   nextMaintenanceDate: '',
-  label: '',
-  drawingFid: '',
-  deviceContractFid: '',
-  deviceInformationFid: '',
-  contractFid: '',
-  attachmentFid: '',
+  labelList: [],
+  drawingFidList: [] as string[],
+  deviceContractFidList: [] as string[],
+  deviceInformationFidList: [] as string[],
+  contractFidList: [] as string[],
+  attachmentFidList: [] as string[],
   enable: 1,
   businessModelCode: '',
   businessModelName: '',
@@ -129,7 +135,7 @@ const formRules = reactive<FormRules>({
   projectId: [{required: true, message: '请选择所属项目', trigger: 'change'}],
   assetId: [{required: true, message: '请选择围合/楼栋', trigger: 'change'}],
   floorId: [{required: true, message: '请选择楼层', trigger: 'change'}],
-  deviceTypeCode: [{required: true, message: '请输入设备类型', trigger: 'blur'}],
+  deviceTypeCode: [{required: true, message: '请选择设备类型', trigger: 'change'}],
   fixedTypeCode: [{required: true, message: '请输入资产类型', trigger: 'blur'}],
   enable: [{required: true, message: '请选择启停状态', trigger: 'change'}],
   deviceWorkState: [{required: true, message: '请选择设备工作状态', trigger: 'change'}],
@@ -207,23 +213,24 @@ const createUploadUid = (id?: string) => {
   return Array.from(id).reduce((total, char) => total + char.charCodeAt(0), 0)
 }
 
-const createUploadFileList = (fileModel?: DetailFileModel | null): UploadUserFile[] => {
-  if (!fileModel?.id) return []
-  return [
-    {
-      uid: createUploadUid(fileModel.id),
-      name: fileModel.name || fileModel.id,
-      url: fileModel.path || fileModel.url || '',
+const createUploadFileList = (
+  fileModels?: DetailFileModel[] | DetailFileModel | null
+): UploadUserFile[] => {
+  if (!fileModels) return []
+  const list = Array.isArray(fileModels) ? fileModels : [fileModels]
+  return list
+    .filter(item => item?.id)
+    .map(item => ({
+      uid: createUploadUid(item.id),
+      name: item.name || item.id!,
+      url: item.path || item.url || '',
       status: 'success',
-      size: fileModel.size,
+      size: item.size,
       response: {
         code: 200,
-        data: {
-          id: fileModel.id,
-        },
+        data: {id: item.id},
       } as Res,
-    },
-  ]
+    }))
 }
 
 const buildGenerateFixedIdPayload = (): AssetFixedIdGenerateDTO | null => {
@@ -350,6 +357,15 @@ watch(
 )
 
 watch(
+  [() => formData.deviceTypeCode, () => deviceTypeOptions.length],
+  ([code]) => {
+    formData.deviceTypeName =
+      findValueByCustomId(code, 'dicCode', 'dicName', deviceTypeOptions) || ''
+  },
+  {immediate: true}
+)
+
+watch(
   () => formData.businessModelCode,
   businessModelCode => {
     formData.businessModelName = findValueByCustomId(
@@ -417,21 +433,21 @@ const fetchDetail = async () => {
     const fixedId = (props.fixedId as string) || (route.params.id as string)
     const {data} = await getFixedDetail({fixedId})
     Object.assign(formData, data)
+    formData.labelList = Array.isArray(data.labelList)
+      ? data.labelList
+      : data.labelList
+        ? String(data.labelList)
+            .split(',')
+            .map(item => item.trim())
+            .filter(Boolean)
+        : []
     normalizeDateFields(formData)
-    attachmentFileList.value = createUploadFileList(
-      (
-        data as AssetFixedVO & {
-          attachmentFileModel?: DetailFileModel
-          drawingFileModel?: DetailFileModel
-        }
-      ).attachmentFileModel ||
-        (
-          data as AssetFixedVO & {
-            attachmentFileModel?: DetailFileModel
-            drawingFileModel?: DetailFileModel
-          }
-        ).drawingFileModel
-    )
+    const fixedDetail = data as AssetFixedVO
+    attachmentFileList.value = createUploadFileList(fixedDetail.attachmentFileModel)
+    drawingFileList.value = createUploadFileList(fixedDetail.drawingFileModel)
+    deviceContractFileList.value = createUploadFileList(fixedDetail.deviceContractFileModel)
+    deviceInformationFileList.value = createUploadFileList(fixedDetail.deviceInformationFileModel)
+    contractFileList.value = createUploadFileList(fixedDetail.contractFileModel)
 
     // 依次加载级联数据，并开启 keepSelection
     if (formData.projectId) {
@@ -508,16 +524,20 @@ const resetFormForCreate = () => {
     nextPatrolDate: '',
     nextMaintenanceDate: '',
     label: '',
-    drawingFid: '',
-    deviceContractFid: '',
-    deviceInformationFid: '',
-    contractFid: '',
-    attachmentFid: '',
+    drawingFidList: [],
+    deviceContractFidList: [],
+    deviceInformationFidList: [],
+    contractFidList: [],
+    attachmentFidList: [],
     enable: 1,
     businessModelCode: '',
     businessModelName: '',
   })
   attachmentFileList.value = []
+  drawingFileList.value = []
+  deviceContractFileList.value = []
+  deviceInformationFileList.value = []
+  contractFileList.value = []
   initializing.value = false
 }
 
@@ -551,11 +571,20 @@ const handleSubmit = () => {
     if (!formData.fixedId) {
       generateFixedId()
     }
-    const fileIds = await validateFileList(attachmentFileList.value)
+    const [attachmentIds, drawingIds, deviceContractIds, deviceInformationIds, contractIds] =
+      await Promise.all([
+        validateFileList(attachmentFileList.value),
+        validateFileList(drawingFileList.value),
+        validateFileList(deviceContractFileList.value),
+        validateFileList(deviceInformationFileList.value),
+        validateFileList(contractFileList.value),
+      ])
     const payload: AssetFixedFormData = {...formData}
-    if (fileIds?.length) {
-      payload.attachmentFid = fileIds[0]
-    }
+    payload.attachmentFidList = attachmentIds || []
+    payload.drawingFidList = drawingIds || []
+    payload.deviceContractFidList = deviceContractIds || []
+    payload.deviceInformationFidList = deviceInformationIds || []
+    payload.contractFidList = contractIds || []
     normalizeDateFields(payload)
     // 补齐接口要求的默认值
     payload.locationCode = payload.locationCode || 'Pz'
@@ -638,7 +667,14 @@ const handleSubmit = () => {
           </el-col>
           <el-col :span="8">
             <el-form-item label="设备类型" prop="deviceTypeCode" required>
-              <el-input v-model="formData.deviceTypeCode" placeholder="请输入设备类型" />
+              <el-select v-model="formData.deviceTypeCode" placeholder="请选择设备类型" clearable>
+                <el-option
+                  v-for="item in deviceTypeOptions"
+                  :key="item.dicCode"
+                  :label="item.dicName"
+                  :value="item.dicCode"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -971,14 +1007,93 @@ const handleSubmit = () => {
           </el-col>
           <el-col :span="8">
             <el-form-item label="标签">
-              <el-input v-model="formData.label" placeholder="请输入标签" />
+              <el-select
+                v-model="formData.labelList"
+                multiple
+                collapse-tags
+                collapse-tags-tooltip
+                placeholder="请选择标签"
+                clearable
+              >
+                <el-option
+                  v-for="item in labelOptions"
+                  :key="item.dicCode"
+                  :label="item.dicName"
+                  :value="item.dicCode"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="上传文件">
+            <el-form-item label="图纸">
+              <upload-file
+                v-model:file-list="drawingFileList"
+                :limit="10"
+                multiple
+                accept=".rar,.zip,.doc,.docx,.pdf,.jpg,.jpeg,.png"
+              >
+                <template #tip>
+                  <div class="text-xs text-gray-500">
+                    支持扩展名：.rar .zip .doc .docx .pdf .jpg ... 单个文件不超过1MB
+                  </div>
+                </template>
+              </upload-file>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="设备合同">
+              <upload-file
+                v-model:file-list="deviceContractFileList"
+                :limit="10"
+                multiple
+                accept=".rar,.zip,.doc,.docx,.pdf,.jpg,.jpeg,.png"
+              >
+                <template #tip>
+                  <div class="text-xs text-gray-500">
+                    支持扩展名：.rar .zip .doc .docx .pdf .jpg ... 单个文件不超过1MB
+                  </div>
+                </template>
+              </upload-file>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="设备技术资料">
+              <upload-file
+                v-model:file-list="deviceInformationFileList"
+                :limit="10"
+                multiple
+                accept=".rar,.zip,.doc,.docx,.pdf,.jpg,.jpeg,.png"
+              >
+                <template #tip>
+                  <div class="text-xs text-gray-500">
+                    支持扩展名：.rar .zip .doc .docx .pdf .jpg ... 单个文件不超过1MB
+                  </div>
+                </template>
+              </upload-file>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="合同">
+              <upload-file
+                v-model:file-list="contractFileList"
+                :limit="10"
+                multiple
+                accept=".rar,.zip,.doc,.docx,.pdf,.jpg,.jpeg,.png"
+              >
+                <template #tip>
+                  <div class="text-xs text-gray-500">
+                    支持扩展名：.rar .zip .doc .docx .pdf .jpg ... 单个文件不超过1MB
+                  </div>
+                </template>
+              </upload-file>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="其他附件">
               <upload-file
                 v-model:file-list="attachmentFileList"
-                :limit="5"
+                :limit="10"
+                multiple
                 accept=".rar,.zip,.doc,.docx,.pdf,.jpg,.jpeg,.png"
               >
                 <template #tip>

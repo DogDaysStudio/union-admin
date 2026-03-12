@@ -2487,12 +2487,12 @@ interface AssetFixedUpsertDTO {
   maintenanceExpireDate: string // 设备维保到期日
   nextPatrolDate: string // 下次巡检日期
   nextMaintenanceDate: string // 下次保养日期
-  label: string // 标签
-  drawingFid: string // 图纸
-  deviceContractFid: string // 设备合同
-  deviceInformationFid: string // 设备技术资料
-  contractFid: string // 合同
-  attachmentFid: string // 其他附件
+  labelList: string[] // 标签
+  drawingFidList: string[] // 图纸
+  deviceContractFidList: string[] // 设备合同
+  deviceInformationFidList: string[] // 设备技术资料
+  contractFidList: string[] // 合同
+  attachmentFidList: string[] // 其他附件
 }
 
 // 资产管理-固定资产
@@ -2562,12 +2562,12 @@ interface AssetFixedVO {
   maintenanceExpireDate: string // 设备维保到期日
   nextPatrolDate: string // 下次巡检日期
   nextMaintenanceDate: string // 下次保养日期
-  label: string // 标签
-  drawingFileModel: FileModel // 图纸
-  deviceContractFileModel: FileModel // 设备合同
-  deviceInformationFileModel: FileModel // 设备技术资料
-  contractFileModel: FileModel // 合同
-  attachmentFileModel: FileModel // 其他附件
+  labelList: string[] // 标签
+  drawingFileModel: FileModel[] // 图纸
+  deviceContractFileModel: FileModel[] // 设备合同
+  deviceInformationFileModel: FileModel[] // 设备技术资料
+  contractFileModel: FileModel[] // 合同
+  attachmentFileModel: FileModel[] // 其他附件
   enable: number // 0-禁用;1-启用
 }
 
@@ -2581,20 +2581,20 @@ interface AssetFixedIdGenerateDTO {
 }
 
 interface AssetFixedBatchWarrantyDTO {
-  fixedIdList: string[] // 固定资产编码列表
-  warrantyCompany: string // 设备质保方名称
-  warrantyLinkman: string // 设备质保方联系人
-  warrantyPhone: string // 设备质保方联系方式
-  warrantyExpireDate: string // 设备质保到期日
-  contractFid: string // 合同
+  fixedIdList?: string[] // 固定资产编码列表
+  warrantyCompany?: string // 设备质保方名称
+  warrantyLinkman?: string // 设备质保方联系人
+  warrantyPhone?: string // 设备质保方联系方式
+  warrantyExpireDate?: string // 设备质保到期日
+  contractFidList: string[] // 合同
 }
 
 interface AssetFixedBatchUpdateDTO {
-  fixedIdList: string[] // 固定资产编码列表
-  label: string // 标签
-  drawingFid: string // 图纸
-  deviceContractFid: string // 设备合同
-  deviceInformationFid: string // 设备技术资料
+  fixedIdList?: string[] // 固定资产编码列表
+  labelList?: string[] // 标签
+  drawingFidList?: string[] // 图纸
+  deviceContractFidList?: string[] // 设备合同
+  deviceInformationFidList?: string[] // 设备技术资料
 }
 
 interface AssetFixedBatchEnableDTO {

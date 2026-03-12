@@ -9,6 +9,25 @@ const router = useRouter()
 const detail = reactive<Partial<AssetFixedVO>>({})
 const {runAsync: fetchDetail, loading} = useRequest(amsAssetFixedGet)
 
+type AttachmentFileModel = {
+  id?: string
+  name?: string
+  path?: string
+  url?: string
+}
+
+type DetailFieldConfig = {
+  label: string
+  field?: string | number | null | undefined
+  type?: 'file'
+  files?: AttachmentFileModel | AttachmentFileModel[]
+}
+
+type DetailGroupConfig = {
+  title: string
+  fields: DetailFieldConfig[][]
+}
+
 const loadDetail = async () => {
   const fixedId = route.params.id as string
   if (!fixedId) return
@@ -18,7 +37,12 @@ const loadDetail = async () => {
 
 onMounted(loadDetail)
 
-const detailConfig = computed(() => [
+const normalizeFiles = (files?: AttachmentFileModel | AttachmentFileModel[]) => {
+  if (!files) return []
+  return Array.isArray(files) ? files : [files]
+}
+
+const detailConfig = computed<DetailGroupConfig[]>(() => [
   {
     title: '基本信息',
     fields: [
@@ -97,7 +121,36 @@ const detailConfig = computed(() => [
         {label: '下次巡检日期', field: detail.nextPatrolDate},
         {label: '下次保养日期', field: detail.nextMaintenanceDate},
       ],
-      [{label: '标签', field: detail.label}],
+      [
+        {
+          label: '标签',
+          field: Array.isArray(detail.labelList) ? detail.labelList.join(', ') : detail.labelList,
+        },
+      ],
+    ],
+  },
+  {
+    title: '附件信息',
+    fields: [
+      [
+        {
+          label: '设备合同',
+          type: 'file',
+          files: detail.deviceContractFileModel,
+        },
+        {
+          label: '设备技术资料',
+          type: 'file',
+          files: detail.deviceInformationFileModel,
+        },
+      ],
+      [
+        {
+          label: '图纸',
+          type: 'file',
+          files: detail.drawingFileModel,
+        },
+      ],
     ],
   },
 ])
@@ -124,7 +177,24 @@ const detailConfig = computed(() => [
         <el-row v-for="(row, rowIdx) in group.fields" :key="rowIdx" :gutter="24">
           <el-col v-for="(item, colIdx) in row" :key="colIdx" :span="8">
             <el-form-item :label="item.label">
-              <span class="ml-4 text-gray-700">{{ item.field ?? '-' }}</span>
+              <template v-if="item.type === 'file'">
+                <div class="ml-4 space-y-1">
+                  <template v-if="normalizeFiles(item.files).length">
+                    <a
+                      v-for="file in normalizeFiles(item.files)"
+                      :key="file.id || file.name"
+                      class="block text-primary hover:underline"
+                      :href="file.path || file.url"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {{ file.name || file.id }}
+                    </a>
+                  </template>
+                  <span v-else class="text-gray-500">-</span>
+                </div>
+              </template>
+              <span v-else class="ml-4 text-gray-700">{{ item.field ?? '-' }}</span>
             </el-form-item>
           </el-col>
         </el-row>
