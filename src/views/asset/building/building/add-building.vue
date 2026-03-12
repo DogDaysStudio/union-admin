@@ -149,6 +149,7 @@ const generateFloorAndRoom = (index: number) => {
       }
       // 推入地上楼层（新增ownershipUnitCode赋值）
       floorData.push({
+        floorId: `${f}层`,
         assetType: '1',
         floorName: `${f}层`,
         floorHeight: defaultHeight,
@@ -172,6 +173,7 @@ const generateFloorAndRoom = (index: number) => {
       }
       // 推入地下楼层（新增ownershipUnitCode赋值）
       floorData.push({
+        floorId: `B${f}层`,
         assetType: '1',
         floorName: `B${f}层`,
         floorHeight: defaultHeight,
@@ -412,90 +414,81 @@ const handleSubmit = () => {
                 </el-form-item>
               </el-col>
             </el-row>
-
-            <el-tree
-              ref="treeRef"
+            <!-- table -->
+            <el-table
               :data="item.floorList"
-              node-key="floorId"
+              border
               default-expand-all
-              :props="{
-                children: 'roomList',
-              }"
-              :expand-on-click-node="false"
+              :preserve-expanded-content="true"
+              :row-key="row => row.floorId"
             >
-              <template #default="{data}">
-                <el-row v-if="data.roomList" :gutter="24">
-                  <span class="ml-2">
-                    楼层：
-                    <el-input class="w-40!" v-model="data.floorName" />
-                  </span>
-                  <span class="ml-2">
-                    层高：
-                    <el-input-number
-                      class="w-40!"
-                      v-model="data.floorHeight"
-                      placeholder="请输入层高"
-                      :min="0"
-                    />
-                  </span>
-                  <span class="ml-2">
-                    产权单位：
-                    <el-cascader
-                      class="w-40!"
-                      v-model="data.ownershipUnitCode"
-                      placeholder="请选择产权单位"
-                      :options="companyOptions"
-                      :props="{
-                        checkStrictly: true,
-                        value: 'dicCode',
-                        label: 'dicName',
-                      }"
-                      clearable
-                    />
-                  </span>
-                </el-row>
-                <el-row v-else :gutter="24">
-                  <span class="ml-2">
-                    房间：
-                    <el-input class="w-40!" v-model="data.roomName" />
-                  </span>
-                  <span class="ml-2">
-                    层高：
-                    <el-input-number
-                      class="w-40!"
-                      v-model="data.roomHeight"
-                      placeholder="请输入层高"
-                    />
-                  </span>
-                  <span class="ml-2">
-                    户型：
-                    <el-select class="w-40!" v-model="data.roomLayoutCode" placeholder="请选择户型">
-                      <el-option
-                        v-for="item in roomOptions"
-                        :key="item.dicCode"
-                        :label="item.dicName"
-                        :value="item.dicCode"
-                      />
-                    </el-select>
-                  </span>
-                  <span class="ml-2">
-                    产权单位：
-                    <el-cascader
-                      class="w-40!"
-                      v-model="data.ownershipUnitCode"
-                      placeholder="请选择产权单位"
-                      :options="companyOptions"
-                      :props="{
-                        checkStrictly: true,
-                        value: 'dicCode',
-                        label: 'dicName',
-                      }"
-                      clearable
-                    />
-                  </span>
-                </el-row>
-              </template>
-            </el-tree>
+              <el-table-column type="expand">
+                <template #default="{row}">
+                  <div class="py-2 px-4 pl-12">
+                    <el-table :data="row.roomList" border>
+                      <el-table-column label="房间">
+                        <template #default="{row}">
+                          <el-input v-model="row.roomName" />
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="层高">
+                        <template #default="{row}">
+                          <el-input-number v-model="row.roomHeight" />
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="户型">
+                        <template #default="{row}">
+                          <el-select v-model="row.roomLayoutCode">
+                            <el-option
+                              v-for="item in roomOptions"
+                              :key="item.dicCode"
+                              :label="item.dicName"
+                              :value="item.dicCode"
+                            />
+                          </el-select>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="产权单位">
+                        <template #default="{row}">
+                          <el-cascader
+                            v-model="row.ownershipUnitCode"
+                            :options="companyOptions"
+                            :props="{
+                              checkStrictly: true,
+                              value: 'dicCode',
+                              label: 'dicName',
+                            }"
+                          />
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="楼层">
+                <template #default="{row}">
+                  <el-input v-model="row.floorName" />
+                </template>
+              </el-table-column>
+              <el-table-column label="层高">
+                <template #default="{row}">
+                  <el-input-number v-model="row.floorHeight" :min="0" />
+                </template>
+              </el-table-column>
+              <el-table-column label="产权单位">
+                <template #default="{row}">
+                  <el-cascader
+                    v-model="row.ownershipUnitCode"
+                    :options="companyOptions"
+                    :props="{
+                      checkStrictly: true,
+                      value: 'dicCode',
+                      label: 'dicName',
+                    }"
+                  />
+                </template>
+              </el-table-column>
+            </el-table>
           </section-group>
         </el-card>
 
@@ -507,11 +500,3 @@ const handleSubmit = () => {
     </div>
   </el-card>
 </template>
-<style lang="scss" scoped>
-:deep() {
-  .el-tree-node__content {
-    height: 44px;
-    line-height: 30px;
-  }
-}
-</style>

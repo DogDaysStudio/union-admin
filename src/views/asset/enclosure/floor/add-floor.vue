@@ -243,53 +243,37 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
           </el-row>
-
-          <el-tree
-            ref="treeRef"
-            :data="formData.shopList"
-            node-key="shopId"
-            default-expand-all
-            :props="{
-              children: 'shopList',
-            }"
-            :expand-on-click-node="false"
-          >
-            <template #default="{data}">
-              <el-row :gutter="24">
-                <span class="ml-2">
-                  商铺名称：
-                  <el-input class="w-40!" v-model="data.shopName" />
-                </span>
-                <span class="ml-2">
-                  商铺号：
-                  <el-input class="w-40!" v-model="data.shopNumber" />
-                </span>
-                <span class="ml-2">
-                  层高：
-                  <el-input-number
-                    class="w-40!"
-                    v-model="data.shopHeight"
-                    placeholder="请输入层高"
-                    :min="0"
-                  />
-                </span>
-                <span class="ml-2">
-                  产权单位：
-                  <el-cascader
-                    class="w-40!"
-                    v-model="data.ownershipUnitCode"
-                    placeholder="请选择产权单位"
-                    :options="companyOptions"
-                    :props="{
-                      checkStrictly: true,
-                      value: 'dicCode',
-                      label: 'dicName',
-                    }"
-                  />
-                </span>
-              </el-row>
-            </template>
-          </el-tree>
+          <!-- table -->
+          <el-table :data="formData.shopList" border>
+            <el-table-column label="商铺名称">
+              <template #default="{row}">
+                <el-input v-model="row.shopName" />
+              </template>
+            </el-table-column>
+            <el-table-column label="商铺号">
+              <template #default="{row}">
+                <el-input v-model="row.shopNumber" />
+              </template>
+            </el-table-column>
+            <el-table-column label="层高">
+              <template #default="{row}">
+                <el-input-number v-model="row.shopHeight" :min="1" />
+              </template>
+            </el-table-column>
+            <el-table-column label="产权单位">
+              <template #default="{row}">
+                <el-cascader
+                  v-model="row.ownershipUnitCode"
+                  :options="companyOptions"
+                  :props="{
+                    checkStrictly: true,
+                    value: 'dicCode',
+                    label: 'dicName',
+                  }"
+                />
+              </template>
+            </el-table-column>
+          </el-table>
         </section-group>
 
         <div class="flex justify-center mt-6">
@@ -300,12 +284,3 @@ const handleSubmit = () => {
     </div>
   </el-card>
 </template>
-
-<style lang="scss" scoped>
-:deep() {
-  .el-tree-node__content {
-    height: 44px;
-    line-height: 30px;
-  }
-}
-</style>

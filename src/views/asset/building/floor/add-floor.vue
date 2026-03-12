@@ -264,60 +264,44 @@ const handleSubmit = () => {
               </el-form-item>
             </el-col>
           </el-row>
-
-          <el-tree
-            ref="treeRef"
-            :data="formData.roomList"
-            node-key="roomId"
-            default-expand-all
-            :props="{
-              children: 'roomList',
-            }"
-            :expand-on-click-node="false"
-          >
-            <template #default="{data}">
-              <el-row :gutter="24">
-                <span class="ml-2">
-                  房间：
-                  <el-input class="w-40!" v-model="data.roomNumber" />
-                </span>
-                <span class="ml-2">
-                  层高：
-                  <el-input-number
-                    class="w-40!"
-                    v-model="data.roomHeight"
-                    placeholder="请输入层高"
-                    :min="1"
+          <!-- table -->
+          <el-table :data="formData.roomList" border>
+            <el-table-column label="房间">
+              <template #default="{row}">
+                <el-input v-model="row.roomNumber" />
+              </template>
+            </el-table-column>
+            <el-table-column label="层高">
+              <template #default="{row}">
+                <el-input-number v-model="row.roomHeight" :min="1" />
+              </template>
+            </el-table-column>
+            <el-table-column label="户型">
+              <template #default="{row}">
+                <el-select v-model="row.roomLayoutCode">
+                  <el-option
+                    v-for="item in roomOptions"
+                    :key="item.dicCode"
+                    :label="item.dicName"
+                    :value="item.dicCode"
                   />
-                </span>
-                <span class="ml-2">
-                  户型：
-                  <el-select class="w-40!" v-model="data.roomLayoutCode" placeholder="请选择户型">
-                    <el-option
-                      v-for="item in roomOptions"
-                      :key="item.dicCode"
-                      :label="item.dicName"
-                      :value="item.dicCode"
-                    />
-                  </el-select>
-                </span>
-                <span class="ml-2">
-                  产权单位：
-                  <el-cascader
-                    v-model="data.ownershipUnitCode"
-                    placeholder="请选择产权单位"
-                    :options="companyOptions"
-                    :props="{
-                      checkStrictly: true,
-                      value: 'dicCode',
-                      label: 'dicName',
-                    }"
-                    clearable
-                  />
-                </span>
-              </el-row>
-            </template>
-          </el-tree>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column label="产权单位">
+              <template #default="{row}">
+                <el-cascader
+                  v-model="row.ownershipUnitCode"
+                  :options="companyOptions"
+                  :props="{
+                    checkStrictly: true,
+                    value: 'dicCode',
+                    label: 'dicName',
+                  }"
+                />
+              </template>
+            </el-table-column>
+          </el-table>
         </section-group>
 
         <div class="flex justify-center mt-6">
@@ -328,12 +312,3 @@ const handleSubmit = () => {
     </div>
   </el-card>
 </template>
-
-<style lang="scss" scoped>
-:deep() {
-  .el-tree-node__content {
-    height: 44px;
-    line-height: 30px;
-  }
-}
-</style>
