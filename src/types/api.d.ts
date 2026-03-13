@@ -2592,9 +2592,9 @@ interface AssetFixedBatchWarrantyDTO {
 interface AssetFixedBatchUpdateDTO {
   fixedIdList?: string[] // 固定资产编码列表
   labelList?: string[] // 标签
-  drawingFidList?: string[] // 图纸
-  deviceContractFidList?: string[] // 设备合同
-  deviceInformationFidList?: string[] // 设备技术资料
+  drawingFidList: string[] // 图纸
+  deviceContractFidList: string[] // 设备合同
+  deviceInformationFidList: string[] // 设备技术资料
 }
 
 interface AssetFixedBatchEnableDTO {

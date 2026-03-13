@@ -59,6 +59,7 @@ const generateFloorAndShop = () => {
       ElMessage.warning('请填写有效的数值：地上层/地下层≥0，每层商铺数≥1')
       return
     }
+    formData.totalFloor = aboveground + underground
 
     const floorData = []
     const defaultHeight = null // 商铺默认层高（保持原有逻辑）
@@ -249,6 +250,17 @@ const handleSubmit = () => {
                     label: 'dicName',
                   }"
                   clearable
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="总楼层" required>
+                <el-input-number
+                  v-model="formData.totalFloor"
+                  placeholder="请填写总楼层"
+                  :min="0"
+                  :precision="0"
+                  disabled
                 />
               </el-form-item>
             </el-col>
