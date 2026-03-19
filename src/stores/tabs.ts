@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import {nextTick} from 'vue'
 import {type RouteLocationNormalized} from 'vue-router'
 import router from '@/router'
+import modules from '@/router/modules'
 
 type TabRoute = Pick<RouteLocationNormalized, 'path' | 'meta' | 'matched' | 'name'>
 type Tab = Pick<RouteLocationNormalized, 'path' | 'meta' | 'name'> & {componentName: string}
@@ -17,8 +18,8 @@ export const useTabStore = defineStore('tab', {
      */
     addTab(tab: TabRoute) {
       if (!tab.meta?.title) return // 有 title 才添加到 tab 中
-      if (this.tabs.some(item => item.path === tab.path)) return
-      const nameTab = this.tabs.find(item => item.name === tab.name)
+      if (this.tabs.some(item => item.path === tab.path)) return // 已存在则不添加
+      if (!modules.some(item => tab.path.startsWith(item.path))) return // 不是模块路径则不添加
 
       const _pushTab = (tab: TabRoute) => {
         this.tabs.push({
@@ -29,6 +30,7 @@ export const useTabStore = defineStore('tab', {
         })
       }
 
+      const nameTab = this.tabs.find(item => item.name === tab.name)
       if (nameTab) {
         this.removeTab(nameTab.path)
         nextTick(() => _pushTab(tab))

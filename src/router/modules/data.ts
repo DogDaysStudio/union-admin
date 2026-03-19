@@ -4,7 +4,7 @@ import MainLayout from '@/layouts/MainLayout.vue'
 const dataRoutes: RouteRecordRaw[] = [
   {
     path: '/data-center',
-    // redirect: '/data-center/dashboard',
+    redirect: '/data-center/dashboard',
     meta: {title: '数据', root: true},
     component: MainLayout,
     children: [
