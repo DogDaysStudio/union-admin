@@ -14,7 +14,7 @@ const propertyRoutes: RouteRecordRaw[] = [
           {
             path: 'sop',
             meta: {title: 'SOP管理', menu: true},
-            component: () => import('@/views/dashboard.vue'),
+            component: () => import('@/views/property/sop/index.vue'),
           },
           {
             path: 'dictionary',
