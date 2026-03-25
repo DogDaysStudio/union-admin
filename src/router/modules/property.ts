@@ -9,23 +9,67 @@ const propertyRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: 'settings',
-        meta: {title: '物业基础设置', menu: true},
-        component: () => import('@/views/home-view.vue'),
+        meta: {title: '系统设置', menu: true},
+        children: [
+          {
+            path: 'sop',
+            meta: {title: 'SOP管理', menu: true},
+            component: () => import('@/views/dashboard.vue'),
+          },
+          {
+            path: 'dictionary',
+            meta: {title: '数据字典管理', menu: true},
+            component: () => import('@/views/dashboard.vue'),
+          },
+          {
+            path: 'employee',
+            meta: {title: '员工管理', menu: true},
+            component: () => import('@/views/dashboard.vue'),
+          },
+        ],
       },
       {
-        path: 'charge-standard',
-        meta: {title: '收费标准设置', menu: true},
-        component: () => import('@/views/home-view.vue'),
+        path: 'customer',
+        meta: {title: '客户管理', menu: true},
+        children: [
+          {
+            path: 'info',
+            meta: {title: '客户信息管理', menu: true},
+            component: () => import('@/views/dashboard.vue'),
+          },
+          {
+            path: 'grid',
+            meta: {title: '网格化管理', menu: true},
+            component: () => import('@/views/dashboard.vue'),
+          },
+        ],
       },
       {
-        path: 'charge-management',
-        meta: {title: '物业收费管理', menu: true},
-        component: () => import('@/views/home-view.vue'),
+        path: 'project',
+        meta: {title: '项目管理', menu: true},
+        children: [
+          {
+            path: 'assets',
+            meta: {title: '项目资产档案', menu: true},
+            component: () => import('@/views/dashboard.vue'),
+          },
+          {
+            path: 'customer',
+            meta: {title: '客户管理', menu: true},
+            component: () => import('@/views/dashboard.vue'),
+          },
+        ],
       },
       {
-        path: 'charge-report',
-        meta: {title: '物业收费报表'},
-        component: () => import('@/views/home-view.vue'),
+        path: 'contract',
+        meta: {title: '合同管理', menu: true},
+        children: [
+          {
+            path: 'list',
+            meta: {title: '合同列表', menu: true},
+            component: () => import('@/views/dashboard.vue'),
+          },
+        ],
       },
     ],
   },

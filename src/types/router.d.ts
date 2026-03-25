@@ -446,23 +446,79 @@ export interface RouteNamedMap {
     any,
     never
   >
-  '/property/charge-standard': RouteRecordInfo<
-    '/property/charge-standard', // name
-    '/property/charge-standard', // path
+  '/property/settings/sop': RouteRecordInfo<
+    '/property/settings/sop', // name
+    '/property/settings/sop', // path
     any,
     any,
     never
   >
-  '/property/charge-management': RouteRecordInfo<
-    '/property/charge-management', // name
-    '/property/charge-management', // path
+  '/property/settings/dictionary': RouteRecordInfo<
+    '/property/settings/dictionary', // name
+    '/property/settings/dictionary', // path
     any,
     any,
     never
   >
-  '/property/charge-report': RouteRecordInfo<
-    '/property/charge-report', // name
-    '/property/charge-report', // path
+  '/property/settings/employee': RouteRecordInfo<
+    '/property/settings/employee', // name
+    '/property/settings/employee', // path
+    any,
+    any,
+    never
+  >
+  '/property/customer': RouteRecordInfo<
+    '/property/customer', // name
+    '/property/customer', // path
+    any,
+    any,
+    never
+  >
+  '/property/customer/info': RouteRecordInfo<
+    '/property/customer/info', // name
+    '/property/customer/info', // path
+    any,
+    any,
+    never
+  >
+  '/property/customer/grid': RouteRecordInfo<
+    '/property/customer/grid', // name
+    '/property/customer/grid', // path
+    any,
+    any,
+    never
+  >
+  '/property/project': RouteRecordInfo<
+    '/property/project', // name
+    '/property/project', // path
+    any,
+    any,
+    never
+  >
+  '/property/project/assets': RouteRecordInfo<
+    '/property/project/assets', // name
+    '/property/project/assets', // path
+    any,
+    any,
+    never
+  >
+  '/property/project/customer': RouteRecordInfo<
+    '/property/project/customer', // name
+    '/property/project/customer', // path
+    any,
+    any,
+    never
+  >
+  '/property/contract': RouteRecordInfo<
+    '/property/contract', // name
+    '/property/contract', // path
+    any,
+    any,
+    never
+  >
+  '/property/contract/list': RouteRecordInfo<
+    '/property/contract/list', // name
+    '/property/contract/list', // path
     any,
     any,
     never
