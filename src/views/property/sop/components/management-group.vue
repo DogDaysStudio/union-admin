@@ -148,6 +148,13 @@ const handleSopCheckChange = () => {
   return
 }
 
+const handleToggleAllExpanded = (expanded: boolean) => {
+  const allNodes = treeRef.value.store._getAllNodes()
+  allNodes.forEach(node => {
+    node.expanded = expanded
+  })
+}
+
 defineExpose({
   open: handleOpen,
 })
@@ -170,8 +177,10 @@ defineExpose({
         >
           全部
         </el-checkbox>
-        <el-button link :icon="Download" class="ml-3!">全部折叠</el-button>
-        <el-button link :icon="Upload">全部展开</el-button>
+        <el-button link :icon="Download" class="ml-3!" @click="handleToggleAllExpanded(false)">
+          全部折叠
+        </el-button>
+        <el-button link :icon="Upload" @click="handleToggleAllExpanded(true)">全部展开</el-button>
         <div class="ml-auto">
           <el-button type="primary" @click="handleAddGroup" link :icon="Plus" v-if="!isAdd">
             新建分组
