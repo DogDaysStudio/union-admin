@@ -31,7 +31,7 @@ const handleAddSop = () => {
 }
 
 const handleManagementGroup = () => {
-  managementGroupRef.value?.open(sopGroupList.value?.data || [])
+  managementGroupRef.value?.open()
 }
 
 onMounted(async () => {
@@ -91,6 +91,8 @@ onMounted(async () => {
       ref="managementGroupRef"
       @re-group="refreshSopGroupList"
       @re-sort="refreshSopGroupList"
+      @add-group="refreshSopGroupList"
+      :groupList="sopGroupList?.data"
     />
   </div>
 </template>

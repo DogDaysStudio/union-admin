@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import {ref, computed} from 'vue'
-import {Plus, Download, Upload, Rank} from '@element-plus/icons-vue'
+import {Plus, Download, Upload, Rank, Close, Check} from '@element-plus/icons-vue'
 import type {
   TreeNodeData,
   TreeInstance,
   CheckboxValueType,
   RenderContentContext,
 } from 'element-plus'
-import {pmsPropertyGroupSort, pmsPropertySopMove} from '@/service/api/pmsProperty'
+import {
+  pmsPropertyGroupSort,
+  pmsPropertySopMove,
+  pmsPropertyGroupUInsert,
+} from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
 
 type Node = RenderContentContext['node']
@@ -19,28 +23,34 @@ const treeProps = {
   children: 'sopList',
 }
 
+const {groupList = []} = defineProps<{
+  groupList: PmsSopGroupVO[]
+}>()
+
 const emit = defineEmits<{
   (e: 're-group'): void
   (e: 're-sort'): void
+  (e: 'add-group'): void
 }>()
 
 const visible = ref(false)
+const isAdd = ref(false)
+const newGroupName = ref('')
 const checkAll = ref(false)
 const isIndeterminate = ref(false)
 const treeRef = ref<TreeInstance>()
-const sopGroups = ref<PmsSopGroupVO[]>([])
 
 const {runAsync: sortGroupAsync, loading: sortGroupLoading} = useRequest(pmsPropertyGroupSort)
 const {runAsync: moveSopAsync, loading: moveSopLoading} = useRequest(pmsPropertySopMove)
+const {runAsync: addGroupAsync, loading: addGroupLoading} = useRequest(pmsPropertyGroupUInsert)
 
 const allSopKeys = computed(() => {
-  const groupIds = sopGroups.value.map(item => item.id)
-  const sopIds = sopGroups.value.flatMap(item => item.sopList.map(sop => sop.id))
+  const groupIds = groupList.map(item => item.id)
+  const sopIds = groupList.flatMap(item => item.sopList.map(sop => sop.id))
   return [...groupIds, ...sopIds]
 })
 
-const handleOpen = (groups: PmsSopGroupVO[]) => {
-  sopGroups.value = groups
+const handleOpen = () => {
   visible.value = true
 }
 
@@ -63,11 +73,23 @@ const handleAllowDrop = (draggingNode: Node, dropNode: Node, type: 'inner' | 'pr
 }
 
 const handleAddGroup = () => {
-  // emit('re-group')
+  isAdd.value = true
 }
 
-const handleNodeDrop = (draggingNode: Node, dropNode: Node, type: 'inner' | 'before' | 'after') => {
-  console.log({draggingNode, dropNode, type})
+const handleCancelAddGroup = () => {
+  isAdd.value = false
+  newGroupName.value = ''
+}
+
+const handleAddGroupConfirm = async () => {
+  const lastGroup = [...groupList].sort((a, b) => b.sortOrder - a.sortOrder)[0]
+  const sortOrder = lastGroup ? lastGroup.sortOrder + 1 : 0
+  await addGroupAsync({groupName: newGroupName.value, sortOrder})
+  emit('add-group')
+  handleCancelAddGroup()
+}
+
+const handleNodeDrop = (draggingNode: Node, dropNode: Node) => {
   const isDroppingGroup = 'groupName' in draggingNode.data
   const isDroppingSop = 'sopName' in draggingNode.data
   if (isDroppingGroup) {
@@ -79,7 +101,7 @@ const handleNodeDrop = (draggingNode: Node, dropNode: Node, type: 'inner' | 'bef
 }
 
 const handleSortGroup = async () => {
-  const groupIds = sopGroups.value.map(item => item.id)
+  const groupIds = groupList.map(item => item.id)
   await sortGroupAsync({groupIds})
   emit('re-sort')
 }
@@ -150,20 +172,21 @@ defineExpose({
         </el-checkbox>
         <el-button link :icon="Download" class="ml-3!">全部折叠</el-button>
         <el-button link :icon="Upload">全部展开</el-button>
-        <el-button type="primary" @click="handleAddGroup" link :icon="Plus" class="ml-auto!">
-          新建分组
-        </el-button>
+        <div class="ml-auto">
+          <el-button type="primary" @click="handleAddGroup" link :icon="Plus" v-if="!isAdd">
+            新建分组
+          </el-button>
+        </div>
       </div>
       <el-tree
         ref="treeRef"
-        :data="sopGroups"
+        :data="groupList"
         :props="treeProps"
         default-expand-all
         node-key="id"
         show-checkbox
         @check-change="handleSopCheckChange"
-        check-strictly
-        draggable
+        :draggable="!isAdd"
         :expand-on-click-node="false"
         style="--el-tree-node-content-height: 32px"
         :allow-drop="handleAllowDrop"
@@ -178,6 +201,18 @@ defineExpose({
           </div>
         </template>
       </el-tree>
+
+      <div v-if="isAdd" class="mt-2 pl-6 flex items-center gap-2">
+        <el-input v-model="newGroupName" placeholder="请输入分组名称" />
+        <el-button
+          type="primary"
+          :icon="Check"
+          class="ml-auto! size-8"
+          :loading="addGroupLoading"
+          @click="handleAddGroupConfirm"
+        />
+        <el-button :icon="Close" class="ml-auto! size-8" @click="handleCancelAddGroup" />
+      </div>
     </div>
   </el-dialog>
 </template>
