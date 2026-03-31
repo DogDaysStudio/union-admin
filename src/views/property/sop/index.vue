@@ -64,7 +64,7 @@ onMounted(async () => {
           <div
             v-for="item in sop.sopList"
             :key="item.id"
-            class="bg-gray-100 rounded-sm overflow-hidden p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-200 transition-all duration-300"
+            class="bg-gray-50 rounded-sm overflow-hidden p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-100 transition-all duration-300"
           >
             <el-icon :size="32" class="shrink-0 text-gray-400!">
               <Document />
@@ -80,8 +80,10 @@ onMounted(async () => {
             </el-icon>
           </div>
         </div>
-        <div v-else class="mt-5 bg-gray-50 rounded-sm p-4 flex items-center justify-center">
-          <span class="text-gray-500 text-sm">暂无SOP</span>
+        <div v-else class="mt-5 grid grid-cols-2 gap-y-5 gap-x-10">
+          <div class="bg-gray-50 rounded-sm overflow-hidden p-4 flex items-center text-gray-400">
+            暂无SOP
+          </div>
         </div>
       </div>
     </div>
