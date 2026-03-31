@@ -45,6 +45,11 @@ export function pmsPropertyGroupSort(payload: {groupIds: string[]}) {
   return http.post<Res<string>>('/pms/sop-group/sort', payload)
 }
 
+// 移动SOP到目标分组
+export function pmsPropertySopMove(payload: {sopId: string; targetGroupId: string}) {
+  return http.post<Res<string>>('/pms/sop/move', payload)
+}
+
 // 新建SOP模板
 export function pmsPropertySopTemplateInsert(payload: PmsSopTemplateInsertDTO) {
   return http.post<Res<string>>('/pms/sop/insert', payload)

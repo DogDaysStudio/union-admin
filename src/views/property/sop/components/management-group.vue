@@ -7,7 +7,7 @@ import type {
   CheckboxValueType,
   RenderContentContext,
 } from 'element-plus'
-import {pmsPropertyGroupSort} from '@/service/api/pmsProperty'
+import {pmsPropertyGroupSort, pmsPropertySopMove} from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
 
 type Node = RenderContentContext['node']
@@ -20,8 +20,8 @@ const treeProps = {
 }
 
 const emit = defineEmits<{
-  (e: 'addGroup'): void
-  (e: 'sort'): void
+  (e: 're-group'): void
+  (e: 're-sort'): void
 }>()
 
 const visible = ref(false)
@@ -31,6 +31,7 @@ const treeRef = ref<TreeInstance>()
 const sopGroups = ref<PmsSopGroupVO[]>([])
 
 const {runAsync: sortGroupAsync, loading: sortGroupLoading} = useRequest(pmsPropertyGroupSort)
+const {runAsync: moveSopAsync, loading: moveSopLoading} = useRequest(pmsPropertySopMove)
 
 const allSopKeys = computed(() => {
   const groupIds = sopGroups.value.map(item => item.id)
@@ -43,33 +44,51 @@ const handleOpen = (groups: PmsSopGroupVO[]) => {
   visible.value = true
 }
 
-const handleAllowDrop = (draggingNode: Node, dropNode: Node) => {
+const handleAllowDrop = (draggingNode: Node, dropNode: Node, type: 'inner' | 'prev' | 'next') => {
   const draggingData = draggingNode.data as unknown as PmsSopGroupVO | PmsSopTemplateVO
   const dropData = dropNode.data as unknown as PmsSopGroupVO | PmsSopTemplateVO
 
   const isGraggingGroup = 'groupName' in draggingData
-  const isDroppingSop = 'sopName' in dropData
+  const isDroppingGroup = 'groupName' in dropData
+  const isDraggingSop = 'sopName' in draggingData
 
-  if (isGraggingGroup && isDroppingSop) return false // 不能将分组拖拽到SOP上
+  if (isGraggingGroup && isDroppingGroup && type !== 'inner') return true // 只能将分组拖拽到其他分组
 
-  return true
+  if (isDraggingSop && isDroppingGroup && type === 'inner') {
+    // 只能将SOP拖拽到其他分组
+    return true
+  }
+
+  return false
 }
 
 const handleAddGroup = () => {
-  emit('addGroup')
+  // emit('re-group')
 }
 
-const handleNodeDrop = (draggingNode: Node) => {
+const handleNodeDrop = (draggingNode: Node, dropNode: Node, type: 'inner' | 'before' | 'after') => {
+  console.log({draggingNode, dropNode, type})
   const isDroppingGroup = 'groupName' in draggingNode.data
+  const isDroppingSop = 'sopName' in draggingNode.data
   if (isDroppingGroup) {
     handleSortGroup()
+  }
+  if (isDroppingSop) {
+    handleMoveSop(draggingNode, dropNode)
   }
 }
 
 const handleSortGroup = async () => {
   const groupIds = sopGroups.value.map(item => item.id)
   await sortGroupAsync({groupIds})
-  emit('sort')
+  emit('re-sort')
+}
+
+const handleMoveSop = async (draggingNode: Node, dropNode: Node) => {
+  const sopId = (draggingNode.data as PmsSopTemplateVO).id
+  const targetGroupId = (dropNode.data as PmsSopGroupVO).id
+  await moveSopAsync({sopId, targetGroupId})
+  emit('re-group')
 }
 
 const handleUncheckAll = () => {
@@ -120,7 +139,7 @@ defineExpose({
         对分组管理及其SOP条目管理，可删除分组、移动和复制条目到其他分组
       </p>
     </template>
-    <div class="flex flex-col" v-loading="sortGroupLoading">
+    <div class="flex flex-col" v-loading="sortGroupLoading || moveSopLoading">
       <div class="flex justify-between items-center mb-4">
         <el-checkbox
           v-model="checkAll"
@@ -162,3 +181,11 @@ defineExpose({
     </div>
   </el-dialog>
 </template>
+
+<style lang="scss" scoped>
+:deep() {
+  .el-tree-node.is-drop-inner {
+    background-color: var(--el-color-primary-light-9);
+  }
+}
+</style>
