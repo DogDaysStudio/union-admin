@@ -17,6 +17,11 @@ const apis = [
     // url:'http://172.24.163.130:9000/ams/v3/api-docs?token=M0DIK8E6PYO7F5B9WRJANV2GCZQHSL1T',
     prefix: '/ams',
   },
+  {
+    url: 'http://8.135.74.217:88/pms/v3/api-docs?token=M0DIK8E6PYO7F5B9WRJANV2GCZQHSL1T',
+    // url:'http://172.24.163.130:9000/ams/v3/api-docs?token=M0DIK8E6PYO7F5B9WRJANV2GCZQHSL1T',
+    prefix: '/pms',
+  },
 ]
 const outputPath = path.join(process.cwd(), 'src/types/api.d.ts')
 

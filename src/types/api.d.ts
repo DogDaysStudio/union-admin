@@ -1309,6 +1309,396 @@ interface ApiType {
   export function amsAssetBuildingCheckTemplateExport(payload: {fid: any}) {return http.post<Res<>>('/ams/asset-building/check-template-export', payload)}
   */
   '/ams/asset-building/check-template-export': {Req: {fid: any}}
+
+  /* 【物业-SOP模板管理】
+  // 移动SOP到目标分组 | object:{sopId:SOP ID,targetGroupId:目标分组ID}
+  export function pmsPmsSopMove(payload: {sopId: any; targetGroupId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop/move', payload)}
+  */
+  '/pms/pms/sop/move': {Req: {sopId: any; targetGroupId: any}; Res: Record<string, any>}
+
+  /* 【物业-SOP模板管理】
+  // SOP模板列表（搜索）
+  export function pmsPmsSopList(payload: PmsSopTemplateListDTO) {return http.post<Res<PmsSopTemplateVO[]>>('/pms/pms/sop/list', payload)}
+  */
+  '/pms/pms/sop/list': {Req: PmsSopTemplateListDTO; Res: PmsSopTemplateVO[]}
+
+  /* 【物业-SOP模板管理】
+  // 新建SOP模板
+  export function pmsPmsSopInsert(payload: PmsSopTemplateInsertDTO) {return http.post<Res<string>>('/pms/pms/sop/insert', payload)}
+  */
+  '/pms/pms/sop/insert': {Req: PmsSopTemplateInsertDTO; Res: string}
+
+  /* 【物业-SOP模板管理】
+  // 删除SOP模板 | object:{sopId:SOP ID}
+  export function pmsPmsSopDelete(payload: {sopId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop/delete', payload)}
+  */
+  '/pms/pms/sop/delete': {Req: {sopId: any}; Res: Record<string, any>}
+
+  /* 【物业-SOP模板管理】
+  // 复制SOP（深拷贝） | object:{sopId:SOP ID,targetGroupId:目标分组ID}
+  export function pmsPmsSopCopy(payload: {sopId: any; targetGroupId: any}) {return http.post<Res<string>>('/pms/pms/sop/copy', payload)}
+  */
+  '/pms/pms/sop/copy': {Req: {sopId: any; targetGroupId: any}; Res: string}
+
+  /* 【物业-SOP步骤管理】
+  // 编辑步骤
+  export function pmsPmsSopStepUpdate(payload: PmsSopStepUpdateDTO) {return http.post<Res<PmsSopStepVO>>('/pms/pms/sop-step/update', payload)}
+  */
+  '/pms/pms/sop-step/update': {Req: PmsSopStepUpdateDTO; Res: PmsSopStepVO}
+
+  /* 【物业-SOP步骤管理】
+  // 步骤排序 | object:{stepIds:[步骤ID有序列表]}
+  export function pmsPmsSopStepSort(payload: {stepIds: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-step/sort', payload)}
+  */
+  '/pms/pms/sop-step/sort': {Req: {stepIds: any}; Res: Record<string, any>}
+
+  /* 【物业-SOP步骤管理】
+  // 查询步骤列表 | object:{sopId:SOP模板ID,categoryId:分类ID}
+  export function pmsPmsSopStepList(payload: {sopId: any; categoryId: any}) {return http.post<Res<PmsSopStepVO[]>>('/pms/pms/sop-step/list', payload)}
+  */
+  '/pms/pms/sop-step/list': {Req: {sopId: any; categoryId: any}; Res: PmsSopStepVO[]}
+
+  /* 【物业-SOP步骤管理】
+  // 新增步骤
+  export function pmsPmsSopStepInsert(payload: PmsSopStepInsertDTO) {return http.post<Res<PmsSopStepVO>>('/pms/pms/sop-step/insert', payload)}
+  */
+  '/pms/pms/sop-step/insert': {Req: PmsSopStepInsertDTO; Res: PmsSopStepVO}
+
+  /* 【物业-SOP步骤管理】
+  // 导入步骤Excel
+  export function pmsPmsSopStepImport() {return http.post<Res<PmsSopImportResultVO>>('/pms/pms/sop-step/import')}
+  */
+  '/pms/pms/sop-step/import': {Res: PmsSopImportResultVO}
+
+  /* 【物业-SOP步骤管理】
+  // 导出步骤Excel | object:{sopId:SOP模板ID}
+  export function pmsPmsSopStepExport(payload: {sopId: any}) {return http.post<Res<>>('/pms/pms/sop-step/export', payload)}
+  */
+  '/pms/pms/sop-step/export': {Req: {sopId: any}}
+
+  /* 【物业-SOP步骤管理】
+  // 启用/关闭步骤 | object:{stepId:步骤ID,enable:1启用/0关闭}
+  export function pmsPmsSopStepEnable(payload: {stepId: any; enable: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-step/enable', payload)}
+  */
+  '/pms/pms/sop-step/enable': {Req: {stepId: any; enable: any}; Res: Record<string, any>}
+
+  /* 【物业-SOP分组管理】
+  // 分组排序 | object:{groupIds:[分组ID有序列表]}
+  export function pmsPmsSopGroupSort(payload: {groupIds: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-group/sort', payload)}
+  */
+  '/pms/pms/sop-group/sort': {Req: {groupIds: any}; Res: Record<string, any>}
+
+  /* 【物业-SOP分组管理】
+  // 分组列表（含SOP模板）
+  export function pmsPmsSopGroupList() {return http.post<Res<PmsSopGroupVO[]>>('/pms/pms/sop-group/list')}
+  */
+  '/pms/pms/sop-group/list': {Res: PmsSopGroupVO[]}
+
+  /* 【物业-SOP分组管理】
+  // 新建分组
+  export function pmsPmsSopGroupInsert(payload: PmsSopGroupInsertDTO) {return http.post<Res<PmsSopGroupVO>>('/pms/pms/sop-group/insert', payload)}
+  */
+  '/pms/pms/sop-group/insert': {Req: PmsSopGroupInsertDTO; Res: PmsSopGroupVO}
+
+  /* 【物业-SOP分组管理】
+  // 删除分组 | object:{groupId:分组ID}
+  export function pmsPmsSopGroupDelete(payload: {groupId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-group/delete', payload)}
+  */
+  '/pms/pms/sop-group/delete': {Req: {groupId: any}; Res: Record<string, any>}
+
+  /* 【物业-SOP分类管理】
+  // 查询SOP分类列表（含步骤数量） | object:{sopId:SOP模板ID}
+  export function pmsPmsSopCategoryList(payload: {sopId: any}) {return http.post<Res<PmsSopCategoryVO[]>>('/pms/pms/sop-category/list', payload)}
+  */
+  '/pms/pms/sop-category/list': {Req: {sopId: any}; Res: PmsSopCategoryVO[]}
+
+  /* 【物业-SOP分类管理】
+  // 新建SOP分类
+  export function pmsPmsSopCategoryInsert(payload: PmsSopCategoryInsertDTO) {return http.post<Res<PmsSopCategoryVO>>('/pms/pms/sop-category/insert', payload)}
+  */
+  '/pms/pms/sop-category/insert': {Req: PmsSopCategoryInsertDTO; Res: PmsSopCategoryVO}
+
+  /* 【物业-SOP分类管理】
+  // 删除SOP分类 | object:{categoryId:分类ID}
+  export function pmsPmsSopCategoryDelete(payload: {categoryId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-category/delete', payload)}
+  */
+  '/pms/pms/sop-category/delete': {Req: {categoryId: any}; Res: Record<string, any>}
+
+  /* 【物业-项目资产档案】
+  // 编辑项目
+  export function pmsPmsProjectUpdate(payload: PmsProjectUpsertDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/project/update', payload)}
+  */
+  '/pms/pms/project/update': {Req: PmsProjectUpsertDTO; Res: Record<string, any>}
+
+  /* 【物业-项目资产档案】
+  // 项目分页查询
+  export function pmsPmsProjectList(payload: PmsProjectListDTO) {return http.post<Res<PmsProjectVO[]>>('/pms/pms/project/list', payload)}
+  */
+  '/pms/pms/project/list': {Req: PmsProjectListDTO; Res: PmsProjectVO[]}
+
+  /* 【物业-项目资产档案】
+  // 导出项目Excel
+  export function pmsPmsProjectListExport(payload: PmsProjectListDTO) {return http.post<Res<>>('/pms/pms/project/list-export', payload)}
+  */
+  '/pms/pms/project/list-export': {Req: PmsProjectListDTO}
+
+  /* 【物业-项目资产档案】
+  // 导出字段元数据
+  export function pmsPmsProjectListExportMeta(payload: Record<string, any>) {return http.post<Res<PairModel[]>>('/pms/pms/project/list-export-meta', payload)}
+  */
+  '/pms/pms/project/list-export-meta': {Req: Record<string, any>; Res: PairModel[]}
+
+  /* 【物业-项目资产档案】
+  // 引入项目
+  export function pmsPmsProjectIntroduce(payload: PmsProjectIntroduceDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/project/introduce', payload)}
+  */
+  '/pms/pms/project/introduce': {Req: PmsProjectIntroduceDTO; Res: Record<string, any>}
+
+  /* 【物业-项目资产档案】
+  // 搜索可引入的资产项目
+  export function pmsPmsProjectIntroduceSearch(payload: PmsProjectListDTO) {return http.post<Res<PmsProjectVO[]>>('/pms/pms/project/introduce/search', payload)}
+  */
+  '/pms/pms/project/introduce/search': {Req: PmsProjectListDTO; Res: PmsProjectVO[]}
+
+  /* 【物业-项目资产档案】
+  // 新增项目
+  export function pmsPmsProjectInsert(payload: PmsProjectUpsertDTO) {return http.post<Res<PmsProjectDetailVO>>('/pms/pms/project/insert', payload)}
+  */
+  '/pms/pms/project/insert': {Req: PmsProjectUpsertDTO; Res: PmsProjectDetailVO}
+
+  /* 【物业-项目资产档案】
+  // 项目详情
+  export function pmsPmsProjectGet(payload: Record<string, any>) {return http.post<Res<PmsProjectDetailVO>>('/pms/pms/project/get', payload)}
+  */
+  '/pms/pms/project/get': {Req: Record<string, any>; Res: PmsProjectDetailVO}
+
+  /* 【物业-项目资产档案】
+  // 启用/禁用项目
+  export function pmsPmsProjectEnable(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/pms/pms/project/enable', payload)}
+  */
+  '/pms/pms/project/enable': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【物业-项目配置】
+  // 保存装修协议配置
+  export function pmsPmsProjectConfigSaveRenovation(payload: PmsProjectConfigRenovationDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/project/config/save-renovation', payload)}
+  */
+  '/pms/pms/project/config/save-renovation': {Req: PmsProjectConfigRenovationDTO; Res: Record<string, any>}
+
+  /* 【物业-项目配置】
+  // 保存财务配置
+  export function pmsPmsProjectConfigSaveFinance(payload: PmsProjectConfigFinanceDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/project/config/save-finance', payload)}
+  */
+  '/pms/pms/project/config/save-finance': {Req: PmsProjectConfigFinanceDTO; Res: Record<string, any>}
+
+  /* 【物业-项目配置】
+  // 保存基本配置
+  export function pmsPmsProjectConfigSaveBasic(payload: PmsProjectConfigBasicDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/project/config/save-basic', payload)}
+  */
+  '/pms/pms/project/config/save-basic': {Req: PmsProjectConfigBasicDTO; Res: Record<string, any>}
+
+  /* 【物业-项目配置】
+  // 查询项目配置
+  export function pmsPmsProjectConfigGet(payload: PmsProjectConfigQueryDTO) {return http.post<Res<PmsProjectConfigVO>>('/pms/pms/project/config/get', payload)}
+  */
+  '/pms/pms/project/config/get': {Req: PmsProjectConfigQueryDTO; Res: PmsProjectConfigVO}
+
+  /* 【物业-项目查验移交】
+  // 更新移交文件状态及附件
+  export function pmsPmsHandoverUpdate(payload: PmsHandoverItemUpdateDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/handover/update', payload)}
+  */
+  '/pms/pms/handover/update': {Req: PmsHandoverItemUpdateDTO; Res: Record<string, any>}
+
+  /* 【物业-项目查验移交】
+  // 查询移交文件清单
+  export function pmsPmsHandoverList(payload: PmsHandoverListDTO) {return http.post<Res<PmsHandoverItemVO[]>>('/pms/pms/handover/list', payload)}
+  */
+  '/pms/pms/handover/list': {Req: PmsHandoverListDTO; Res: PmsHandoverItemVO[]}
+
+  /* 【物业-项目查验移交】
+  // 编辑遗留问题
+  export function pmsPmsHandoverIssueUpdate(payload: PmsLegacyIssueUpdateDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/handover/issue/update', payload)}
+  */
+  '/pms/pms/handover/issue/update': {Req: PmsLegacyIssueUpdateDTO; Res: Record<string, any>}
+
+  /* 【物业-项目查验移交】
+  // 遗留问题列表
+  export function pmsPmsHandoverIssueList(payload: PmsHandoverListDTO) {return http.post<Res<PmsLegacyIssueVO[]>>('/pms/pms/handover/issue/list', payload)}
+  */
+  '/pms/pms/handover/issue/list': {Req: PmsHandoverListDTO; Res: PmsLegacyIssueVO[]}
+
+  /* 【物业-项目查验移交】
+  // 新增遗留问题
+  export function pmsPmsHandoverIssueInsert(payload: PmsLegacyIssueInsertDTO) {return http.post<Res<PmsLegacyIssueVO>>('/pms/pms/handover/issue/insert', payload)}
+  */
+  '/pms/pms/handover/issue/insert': {Req: PmsLegacyIssueInsertDTO; Res: PmsLegacyIssueVO}
+
+  /* 【物业-项目查验移交】
+  // 删除遗留问题
+  export function pmsPmsHandoverIssueDelete(payload: IdDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/handover/issue/delete', payload)}
+  */
+  '/pms/pms/handover/issue/delete': {Req: IdDTO; Res: Record<string, any>}
+
+  /* 【系统设置-员工管理】
+  // 编辑员工扩展字段（员工组别、备注）
+  export function pmsPmsEmployeeUpdate(payload: PmsEmployeeUpdateExtDTO) {return http.post<Res<PmsEmployeeVO>>('/pms/pms/employee/update', payload)}
+  */
+  '/pms/pms/employee/update': {Req: PmsEmployeeUpdateExtDTO; Res: PmsEmployeeVO}
+
+  /* 【系统设置-员工管理】
+  // 员工分页查询（基础信息来自 auth_user，扩展字段来自 pms_employee_ext）
+  export function pmsPmsEmployeeList(payload: PmsEmployeeListDTO) {return http.post<Res<PmsEmployeeVO[]>>('/pms/pms/employee/list', payload)}
+  */
+  '/pms/pms/employee/list': {Req: PmsEmployeeListDTO; Res: PmsEmployeeVO[]}
+
+  /* 【系统设置-员工管理】
+  // 员工详情 | object:{id:userId}
+  export function pmsPmsEmployeeGet(payload: {id: any}) {return http.post<Res<PmsEmployeeVO>>('/pms/pms/employee/get', payload)}
+  */
+  '/pms/pms/employee/get': {Req: {id: any}; Res: PmsEmployeeVO}
+
+  /* 【系统设置-员工管理】
+  // 导出员工Excel
+  export function pmsPmsEmployeeExport(payload: PmsEmployeeListDTO) {return http.post<Res<>>('/pms/pms/employee/export', payload)}
+  */
+  '/pms/pms/employee/export': {Req: PmsEmployeeListDTO}
+
+  /* 【物业-字典管理】
+  // 新增/修改字典
+  export function pmsPmsDicUpsert(payload: SysDicUpsertDTO) {return http.post<Res<string>>('/pms/pms/dic/upsert', payload)}
+  */
+  '/pms/pms/dic/upsert': {Req: SysDicUpsertDTO; Res: string}
+
+  /* 【物业-字典管理】
+  // 批量更新字典条目排序
+  export function pmsPmsDicSortBatch(payload: SysDicSortDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/dic/sort-batch', payload)}
+  */
+  '/pms/pms/dic/sort-batch': {Req: SysDicSortDTO; Res: Record<string, any>}
+
+  /* 【物业-字典管理】
+  // 字典列表
+  export function pmsPmsDicList(payload: SysDicListDTO) {return http.post<Res<SysDicVO[]>>('/pms/pms/dic/list', payload)}
+  */
+  '/pms/pms/dic/list': {Req: SysDicListDTO; Res: SysDicVO[]}
+
+  /* 【物业-字典管理】
+  // 字典详情 | object:{dicId:字典ID}
+  export function pmsPmsDicGet(payload: {dicId: any}) {return http.post<Res<SysDicVO>>('/pms/pms/dic/get', payload)}
+  */
+  '/pms/pms/dic/get': {Req: {dicId: any}; Res: SysDicVO}
+
+  /* 【物业-字典管理】
+  // 启用/禁用字典 | object:{dicId:字典ID,enable:bool}
+  export function pmsPmsDicEnable(payload: {dicId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/pms/pms/dic/enable', payload)}
+  */
+  '/pms/pms/dic/enable': {Req: {dicId: any; enable: boolean}; Res: Record<string, any>}
+
+  /* 【物业-字典管理】
+  // 删除字典 | object:{dicId:字典ID}
+  export function pmsPmsDicDelete(payload: {dicId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/dic/delete', payload)}
+  */
+  '/pms/pms/dic/delete': {Req: {dicId: any}; Res: Record<string, any>}
+
+  /* 【物业-客户信息管理】
+  // 新增客户车辆
+  export function pmsPmsCustomerVehicleInsert(payload: PmsCustomerVehicleInsertDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/customer/vehicle/insert', payload)}
+  */
+  '/pms/pms/customer/vehicle/insert': {Req: PmsCustomerVehicleInsertDTO; Res: Record<string, any>}
+
+  /* 【物业-客户信息管理】
+  // 删除车辆（软删除）
+  export function pmsPmsCustomerVehicleDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/pms/pms/customer/vehicle/delete', payload)}
+  */
+  '/pms/pms/customer/vehicle/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【物业-客户信息管理】
+  // 编辑客户
+  export function pmsPmsCustomerUpdate(payload: PmsCustomerUpdateDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/customer/update', payload)}
+  */
+  '/pms/pms/customer/update': {Req: PmsCustomerUpdateDTO; Res: Record<string, any>}
+
+  /* 【物业-客户信息管理】
+  // 客户列表（分页+筛选）
+  export function pmsPmsCustomerList(payload: PmsCustomerListDTO) {return http.post<Res<PmsCustomerVO[]>>('/pms/pms/customer/list', payload)}
+  */
+  '/pms/pms/customer/list': {Req: PmsCustomerListDTO; Res: PmsCustomerVO[]}
+
+  /* 【物业-客户信息管理】
+  // 新建客户（手机号唯一键upsert）
+  export function pmsPmsCustomerInsert(payload: PmsCustomerInsertDTO) {return http.post<Res<PmsCustomerVO>>('/pms/pms/customer/insert', payload)}
+  */
+  '/pms/pms/customer/insert': {Req: PmsCustomerInsertDTO; Res: PmsCustomerVO}
+
+  /* 【物业-客户信息管理】
+  // 客户详情（含车辆列表）
+  export function pmsPmsCustomerGet(payload: Record<string, any>) {return http.post<Res<PmsCustomerDetailVO>>('/pms/pms/customer/get', payload)}
+  */
+  '/pms/pms/customer/get': {Req: Record<string, any>; Res: PmsCustomerDetailVO}
+
+  /* 【物业-客户信息管理】
+  // 客户信息导出Excel
+  export function pmsPmsCustomerExport(payload: PmsCustomerListDTO) {return http.post<Res<>>('/pms/pms/customer/export', payload)}
+  */
+  '/pms/pms/customer/export': {Req: PmsCustomerListDTO}
+
+  /* 【通用相关】
+  // 中文转拼音 | object:{key:中文}
+  export function pmsCommonFuncZhToPinyin(payload: {key: any}) {return http.post<Res<string>>('/pms/common/func/zh-to-pinyin', payload)}
+  */
+  '/pms/common/func/zh-to-pinyin': {Req: {key: any}; Res: string}
+
+  /* 【通用相关】
+  // 身份证判断男女 | object:{certNo:身份证}
+  export function pmsCommonFuncCertNoToGender(payload: {certNo: any}) {return http.post<Res<string>>('/pms/common/func/certNo-to-gender', payload)}
+  */
+  '/pms/common/func/certNo-to-gender': {Req: {certNo: any}; Res: string}
+
+  /* 【通用相关】
+  // 文件上传(type,file)
+  export function pmsCommonFileUpload() {return http.post<Res<FileModel>>('/pms/common/file/upload')}
+  */
+  '/pms/common/file/upload': {Res: FileModel}
+
+  /* 【通用相关】
+  // 文件上传(type,file,filename)
+  export function pmsCommonFileUploadBase64() {return http.post<Res<FileModel>>('/pms/common/file/upload-base64')}
+  */
+  '/pms/common/file/upload-base64': {Res: FileModel}
+
+  /* 【通用相关】
+  // 文件ID转文件Model,入参[id1,id2]
+  export function pmsCommonFileIdToPath() {return http.post<Res<FileModel[]>>('/pms/common/file/id-to-path')}
+  */
+  '/pms/common/file/id-to-path': {Res: FileModel[]}
+
+  /* 【通用相关】
+  // 码表元信息
+  export function pmsCommonDicMeta(payload: Record<string, any>) {return http.post<Res<Record<string, Record<string, any>>[]>>('/pms/common/dic/meta', payload)}
+  */
+  '/pms/common/dic/meta': {Req: Record<string, any>; Res: Record<string, Record<string, any>>[]}
+
+  /* 【通用相关】
+  // 树形码表 | object:{dicType:字典类型}
+  export function pmsCommonDicListTree(payload: {dicType: any}) {return http.post<Res<SysDicVO[]>>('/pms/common/dic/list-tree', payload)}
+  */
+  '/pms/common/dic/list-tree': {Req: {dicType: any}; Res: SysDicVO[]}
+
+  /* 【通用相关】
+  // 常规码表
+  export function pmsCommonDicListAll(payload: Record<string, any>) {return http.post<Res<Record<string, SysDicVO[]>>>('/pms/common/dic/list-all', payload)}
+  */
+  '/pms/common/dic/list-all': {Req: Record<string, any>; Res: Record<string, SysDicVO[]>}
+
+  /* 【通用相关】
+  // 省_市_区_商圈 | object:{pid:上级ID}
+  export function pmsCommonAreaList(payload: {pid: any}) {return http.post<Res<PairModel[]>>('/pms/common/area/list', payload)}
+  */
+  '/pms/common/area/list': {Req: {pid: any}; Res: PairModel[]}
+
+  /* 【通用相关】
+  // 根据城市查询区和街道(树) | object:{cityCode:城市CODE}
+  export function pmsCommonAreaCityInfo(payload: {cityCode: any}) {return http.post<Res<Record<string, TreeModel[]>>>('/pms/common/area/city-info', payload)}
+  */
+  '/pms/common/area/city-info': {Req: {cityCode: any}; Res: Record<string, TreeModel[]>}
 }
 
 interface SysActionLogListDTO {
@@ -2705,4 +3095,654 @@ interface AssetBuildingDTO {
 
 interface AssetBuildingInsertDTO {
   buildingList: AssetBuildingDTO[] // 楼栋数据
+}
+
+interface PmsSopTemplateListDTO {
+  pageable: boolean
+  pageNum: number
+  pageSize: number
+  exportFields: string[]
+  searchName: string // SOP名称模糊搜索
+  groupId: string // 所属分组ID
+}
+
+interface PmsSopTemplateVO {
+  id: string // ID
+  groupId: string // 所属分组ID
+  sopName: string // SOP名称
+  description: string // SOP描述
+  sortOrder: number // 排序号
+  enable: number // 0-禁用;1-启用
+  insertTime: string // 记录插入时间
+  categoryCount: number // 子项（分类）数量
+  categorySummary: string // 子项分类名称摘要
+}
+
+interface PmsSopTemplateInsertDTO {
+  sopName: string // SOP名称
+  groupId?: string // 所属分组ID（不传则使用默认分组）
+  description?: string // SOP描述
+}
+
+// SOP步骤编辑DTO
+interface PmsSopStepUpdateDTO {
+  id: string // 步骤ID
+  title?: string // 步骤标题
+  description?: string // 步骤描述
+  prompt?: string // 提示语
+  workHours?: number // 工时
+  score?: number // 分值
+  required?: number // 是否必填(0否/1是)
+  photoRequired?: number // 是否需要拍照(0否/1是)
+  enable?: number // 状态(0关闭/1启用)
+}
+
+// SOP步骤VO
+interface PmsSopStepVO {
+  id: string // ID
+  categoryId: string // 所属分类ID
+  sopId: string // 所属SOP模板ID
+  seqNo: number // 序号
+  title: string // 步骤标题
+  description: string // 步骤描述
+  prompt: string // 提示语
+  workHours: number // 工时
+  score: number // 分值
+  required: number // 0-非必填;1-必填
+  photoRequired: number // 0-不需拍照;1-需拍照
+  enable: number // 0-禁用;1-启用
+  insertTime: string // 创建时间
+}
+
+// SOP步骤新建DTO
+interface PmsSopStepInsertDTO {
+  categoryId: string // 所属分类ID
+  title?: string // 步骤标题
+  description?: string // 步骤描述
+  prompt?: string // 提示语
+  workHours?: number // 工时
+  score?: number // 分值
+  required?: number // 是否必填(0否/1是)
+  photoRequired?: number // 是否需要拍照(0否/1是)
+}
+
+// Excel导入结果VO
+interface PmsSopImportResultVO {
+  successCount: number // 成功条数
+  failCount: number // 失败条数
+  failReasons: string[] // 失败原因列表
+}
+
+interface PmsSopGroupVO {
+  id: string // ID
+  groupName: string // 分组名称
+  sortOrder: number // 排序号
+  enable: number // 0-禁用;1-启用
+  insertTime: string // 记录插入时间
+  sopList: PmsSopTemplateVO[] // 分组下的SOP列表
+}
+
+interface PmsSopGroupInsertDTO {
+  groupName: string // 分组名称
+  sortOrder?: number // 排序号
+}
+
+// SOP分类VO
+interface PmsSopCategoryVO {
+  id: string // ID
+  sopId: string // 所属SOP模板ID
+  categoryName: string // 分类名称
+  sortOrder: number // 排序号
+  enable: number // 0-禁用;1-启用
+  stepCount: number // 步骤数量
+  insertTime: string // 创建时间
+}
+
+// SOP分类新建DTO
+interface PmsSopCategoryInsertDTO {
+  sopId: string // 所属SOP模板ID
+  categoryName: string // 分类名称
+  sortOrder?: number // 排序号
+}
+
+// 物业-项目新建/编辑DTO
+interface PmsProjectUpsertDTO {
+  id?: string // PMS项目ID（编辑时必传，新建时不传）
+  projectName: string // 项目名称
+  projectShortName: string // 项目简称
+  projectCoverImage?: string // 封面照片
+  provinceCode: string // 省编码
+  provinceName?: string // 省名称
+  cityCode: string // 市编码
+  cityName?: string // 市名称
+  districtCode: string // 区编码
+  districtName?: string // 区名称
+  address: string // 详细地址
+  lng: number // 经度
+  lat: number // 纬度
+  landNumber: string // 宗地号
+  ownershipPropertyCode: string // 产权性质编码
+  ownershipPropertyName?: string // 产权性质名称
+  ownershipUnitCode: string // 产权单位编码
+  ownershipUnitName?: string // 产权单位名称
+  collectWayCode: string // 项目来源编码
+  collectWayName?: string // 项目来源名称
+  collectSubjectCode?: string // 筹集主体编码
+  collectSubjectName?: string // 筹集主体名称
+  collectDate?: string // 筹集日期
+  businessModelCode: string // 经营模式编码
+  businessModelName?: string // 经营模式名称
+  projectTypeCode: string // 项目类型编码
+  projectTypeName?: string // 项目类型名称
+  projectManager: string // 项目负责人
+  projectPhone: string // 项目电话
+  totalLandArea?: number // 总占地面积
+  totalArea?: number // 总建筑面积
+  groundArea?: number // 地上建筑面积
+  undergroundArea?: number // 地下建筑面积
+  roomArea?: number // 住宅建筑面积
+  roomUtilityArea?: number // 住宅实用面积
+  shopArea?: number // 商业面积
+  shopUtilityArea?: number // 商业实用面积
+  manageRoomArea?: number // 管理用房面积
+  deviceRoomArea?: number // 设备用房面积
+  greenArea?: number // 绿化面积
+  propertyFeeArea?: number // 物业费收费面积
+  roadArea?: number // 道路面积
+  plotRatio?: string // 容积率
+  completeDate?: string // 竣工时间
+  prepareDate?: string // 竣备时间
+  checkInDate?: string // 入伙时间
+  contractBegin?: string // 物业合同生效日期
+  contractEnd?: string // 物业合同终止日期
+  propertyCompany?: string // 物业公司名称
+  warrantyContractBegin?: string // 质保合同生效日期
+  warrantyContractEnd?: string // 质保合同终止日期
+  totalHouseholds?: number // 总户数
+  groundParkingSpace?: number // 地上车位数量
+  undergroundParkingSpace?: number // 地下车位数量
+  machineryParkingSpace?: number // 机械车位数量
+  parkingSpaceRatio?: string // 车位配比
+  staffEntrance?: number // 人行出入口数量
+  carEntrance?: number // 车辆出入口数量
+  customElevator?: number // 客梯数量
+  goodsElevator?: number // 货梯数量
+  firefightElevator?: number // 消防梯数量
+  propertyFeeModel?: string // 物业费收费模式
+  roomStandard?: string // 住宅物业收费标准
+  shopStandard?: string // 底商物业收费标准
+  independentShopStandard?: string // 独立商业物业收费标准
+  groundParkingStandard?: string // 地上车位收费标准
+  undergroundParkingStandard?: string // 地下车位收费标准
+}
+
+interface PmsProjectListDTO {
+  pageable: boolean
+  pageNum: number
+  pageSize: number
+  exportFields: string[]
+  projectName: string // 项目名称（模糊）
+  provinceCode: string // 省编码
+  cityCode: string // 市编码
+  districtCode: string // 区编码
+  enable: number // 状态: 1启用, 0禁用
+  ownershipUnitCode: string // 产权单位编码
+  businessModelCode: string // 经营模式编码
+  collectWayCode: string // 项目来源编码（筹集方式）
+  ownershipPropertyCode: string // 产权性质编码
+}
+
+// 物业-项目列表VO
+interface PmsProjectVO {
+  id: string // PMS项目ID
+  enable: number // 状态: 1启用, 0禁用
+  projectId: string // 资产项目编码
+  projectName: string // 项目名称
+  projectShortName: string // 项目简称
+  collectWayName: string // 项目来源
+  projectTypeName: string // 项目类型
+  ownershipUnitName: string // 产权单位
+  ownershipPropertyName: string // 产权性质
+  businessModelName: string // 经营模式
+  areaName: string // 所属省市区
+  address: string // 详细地址
+}
+
+interface PmsProjectIntroduceDTO {
+  projectIds: string[] // 要引入的资产项目ID列表
+}
+
+// 物业-项目详情VO
+interface PmsProjectDetailVO {
+  id: string // PMS项目ID
+  enable: number // 状态: 1启用, 0禁用
+  projectId: string // 资产项目编码
+  projectCoverImage: string // 封面照片
+  projectName: string // 项目名称
+  projectShortName: string // 项目简称
+  provinceCode: string // 省编码
+  provinceName: string // 省名称
+  cityCode: string // 市编码
+  cityName: string // 市名称
+  districtCode: string // 区编码
+  districtName: string // 区名称
+  address: string // 详细地址
+  lng: number // 经度
+  lat: number // 纬度
+  landNumber: string // 宗地号
+  ownershipPropertyCode: string // 产权性质编码
+  ownershipPropertyName: string // 产权性质名称
+  ownershipUnitCode: string // 产权单位编码
+  ownershipUnitName: string // 产权单位名称
+  collectWayCode: string // 项目来源编码
+  collectWayName: string // 项目来源名称
+  collectSubjectCode: string // 筹集主体编码
+  collectSubjectName: string // 筹集主体名称
+  collectDate: string // 筹集日期
+  businessModelCode: string // 经营模式编码
+  businessModelName: string // 经营模式名称
+  projectTypeCode: string // 项目类型编码
+  projectTypeName: string // 项目类型名称
+  projectManager: string // 项目负责人
+  projectPhone: string // 项目电话
+  totalLandArea: number // 总占地面积
+  totalArea: number // 总建筑面积
+  groundArea: number // 地上建筑面积
+  undergroundArea: number // 地下建筑面积
+  roomArea: number // 住宅建筑面积
+  roomUtilityArea: number // 住宅实用面积
+  shopArea: number // 商业面积
+  shopUtilityArea: number // 商业实用面积
+  manageRoomArea: number // 管理用房面积
+  deviceRoomArea: number // 设备用房面积
+  greenArea: number // 绿化面积
+  propertyFeeArea: number // 物业费收费面积
+  roadArea: number // 道路面积
+  plotRatio: string // 容积率
+  completeDate: string // 竣工时间
+  prepareDate: string // 竣备时间
+  checkInDate: string // 入伙时间
+  contractBegin: string // 物业合同生效日期
+  contractEnd: string // 物业合同终止日期
+  propertyCompany: string // 物业公司名称
+  warrantyContractBegin: string // 质保合同生效日期
+  warrantyContractEnd: string // 质保合同终止日期
+  totalHouseholds: number // 总户数
+  groundParkingSpace: number // 地上车位数量
+  undergroundParkingSpace: number // 地下车位数量
+  machineryParkingSpace: number // 机械车位数量
+  parkingSpaceRatio: string // 车位配比
+  staffEntrance: number // 人行出入口数量
+  carEntrance: number // 车辆出入口数量
+  customElevator: number // 客梯数量
+  goodsElevator: number // 货梯数量
+  firefightElevator: number // 消防梯数量
+  propertyFeeModel: string // 物业费收费模式
+  roomStandard: string // 住宅物业收费标准
+  shopStandard: string // 底商物业收费标准
+  independentShopStandard: string // 独立商业物业收费标准
+  groundParkingStandard: string // 地上车位收费标准
+  undergroundParkingStandard: string // 地下车位收费标准
+  buildingCount: number // 楼栋数
+  residentialRoomCount: number // 住宅房间数
+  commercialRoomCount: number // 商业房间数
+  parkingLotCount: number // 停车场数
+  parkingSpaceCount: number // 停车位数
+  floorCount: number // 楼层数
+  enclosureCount: number // 围合数（暂为0，来源待确认）
+  spacePointCount: number // 空间点位数
+}
+
+// 物业-项目装修协议配置保存DTO
+interface PmsProjectConfigRenovationDTO {
+  pmsProjectId: string // PMS项目ID
+  renovationCompanyTemplateId?: string // 装修协议模板ID(装修公司)
+  renovationResidentTemplateId?: string // 装修协议模板ID(住户)
+  renovationPrecondition?: string // 签署前置条件（文本描述，如"需提交装修押金收据"）
+}
+
+// 物业-项目财务配置保存DTO
+interface PmsProjectConfigFinanceDTO {
+  pmsProjectId: string // PMS项目ID
+  financeTemplateId?: string // 财务配置模板ID
+  bankAccountIds?: string // 银行转账收款账户ID(JSON数组)
+  onlinePaymentMerchantIds?: string // 在线支付收款商户ID(JSON数组)
+  onlineCollectionAccountId?: string // 线上托收收款账户ID
+  offlineCollectionAccountId?: string // 线下托收收款账户ID
+  cbsIntegrationAccountId?: string // CBS集成账户ID
+  externalCollectionAccountId?: string // 系统外托收账户ID
+  posPaymentAccountId?: string // POS支付收款账户ID
+  financeShareProjectName?: string // 财务共享项目名称
+  financeShareProjectCode?: string // 财务共享项目编码
+  financeAutoPush?: boolean // 是否自动推送财务共享
+  financeShareScope?: boolean // 是否属于财务共享范围
+}
+
+// 按房屋面积计费-单价配置
+interface AreaPriceConfigDTO {
+  mode: string // 子模式: fixed_unit_price(固定单价) / first_year_special(首年特惠)
+  unitPrice: number // 固定单价模式-单价(元/㎡/月)
+  specialStartDate: string // 首年特惠模式-优惠期开始日期
+  specialEndDate: string // 首年特惠模式-优惠期结束日期
+  specialUnitPrice: number // 首年特惠模式-优惠单价(元/㎡/月)
+  standardUnitPrice: number // 首年特惠模式-到期后标准单价(元/㎡/月)
+}
+
+// 物业-项目基本配置保存DTO
+interface PmsProjectConfigBasicDTO {
+  pmsProjectId: string // PMS项目ID
+  residentialFeeMode?: string // 住宅物业费模式: fixed/area
+  residentialFeeValue?: number // 住宅物业费值（fixed模式用）
+  residentialAreaPriceConfig?: AreaPriceConfigDTO // 住宅按面积计费单价配置（area模式用）
+  commercialFeeMode?: string // 商业物业费模式: fixed/area
+  commercialFeeValue?: number // 商业物业费值（fixed模式用）
+  commercialAreaPriceConfig?: AreaPriceConfigDTO // 商业按面积计费单价配置（area模式用）
+  billingStartType?: string // 账单周期开始日类型: check_in_date/lease_start_date/fixed/advance_days
+  billingFixedDay?: number // 固定号数(1-28)，billingStartType=fixed时必填
+  billingStartAdvanceDays?: number // 提前N天起算，billingStartType=advance_days时必填（正整数）
+  paymentAdvanceDays?: number // 收款日提前天数
+  billingDisplayMode?: string // 账单展示方式: full/advance_days
+  billingAdvanceDays?: number // 提前N天展示
+  lateFeeEnabled?: boolean // 是否收取滞纳金
+  lateFeeMethod?: string // 滞纳金计算方式: simple_interest/compound_interest
+  accessCardDeposit?: number // 出入证押金
+  accessCardDepositEditable?: boolean // 出入证押金-入伙登记时可修改
+  doorCardDeposit?: number // 门禁卡押金
+  doorCardDepositEditable?: boolean // 门禁卡押金-入伙登记时可修改
+  renovationDepositResidential?: number // 装修押金(住宅)
+  renovationDepositResidentialEditable?: boolean // 装修押金(住宅)-装修许可证申请时可修改
+  renovationDepositCommercial?: number // 装修押金(商业)
+  renovationDepositCommercialEditable?: boolean // 装修押金(商业)-装修许可证申请时可修改
+  maintenanceFundRate?: number // 专项维修基金(元/㎡/月)
+  maintenanceFundRateEditable?: boolean // 专项维修基金-入伙登记时可修改
+  waterFeeMode?: string // 水费模式: fixed_price/tiered_price
+  waterFeePrice?: number // 水费固定单价
+  waterTieredPrices?: UtilityFeeTierDTO[] // 水费阶梯单价列表
+  sewageFee?: number // 污水处理费
+  electricFeeMode?: string // 电费模式: fixed_price/tiered_price
+  electricFeePrice?: number // 电费固定单价
+  electricTieredPrices?: UtilityFeeTierDTO[] // 电费阶梯单价列表
+  leaseTemplateId?: string // 物业协议模板ID(租赁)
+  commercialTemplateId?: string // 物业协议模板ID(商业)
+  ownerTemplateId?: string // 物业协议模板ID(业主)
+  publicTemplateId?: string // 物业协议模板ID(公配)
+  signingEntity?: string // 签约主体
+  vacancyDiscountTiers?: VacancyDiscountTierDTO[] // 空置房折扣分档配置列表
+  prepareDateBegin?: string // 竣备时间-开始
+  prepareDateEnd?: string // 竣备时间-结束
+  mergeFirstMonth?: boolean // 合并零头首月
+  mergeLastMonth?: boolean // 合并零头尾月
+  coverImage?: string // 封面照片URL
+}
+
+// 水/电费阶梯单价
+interface UtilityFeeTierDTO {
+  start: number // 用量区间起始值
+  end: number // 用量区间结束值
+  price: number // 单价
+}
+
+// 空置房折扣分档
+interface VacancyDiscountTierDTO {
+  minOccupancyRate: number // 出租率区间下限(%)
+  maxOccupancyRate: number // 出租率区间上限(%)
+  discountRate: number // 折扣比例(0-100)
+}
+
+// 物业-项目配置查询DTO
+interface PmsProjectConfigQueryDTO {
+  pmsProjectId: string // PMS项目ID
+}
+
+// 按房屋面积计费-单价配置
+interface AreaPriceConfigVO {
+  mode: string // 子模式: fixed_unit_price(固定单价) / first_year_special(首年特惠)
+  unitPrice: number // 固定单价模式-单价(元/㎡/月)
+  specialStartDate: string // 首年特惠模式-优惠期开始日期
+  specialEndDate: string // 首年特惠模式-优惠期结束日期
+  specialUnitPrice: number // 首年特惠模式-优惠单价(元/㎡/月)
+  standardUnitPrice: number // 首年特惠模式-到期后标准单价(元/㎡/月)
+}
+
+// 物业-项目配置VO
+interface PmsProjectConfigVO {
+  id: string // 配置ID
+  pmsProjectId: string // PMS项目ID
+  residentialFeeMode: string
+  residentialFeeValue: number
+  residentialAreaPriceConfig: AreaPriceConfigVO
+  commercialFeeMode: string
+  commercialFeeValue: number
+  commercialAreaPriceConfig: AreaPriceConfigVO
+  billingStartType: string
+  billingFixedDay: number
+  billingStartAdvanceDays: number
+  paymentAdvanceDays: number
+  billingDisplayMode: string
+  billingAdvanceDays: number
+  lateFeeEnabled: boolean
+  lateFeeMethod: string
+  accessCardDeposit: number
+  accessCardDepositEditable: boolean
+  doorCardDeposit: number
+  doorCardDepositEditable: boolean
+  renovationDepositResidential: number
+  renovationDepositResidentialEditable: boolean
+  renovationDepositCommercial: number
+  renovationDepositCommercialEditable: boolean
+  maintenanceFundRate: number
+  maintenanceFundRateEditable: boolean
+  waterFeeMode: string
+  waterFeePrice: number
+  waterTieredPrices: UtilityFeeTierVO[]
+  sewageFee: number
+  electricFeeMode: string
+  electricFeePrice: number
+  electricTieredPrices: UtilityFeeTierVO[]
+  leaseTemplateId: string
+  commercialTemplateId: string
+  ownerTemplateId: string
+  publicTemplateId: string
+  signingEntity: string
+  vacancyDiscountTiers: VacancyDiscountTierVO[]
+  prepareDateBegin: string
+  prepareDateEnd: string
+  mergeFirstMonth: boolean
+  mergeLastMonth: boolean
+  coverImage: string
+  financeTemplateId: string
+  bankAccountIds: string
+  onlinePaymentMerchantIds: string
+  onlineCollectionAccountId: string
+  offlineCollectionAccountId: string
+  cbsIntegrationAccountId: string
+  externalCollectionAccountId: string
+  posPaymentAccountId: string
+  financeShareProjectName: string
+  financeShareProjectCode: string
+  financeAutoPush: boolean
+  financeShareScope: boolean
+  renovationCompanyTemplateId: string
+  renovationResidentTemplateId: string
+  renovationPrecondition: string
+}
+
+// 水/电费阶梯单价
+interface UtilityFeeTierVO {
+  start: number // 用量区间起始值
+  end: number // 用量区间结束值
+  price: number // 单价
+}
+
+// 空置房折扣分档
+interface VacancyDiscountTierVO {
+  minOccupancyRate: number // 出租率区间下限(%)
+  maxOccupancyRate: number // 出租率区间上限(%)
+  discountRate: number // 折扣比例(0-100)
+}
+
+// 更新移交文件状态DTO
+interface PmsHandoverItemUpdateDTO {
+  id: string // 文件项ID
+  transferred: boolean // 是否已移交
+  attachments?: string[] // 附件URL列表（可选）
+}
+
+// 查验移交/遗留问题列表查询DTO
+interface PmsHandoverListDTO {
+  projectId: string // PMS项目ID
+}
+
+// 物业-查验移交文件项VO
+interface PmsHandoverItemVO {
+  id: string // 文件项ID
+  category: string // 分类编码: approval/planning/construction/other/handover_list
+  categoryName: string // 分类名称
+  itemName: string // 文件项名称
+  transferred: boolean // 是否已移交
+  attachments: string[] // 附件URL列表
+  sortOrder: number // 排序号
+}
+
+// 编辑遗留问题DTO
+interface PmsLegacyIssueUpdateDTO {
+  id: string // 问题ID
+  description: string // 问题描述
+}
+
+// 物业-遗留问题VO
+interface PmsLegacyIssueVO {
+  id: string // 问题ID
+  description: string // 问题描述
+  insertTime: string // 创建时间
+}
+
+// 新增遗留问题DTO
+interface PmsLegacyIssueInsertDTO {
+  projectId: string // PMS项目ID
+  description: string // 问题描述
+}
+
+// 通用ID查询/操作DTO
+interface IdDTO {
+  id: string // ID
+}
+
+interface PmsEmployeeUpdateExtDTO {
+  userId: string // 员工用户ID（auth_user.user_id）
+  employeeGroups?: string[] // 员工组别列表（SysDic PMS_EMPLOYEE_GROUP 的 dic_code 值，多选）
+  notes?: string // 备注
+}
+
+interface PmsEmployeeVO {
+  id: string // 用户ID（auth_user.user_id，只读）
+  employeeName: string // 姓名（只读，来自 auth_user.nick_name）
+  mobile: string // 手机号（只读，来自 auth_user.mobile）
+  employeeNumber: string // 工号（只读，来自 auth_user.employee_number）
+  avatarFid: string // 头像文件ID（只读，来自 auth_user.avatar_fid）
+  departmentId: string // 所属部门ID
+  departmentName: string // 所属部门名称
+  roleNames: string[] // 当前角色名称列表
+  employeeGroup: string[] // 员工组别码值列表（物业侧扩展，SysDic PMS_EMPLOYEE_GROUP dic_code，多值）
+  employeeGroupName: string[] // 员工组别名称列表（SysDic 转换）
+  notes: string // 备注（物业侧扩展）
+}
+
+interface PmsEmployeeListDTO {
+  pageable: boolean
+  pageNum: number
+  pageSize: number
+  exportFields: string[]
+  employeeGroups: string[] // 员工组别筛选（数组，SysDic PMS_EMPLOYEE_GROUP 值，支持多选）
+  searchName: string // 关键字搜索（按姓名模糊匹配）
+}
+
+interface SysDicSortDTO {
+  dicId: string // 字典ID
+  dicSort: number // 排序值（越小越靠前）
+}
+
+interface PmsCustomerVehicleInsertDTO {
+  customerId: string // 客户ID（必填）
+  plateNo?: string // 车牌号
+  carType?: string // 车型
+  parkingNo?: string // 车位号
+}
+
+interface PmsCustomerUpdateDTO {
+  id: string // 客户ID（必填）
+  customerName?: string // 客户姓名
+  certType?: string // 证件类型（SYS_CERT_TYPE字典）
+  certNo?: string // 证件号（更新时重新加密）
+  gender?: string // 性别（SYS_GENDER字典）
+  birthday?: string // 出生日期
+  certPhoto?: string // 证件照片（多张，JSON数组存URL）
+  bankAccount?: string // 银行账号
+  bankCardPhoto?: string // 银行卡照片（多张，JSON数组存URL）
+  personalPhoto?: string // 个人照片（单张URL）
+  remark?: string // 备注
+}
+
+interface PmsCustomerListDTO {
+  pageable: boolean
+  pageNum: number
+  pageSize: number
+  exportFields: string[] // 导出字段列表
+  customerName: string // 客户姓名（模糊搜索）
+  phone: string // 手机号（精确搜索）
+  dataSource: string // 数据来源: ADMIN/RENTAL/APP
+  startTime: string // 创建开始时间
+  endTime: string // 创建结束时间
+}
+
+interface PmsCustomerVO {
+  id: string // 客户ID
+  customerName: string // 客户姓名
+  phone: string // 手机号（脱敏，格式: 138****8888）
+  certType: string // 证件类型
+  certNo: string // 证件号（脱敏，格式: 12321321****）
+  gender: string // 性别
+  dataSource: string // 数据来源: ADMIN/RENTAL/APP
+  insertTime: string // 创建时间
+  remark: string // 备注
+}
+
+interface PmsCustomerInsertDTO {
+  customerName: string // 客户姓名
+  phone: string // 手机号（必填，唯一键）
+  certType?: string // 证件类型（SYS_CERT_TYPE字典）
+  certNo?: string // 证件号
+  gender?: string // 性别（SYS_GENDER字典）
+  birthday?: string // 出生日期
+  certPhoto?: string // 证件照片（多张，JSON数组存URL）
+  bankAccount?: string // 银行账号
+  bankCardPhoto?: string // 银行卡照片（多张，JSON数组存URL）
+  personalPhoto?: string // 个人照片（单张URL）
+  remark?: string // 备注
+}
+
+interface PmsCustomerDetailVO {
+  id: string // 客户ID
+  customerName: string // 客户姓名
+  phone: string // 手机号（明文）
+  certType: string // 证件类型
+  certNo: string // 证件号（明文）
+  gender: string // 性别
+  birthday: string // 出生日期
+  dataSource: string // 数据来源: ADMIN/RENTAL/APP
+  certPhoto: string // 证件照片（多张，JSON数组存URL）
+  bankAccount: string // 银行账号
+  bankCardPhoto: string // 银行卡照片（多张，JSON数组存URL）
+  personalPhoto: string // 个人照片（单张URL）
+  remark: string // 备注
+  insertTime: string // 创建时间
+  vehicleList: PmsCustomerVehicleVO[] // 车辆信息列表
+}
+
+interface PmsCustomerVehicleVO {
+  id: string // 车辆ID
+  customerId: string // 客户ID
+  plateNo: string // 车牌号
+  carType: string // 车型
+  parkingNo: string // 车位号
 }

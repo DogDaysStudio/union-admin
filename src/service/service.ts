@@ -9,9 +9,9 @@ const instance = axios.create({
 })
 
 export const createHeaders = () => {
-  const userStore = useUserStore()
+  // const userStore = useUserStore()
   return {
-    'union-auth': userStore.token,
+    'union-auth': 'b1cb020e4b3a4391a406cc33878b78ce',
   }
 }
 
