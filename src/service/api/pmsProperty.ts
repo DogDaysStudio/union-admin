@@ -31,7 +31,7 @@ export function pmsPropertyGroupList(payload?: Record<string, any>) {
 }
 
 // 新建分组
-export function pmsPropertyGroupUInsert(payload: Record<string, any>) {
+export function pmsPropertyGroupUInsert(payload: PmsSopGroupInsertDTO) {
   return http.post<Res<string>>('/pms/sop-group/insert', payload)
 }
 
@@ -41,7 +41,7 @@ export function pmsPropertyGroupDelete(payload: Record<string, any>) {
 }
 
 // 分组排序
-export function pmsPropertyGroupSort(payload: Record<string, any>) {
+export function pmsPropertyGroupSort(payload: {groupIds: string[]}) {
   return http.post<Res<string>>('/pms/sop-group/sort', payload)
 }
 

@@ -87,6 +87,6 @@ onMounted(async () => {
     </div>
 
     <AddSop ref="addSopRef" @finish="refreshSopGroupList" />
-    <ManagementGroup ref="managementGroupRef" @finish="refreshSopGroupList" />
+    <ManagementGroup ref="managementGroupRef" @sort="refreshSopGroupList" />
   </div>
 </template>
