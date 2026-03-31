@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import {onMounted, ref, defineAsyncComponent, computed} from 'vue'
-import {Plus, Search, ArrowRight, School} from '@element-plus/icons-vue'
+import {Plus, Search, ArrowRight, Document} from '@element-plus/icons-vue'
 import {pmsPropertyGroupList} from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
 
 const AddSop = defineAsyncComponent(() => import('./components/add-sop.vue'))
+const ManagementGroup = defineAsyncComponent(() => import('./components/management-group.vue'))
 
 const addSopRef = ref<InstanceType<typeof AddSop>>()
+const managementGroupRef = ref<InstanceType<typeof ManagementGroup>>()
 
 const {
   data: sopGroupList,
   runAsync: runSopGroupList,
   loading: sopGroupListLoading,
+  refresh: refreshSopGroupList,
 } = useRequest(pmsPropertyGroupList)
 
 const groupOptions = computed(() => {
@@ -27,8 +30,8 @@ const handleAddSop = () => {
   addSopRef.value?.open(groupOptions.value)
 }
 
-const handleAddSopFinish = () => {
-  runSopGroupList()
+const handleManagementGroup = () => {
+  managementGroupRef.value?.open(sopGroupList.value?.data || [])
 }
 
 onMounted(async () => {
@@ -50,7 +53,7 @@ onMounted(async () => {
           style="width: 300px"
         ></el-input>
         <el-button class="ml-3.5" :icon="Plus" @click="handleAddSop">新建SOP</el-button>
-        <el-button>管理分组</el-button>
+        <el-button @click="handleManagementGroup">管理分组</el-button>
       </div>
     </div>
 
@@ -64,7 +67,7 @@ onMounted(async () => {
             class="bg-gray-100 rounded-sm overflow-hidden p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-200 transition-all duration-300"
           >
             <el-icon :size="32" class="shrink-0 text-gray-400!">
-              <School />
+              <Document />
             </el-icon>
             <div class="flex-1">
               <h4 class="line-clamp-1">{{ item.sopName }}</h4>
@@ -83,6 +86,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <AddSop ref="addSopRef" @finish="handleAddSopFinish" />
+    <AddSop ref="addSopRef" @finish="refreshSopGroupList" />
+    <ManagementGroup ref="managementGroupRef" @finish="refreshSopGroupList" />
   </div>
 </template>
