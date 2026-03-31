@@ -44,3 +44,8 @@ export function pmsPropertyGroupDelete(payload: Record<string, any>) {
 export function pmsPropertyGroupSort(payload: Record<string, any>) {
   return http.post<Res<string>>('/pms/sop-group/sort', payload)
 }
+
+// 新建SOP模板
+export function pmsPropertySopTemplateInsert(payload: PmsSopTemplateInsertDTO) {
+  return http.post<Res<string>>('/pms/sop/insert', payload)
+}
