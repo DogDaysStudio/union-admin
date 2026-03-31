@@ -54,3 +54,13 @@ export function pmsPropertySopMove(payload: {sopId: string; targetGroupId: strin
 export function pmsPropertySopTemplateInsert(payload: PmsSopTemplateInsertDTO) {
   return http.post<Res<string>>('/pms/sop/insert', payload)
 }
+
+// 删除SOP模板
+export function pmsPropertySopTemplateDelete(payload: {sopId: string}) {
+  return http.post<Res<string>>('/pms/sop/delete', payload)
+}
+
+// 复制SOP模板
+export function pmsPropertySopTemplateCopy(payload: {sopId: string; targetGroupId: string}) {
+  return http.post<Res<string>>('/pms/sop/copy', payload)
+}

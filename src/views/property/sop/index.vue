@@ -6,9 +6,11 @@ import {useRequest} from 'vue-request'
 
 const AddSop = defineAsyncComponent(() => import('./components/add-sop.vue'))
 const ManagementGroup = defineAsyncComponent(() => import('./components/management-group.vue'))
+const CopySop = defineAsyncComponent(() => import('./components/copy-sop.vue'))
 
 const addSopRef = ref<InstanceType<typeof AddSop>>()
 const managementGroupRef = ref<InstanceType<typeof ManagementGroup>>()
+const copySopRef = ref<InstanceType<typeof CopySop>>()
 
 const {
   data: sopGroupList,
@@ -32,6 +34,10 @@ const handleAddSop = () => {
 
 const handleManagementGroup = () => {
   managementGroupRef.value?.open()
+}
+
+const handleCopySop = (sopIds: string[]) => {
+  copySopRef.value?.open({sopIds, groupOptions: groupOptions.value})
 }
 
 onMounted(async () => {
@@ -95,6 +101,8 @@ onMounted(async () => {
       @re-sort="refreshSopGroupList"
       @add-group="refreshSopGroupList"
       :groupList="sopGroupList?.data"
+      @copy-sop="handleCopySop"
     />
+    <CopySop ref="copySopRef" @finish="refreshSopGroupList" />
   </div>
 </template>

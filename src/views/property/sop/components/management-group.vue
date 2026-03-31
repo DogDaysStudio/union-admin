@@ -1,11 +1,21 @@
 <script setup lang="ts">
 import {ref, computed} from 'vue'
-import {Plus, Download, Upload, Rank, Close, Check} from '@element-plus/icons-vue'
+import {
+  Plus,
+  Download,
+  Upload,
+  Rank,
+  Close,
+  Check,
+  CopyDocument,
+  Delete,
+} from '@element-plus/icons-vue'
 import type {
   TreeNodeData,
   TreeInstance,
   CheckboxValueType,
   RenderContentContext,
+  TreeKey,
 } from 'element-plus'
 import {
   pmsPropertyGroupSort,
@@ -31,13 +41,14 @@ const emit = defineEmits<{
   (e: 're-group'): void
   (e: 're-sort'): void
   (e: 'add-group'): void
+  (e: 'copy-sop', sopIds: string[]): void
 }>()
 
 const visible = ref(false)
 const isAdd = ref(false)
 const newGroupName = ref('')
-const checkAll = ref(false)
-const isIndeterminate = ref(false)
+const checkedKeys = ref<TreeKey[]>([])
+
 const treeRef = ref<TreeInstance>()
 
 const {runAsync: sortGroupAsync, loading: sortGroupLoading} = useRequest(pmsPropertyGroupSort)
@@ -48,6 +59,14 @@ const allSopKeys = computed(() => {
   const groupIds = groupList.map(item => item.id)
   const sopIds = groupList.flatMap(item => item.sopList.map(sop => sop.id))
   return [...groupIds, ...sopIds]
+})
+
+const isCheckedAll = computed(() => {
+  return checkedKeys.value.length === allSopKeys.value.length
+})
+
+const isIndeterminate = computed(() => {
+  return checkedKeys.value.length > 0 && checkedKeys.value.length < allSopKeys.value.length
 })
 
 const handleOpen = () => {
@@ -114,8 +133,7 @@ const handleMoveSop = async (draggingNode: Node, dropNode: Node) => {
 }
 
 const handleUncheckAll = () => {
-  checkAll.value = false
-  isIndeterminate.value = false
+  checkedKeys.value = []
   treeRef.value?.setCheckedKeys([])
 }
 
@@ -132,20 +150,8 @@ const handleCheckAllChange = (val: CheckboxValueType) => {
 }
 
 const handleSopCheckChange = () => {
-  const checkedKeys = treeRef.value?.getCheckedKeys()
-  if (checkedKeys?.length === allSopKeys.value.length) {
-    checkAll.value = true
-    isIndeterminate.value = false
-    return
-  }
-  if (checkedKeys?.length === 0) {
-    checkAll.value = false
-    isIndeterminate.value = false
-    return
-  }
-  checkAll.value = false
-  isIndeterminate.value = true
-  return
+  const keys = treeRef.value?.getCheckedKeys()
+  checkedKeys.value = keys || []
 }
 
 const handleToggleAllExpanded = (expanded: boolean) => {
@@ -153,6 +159,17 @@ const handleToggleAllExpanded = (expanded: boolean) => {
   allNodes.forEach(node => {
     node.expanded = expanded
   })
+}
+
+const handleCopy = () => {
+  emit(
+    'copy-sop',
+    checkedKeys.value.map(item => String(item))
+  )
+}
+
+const handleDelete = () => {
+  console.log('删除')
 }
 
 defineExpose({
@@ -170,21 +187,26 @@ defineExpose({
     </template>
     <div class="flex flex-col" v-loading="sortGroupLoading || moveSopLoading">
       <div class="flex justify-between items-center mb-4">
-        <el-checkbox
-          v-model="checkAll"
-          :indeterminate="isIndeterminate"
-          @change="handleCheckAllChange"
-        >
-          全部
-        </el-checkbox>
-        <el-button link :icon="Download" class="ml-3!" @click="handleToggleAllExpanded(false)">
-          全部折叠
-        </el-button>
-        <el-button link :icon="Upload" @click="handleToggleAllExpanded(true)">全部展开</el-button>
-        <div class="ml-auto">
-          <el-button type="primary" @click="handleAddGroup" link :icon="Plus" v-if="!isAdd">
-            新建分组
+        <div class="flex items-center">
+          <el-checkbox
+            v-model="isCheckedAll"
+            :indeterminate="isIndeterminate"
+            @change="handleCheckAllChange"
+            :disabled="isAdd"
+          >
+            全部
+          </el-checkbox>
+          <el-button link :icon="Download" class="ml-3!" @click="handleToggleAllExpanded(false)">
+            全部折叠
           </el-button>
+          <el-button link :icon="Upload" @click="handleToggleAllExpanded(true)">全部展开</el-button>
+        </div>
+        <div class="ml-auto" v-if="checkedKeys.length <= 0 && !isAdd">
+          <el-button type="primary" @click="handleAddGroup" link :icon="Plus">新建分组</el-button>
+        </div>
+        <div class="ml-auto" v-if="checkedKeys.length > 0">
+          <el-button type="primary" @click="handleCopy" link :icon="CopyDocument">复制</el-button>
+          <el-button type="danger" @click="handleDelete" link :icon="Delete">删除</el-button>
         </div>
       </div>
       <el-tree
