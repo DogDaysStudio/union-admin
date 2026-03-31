@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, defineEmits} from 'vue'
+import {ref} from 'vue'
 import {useForm} from '@/common/hooks/useForm'
 import type {FormInstance} from 'element-plus'
 import {pmsPropertySopTemplateInsert} from '@/service/api/pmsProperty'
