@@ -124,3 +124,40 @@ export function pmsPropertySopStepEnable(payload: {stepId: string; enable: numbe
 export function pmsPropertyEmployeeList(payload?: PmsEmployeeListDTO) {
   return http.post<Res<PmsEmployeeVO[]>>('/pms/employee/list', payload)
 }
+
+// 客户信息管理
+
+// 客户列表（分页+筛选）
+export function pmsPropertyCustomerList(payload?: PmsCustomerListDTO) {
+  return http.post<Res<PmsCustomerVO[]>>('/pms/customer/list', payload)
+}
+
+// 客户详情
+export function pmsPropertyCustomerGet(payload: {customerId: string}) {
+  return http.post<Res<PmsCustomerVO>>('/pms/customer/get', payload)
+}
+
+// 新建客户（手机号唯一键upsert）
+export function pmsPropertyCustomerInsert(payload: PmsCustomerInsertDTO) {
+  return http.post<Res<string>>('/pms/customer/insert', payload)
+}
+
+// 客户编辑
+export function pmsPropertyCustomerUpdate(payload: PmsCustomerUpdateDTO) {
+  return http.post<Res<string>>('/pms/customer/update', payload)
+}
+
+// 新增客户车辆
+export function pmsPropertyCustomerVehicleInsert(payload: PmsCustomerVehicleInsertDTO) {
+  return http.post<Res<string>>('/pms/customer/vehicle/insert', payload)
+}
+
+// 删除车辆（软删除）
+export function pmsPropertyCustomerVehicleDelete(payload: {vehicleId: string}) {
+  return http.post<Res<string>>('/pms/customer/vehicle/delete', payload)
+}
+
+// 客户信息导出Excel
+export function pmsPropertyCustomerExport(payload: {customerId: string}) {
+  return http.post<Res<string>>('/pms/customer/export', payload)
+}

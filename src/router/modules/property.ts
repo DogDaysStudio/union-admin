@@ -40,7 +40,7 @@ const propertyRoutes: RouteRecordRaw[] = [
           {
             path: 'info',
             meta: {title: '客户信息管理', menu: true},
-            component: () => import('@/views/dashboard.vue'),
+            component: () => import('@/views/property/customer/info/index.vue'),
           },
           {
             path: 'grid',

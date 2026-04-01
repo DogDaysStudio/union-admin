@@ -1,34 +1,38 @@
 <script setup lang="ts">
 import {useActivated, useForm} from '@/common/hooks'
 import {defineField, defineSchema} from '@/components'
-import {computed} from 'vue'
+import {computed, defineAsyncComponent, ref} from 'vue'
 import {usePagination} from 'vue-request'
-import {pmsPropertyEmployeeList} from '@/service/api/pmsProperty'
+import {pmsPropertyCustomerList} from '@/service/api/pmsProperty'
 import {useExport} from '@/common/hooks/useExport'
+
+const AddInfo = defineAsyncComponent(() => import('./components/add-info.vue'))
+
+const addInfoRef = ref<InstanceType<typeof AddInfo>>()
 
 // 搜索表单
 const [searchForm] = useForm({
   pageable: true,
   pageNum: 1,
   pageSize: 10,
-} as PmsEmployeeListDTO)
+} as PmsCustomerListDTO)
 
 const {
-  data: employeeList,
-  runAsync: runEmployeeList,
-  refreshAsync: refreshEmployeeList,
-  loading: employeeListLoading,
+  data: customerList,
+  runAsync: runCustomerList,
+  refreshAsync: refreshCustomerList,
+  loading: customerListLoading,
   current,
   pageSize,
   total,
   changePageSize,
   changeCurrent,
-} = usePagination(pmsPropertyEmployeeList, {
+} = usePagination(pmsPropertyCustomerList, {
   manual: false,
   defaultParams: [searchForm],
 })
 
-useActivated(refreshEmployeeList)
+useActivated(refreshCustomerList)
 
 const {exportData, loading: exportLoading} = useExport({
   meta: '/iam/auth-user/list-export-meta',
@@ -37,17 +41,13 @@ const {exportData, loading: exportLoading} = useExport({
 
 const schema = computed(() =>
   defineSchema({
-    fields: [
-      defineField.Input({label: '姓名', prop: 'searchName', placeholder: '姓名'}),
-      defineField.Select({
-        label: '组别',
-        prop: 'employeeGroups',
-        props: {label: 'roleName', value: 'roleId'},
-        options: employeeList?.value?.data,
-      }),
-    ],
+    fields: [defineField.Input({label: '姓名', prop: 'searchName', placeholder: '姓名'})],
   })
 )
+
+const handleAddInfo = () => {
+  addInfoRef.value?.open()
+}
 </script>
 
 <template>
@@ -56,8 +56,8 @@ const schema = computed(() =>
     <schema-form
       :schema="schema"
       :model="searchForm"
-      @finish="runEmployeeList(searchForm)"
-      @reset="runEmployeeList(searchForm)"
+      @finish="runCustomerList(searchForm)"
+      @reset="runCustomerList(searchForm)"
     ></schema-form>
   </section-group>
 
@@ -66,15 +66,16 @@ const schema = computed(() =>
     <template #extra>
       <el-space>
         <el-button @click="exportData(searchForm)" :loading="exportLoading">导出</el-button>
+        <el-button @click="handleAddInfo">新增</el-button>
       </el-space>
     </template>
 
     <el-table
       ref="multipleTableRef"
-      :data="employeeList?.data"
+      :data="customerList?.data"
       stripe
       border
-      v-loading="employeeListLoading"
+      v-loading="customerListLoading"
     >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="certName" label="姓名" />
@@ -103,4 +104,6 @@ const schema = computed(() =>
     @size-change="changePageSize"
     @current-change="changeCurrent"
   />
+
+  <AddInfo ref="addInfoRef" />
 </template>
