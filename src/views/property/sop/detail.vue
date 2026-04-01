@@ -12,6 +12,7 @@ import {useRequest} from 'vue-request'
 import {onMounted, ref, defineAsyncComponent} from 'vue'
 import SopCategory from './components/sop-category.vue'
 import Sortable from 'sortablejs'
+import {useExport} from '@/common/hooks'
 
 const AddStep = defineAsyncComponent(() => import('./components/add-step.vue'))
 
@@ -43,6 +44,14 @@ const addStepRef = ref<InstanceType<typeof AddStep>>()
 const route = useRoute()
 const tableRef = ref<InstanceType<typeof ElTable>>()
 const sopId = route.params.id as string
+
+const {exportData, loading: exportLoading} = useExport({
+  url: '/pms/sop-step/export' as keyof ApiType,
+})
+
+const handleExport = async () => {
+  await exportData({sopId})
+}
 
 const handleAddSopCategory = () => {
   isAddingCategory.value = true
@@ -153,7 +162,9 @@ onMounted(async () => {
           <h2 class="font-bold text-base shrink-0 mr-50">步骤</h2>
           <el-input v-model="searchStepTitle" placeholder="搜索步骤" />
           <el-button :icon="Upload">上传</el-button>
-          <el-button :icon="Download">下载</el-button>
+          <el-button :icon="Download" @click="handleExport" :loading="exportLoading">
+            下载
+          </el-button>
           <el-button :icon="Plus" @click="handleAddStep">增加步骤</el-button>
         </div>
         <el-table
