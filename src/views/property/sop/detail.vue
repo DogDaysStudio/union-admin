@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import {Plus, Upload, Download} from '@element-plus/icons-vue'
+import {Plus, Upload, Download, Sort} from '@element-plus/icons-vue'
 import {useRoute} from 'vue-router'
 import {
   pmsPropertySopCategoryList,
   pmsPropertySopCategoryInsert,
   pmsPropertySopStepList,
   pmsPropertySopStepEnable,
+  pmsPropertySopStepSort,
 } from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
 import {onMounted, ref, defineAsyncComponent} from 'vue'
 import SopCategory from './components/sop-category.vue'
+import Sortable from 'sortablejs'
 
 const AddStep = defineAsyncComponent(() => import('./components/add-step.vue'))
 
@@ -25,6 +27,8 @@ const {
   loading: sopStepListLoading,
 } = useRequest(pmsPropertySopStepList)
 
+const {runAsync: runSopStepSort, loading: sopStepSortLoading} = useRequest(pmsPropertySopStepSort)
+
 const {runAsync: runSopCategoryInsert, loading: sopCategoryInsertLoading} = useRequest(
   pmsPropertySopCategoryInsert
 )
@@ -37,7 +41,7 @@ const currentCategoryId = ref('')
 const isAddingCategory = ref(false)
 const addStepRef = ref<InstanceType<typeof AddStep>>()
 const route = useRoute()
-
+const tableRef = ref<InstanceType<typeof ElTable>>()
 const sopId = route.params.id as string
 
 const handleAddSopCategory = () => {
@@ -84,10 +88,26 @@ const handleSopCategoryClick = async (id: string) => {
   await runSopStepList({sopId, categoryId: id})
 }
 
+const initDraggable = () => {
+  const tbody = tableRef.value.$el.querySelector('.el-table__body-wrapper tbody')
+
+  Sortable.create(tbody, {
+    animation: 150,
+    async onEnd(evt) {
+      const {oldIndex, newIndex} = evt
+      const currRow = sopStepListData.value?.data?.splice(oldIndex, 1)[0]
+      sopStepListData.value?.data?.splice(newIndex, 0, currRow)
+      await runSopStepSort({stepIds: sopStepListData.value?.data?.map(item => item.id) || []})
+      await refreshSopStepList()
+    },
+  })
+}
+
 onMounted(async () => {
   await runSopCategoryList({sopId})
   currentCategoryId.value = sopCategoryListData.value?.data[0]?.id
   await runSopStepList({sopId, categoryId: currentCategoryId.value})
+  initDraggable()
 })
 </script>
 
@@ -136,7 +156,14 @@ onMounted(async () => {
           <el-button :icon="Download">下载</el-button>
           <el-button :icon="Plus" @click="handleAddStep">增加步骤</el-button>
         </div>
-        <el-table :data="sopStepListData?.data" stripe border :loading="sopStepListLoading">
+        <el-table
+          ref="tableRef"
+          :data="sopStepListData?.data"
+          stripe
+          border
+          :loading="sopStepListLoading || sopStepSortLoading"
+          row-key="id"
+        >
           <el-table-column prop="enable" label="状态">
             <template #default="scope">
               <el-switch
@@ -159,6 +186,7 @@ onMounted(async () => {
             <template #default="scope">
               <el-button link type="primary" @click="handleEditStep(scope.row)">编辑</el-button>
               <el-button link type="danger" @click="handleDeleteStep(scope.row)">删除</el-button>
+              <el-button link type="primary" :icon="Sort" class=".drag-handle"></el-button>
             </template>
           </el-table-column>
         </el-table>
