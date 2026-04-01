@@ -1,8 +1,13 @@
 import http from '../service'
 
+// 树形码表
+export function pmsPropertyDicListTree(payload?: {dicType: any}) {
+  return http.post<Res<SysDicVO[]>>('/pms/dic/list-tree', payload)
+}
+
 // 字典列表
-export function pmsPropertyDicList(payload?: Record<string, any>) {
-  return http.post<Res<PairModel[]>>('/pms/dic/list', payload)
+export function pmsPropertyDicList(payload?: SysDicListDTO) {
+  return http.post<Res<SysDicVO[]>>('/pms/dic/list', payload)
 }
 
 // 新增/修改字典

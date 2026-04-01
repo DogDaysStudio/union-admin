@@ -19,7 +19,7 @@ const propertyRoutes: RouteRecordRaw[] = [
           {
             path: 'dictionary',
             meta: {title: '数据字典管理', menu: true},
-            component: () => import('@/views/dashboard.vue'),
+            component: () => import('@/views/property/dictionary/index.vue'),
           },
           {
             path: 'employee',
