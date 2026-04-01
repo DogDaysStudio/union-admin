@@ -2,7 +2,7 @@ import http from '../service'
 
 // 树形码表
 export function pmsPropertyDicListTree(payload?: {dicType: any}) {
-  return http.post<Res<SysDicVO[]>>('/pms/dic/list-tree', payload)
+  return http.post<Res<SysDicVO[]>>('/common/dic/list-tree', payload)
 }
 
 // 字典列表
