@@ -3,6 +3,9 @@ import {onMounted, ref, defineAsyncComponent, computed} from 'vue'
 import {Plus, Search, ArrowRight, Document} from '@element-plus/icons-vue'
 import {pmsPropertyGroupList} from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
+import {useRouter} from 'vue-router'
+
+const router = useRouter()
 
 const AddSop = defineAsyncComponent(() => import('./components/add-sop.vue'))
 const ManagementGroup = defineAsyncComponent(() => import('./components/management-group.vue'))
@@ -40,6 +43,10 @@ const handleCopySop = (sopIds: string[]) => {
   copySopRef.value?.open({sopIds, groupOptions: groupOptions.value})
 }
 
+const handleSopDetail = (sopId: string) => {
+  router.push(`/property/settings/sop/${sopId}`)
+}
+
 onMounted(async () => {
   await runSopGroupList()
 })
@@ -71,6 +78,7 @@ onMounted(async () => {
             v-for="item in sop.sopList"
             :key="item.id"
             class="bg-gray-50 rounded-sm overflow-hidden p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-100 transition-all duration-300"
+            @click="handleSopDetail(item.id)"
           >
             <el-icon :size="32" class="shrink-0 text-gray-400!">
               <Document />

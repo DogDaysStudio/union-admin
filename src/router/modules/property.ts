@@ -17,6 +17,11 @@ const propertyRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/property/sop/index.vue'),
           },
           {
+            path: 'sop/:id',
+            meta: {title: 'SOP 详情', menu: false},
+            component: () => import('@/views/property/sop/detail.vue'),
+          },
+          {
             path: 'dictionary',
             meta: {title: '数据字典管理', menu: true},
             component: () => import('@/views/property/dictionary/index.vue'),

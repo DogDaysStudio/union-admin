@@ -70,6 +70,56 @@ export function pmsPropertySopTemplateCopy(payload: {sopId: string; targetGroupI
   return http.post<Res<string>>('/pms/sop/copy', payload)
 }
 
+// 查询SOP分类列表（含步骤数量）
+export function pmsPropertySopCategoryList(payload: {sopId: string}) {
+  return http.post<Res<PmsSopCategoryVO[]>>('/pms/sop-category/list', payload)
+}
+
+// 新建SOP分类
+export function pmsPropertySopCategoryInsert(payload: PmsSopCategoryInsertDTO) {
+  return http.post<Res<PmsSopCategoryVO>>('/pms/sop-category/insert', payload)
+}
+
+// 删除SOP分类
+export function pmsPropertySopCategoryDelete(payload: {categoryId: string}) {
+  return http.post<Res<string>>('/pms/sop-category/delete', payload)
+}
+
+// 查询步骤列表
+export function pmsPropertySopStepList(payload: {sopId: string; categoryId: string}) {
+  return http.post<Res<PmsSopStepVO[]>>('/pms/sop-step/list', payload)
+}
+
+// 步骤排序
+export function pmsPropertySopStepSort(payload: {stepIds: string[]}) {
+  return http.post<Res<string>>('/pms/sop-step/sort', payload)
+}
+
+// 新建步骤
+export function pmsPropertySopStepInsert(payload: PmsSopStepInsertDTO) {
+  return http.post<Res<PmsSopStepVO>>('/pms/sop-step/insert', payload)
+}
+
+// 编辑步骤
+export function pmsPropertySopStepUpdate(payload: PmsSopStepUpdateDTO) {
+  return http.post<Res<PmsSopStepVO>>('/pms/sop-step/update', payload)
+}
+
+// 导入步骤Excel
+export function pmsPropertySopStepImport() {
+  return http.post<Res<PmsSopImportResultVO>>('/pms/sop-step/import')
+}
+
+// 导出步骤Excel
+export function pmsPropertySopStepExport(payload: {sopId: string}) {
+  return http.post<Res<string>>('/pms/sop-step/export', payload)
+}
+
+// 启用/关闭步骤
+export function pmsPropertySopStepEnable(payload: {stepId: string; enable: number}) {
+  return http.post<Res<string>>('/pms/sop-step/enable', payload)
+}
+
 // 员工分页查询
 export function pmsPropertyEmployeeList(payload?: PmsEmployeeListDTO) {
   return http.post<Res<PmsEmployeeVO[]>>('/pms/employee/list', payload)

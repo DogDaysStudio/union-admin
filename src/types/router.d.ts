@@ -453,6 +453,13 @@ export interface RouteNamedMap {
     any,
     never
   >
+  '/property/settings/sop/:id': RouteRecordInfo<
+    '/property/settings/sop/:id', // name
+    '/property/settings/sop/:id', // path
+    {id: ParamValue<true>},
+    {id: ParamValue<false>},
+    never
+  >
   '/property/settings/dictionary': RouteRecordInfo<
     '/property/settings/dictionary', // name
     '/property/settings/dictionary', // path
