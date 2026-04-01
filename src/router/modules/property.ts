@@ -24,7 +24,7 @@ const propertyRoutes: RouteRecordRaw[] = [
           {
             path: 'employee',
             meta: {title: '员工管理', menu: true},
-            component: () => import('@/views/dashboard.vue'),
+            component: () => import('@/views/property/employee/index.vue'),
           },
         ],
       },

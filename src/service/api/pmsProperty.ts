@@ -69,3 +69,8 @@ export function pmsPropertySopTemplateDelete(payload: {sopId: string}) {
 export function pmsPropertySopTemplateCopy(payload: {sopId: string; targetGroupId: string}) {
   return http.post<Res<string>>('/pms/sop/copy', payload)
 }
+
+// 员工分页查询
+export function pmsPropertyEmployeeList(payload?: PmsEmployeeListDTO) {
+  return http.post<Res<PmsEmployeeVO[]>>('/pms/employee/list', payload)
+}
