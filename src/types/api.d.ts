@@ -1329,16 +1329,16 @@ interface ApiType {
   '/pms/pms/sop/insert': {Req: PmsSopTemplateInsertDTO; Res: string}
 
   /* 【物业-SOP模板管理】
-  // 删除SOP模板 | object:{sopId:SOP ID}
-  export function pmsPmsSopDelete(payload: {sopId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop/delete', payload)}
+  // 批量删除SOP模板 | object:{sopIds:[SOP ID列表]}
+  export function pmsPmsSopDelete(payload: {sopIds: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop/delete', payload)}
   */
-  '/pms/pms/sop/delete': {Req: {sopId: any}; Res: Record<string, any>}
+  '/pms/pms/sop/delete': {Req: {sopIds: any}; Res: Record<string, any>}
 
   /* 【物业-SOP模板管理】
-  // 复制SOP（深拷贝） | object:{sopId:SOP ID,targetGroupId:目标分组ID}
-  export function pmsPmsSopCopy(payload: {sopId: any; targetGroupId: any}) {return http.post<Res<string>>('/pms/pms/sop/copy', payload)}
+  // 批量复制SOP（深拷贝） | object:{sopIds:[SOP ID列表],targetGroupId:目标分组ID}
+  export function pmsPmsSopCopy(payload: {sopIds: any; targetGroupId: any}) {return http.post<Res<string[]>>('/pms/pms/sop/copy', payload)}
   */
-  '/pms/pms/sop/copy': {Req: {sopId: any; targetGroupId: any}; Res: string}
+  '/pms/pms/sop/copy': {Req: {sopIds: any; targetGroupId: any}; Res: string[]}
 
   /* 【物业-SOP步骤管理】
   // 编辑步骤
@@ -1389,6 +1389,12 @@ interface ApiType {
   '/pms/pms/sop-group/sort': {Req: {groupIds: any}; Res: Record<string, any>}
 
   /* 【物业-SOP分组管理】
+  // 按分组名称模糊搜索 | object:{groupName:关键词}，为空则返回全部（同列表）
+  export function pmsPmsSopGroupSearch(payload: Record<string, any>) {return http.post<Res<PmsSopGroupVO[]>>('/pms/pms/sop-group/search', payload)}
+  */
+  '/pms/pms/sop-group/search': {Req: Record<string, any>; Res: PmsSopGroupVO[]}
+
+  /* 【物业-SOP分组管理】
   // 分组列表（含SOP模板）
   export function pmsPmsSopGroupList() {return http.post<Res<PmsSopGroupVO[]>>('/pms/pms/sop-group/list')}
   */
@@ -1423,6 +1429,36 @@ interface ApiType {
   export function pmsPmsSopCategoryDelete(payload: {categoryId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-category/delete', payload)}
   */
   '/pms/pms/sop-category/delete': {Req: {categoryId: any}; Res: Record<string, any>}
+
+  /* 【物业-人房关系管理】
+  // 更新人房关系（协议状态/文件/到期状态）
+  export function pmsPmsRelationshipUpdate(payload: PmsRelationshipUpdateDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/relationship/update', payload)}
+  */
+  '/pms/pms/relationship/update': {Req: PmsRelationshipUpdateDTO; Res: Record<string, any>}
+
+  /* 【物业-人房关系管理】
+  // 人房关系列表查询（分页）
+  export function pmsPmsRelationshipList(payload: PmsRelationshipListDTO) {return http.post<Res<PmsRelationshipVO[]>>('/pms/pms/relationship/list', payload)}
+  */
+  '/pms/pms/relationship/list': {Req: PmsRelationshipListDTO; Res: PmsRelationshipVO[]}
+
+  /* 【物业-人房关系管理】
+  // 新建人房关系
+  export function pmsPmsRelationshipInsert(payload: PmsRelationshipInsertDTO) {return http.post<Res<PmsRelationshipVO>>('/pms/pms/relationship/insert', payload)}
+  */
+  '/pms/pms/relationship/insert': {Req: PmsRelationshipInsertDTO; Res: PmsRelationshipVO}
+
+  /* 【物业-人房关系管理】
+  // 人房关系详情
+  export function pmsPmsRelationshipGet(payload: Record<string, any>) {return http.post<Res<PmsRelationshipVO>>('/pms/pms/relationship/get', payload)}
+  */
+  '/pms/pms/relationship/get': {Req: Record<string, any>; Res: PmsRelationshipVO}
+
+  /* 【物业-人房关系管理】
+  // 迁出（终止单条人房关系）
+  export function pmsPmsRelationshipCheckOut(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/pms/pms/relationship/checkOut', payload)}
+  */
+  '/pms/pms/relationship/checkOut': {Req: Record<string, any>; Res: Record<string, any>}
 
   /* 【物业-项目资产档案】
   // 编辑项目
@@ -3203,6 +3239,62 @@ interface PmsSopCategoryInsertDTO {
   sopId: string // 所属SOP模板ID
   categoryName: string // 分类名称
   sortOrder?: number // 排序号
+}
+
+// 更新人房关系 DTO
+interface PmsRelationshipUpdateDTO {
+  id: string // 关系ID
+  agreeStatus?: string // 协议状态: UNSIGNED/SIGNED
+  attachmentUrls?: string // 其他资料文件URL列表（JSON数组字符串）
+  agreementFileUrl?: string // 物业协议文件URL
+  agreementExpired?: number // 物业协议是否到期: 0否, 1是
+}
+
+// 人房关系列表查询 DTO
+interface PmsRelationshipListDTO {
+  pageable: boolean
+  pageNum: number
+  pageSize: number
+  exportFields: string[]
+  customerId: string // 客户ID（与roomId二选一必填）
+  roomId: string // 房间ID（与customerId二选一必填）
+  authStatus: string // 认证状态筛选: PENDING/CERTIFIED/REJECTED
+  agreeStatus: string // 协议状态筛选: UNSIGNED/SIGNED
+  relationType: string // 关系类型筛选: OWNER/TENANT/COHABITANT/OTHER
+}
+
+// 人房关系 VO
+interface PmsRelationshipVO {
+  id: string // 关系ID（relationship_id，雪花）
+  customerId: string // 客户ID
+  roomId: string // 房间ID（asset_room.room_id）
+  projectId: string // 项目ID（冗余）
+  relationType: string // 关系类型: OWNER(业主)/TENANT(租户)/COHABITANT(同住人)/OTHER(其他)
+  authStatus: string // 认证状态: PENDING(待审核)/CERTIFIED(已认证)/REJECTED(已驳回)
+  agreeStatus: string // 物业协议状态: UNSIGNED(待签署)/SIGNED(已签署)
+  effectiveDate: string // 生效日期
+  checkOutTime: string // 迁出时间
+  attachmentUrls: string // 其他资料文件URL列表（JSON数组字符串）
+  agreementFileUrl: string // 物业协议文件URL
+  agreementExpired: number // 物业协议是否到期: 0否, 1是
+  valid: number // 是否有效: 1有效, 0已迁出
+  insertTime: string // 创建时间
+  customerName: string // 客户姓名（JOIN pms_customer）
+  phone: string // 联系电话（加密存储，Service层脱敏后返回）
+  projectName: string // 项目名称（JOIN asset_project）
+  buildingName: string // 楼栋/围合名称（JOIN asset_building）
+  floorName: string // 楼层名称（JOIN asset_floor）
+  roomNumber: string // 房间号（JOIN asset_room）
+}
+
+// 新建人房关系 DTO
+interface PmsRelationshipInsertDTO {
+  customerId: string // 客户ID
+  roomId: string // 房间ID（asset_room.room_id）
+  relationType: string // 关系类型: OWNER(业主)/TENANT(租户)/COHABITANT(同住人)/OTHER(其他)
+  effectiveDate?: string // 生效日期
+  attachmentUrls?: string // 其他资料文件URL列表（JSON数组字符串，房产证/购房合同等）
+  agreementFileUrl?: string // 物业协议文件URL
 }
 
 // 物业-项目新建/编辑DTO
