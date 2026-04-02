@@ -41,7 +41,7 @@ const emit = defineEmits<{
   (e: 're-group'): void
   (e: 're-sort'): void
   (e: 'add-group'): void
-  (e: 'copy-sop', sopIds: string[]): void
+  (e: 'copy-sop', payload: {sopIds: string[]}): void
 }>()
 
 const visible = ref(false)
@@ -162,14 +162,14 @@ const handleToggleAllExpanded = (expanded: boolean) => {
 }
 
 const handleCopy = () => {
-  emit(
-    'copy-sop',
-    checkedKeys.value.map(item => String(item))
-  )
+  const nodes = treeRef.value?.getCheckedNodes()
+  const sopIds = nodes?.filter(item => !!item.groupId).map(item => item.id)
+  emit('copy-sop', {sopIds})
 }
 
 const handleDelete = () => {
   console.log('删除')
+  console.log(checkedKeys.value)
 }
 
 defineExpose({
@@ -218,6 +218,7 @@ defineExpose({
         show-checkbox
         @check-change="handleSopCheckChange"
         :draggable="!isAdd"
+        :check-on-click-node="true"
         :expand-on-click-node="false"
         style="--el-tree-node-content-height: 32px"
         :allow-drop="handleAllowDrop"

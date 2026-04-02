@@ -50,6 +50,11 @@ export function pmsPropertyGroupSort(payload: {groupIds: string[]}) {
   return http.post<Res<string>>('/pms/sop-group/sort', payload)
 }
 
+// 按分组名称模糊搜索 | object:{groupName:关键词}，为空则返回全部（同列表）
+export function pmsPmsSopGroupSearch(payload?: Record<string, any>) {
+  return http.post<Res<PmsSopGroupVO[]>>('/pms/sop-group/search', payload)
+}
+
 // 移动SOP到目标分组
 export function pmsPropertySopMove(payload: {sopId: string; targetGroupId: string}) {
   return http.post<Res<string>>('/pms/sop/move', payload)
@@ -65,9 +70,9 @@ export function pmsPropertySopTemplateDelete(payload: {sopId: string}) {
   return http.post<Res<string>>('/pms/sop/delete', payload)
 }
 
-// 复制SOP模板
-export function pmsPropertySopTemplateCopy(payload: {sopId: string; targetGroupId: string}) {
-  return http.post<Res<string>>('/pms/sop/copy', payload)
+// 批量删除SOP模板
+export function pmsPmsSopCopy(payload: {sopIds: any; targetGroupId: any}) {
+  return http.post<Res<string[]>>('/pms/sop/copy', payload)
 }
 
 // 查询SOP分类列表（含步骤数量）
