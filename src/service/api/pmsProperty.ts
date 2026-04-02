@@ -45,6 +45,11 @@ export function pmsPropertyGroupDelete(payload: Record<string, any>) {
   return http.post<Res<string>>('/pms/sop-group/delete', payload)
 }
 
+// 批量删除分组 | object:{groupIds:[分组ID列表]}，级联软删除每个分组下所有SOP模板
+export function pmsPmsSopGroupDeleteBatch(payload: {groupIds: string[]}) {
+  return http.post<Res<Record<string, any>>>('/pms/sop-group/delete-batch', payload)
+}
+
 // 分组排序
 export function pmsPropertyGroupSort(payload: {groupIds: string[]}) {
   return http.post<Res<string>>('/pms/sop-group/sort', payload)
@@ -65,12 +70,12 @@ export function pmsPropertySopTemplateInsert(payload: PmsSopTemplateInsertDTO) {
   return http.post<Res<string>>('/pms/sop/insert', payload)
 }
 
-// 删除SOP模板
-export function pmsPropertySopTemplateDelete(payload: {sopId: string}) {
-  return http.post<Res<string>>('/pms/sop/delete', payload)
+// 批量删除SOP模板
+export function pmsPmsSopDelete(payload: {sopIds: any}) {
+  return http.post<Res<Record<string, any>>>('/pms/sop/delete', payload)
 }
 
-// 批量删除SOP模板
+// 批量复制SOP（深拷贝）
 export function pmsPmsSopCopy(payload: {sopIds: any; targetGroupId: any}) {
   return http.post<Res<string[]>>('/pms/sop/copy', payload)
 }

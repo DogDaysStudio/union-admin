@@ -21,6 +21,8 @@ import {
   pmsPropertyGroupSort,
   pmsPropertySopMove,
   pmsPropertyGroupUInsert,
+  pmsPmsSopDelete,
+  pmsPmsSopGroupDeleteBatch,
 } from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
 
@@ -54,6 +56,8 @@ const treeRef = ref<TreeInstance>()
 const {runAsync: sortGroupAsync, loading: sortGroupLoading} = useRequest(pmsPropertyGroupSort)
 const {runAsync: moveSopAsync, loading: moveSopLoading} = useRequest(pmsPropertySopMove)
 const {runAsync: addGroupAsync, loading: addGroupLoading} = useRequest(pmsPropertyGroupUInsert)
+const {runAsync: deleteGroupAsync} = useRequest(pmsPmsSopGroupDeleteBatch)
+const {runAsync: deleteSopAsync} = useRequest(pmsPmsSopDelete)
 
 const allSopKeys = computed(() => {
   const groupIds = groupList.map(item => item.id)
@@ -168,8 +172,20 @@ const handleCopy = () => {
 }
 
 const handleDelete = () => {
-  console.log('删除')
-  console.log(checkedKeys.value)
+  const nodes = treeRef.value?.getCheckedNodes()
+  const sopIds = nodes?.filter(item => !!item.groupId).map(item => item.id)
+  const groupIds = nodes?.filter(item => !item.groupId).map(item => item.id)
+  const msg = `确定删除${groupIds?.length}个分组，${sopIds?.length}个SOP吗？`
+
+  ElMessageBox.confirm(msg, '删除', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(async () => {
+    await deleteSopAsync({sopIds})
+    await deleteGroupAsync({groupIds})
+    emit('re-group')
+  })
 }
 
 defineExpose({
