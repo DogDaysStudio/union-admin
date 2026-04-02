@@ -70,6 +70,16 @@ export function pmsPropertySopTemplateInsert(payload: PmsSopTemplateInsertDTO) {
   return http.post<Res<string>>('/pms/sop/insert', payload)
 }
 
+// SOP模板详情 | 基础信息 + 分类列表（含步骤数量）
+export function pmsPmsSopDetail(payload: PmsSopTemplateDetailQueryDTO) {
+  return http.post<Res<PmsSopTemplateDetailVO>>('/pms/sop/detail', payload)
+}
+
+// 编辑SOP模板标题与描述
+export function pmsPmsSopUpdateBasic(payload: PmsSopTemplateUpdateBasicDTO) {
+  return http.post<Res<Record<string, any>>>('/pms/sop/update-basic', payload)
+}
+
 // 批量删除SOP模板
 export function pmsPmsSopDelete(payload: {sopIds: any}) {
   return http.post<Res<Record<string, any>>>('/pms/sop/delete', payload)

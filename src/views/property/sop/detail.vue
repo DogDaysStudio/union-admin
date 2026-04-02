@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Plus, Upload, Download, Sort} from '@element-plus/icons-vue'
+import {Plus, Upload, Download, Sort, EditPen} from '@element-plus/icons-vue'
 import {useRoute} from 'vue-router'
 import {
   pmsPropertySopCategoryList,
@@ -7,6 +7,7 @@ import {
   pmsPropertySopStepList,
   pmsPropertySopStepEnable,
   pmsPropertySopStepSort,
+  pmsPmsSopDetail,
 } from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
 import {onMounted, ref, defineAsyncComponent} from 'vue'
@@ -15,6 +16,7 @@ import Sortable from 'sortablejs'
 import {useExport} from '@/common/hooks'
 
 const AddStep = defineAsyncComponent(() => import('./components/add-step.vue'))
+const UpdateStop = defineAsyncComponent(() => import('./components/update-stop.vue'))
 
 const {
   data: sopCategoryListData,
@@ -28,6 +30,16 @@ const {
   loading: sopStepListLoading,
 } = useRequest(pmsPropertySopStepList)
 
+const newCategoryName = ref('')
+const searchStepTitle = ref('')
+const currentCategoryId = ref('')
+const isAddingCategory = ref(false)
+const addStepRef = ref<InstanceType<typeof AddStep>>()
+const updateStopRef = ref<InstanceType<typeof UpdateStop>>()
+const route = useRoute()
+const tableRef = ref<InstanceType<typeof ElTable>>()
+const sopId = route.params.id as string
+
 const {runAsync: runSopStepSort, loading: sopStepSortLoading} = useRequest(pmsPropertySopStepSort)
 
 const {runAsync: runSopCategoryInsert, loading: sopCategoryInsertLoading} = useRequest(
@@ -36,14 +48,10 @@ const {runAsync: runSopCategoryInsert, loading: sopCategoryInsertLoading} = useR
 const {runAsync: runSopStepEnable, loading: sopStepEnableLoading} =
   useRequest(pmsPropertySopStepEnable)
 
-const newCategoryName = ref('')
-const searchStepTitle = ref('')
-const currentCategoryId = ref('')
-const isAddingCategory = ref(false)
-const addStepRef = ref<InstanceType<typeof AddStep>>()
-const route = useRoute()
-const tableRef = ref<InstanceType<typeof ElTable>>()
-const sopId = route.params.id as string
+const {data: sopDetailData, refresh: refreshSopDetail} = useRequest(pmsPmsSopDetail, {
+  manual: false,
+  defaultParams: [{sopId}],
+})
 
 const {exportData, loading: exportLoading} = useExport({
   url: '/pms/sop-step/export' as keyof ApiType,
@@ -87,6 +95,10 @@ const handleDeleteStep = (row: PmsSopStepVO) => {
   console.log(row)
 }
 
+const handleUpdateStop = () => {
+  updateStopRef.value?.open(sopDetailData.value?.data)
+}
+
 const handleSopStepEnable = async (row: PmsSopStepVO) => {
   await runSopStepEnable({stepId: row.id, enable: row.enable})
   await refreshSopStepList()
@@ -121,9 +133,30 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <h2 class="font-bold text-xl">SOP 详情 - {{ sopId }}</h2>
-    <p>SOP的说明，比如：适用场景、来源依据、版本相关信息等。</p>
+  <section-group title="SOP 管理">
+    <template #title>
+      <h2 class="font-bold text-xl/8 flex items-center gap-1 group">
+        <span>{{ sopDetailData?.data?.sopName || 'SOP 详情' }}</span>
+        <el-button
+          class="size-8 opacity-0 group-hover:opacity-100"
+          text
+          :icon="EditPen"
+          @click="handleUpdateStop"
+        />
+      </h2>
+      <p class="flex items-center gap-1 group">
+        <span v-if="sopDetailData?.data?.description">{{ sopDetailData?.data?.description }}</span>
+        <span v-else class="text-gray-400">
+          SOP的说明，比如：适用场景、来源依据、版本相关信息等。
+        </span>
+        <el-button
+          class="size-8 opacity-0 group-hover:opacity-100"
+          text
+          :icon="EditPen"
+          @click="handleUpdateStop"
+        />
+      </p>
+    </template>
 
     <div class="flex gap-3">
       <div class="w-60 min-h-50">
@@ -205,5 +238,6 @@ onMounted(async () => {
     </div>
 
     <AddStep ref="addStepRef" @finish="refreshSopStepList" />
-  </div>
+    <UpdateStop ref="updateStopRef" @finish="refreshSopDetail" />
+  </section-group>
 </template>
