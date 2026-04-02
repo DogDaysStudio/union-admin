@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import {useActivated, useForm} from '@/common/hooks'
 import {defineField, defineSchema} from '@/components'
-import {computed} from 'vue'
+import {computed, defineAsyncComponent, ref} from 'vue'
 import {usePagination} from 'vue-request'
 import {pmsPropertyEmployeeList} from '@/service/api/pmsProperty'
 import {useExport} from '@/common/hooks/useExport'
+
+const AddGroup = defineAsyncComponent(() => import('./components/add-group.vue'))
+
+const addGroupRef = ref<InstanceType<typeof AddGroup>>()
+
+const checkedKeys = ref<string[]>([])
 
 // 搜索表单
 const [searchForm] = useForm({
@@ -31,23 +37,22 @@ const {
 useActivated(refreshEmployeeList)
 
 const {exportData, loading: exportLoading} = useExport({
-  meta: '/iam/auth-user/list-export-meta',
-  url: '/iam/auth-user/list-export',
+  url: 'pms/employee/export' as keyof ApiType,
 })
 
 const schema = computed(() =>
   defineSchema({
-    fields: [
-      defineField.Input({label: '姓名', prop: 'searchName', placeholder: '姓名'}),
-      defineField.Select({
-        label: '组别',
-        prop: 'employeeGroups',
-        props: {label: 'roleName', value: 'roleId'},
-        options: employeeList?.value?.data,
-      }),
-    ],
+    fields: [defineField.Input({label: '姓名', prop: 'searchName', placeholder: '姓名'})],
   })
 )
+
+const handleSelectionChange = (selection: PmsLegacyIssueVO[]) => {
+  checkedKeys.value = selection.map(item => item.id)
+}
+
+const handleAddGroup = () => {
+  addGroupRef.value?.open(checkedKeys.value)
+}
 </script>
 
 <template>
@@ -65,6 +70,14 @@ const schema = computed(() =>
   <section-group title="数据列表">
     <template #extra>
       <el-space>
+        <el-button
+          type="primary"
+          @click="handleAddGroup"
+          :loading="exportLoading"
+          v-if="checkedKeys.length > 0"
+        >
+          关联组别
+        </el-button>
         <el-button @click="exportData(searchForm)" :loading="exportLoading">导出</el-button>
       </el-space>
     </template>
@@ -75,6 +88,7 @@ const schema = computed(() =>
       stripe
       border
       v-loading="employeeListLoading"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
       <el-table-column prop="certName" label="姓名" />
@@ -103,4 +117,6 @@ const schema = computed(() =>
     @size-change="changePageSize"
     @current-change="changeCurrent"
   />
+
+  <add-group ref="addGroupRef" @finish="refreshEmployeeList" />
 </template>

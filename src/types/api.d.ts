@@ -56,6 +56,30 @@ interface ApiType {
   */
   '/iam/open-app/delete': {Req: {appId: any}; Res: Record<string, any>}
 
+  /* 【OA 岗位映射管理】
+  // OA 岗位映射列表
+  export function iamOaPositionMappingList(payload: OaPositionMappingListDTO) {return http.post<Res<OaPositionMappingVO[]>>('/iam/oa-position-mapping/list', payload)}
+  */
+  '/iam/oa-position-mapping/list': {Req: OaPositionMappingListDTO; Res: OaPositionMappingVO[]}
+
+  /* 【OA 岗位映射管理】
+  // OA 岗位映射详情 | object:{mappingId:岗位映射 ID}
+  export function iamOaPositionMappingGet(payload: {mappingId: any}) {return http.post<Res<OaPositionMappingVO>>('/iam/oa-position-mapping/get', payload)}
+  */
+  '/iam/oa-position-mapping/get': {Req: {mappingId: any}; Res: OaPositionMappingVO}
+
+  /* 【OA 岗位映射管理】
+  // 启用/禁用 OA 岗位映射 | object:{mappingId:岗位映射ID, enable:true/false}
+  export function iamOaPositionMappingEnable(payload: {mappingId: any; enable: any}) {return http.post<Res<Record<string, any>>>('/iam/oa-position-mapping/enable', payload)}
+  */
+  '/iam/oa-position-mapping/enable': {Req: {mappingId: any; enable: any}; Res: Record<string, any>}
+
+  /* 【OA 岗位映射管理】
+  // 配置 OA 岗位映射
+  export function iamOaPositionMappingConfig(payload: OaPositionMappingConfigDTO) {return http.post<Res<Record<string, any>>>('/iam/oa-position-mapping/config', payload)}
+  */
+  '/iam/oa-position-mapping/config': {Req: OaPositionMappingConfigDTO; Res: Record<string, any>}
+
   /* 【通用相关】
   // 中文转拼音 | object:{key:中文}
   export function iamCommonFuncZhToPinyin(payload: {key: any}) {return http.post<Res<string>>('/iam/common/func/zh-to-pinyin', payload)}
@@ -385,6 +409,18 @@ interface ApiType {
   export function iamAuthOrgDelete(payload: {orgId: any}) {return http.post<Res<Record<string, any>>>('/iam/auth-org/delete', payload)}
   */
   '/iam/auth-org/delete': {Req: {orgId: any}; Res: Record<string, any>}
+
+  /* 【用户端-登录认证】
+  // 登录
+  export function iamAuthCustomerLogin(payload: AuthLoginDTO) {return http.post<Res<string>>('/iam/auth-customer/login', payload)}
+  */
+  '/iam/auth-customer/login': {Req: AuthLoginDTO; Res: string}
+
+  /* 【用户端-登录认证】
+  // 获取用户信息
+  export function iamAuthCustomerInfo() {return http.post<Res<AuthCustomerVO>>('/iam/auth-customer/info')}
+  */
+  '/iam/auth-customer/info': {Res: AuthCustomerVO}
 
   /* 【字典管理】
   // 新增/修改字典
@@ -1311,6 +1347,12 @@ interface ApiType {
   '/ams/asset-building/check-template-export': {Req: {fid: any}}
 
   /* 【物业-SOP模板管理】
+  // 编辑SOP模板标题与描述
+  export function pmsPmsSopUpdateBasic(payload: PmsSopTemplateUpdateBasicDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/sop/update-basic', payload)}
+  */
+  '/pms/pms/sop/update-basic': {Req: PmsSopTemplateUpdateBasicDTO; Res: Record<string, any>}
+
+  /* 【物业-SOP模板管理】
   // 移动SOP到目标分组 | object:{sopId:SOP ID,targetGroupId:目标分组ID}
   export function pmsPmsSopMove(payload: {sopId: any; targetGroupId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop/move', payload)}
   */
@@ -1327,6 +1369,12 @@ interface ApiType {
   export function pmsPmsSopInsert(payload: PmsSopTemplateInsertDTO) {return http.post<Res<string>>('/pms/pms/sop/insert', payload)}
   */
   '/pms/pms/sop/insert': {Req: PmsSopTemplateInsertDTO; Res: string}
+
+  /* 【物业-SOP模板管理】
+  // SOP模板详情 | 基础信息 + 分类列表（含步骤数量）
+  export function pmsPmsSopDetail(payload: PmsSopTemplateDetailQueryDTO) {return http.post<Res<PmsSopTemplateDetailVO>>('/pms/pms/sop/detail', payload)}
+  */
+  '/pms/pms/sop/detail': {Req: PmsSopTemplateDetailQueryDTO; Res: PmsSopTemplateDetailVO}
 
   /* 【物业-SOP模板管理】
   // 批量删除SOP模板 | object:{sopIds:[SOP ID列表]}
@@ -1382,6 +1430,12 @@ interface ApiType {
   */
   '/pms/pms/sop-step/enable': {Req: {stepId: any; enable: any}; Res: Record<string, any>}
 
+  /* 【物业-SOP步骤管理】
+  // 删除SOP步骤 | object:{stepId:步骤ID}
+  export function pmsPmsSopStepDelete(payload: {stepId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-step/delete', payload)}
+  */
+  '/pms/pms/sop-step/delete': {Req: {stepId: any}; Res: Record<string, any>}
+
   /* 【物业-SOP分组管理】
   // 分组排序 | object:{groupIds:[分组ID有序列表]}
   export function pmsPmsSopGroupSort(payload: {groupIds: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-group/sort', payload)}
@@ -1407,10 +1461,22 @@ interface ApiType {
   '/pms/pms/sop-group/insert': {Req: PmsSopGroupInsertDTO; Res: PmsSopGroupVO}
 
   /* 【物业-SOP分组管理】
-  // 删除分组 | object:{groupId:分组ID}
-  export function pmsPmsSopGroupDelete(payload: {groupId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-group/delete', payload)}
+  // 删除分组 | object:{groupId:分组ID}，级联软删除分组下所有SOP模板
+  export function pmsPmsSopGroupDelete(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-group/delete', payload)}
   */
-  '/pms/pms/sop-group/delete': {Req: {groupId: any}; Res: Record<string, any>}
+  '/pms/pms/sop-group/delete': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【物业-SOP分组管理】
+  // 批量删除分组 | object:{groupIds:[分组ID列表]}，级联软删除每个分组下所有SOP模板
+  export function pmsPmsSopGroupDeleteBatch(payload: Record<string, any>) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-group/delete-batch', payload)}
+  */
+  '/pms/pms/sop-group/delete-batch': {Req: Record<string, any>; Res: Record<string, any>}
+
+  /* 【物业-SOP分类管理】
+  // 编辑SOP分类名称
+  export function pmsPmsSopCategoryUpdate(payload: PmsSopCategoryUpdateDTO) {return http.post<Res<PmsSopCategoryVO>>('/pms/pms/sop-category/update', payload)}
+  */
+  '/pms/pms/sop-category/update': {Req: PmsSopCategoryUpdateDTO; Res: PmsSopCategoryVO}
 
   /* 【物业-SOP分类管理】
   // 查询SOP分类列表（含步骤数量） | object:{sopId:SOP模板ID}
@@ -1823,6 +1889,35 @@ interface JSONObject {
   empty: boolean
 }
 
+interface OaPositionMappingListDTO {
+  pageable: boolean
+  pageNum: number
+  pageSize: number
+  exportFields: string[]
+  position: string // OA 岗位
+  roleName: string // 角色名称
+  isConfig: number // 映射是否配置 (1:是、0:否)
+}
+
+interface OaPositionMappingVO {
+  mappingId: string // 主键 ID
+  position: string // OA 岗位
+  roleName: string // 角色名称
+  description: string // 描述
+  isConfig: number // 映射是否配置 (1:是、0:否)
+  enable: number // 启用状态 (1:启用、0:禁用)
+  updateTime: string // 记录更新时间
+  roleIdList: string[] // 角色ID列表
+}
+
+interface OaPositionMappingConfigDTO {
+  mappingId: string // 主键 ID
+  position: string // 岗位名称
+  description?: string // 描述
+  roleIdList: string[] // 角色 ID列表
+  roleNameList: string[] // 角色名称列表
+}
+
 interface FileModel {
   id: string // 文件ID
   type: number // 文件类型
@@ -2147,6 +2242,30 @@ interface AuthOrgListDTO {
   orgLevel: number // 部门级别
   notes: string // 部门描述
   enable: number // 启用状态（1：启用、0：禁用）
+}
+
+// 用户信息VO
+interface AuthCustomerVO {
+  userId: string // 用户ID
+  mobile: string // 手机号
+  password: string // 密码
+  email: string // 邮箱
+  nickName: string // 昵称
+  certName: string // 证件姓名
+  certType: string // 证件类型
+  certNo: string // *证件号码
+  certCheck: number // 证件号认证
+  gender: string // 性别 1男 2女
+  birthday: string // 生日
+  avatarFid: string // 头像
+  lastLoginTime: string // 最后登录时间
+  lastLoginIp: string // 最后登录IP
+  valid: number // 记录是否有效
+  insertTime: string // 记录插入时间
+  insertBy: string // 记录插入操作人
+  updateTime: string // 记录更新时间
+  updateBy: string // 记录更新操作人
+  avatarFile: FileModel // 头像
 }
 
 interface SysDicUpsertDTO {
@@ -3133,6 +3252,13 @@ interface AssetBuildingInsertDTO {
   buildingList: AssetBuildingDTO[] // 楼栋数据
 }
 
+// SOP模板标题与描述更新
+interface PmsSopTemplateUpdateBasicDTO {
+  id: string // SOP模板ID
+  sopName: string // SOP名称（标题）
+  description?: string // SOP描述，可空字符串
+}
+
 interface PmsSopTemplateListDTO {
   pageable: boolean
   pageNum: number
@@ -3158,6 +3284,34 @@ interface PmsSopTemplateInsertDTO {
   sopName: string // SOP名称
   groupId?: string // 所属分组ID（不传则使用默认分组）
   description?: string // SOP描述
+}
+
+// SOP模板详情查询
+interface PmsSopTemplateDetailQueryDTO {
+  sopId: string // SOP模板ID
+}
+
+// SOP分类VO
+interface PmsSopCategoryVO {
+  id: string // ID
+  sopId: string // 所属SOP模板ID
+  categoryName: string // 分类名称
+  sortOrder: number // 排序号
+  enable: number // 0-禁用;1-启用
+  stepCount: number // 步骤数量
+  insertTime: string // 创建时间
+}
+
+// SOP模板详情（含分类列表）
+interface PmsSopTemplateDetailVO {
+  id: string // ID
+  groupId: string // 所属分组ID
+  sopName: string // SOP名称（标题）
+  description: string // SOP描述
+  sortOrder: number // 排序号
+  enable: number // 0-禁用;1-启用
+  insertTime: string // 记录插入时间
+  categories: PmsSopCategoryVO[] // 该模板下 SOP 分类列表（含步骤数量）
 }
 
 // SOP步骤编辑DTO
@@ -3223,15 +3377,10 @@ interface PmsSopGroupInsertDTO {
   sortOrder?: number // 排序号
 }
 
-// SOP分类VO
-interface PmsSopCategoryVO {
-  id: string // ID
-  sopId: string // 所属SOP模板ID
-  categoryName: string // 分类名称
-  sortOrder: number // 排序号
-  enable: number // 0-禁用;1-启用
-  stepCount: number // 步骤数量
-  insertTime: string // 创建时间
+// SOP分类名称更新
+interface PmsSopCategoryUpdateDTO {
+  categoryId: string // 分类ID
+  categoryName: string // 新分类名称
 }
 
 // SOP分类新建DTO
