@@ -125,6 +125,11 @@ export function pmsPropertyEmployeeList(payload?: PmsEmployeeListDTO) {
   return http.post<Res<PmsEmployeeVO[]>>('/pms/employee/list', payload)
 }
 
+// 员工详情
+export function pmsPropertyEmployeeDetail(payload: {id: string}) {
+  return http.post<Res<PmsEmployeeVO>>('/pms/employee/get', payload)
+}
+
 // 客户信息管理
 
 // 客户列表（分页+筛选）
