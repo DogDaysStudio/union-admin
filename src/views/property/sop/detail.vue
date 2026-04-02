@@ -3,7 +3,6 @@ import {Plus, Upload, Download, Sort, EditPen} from '@element-plus/icons-vue'
 import {useRoute} from 'vue-router'
 import {
   pmsPropertySopCategoryList,
-  pmsPropertySopCategoryInsert,
   pmsPropertySopStepList,
   pmsPropertySopStepEnable,
   pmsPropertySopStepSort,
@@ -30,10 +29,8 @@ const {
   loading: sopStepListLoading,
 } = useRequest(pmsPropertySopStepList)
 
-const newCategoryName = ref('')
 const searchStepTitle = ref('')
 const currentCategoryId = ref('')
-const isAddingCategory = ref(false)
 const addStepRef = ref<InstanceType<typeof AddStep>>()
 const updateStopRef = ref<InstanceType<typeof UpdateStop>>()
 const route = useRoute()
@@ -42,9 +39,6 @@ const sopId = route.params.id as string
 
 const {runAsync: runSopStepSort, loading: sopStepSortLoading} = useRequest(pmsPropertySopStepSort)
 
-const {runAsync: runSopCategoryInsert, loading: sopCategoryInsertLoading} = useRequest(
-  pmsPropertySopCategoryInsert
-)
 const {runAsync: runSopStepEnable, loading: sopStepEnableLoading} =
   useRequest(pmsPropertySopStepEnable)
 
@@ -59,20 +53,6 @@ const {exportData, loading: exportLoading} = useExport({
 
 const handleExport = async () => {
   await exportData({sopId})
-}
-
-const handleAddSopCategory = () => {
-  isAddingCategory.value = true
-}
-
-const handleSopCategorySubmit = async () => {
-  await runSopCategoryInsert({
-    sopId: sopId,
-    categoryName: newCategoryName.value,
-  })
-  await refreshSopCategoryList()
-  isAddingCategory.value = false
-  newCategoryName.value = ''
 }
 
 const handleAddStep = () => {
@@ -158,9 +138,15 @@ onMounted(async () => {
       </p>
     </template>
 
-    <div class="flex gap-3">
+    <div class="flex gap-4">
       <div class="w-60 min-h-50">
-        <div v-if="sopCategoryListData?.data?.length > 0" class="flex flex-col gap-3">
+        <SopCategory
+          :categoryList="sopCategoryListData?.data"
+          :sopId="sopId"
+          @add-category="refreshSopCategoryList"
+          @change-category="handleSopCategoryClick"
+        />
+        <!-- <div v-if="sopCategoryListData?.data?.length > 0" class="flex flex-col gap-3">
           <div
             v-for="item in sopCategoryListData.data"
             :key="item.id"
@@ -187,13 +173,13 @@ onMounted(async () => {
           :disabled="isAddingCategory || sopCategoryInsertLoading"
         >
           增加SOP分类
-        </el-button>
+        </el-button> -->
       </div>
 
       <div class="flex-1">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="font-bold text-base shrink-0 mr-50">步骤</h2>
-          <el-input v-model="searchStepTitle" placeholder="搜索步骤" />
+          <h2 class="font-bold text-base shrink-0">步骤列表</h2>
+          <el-input v-model="searchStepTitle" placeholder="搜索步骤" class="w-80! ml-auto mr-3" />
           <el-button :icon="Upload">上传</el-button>
           <el-button :icon="Download" @click="handleExport" :loading="exportLoading">
             下载
