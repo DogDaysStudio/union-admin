@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {EditPen, Rank, Plus} from '@element-plus/icons-vue'
 import {computed, nextTick, ref} from 'vue'
-import {pmsPropertySopCategoryInsert} from '@/service/api/pmsProperty'
+import {pmsPropertySopCategoryInsert, pmsPmsSopCategoryUpdate} from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
 
 const {categoryList = [], sopId} = defineProps<{
@@ -12,18 +12,26 @@ const {categoryList = [], sopId} = defineProps<{
 const emit = defineEmits<{
   (e: 'add-category'): void
   (e: 'change-category', id: string): void
+  (e: 'update-category', id: string): void
 }>()
 
 const newCategoryName = ref('')
 const isAddingCategory = ref(false)
 const activeCategoryId = ref('')
 const inputRef = ref<InstanceType<typeof ElInput>>()
+const categoryRef = ref<InstanceType<typeof ElInput>>()
+
+const isEditingCategory = ref(false)
+const editCategoryId = ref('')
+const editCategoryName = ref('')
 
 const isEmpty = computed(() => categoryList?.length === 0)
 
 const {runAsync: runSopCategoryInsert, loading: sopCategoryInsertLoading} = useRequest(
   pmsPropertySopCategoryInsert
 )
+
+const {runAsync: runSopCategoryUpdate} = useRequest(pmsPmsSopCategoryUpdate)
 
 const handleAddSopCategory = () => {
   isAddingCategory.value = true
@@ -47,7 +55,36 @@ const handleSopCategorySubmit = async () => {
 }
 
 const handleSopCategoryClick = (id: string) => {
+  activeCategoryId.value = id
   emit('change-category', id)
+}
+
+const handleEditSopCategory = (item: PmsSopCategoryVO) => {
+  isEditingCategory.value = true
+  editCategoryId.value = item.id
+  editCategoryName.value = item.categoryName
+  nextTick(() => {
+    categoryRef.value?.[0]?.focus()
+  })
+}
+
+const handleCancelEditSopCategory = () => {
+  isEditingCategory.value = false
+  editCategoryId.value = ''
+  editCategoryName.value = ''
+}
+
+const handleEditSopCategorySubmit = async () => {
+  if (!editCategoryName.value) {
+    handleCancelEditSopCategory()
+    return
+  }
+  await runSopCategoryUpdate({
+    categoryId: editCategoryId.value,
+    categoryName: editCategoryName.value,
+  })
+  handleCancelEditSopCategory()
+  emit('update-category', editCategoryId.value)
 }
 </script>
 
@@ -58,21 +95,37 @@ const handleSopCategoryClick = (id: string) => {
         v-for="item in categoryList"
         :key="item.id"
         @click="handleSopCategoryClick(item.id)"
-        class="cursor-pointer rounded-sm px-3 p-2 text-sm group flex items-center justify-between"
+        class="cursor-pointer rounded-sm px-3 p-2 text-sm/8 group transition-all duration-300"
         :class="{
           'bg-sky-100': activeCategoryId === item.id,
           'bg-gray-100 hover:bg-gray-100': activeCategoryId !== item.id,
         }"
       >
-        <span>{{ item.categoryName }}</span>
-        <el-button class="size-8 opacity-0 group-hover:opacity-100" text :icon="EditPen" />
-        <el-button class="size-8 opacity-0 group-hover:opacity-100 ml-auto!" text :icon="Rank" />
+        <div class="flex items-center justify-between w-full" v-if="editCategoryId !== item.id">
+          <span>{{ item.categoryName }}</span>
+          <el-button
+            link
+            class="size-8 opacity-0 group-hover:opacity-100"
+            text
+            :icon="EditPen"
+            @click.stop="handleEditSopCategory(item)"
+          />
+          <el-button
+            link
+            class="size-8 opacity-0 group-hover:opacity-100 ml-auto!"
+            text
+            :icon="Rank"
+          />
+        </div>
+        <el-input
+          ref="categoryRef"
+          v-model="editCategoryName"
+          v-else
+          @blur="handleEditSopCategorySubmit"
+          @keyup.enter="handleSopCategorySubmit"
+        />
       </div>
     </div>
-
-    <!-- <div v-else class="flex justify-center items-center bg-gray-50 rounded-sm p-3 text-sm h-26 text-gray-400">
-      暂无分类
-    </div> -->
 
     <el-input
       ref="inputRef"
@@ -88,7 +141,7 @@ const handleSopCategoryClick = (id: string) => {
       :icon="Plus"
       @click="handleAddSopCategory"
       class="w-full"
-      :disabled="isAddingCategory || sopCategoryInsertLoading"
+      :disabled="isAddingCategory || sopCategoryInsertLoading || isEditingCategory"
     >
       增加SOP分类
     </el-button>

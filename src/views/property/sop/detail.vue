@@ -144,36 +144,9 @@ onMounted(async () => {
           :categoryList="sopCategoryListData?.data"
           :sopId="sopId"
           @add-category="refreshSopCategoryList"
+          @update-category="refreshSopCategoryList"
           @change-category="handleSopCategoryClick"
         />
-        <!-- <div v-if="sopCategoryListData?.data?.length > 0" class="flex flex-col gap-3">
-          <div
-            v-for="item in sopCategoryListData.data"
-            :key="item.id"
-            @click="handleSopCategoryClick(item.id)"
-          >
-            <SopCategory :sopCategory="item" :isActive="item.id === currentCategoryId" />
-          </div>
-        </div>
-        <div v-else class="flex justify-center items-center mb-4">
-          <p class="text-gray-500 text-sm text-center py-5 bg-gray-50 rounded-sm">暂无分类</p>
-        </div>
-        <el-input
-          v-model="newCategoryName"
-          placeholder="请输入分类名称"
-          class="w-full my-3"
-          v-if="isAddingCategory"
-          @keyup.enter="handleSopCategorySubmit"
-          :disabled="sopCategoryInsertLoading"
-        />
-        <el-button
-          :icon="Plus"
-          @click="handleAddSopCategory"
-          class="w-full"
-          :disabled="isAddingCategory || sopCategoryInsertLoading"
-        >
-          增加SOP分类
-        </el-button> -->
       </div>
 
       <div class="flex-1">

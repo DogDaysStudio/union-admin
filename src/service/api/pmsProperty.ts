@@ -90,6 +90,11 @@ export function pmsPmsSopCopy(payload: {sopIds: any; targetGroupId: any}) {
   return http.post<Res<string[]>>('/pms/sop/copy', payload)
 }
 
+// 编辑SOP分类名称
+export function pmsPmsSopCategoryUpdate(payload: PmsSopCategoryUpdateDTO) {
+  return http.post<Res<PmsSopCategoryVO>>('/pms/sop-category/update', payload)
+}
+
 // 查询SOP分类列表（含步骤数量）
 export function pmsPropertySopCategoryList(payload: {sopId: string}) {
   return http.post<Res<PmsSopCategoryVO[]>>('/pms/sop-category/list', payload)
