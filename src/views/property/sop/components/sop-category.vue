@@ -86,6 +86,10 @@ const handleEditSopCategorySubmit = async () => {
   handleCancelEditSopCategory()
   emit('update-category', editCategoryId.value)
 }
+
+defineExpose({
+  changeCategory: handleSopCategoryClick,
+})
 </script>
 
 <template>

@@ -35,6 +35,7 @@ const addStepRef = ref<InstanceType<typeof AddStep>>()
 const updateStopRef = ref<InstanceType<typeof UpdateStop>>()
 const route = useRoute()
 const tableRef = ref<InstanceType<typeof ElTable>>()
+const sopCategoryRef = ref<InstanceType<typeof SopCategory>>()
 const sopId = route.params.id as string
 
 const {runAsync: runSopStepSort, loading: sopStepSortLoading} = useRequest(pmsPropertySopStepSort)
@@ -106,8 +107,7 @@ const initDraggable = () => {
 
 onMounted(async () => {
   await runSopCategoryList({sopId})
-  currentCategoryId.value = sopCategoryListData.value?.data[0]?.id
-  await runSopStepList({sopId, categoryId: currentCategoryId.value})
+  sopCategoryRef.value?.changeCategory(sopCategoryListData.value?.data[0]?.id)
   initDraggable()
 })
 </script>
@@ -146,6 +146,7 @@ onMounted(async () => {
           @add-category="refreshSopCategoryList"
           @update-category="refreshSopCategoryList"
           @change-category="handleSopCategoryClick"
+          ref="sopCategoryRef"
         />
       </div>
 
