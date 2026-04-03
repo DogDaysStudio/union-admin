@@ -27,12 +27,18 @@ const schema = computed(() =>
           rules: [{required: true, message: '请输入SOP名称'}],
           labelWidth: '60px',
         },
+        maxlength: 20,
+        showWordLimit: true,
       }),
       defineField.Input({
         label: 'SOP描述',
         prop: 'description',
         placeholder: 'SOP描述',
         colProps: {span: 24},
+        maxlength: 200,
+        showWordLimit: true,
+        type: 'textarea',
+        rows: 3,
       }),
     ],
   })

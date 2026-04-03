@@ -185,8 +185,8 @@ onMounted(async () => {
           <el-table-column prop="title" label="标题" />
           <el-table-column prop="description" label="描述" />
           <el-table-column prop="prompt" label="提示语" />
-          <el-table-column prop="workHours" label="工时" width="60" />
-          <el-table-column prop="score" label="分值" width="60" />
+          <el-table-column prop="workHours" label="工时" width="80" align="right" />
+          <el-table-column prop="score" label="分值" width="80" align="right" />
           <el-table-column prop="required" label="必填" align="center" width="60">
             <template #default="scope">
               <el-tag v-if="scope.row.required === 1" type="success">是</el-tag>

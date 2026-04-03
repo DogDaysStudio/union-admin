@@ -85,13 +85,25 @@ defineExpose({
       class="mt-4"
     >
       <el-form-item label="标题" prop="title">
-        <el-input v-model="form.title"></el-input>
+        <el-input v-model="form.title" maxlength="20" show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="描述" prop="description">
-        <el-input v-model="form.description"></el-input>
+        <el-input
+          type="textarea"
+          v-model="form.description"
+          :rows="3"
+          maxlength="200"
+          show-word-limit
+        ></el-input>
       </el-form-item>
       <el-form-item label="提示语" prop="prompt">
-        <el-input v-model="form.prompt"></el-input>
+        <el-input
+          type="textarea"
+          v-model="form.prompt"
+          :rows="3"
+          maxlength="200"
+          show-word-limit
+        ></el-input>
       </el-form-item>
       <el-form-item label="工时" prop="workHours">
         <el-input-number v-model="form.workHours"></el-input-number>
