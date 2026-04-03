@@ -1401,10 +1401,10 @@ interface ApiType {
   '/pms/pms/sop-step/sort': {Req: {stepIds: any}; Res: Record<string, any>}
 
   /* 【物业-SOP步骤管理】
-  // 查询步骤列表 | object:{sopId:SOP模板ID,categoryId:分类ID}
-  export function pmsPmsSopStepList(payload: {sopId: any; categoryId: any}) {return http.post<Res<PmsSopStepVO[]>>('/pms/pms/sop-step/list', payload)}
+  // 查询步骤列表或按标题搜索 | 无 keyword：按 sopId+categoryId 查分类下步骤。有 keyword：须传 sopId，在当前 SOP 全部步骤中按标题模糊搜索（跨分类）
+  export function pmsPmsSopStepList(payload: Record<string, any>) {return http.post<Res<PmsSopStepVO[]>>('/pms/pms/sop-step/list', payload)}
   */
-  '/pms/pms/sop-step/list': {Req: {sopId: any; categoryId: any}; Res: PmsSopStepVO[]}
+  '/pms/pms/sop-step/list': {Req: Record<string, any>; Res: PmsSopStepVO[]}
 
   /* 【物业-SOP步骤管理】
   // 新增步骤
@@ -1435,6 +1435,18 @@ interface ApiType {
   export function pmsPmsSopStepDelete(payload: {stepId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-step/delete', payload)}
   */
   '/pms/pms/sop-step/delete': {Req: {stepId: any}; Res: Record<string, any>}
+
+  /* 【物业-SOP版本快照】
+  // 获取SOP快照详情 | object:{snapshotId:快照ID}
+  export function pmsPmsSopSnapshotDetail(payload: {snapshotId: any}) {return http.post<Res<PmsSopSnapshotVO>>('/pms/pms/sop-snapshot/detail', payload)}
+  */
+  '/pms/pms/sop-snapshot/detail': {Req: {snapshotId: any}; Res: PmsSopSnapshotVO}
+
+  /* 【物业-SOP版本快照】
+  // 创建SOP版本快照 | 传入SOP模板ID，生成完整内容快照，返回snapshotId
+  export function pmsPmsSopSnapshotCreate(payload: PmsSopSnapshotCreateDTO) {return http.post<Res<string>>('/pms/pms/sop-snapshot/create', payload)}
+  */
+  '/pms/pms/sop-snapshot/create': {Req: PmsSopSnapshotCreateDTO; Res: string}
 
   /* 【物业-SOP分组管理】
   // 分组排序 | object:{groupIds:[分组ID有序列表]}
@@ -1477,6 +1489,12 @@ interface ApiType {
   export function pmsPmsSopCategoryUpdate(payload: PmsSopCategoryUpdateDTO) {return http.post<Res<PmsSopCategoryVO>>('/pms/pms/sop-category/update', payload)}
   */
   '/pms/pms/sop-category/update': {Req: PmsSopCategoryUpdateDTO; Res: PmsSopCategoryVO}
+
+  /* 【物业-SOP分类管理】
+  // SOP分类批量排序 | 传入该SOP下全部有效分类ID的有序列表
+  export function pmsPmsSopCategorySortBatch(payload: PmsSopCategorySortDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/sop-category/sort-batch', payload)}
+  */
+  '/pms/pms/sop-category/sort-batch': {Req: PmsSopCategorySortDTO; Res: Record<string, any>}
 
   /* 【物业-SOP分类管理】
   // 查询SOP分类列表（含步骤数量） | object:{sopId:SOP模板ID}
@@ -1665,40 +1683,82 @@ interface ApiType {
   '/pms/pms/employee/export': {Req: PmsEmployeeListDTO}
 
   /* 【物业-字典管理】
-  // 新增/修改字典
-  export function pmsPmsDicUpsert(payload: SysDicUpsertDTO) {return http.post<Res<string>>('/pms/pms/dic/upsert', payload)}
+  // 新建字典名（默认名称未命名字典） | object:{groupId:分组ID}
+  export function pmsPmsDicTypeInsert(payload: {groupId: any}) {return http.post<Res<PmsDicTypeVO>>('/pms/pms/dic/type/insert', payload)}
   */
-  '/pms/pms/dic/upsert': {Req: SysDicUpsertDTO; Res: string}
+  '/pms/pms/dic/type/insert': {Req: {groupId: any}; Res: PmsDicTypeVO}
 
   /* 【物业-字典管理】
-  // 批量更新字典条目排序
-  export function pmsPmsDicSortBatch(payload: SysDicSortDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/dic/sort-batch', payload)}
+  // 删除字典名（级联软删除） | object:{typeId:字典名ID}
+  export function pmsPmsDicTypeDelete(payload: {typeId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/dic/type/delete', payload)}
   */
-  '/pms/pms/dic/sort-batch': {Req: SysDicSortDTO; Res: Record<string, any>}
+  '/pms/pms/dic/type/delete': {Req: {typeId: any}; Res: Record<string, any>}
 
   /* 【物业-字典管理】
-  // 字典列表
-  export function pmsPmsDicList(payload: SysDicListDTO) {return http.post<Res<SysDicVO[]>>('/pms/pms/dic/list', payload)}
+  // 编辑字典值
+  export function pmsPmsDicItemUpdate(payload: PmsDicItemUpdateDTO) {return http.post<Res<PmsDicItemVO>>('/pms/pms/dic/item/update', payload)}
   */
-  '/pms/pms/dic/list': {Req: SysDicListDTO; Res: SysDicVO[]}
+  '/pms/pms/dic/item/update': {Req: PmsDicItemUpdateDTO; Res: PmsDicItemVO}
 
   /* 【物业-字典管理】
-  // 字典详情 | object:{dicId:字典ID}
-  export function pmsPmsDicGet(payload: {dicId: any}) {return http.post<Res<SysDicVO>>('/pms/pms/dic/get', payload)}
+  // 右侧字典值搜索 | object:{typeId:字典名ID, keyword:关键字}
+  export function pmsPmsDicItemSearch(payload: {typeId: any; keyword: any}) {return http.post<Res<PmsDicItemVO[]>>('/pms/pms/dic/item/search', payload)}
   */
-  '/pms/pms/dic/get': {Req: {dicId: any}; Res: SysDicVO}
+  '/pms/pms/dic/item/search': {Req: {typeId: any; keyword: any}; Res: PmsDicItemVO[]}
 
   /* 【物业-字典管理】
-  // 启用/禁用字典 | object:{dicId:字典ID,enable:bool}
-  export function pmsPmsDicEnable(payload: {dicId: any; enable: boolean}) {return http.post<Res<Record<string, any>>>('/pms/pms/dic/enable', payload)}
+  // 字典值列表 | object:{typeId:字典名ID}
+  export function pmsPmsDicItemList(payload: {typeId: any}) {return http.post<Res<PmsDicItemVO[]>>('/pms/pms/dic/item/list', payload)}
   */
-  '/pms/pms/dic/enable': {Req: {dicId: any; enable: boolean}; Res: Record<string, any>}
+  '/pms/pms/dic/item/list': {Req: {typeId: any}; Res: PmsDicItemVO[]}
 
   /* 【物业-字典管理】
-  // 删除字典 | object:{dicId:字典ID}
-  export function pmsPmsDicDelete(payload: {dicId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/dic/delete', payload)}
+  // 批量添加字典值
+  export function pmsPmsDicItemInsertBatch(payload: PmsDicItemInsertDTO) {return http.post<Res<Record<string, any>>>('/pms/pms/dic/item/insert-batch', payload)}
   */
-  '/pms/pms/dic/delete': {Req: {dicId: any}; Res: Record<string, any>}
+  '/pms/pms/dic/item/insert-batch': {Req: PmsDicItemInsertDTO; Res: Record<string, any>}
+
+  /* 【物业-字典管理】
+  // 字典值导入Excel
+  export function pmsPmsDicItemImport() {return http.post<Res<ImportResult>>('/pms/pms/dic/item/import')}
+  */
+  '/pms/pms/dic/item/import': {Res: ImportResult}
+
+  /* 【物业-字典管理】
+  // 字典值导出Excel | object:{typeId:字典名ID}
+  export function pmsPmsDicItemExport(payload: {typeId: any}) {return http.post<Res<>>('/pms/pms/dic/item/export', payload)}
+  */
+  '/pms/pms/dic/item/export': {Req: {typeId: any}}
+
+  /* 【物业-字典管理】
+  // 删除字典值 | object:{itemId:字典值ID}
+  export function pmsPmsDicItemDelete(payload: {itemId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/dic/item/delete', payload)}
+  */
+  '/pms/pms/dic/item/delete': {Req: {itemId: any}; Res: Record<string, any>}
+
+  /* 【物业-字典管理】
+  // 左侧树查询（分组→字典名，含字典值数量）
+  export function pmsPmsDicGroupTree() {return http.post<Res<PmsDicGroupVO[]>>('/pms/pms/dic/group/tree')}
+  */
+  '/pms/pms/dic/group/tree': {Res: PmsDicGroupVO[]}
+
+  /* 【物业-字典管理】
+  // 左侧树搜索 | object:{keyword:关键字}，按分组名和字典名模糊匹配
+  export function pmsPmsDicGroupSearch(payload: Record<string, any>) {return http.post<Res<PmsDicGroupVO[]>>('/pms/pms/dic/group/search', payload)}
+  */
+  '/pms/pms/dic/group/search': {Req: Record<string, any>; Res: PmsDicGroupVO[]}
+
+  /* 【物业-字典管理】
+  // 新建分组（默认名称未命名分组）
+  export function pmsPmsDicGroupInsert() {return http.post<Res<PmsDicGroupVO>>('/pms/pms/dic/group/insert')}
+  */
+  '/pms/pms/dic/group/insert': {Res: PmsDicGroupVO}
+
+  /* 【物业-字典管理】
+  // 删除分组（级联软删除） | object:{groupId:分组ID}
+  export function pmsPmsDicGroupDelete(payload: {groupId: any}) {return http.post<Res<Record<string, any>>>('/pms/pms/dic/group/delete', payload)}
+  */
+  '/pms/pms/dic/group/delete': {Req: {groupId: any}; Res: Record<string, any>}
 
   /* 【物业-客户信息管理】
   // 新增客户车辆
@@ -3257,6 +3317,7 @@ interface PmsSopTemplateUpdateBasicDTO {
   id: string // SOP模板ID
   sopName: string // SOP名称（标题）
   description?: string // SOP描述，可空字符串
+  sopType?: string // SOP类型: normal-普通, scoring-评分；不传则不更新
 }
 
 interface PmsSopTemplateListDTO {
@@ -3274,6 +3335,7 @@ interface PmsSopTemplateVO {
   sopName: string // SOP名称
   description: string // SOP描述
   sortOrder: number // 排序号
+  sopType: string // SOP类型: normal-普通, scoring-评分
   enable: number // 0-禁用;1-启用
   insertTime: string // 记录插入时间
   categoryCount: number // 子项（分类）数量
@@ -3284,6 +3346,7 @@ interface PmsSopTemplateInsertDTO {
   sopName: string // SOP名称
   groupId?: string // 所属分组ID（不传则使用默认分组）
   description?: string // SOP描述
+  sopType?: string // SOP类型: normal-普通（默认）, scoring-评分
 }
 
 // SOP模板详情查询
@@ -3309,6 +3372,7 @@ interface PmsSopTemplateDetailVO {
   sopName: string // SOP名称（标题）
   description: string // SOP描述
   sortOrder: number // 排序号
+  sopType: string // SOP类型: normal-普通, scoring-评分
   enable: number // 0-禁用;1-启用
   insertTime: string // 记录插入时间
   categories: PmsSopCategoryVO[] // 该模板下 SOP 分类列表（含步骤数量）
@@ -3325,12 +3389,15 @@ interface PmsSopStepUpdateDTO {
   required?: number // 是否必填(0否/1是)
   photoRequired?: number // 是否需要拍照(0否/1是)
   enable?: number // 状态(0关闭/1启用)
+  scoreRangeMin?: number // 评分区间最小值（评分类SOP步骤专用，普通类忽略）
+  scoreRangeMax?: number // 评分区间最大值（评分类SOP步骤专用，普通类忽略）
 }
 
 // SOP步骤VO
 interface PmsSopStepVO {
   id: string // ID
   categoryId: string // 所属分类ID
+  categoryName: string // 所属分类名称
   sopId: string // 所属SOP模板ID
   seqNo: number // 序号
   title: string // 步骤标题
@@ -3338,6 +3405,8 @@ interface PmsSopStepVO {
   prompt: string // 提示语
   workHours: number // 工时
   score: number // 分值
+  scoreRangeMin: number // 评分区间最小值
+  scoreRangeMax: number // 评分区间最大值
   required: number // 0-非必填;1-必填
   photoRequired: number // 0-不需拍照;1-需拍照
   enable: number // 0-禁用;1-启用
@@ -3354,6 +3423,8 @@ interface PmsSopStepInsertDTO {
   score?: number // 分值
   required?: number // 是否必填(0否/1是)
   photoRequired?: number // 是否需要拍照(0否/1是)
+  scoreRangeMin?: number // 评分区间最小值（评分类SOP步骤专用，普通类忽略）
+  scoreRangeMax?: number // 评分区间最大值（评分类SOP步骤专用，普通类忽略）
 }
 
 // Excel导入结果VO
@@ -3361,6 +3432,30 @@ interface PmsSopImportResultVO {
   successCount: number // 成功条数
   failCount: number // 失败条数
   failReasons: string[] // 失败原因列表
+}
+
+// SOP快照分类（含步骤列表）
+interface PmsSopSnapshotCategoryVO {
+  id: string // 分类ID
+  categoryName: string // 分类名称
+  sortOrder: number // 排序号
+  steps: PmsSopStepVO[] // 步骤列表
+}
+
+// SOP版本快照详情
+interface PmsSopSnapshotVO {
+  snapshotId: string // 快照ID
+  sopId: string // 来源SOP模板ID
+  sopName: string // 快照时SOP名称
+  sopType: string // SOP类型: normal-普通, scoring-评分
+  description: string // SOP描述
+  categories: PmsSopSnapshotCategoryVO[] // 分类列表（含步骤）
+  insertTime: string // 快照创建时间
+}
+
+// 创建SOP版本快照请求
+interface PmsSopSnapshotCreateDTO {
+  sopId: string // SOP模板ID
 }
 
 interface PmsSopGroupVO {
@@ -3381,6 +3476,12 @@ interface PmsSopGroupInsertDTO {
 interface PmsSopCategoryUpdateDTO {
   categoryId: string // 分类ID
   categoryName: string // 新分类名称
+}
+
+// SOP分类排序DTO（须包含该SOP下全部分类ID，顺序与展示一致）
+interface PmsSopCategorySortDTO {
+  sopId: string // SOP模板ID
+  categoryIds: string[] // 分类ID有序列表，须覆盖该SOP下全部有效分类且无重复
 }
 
 // SOP分类新建DTO
@@ -3898,9 +3999,60 @@ interface PmsEmployeeListDTO {
   searchName: string // 关键字搜索（按姓名模糊匹配）
 }
 
-interface SysDicSortDTO {
-  dicId: string // 字典ID
-  dicSort: number // 排序值（越小越靠前）
+interface PmsDicTypeVO {
+  id: string // ID
+  groupId: string // 所属分组ID
+  typeName: string // 字典名称
+  typeCode: string // 字典编码
+  sortOrder: number // 排序号
+  enable: number // 0-禁用;1-启用
+  insertTime: string // 记录插入时间
+  itemCount: number // 字典值数量
+}
+
+// PMS字典值编辑DTO
+interface PmsDicItemUpdateDTO {
+  itemId: string // 字典值ID
+  itemName?: string // 字典值名称
+  remark?: string // 备注
+}
+
+interface PmsDicItemVO {
+  id: string // ID
+  typeId: string // 所属字典名ID
+  typeCode: string // 所属字典名编码（冗余）
+  itemName: string // 字典值名称
+  itemCode: string // 字典值编码
+  remark: string // 备注
+  sortOrder: number // 排序号
+  enable: number // 0-禁用;1-启用
+  insertTime: string // 记录插入时间
+}
+
+interface ItemEntry {
+  itemName: string // 字典值名称
+  remark?: string // 备注
+}
+
+// PMS字典值批量添加DTO
+interface PmsDicItemInsertDTO {
+  typeId: string // 字典名ID
+  items: ItemEntry[] // 字典值列表
+}
+
+interface ImportResult {
+  successCount: number
+  failCount: number
+  errors: string[]
+}
+
+interface PmsDicGroupVO {
+  id: string // ID
+  groupName: string // 分组名称
+  sortOrder: number // 排序号
+  enable: number // 0-禁用;1-启用
+  insertTime: string // 记录插入时间
+  typeList: PmsDicTypeVO[] // 分组下的字典名列表
 }
 
 interface PmsCustomerVehicleInsertDTO {

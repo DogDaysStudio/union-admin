@@ -1,33 +1,68 @@
 import http from '../service'
 
-// 树形码表
-export function pmsPropertyDicListTree(payload?: {dicType: any}) {
-  return http.post<Res<SysDicVO[]>>('/common/dic/list-tree', payload)
+// 新建字典名（默认名称未命名字典） | object:{groupId:分组ID}
+export function pmsPmsDicTypeInsert(payload: {groupId: any}) {
+  return http.post<Res<PmsDicTypeVO>>('/pms/dic/type/insert', payload)
 }
 
-// 字典列表
-export function pmsPropertyDicList(payload?: SysDicListDTO) {
-  return http.post<Res<SysDicVO[]>>('/pms/dic/list', payload)
+// 删除字典名（级联软删除） | object:{typeId:字典名ID}
+export function pmsPmsDicTypeDelete(payload: {typeId: any}) {
+  return http.post<Res<Record<string, any>>>('/pms/dic/type/delete', payload)
 }
 
-// 新增/修改字典
-export function pmsPropertyDicUpsert(payload: Record<string, any>) {
-  return http.post<Res<string>>('/pms/dic/upsert', payload)
+// 编辑字典值
+export function pmsPmsDicItemUpdate(payload: PmsDicItemUpdateDTO) {
+  return http.post<Res<PmsDicItemVO>>('/pms/dic/item/update', payload)
 }
 
-// 字典详情
-export function pmsPropertyDicGet(payload: Record<string, any>) {
-  return http.post<Res<PairModel>>('/pms/dic/get', payload)
+// 右侧字典值搜索 | object:{typeId:字典名ID, keyword:关键字}
+export function pmsPmsDicItemSearch(payload: {typeId: any; keyword: any}) {
+  return http.post<Res<PmsDicItemVO[]>>('/pms/dic/item/search', payload)
 }
 
-// 启用/禁用字典
-export function pmsPropertyDicEnable(payload: Record<string, any>) {
-  return http.post<Res<string>>('/pms/dic/enable', payload)
+// 字典值列表 | object:{typeId:字典名ID}
+export function pmsPmsDicItemList(payload: {typeId: any}) {
+  return http.post<Res<PmsDicItemVO[]>>('/pms/dic/item/list', payload)
 }
 
-// 删除字典
-export function pmsPropertyDicDelete(payload: Record<string, any>) {
-  return http.post<Res<string>>('/pms/dic/delete', payload)
+// 批量添加字典值
+export function pmsPmsDicItemInsertBatch(payload: PmsDicItemInsertDTO) {
+  return http.post<Res<Record<string, any>>>('/pms/dic/item/insert-batch', payload)
+}
+
+// 字典值导入Excel
+export function pmsPmsDicItemImport() {
+  return http.post<Res<ImportResult>>('/pms/dic/item/import')
+}
+
+// 字典值导出Excel | object:{typeId:字典名ID}
+export function pmsPmsDicItemExport(payload: {typeId: any}) {
+  return http.post<Res<string>>('/pms/dic/item/export', payload)
+}
+
+// 删除字典值 | object:{itemId:字典值ID}
+export function pmsPmsDicItemDelete(payload: {itemId: any}) {
+  return http.post<Res<Record<string, any>>>('/pms/dic/item/delete', payload)
+}
+
+// 左侧树查询（分组→字典名，含字典值数量）
+export function pmsPmsDicGroupTree() {
+  return http.post<Res<PmsDicGroupVO[]>>('/pms/dic/group/tree')
+}
+
+// 左侧树搜索 | object:{keyword:关键字}，按分组名和字典名模糊匹配
+export function pmsPmsDicGroupSearch(payload: Record<string, any>) {
+  return http.post<Res<PmsDicGroupVO[]>>('/pms/dic/group/search', payload)
+}
+
+// 新建分组（默认名称未命名分组）
+export function pmsPmsDicGroupInsert() {
+  return http.post<Res<PmsDicGroupVO>>('/pms/dic/group/insert')
+}
+
+// 删除分组（级联软删除） | object:{groupId:分组ID}
+export function pmsPmsDicGroupDelete(payload: {groupId: any}) {
+  return http.post<Res<Record<string, any>>>('/pms/dic/group/delete', payload)
 }
 
 // 分组列表（含SOP模板）
