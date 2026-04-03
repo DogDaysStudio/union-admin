@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {EditPen, Rank, Plus} from '@element-plus/icons-vue'
-import {computed, nextTick, ref} from 'vue'
+import {nextTick, onMounted, ref} from 'vue'
 import {pmsPropertySopCategoryInsert, pmsPmsSopCategoryUpdate} from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
+import Sortable from 'sortablejs'
 
 const {categoryList = [], sopId} = defineProps<{
   categoryList: PmsSopCategoryVO[]
@@ -20,12 +21,10 @@ const isAddingCategory = ref(false)
 const activeCategoryId = ref('')
 const inputRef = ref<InstanceType<typeof ElInput>>()
 const categoryRef = ref<InstanceType<typeof ElInput>>()
-
+const categoryMenuRef = ref<InstanceType<typeof HTMLDivElement>>()
 const isEditingCategory = ref(false)
 const editCategoryId = ref('')
 const editCategoryName = ref('')
-
-const isEmpty = computed(() => categoryList?.length === 0)
 
 const {runAsync: runSopCategoryInsert, loading: sopCategoryInsertLoading} = useRequest(
   pmsPropertySopCategoryInsert
@@ -87,6 +86,24 @@ const handleEditSopCategorySubmit = async () => {
   emit('update-category', editCategoryId.value)
 }
 
+const initDraggable = () => {
+  const dom = categoryMenuRef.value
+
+  Sortable.create(dom, {
+    animation: 150,
+    handle: '.handle-drag',
+    async onEnd(evt) {
+      const {oldIndex, newIndex} = evt
+      console.log({oldIndex, newIndex})
+      console.log(categoryList)
+    },
+  })
+}
+
+onMounted(() => {
+  initDraggable()
+})
+
 defineExpose({
   changeCategory: handleSopCategoryClick,
 })
@@ -94,40 +111,42 @@ defineExpose({
 
 <template>
   <div class="flex flex-col gap-3">
-    <div v-if="!isEmpty" class="flex flex-col gap-3">
-      <div
-        v-for="item in categoryList"
-        :key="item.id"
-        @click="handleSopCategoryClick(item.id)"
-        class="cursor-pointer rounded-sm px-3 p-2 text-sm/8 group transition-all duration-300"
-        :class="{
-          'bg-sky-100': activeCategoryId === item.id,
-          'bg-gray-100 hover:bg-gray-100': activeCategoryId !== item.id,
-        }"
-      >
-        <div class="flex items-center justify-between w-full" v-if="editCategoryId !== item.id">
-          <span>{{ item.categoryName }}</span>
-          <el-button
-            link
-            class="size-8 opacity-0 group-hover:opacity-100"
-            text
-            :icon="EditPen"
-            @click.stop="handleEditSopCategory(item)"
-          />
-          <el-button
-            link
-            class="size-8 opacity-0 group-hover:opacity-100 ml-auto!"
-            text
-            :icon="Rank"
+    <div>
+      <div class="flex flex-col gap-3" ref="categoryMenuRef">
+        <div
+          v-for="item in categoryList"
+          :key="item.id"
+          @click="handleSopCategoryClick(item.id)"
+          class="cursor-pointer rounded-sm px-3 p-2 text-sm/8 group transition-all duration-300"
+          :class="{
+            'bg-sky-100': activeCategoryId === item.id,
+            'bg-gray-100 hover:bg-gray-100': activeCategoryId !== item.id,
+          }"
+        >
+          <div class="flex items-center justify-between w-full" v-if="editCategoryId !== item.id">
+            <span>{{ item.categoryName }}</span>
+            <el-button
+              link
+              class="size-8 opacity-0 group-hover:opacity-100"
+              text
+              :icon="EditPen"
+              @click.stop="handleEditSopCategory(item)"
+            />
+            <el-button
+              link
+              class="size-8 opacity-0 group-hover:opacity-100 ml-auto! handle-drag"
+              text
+              :icon="Rank"
+            />
+          </div>
+          <el-input
+            ref="categoryRef"
+            v-model="editCategoryName"
+            v-else
+            @blur="handleEditSopCategorySubmit"
+            @keyup.enter="handleSopCategorySubmit"
           />
         </div>
-        <el-input
-          ref="categoryRef"
-          v-model="editCategoryName"
-          v-else
-          @blur="handleEditSopCategorySubmit"
-          @keyup.enter="handleSopCategorySubmit"
-        />
       </div>
     </div>
 

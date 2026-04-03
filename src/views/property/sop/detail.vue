@@ -139,7 +139,7 @@ onMounted(async () => {
     </template>
 
     <div class="flex gap-4">
-      <div class="w-60 min-h-50">
+      <div class="w-60 min-h-50 shrink-0">
         <SopCategory
           :categoryList="sopCategoryListData?.data"
           :sopId="sopId"
@@ -150,7 +150,7 @@ onMounted(async () => {
         />
       </div>
 
-      <div class="flex-1">
+      <div class="flex-1 overflow-hidden">
         <div class="flex justify-between items-center mb-4">
           <h2 class="font-bold text-base shrink-0">步骤列表</h2>
           <el-input v-model="searchStepTitle" placeholder="搜索步骤" class="w-80! ml-auto mr-3" />
@@ -167,8 +167,9 @@ onMounted(async () => {
           border
           :loading="sopStepListLoading || sopStepSortLoading"
           row-key="id"
+          class="w-full"
         >
-          <el-table-column prop="enable" label="状态">
+          <el-table-column prop="enable" label="状态" width="80" align="center">
             <template #default="scope">
               <el-switch
                 v-model="scope.row.enable"
@@ -182,11 +183,21 @@ onMounted(async () => {
           <el-table-column prop="title" label="标题" />
           <el-table-column prop="description" label="描述" />
           <el-table-column prop="prompt" label="提示语" />
-          <el-table-column prop="workHours" label="工时" />
-          <el-table-column prop="score" label="分值" />
-          <el-table-column prop="required" label="必填" />
-          <el-table-column prop="photoRequired" label="拍照" />
-          <el-table-column label="操作" align="center">
+          <el-table-column prop="workHours" label="工时" width="60" />
+          <el-table-column prop="score" label="分值" width="60" />
+          <el-table-column prop="required" label="必填" align="center" width="60">
+            <template #default="scope">
+              <el-tag v-if="scope.row.required === 1" type="success">是</el-tag>
+              <el-tag v-else type="info">否</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="photoRequired" label="拍照" align="center" width="60">
+            <template #default="scope">
+              <el-tag v-if="scope.row.photoRequired === 1" type="success">是</el-tag>
+              <el-tag v-else type="info">否</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center" width="140">
             <template #default="scope">
               <el-button link type="primary" @click="handleEditStep(scope.row)">编辑</el-button>
               <el-button link type="danger" @click="handleDeleteStep(scope.row)">删除</el-button>
