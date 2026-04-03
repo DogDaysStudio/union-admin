@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import {Plus, Upload, Download, Search} from '@element-plus/icons-vue'
-import {useRoute} from 'vue-router'
 import {
   pmsPmsDicGroupSearch,
-  pmsPropertySopStepList,
-  pmsPmsSopStepDelete,
+  pmsPmsDicItemDelete,
+  pmsPmsDicItemList,
 } from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
-import {ref, defineAsyncComponent} from 'vue'
+import {ref, defineAsyncComponent, computed} from 'vue'
 // import DicGroup from './components/dic-group.vue'
 import {useExport} from '@/common/hooks'
+
+// const DEFAULT_GROUP_NAME = '未命名分组'
 
 const AddDic = defineAsyncComponent(() => import('./components/add-dic.vue'))
 
@@ -21,53 +22,78 @@ const defaultProps = {
 const keyword = ref('')
 const dicSearch = ref('')
 
+const isAddGroup = ref(false)
+// const newGroupName = ref(DEFAULT_GROUP_NAME)
+
+const typeId = ref('')
+
 const {
   data: dicGroupListData,
   runAsync: runDicGroupList,
   loading: dicGroupListLoading,
+  refresh: refreshDicGroupList,
 } = useRequest(pmsPmsDicGroupSearch, {
   manual: false,
   defaultParams: [{keyword: ''}],
 })
 
 const {
-  data: sopStepListData,
-  refresh: refreshSopStepList,
-  loading: sopStepListLoading,
-} = useRequest(pmsPropertySopStepList)
+  data: dicItemListData,
+  runAsync: runDicItemList,
+  loading: dicItemListLoading,
+  refresh: refreshDicItemList,
+} = useRequest(pmsPmsDicItemList)
 
 const currentCategoryId = ref('')
 const addDicRef = ref<InstanceType<typeof AddDic>>()
-const route = useRoute()
 const tableRef = ref<InstanceType<typeof ElTable>>()
-const sopId = route.params.id as string
 
-const {runAsync: runSopStepDelete} = useRequest(pmsPmsSopStepDelete)
+const {runAsync: runDicItemDelete} = useRequest(pmsPmsDicItemDelete)
+
+const filterDicItemList = computed(() => {
+  return dicItemListData.value?.data.filter((item: PmsDicItemVO) => {
+    return item.itemName.includes(dicSearch.value) || item.itemCode.includes(dicSearch.value)
+  })
+})
 
 const {exportData, loading: exportLoading} = useExport({
-  url: '/pms/sop-step/export' as keyof ApiType,
+  url: '/pms/dic/item/export' as keyof ApiType,
 })
+
+const handleGroupChange = (node: PmsDicGroupVO) => {
+  typeId.value = node.id
+  runDicItemList({typeId: node.id})
+}
+
+const handleAddGroup = () => {
+  isAddGroup.value = true
+}
+
+// const handleCancelAddGroup = () => {
+//   isAddGroup.value = false
+//   newGroupName.value = DEFAULT_GROUP_NAME
+// }
 
 const handleSearchGroup = () => {
   runDicGroupList({keyword: keyword.value})
 }
 
 const handleExport = async () => {
-  await exportData({sopId})
+  await exportData({typeId: typeId.value})
 }
 
 const handleAddDic = () => {
   addDicRef.value?.open({categoryId: currentCategoryId.value})
 }
 
-const handleDeleteStep = (row: PmsSopStepVO) => {
-  ElMessageBox.confirm(`确定删除该步骤吗？${row.title}`, '提示', {
+const handleDeleteStep = (row: PmsDicItemVO) => {
+  ElMessageBox.confirm(`确定删除该字典值吗？${row.itemName}`, '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   }).then(async () => {
-    await runSopStepDelete({stepId: row.id})
-    await refreshSopStepList()
+    await runDicItemDelete({itemId: row.id})
+    refreshDicItemList()
   })
 }
 </script>
@@ -86,15 +112,21 @@ const handleDeleteStep = (row: PmsSopStepVO) => {
             clearable
             @clear="handleSearchGroup"
           />
-          <el-button :icon="Plus" class="size-8!"></el-button>
+          <el-button :icon="Plus" class="size-8!" @click="handleAddGroup"></el-button>
         </div>
 
         <el-tree
           :data="dicGroupListData?.data"
           :props="defaultProps"
-          style="--el-tree-node-content-height: 32px"
+          style="--el-tree-node-content-height: 36px"
           default-expand-all
-        />
+          @node-click="handleGroupChange"
+          :expand-on-click-node="false"
+        >
+          <template #default="{data}">
+            <span>{{ data.groupName || data.typeName }}</span>
+          </template>
+        </el-tree>
       </section-group>
     </el-col>
 
@@ -111,16 +143,14 @@ const handleDeleteStep = (row: PmsSopStepVO) => {
         </div>
         <el-table
           ref="tableRef"
-          :data="sopStepListData?.data"
-          stripe
+          :data="filterDicItemList"
           border
-          :loading="sopStepListLoading"
+          :loading="dicItemListLoading"
           row-key="id"
           class="w-full"
         >
-          <el-table-column prop="title" label="名称" />
-          <el-table-column prop="description" label="CODE" />
-          <el-table-column prop="description" label="备注" />
+          <el-table-column prop="itemName" label="名称" />
+          <el-table-column prop="itemCode" label="CODE" />
 
           <el-table-column label="操作" align="center" width="80">
             <template #default="scope">
@@ -130,6 +160,6 @@ const handleDeleteStep = (row: PmsSopStepVO) => {
         </el-table>
       </section-group>
     </el-col>
-    <AddDic ref="addDicRef" @finish="refreshSopStepList" />
+    <AddDic ref="addDicRef" @finish="refreshDicGroupList" />
   </el-row>
 </template>
