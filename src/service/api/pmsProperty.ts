@@ -145,6 +145,11 @@ export function pmsPropertySopStepEnable(payload: {stepId: string; enable: numbe
   return http.post<Res<string>>('/pms/sop-step/enable', payload)
 }
 
+// 删除SOP步骤 | object:{stepId:步骤ID}
+export function pmsPmsSopStepDelete(payload: {stepId: any}) {
+  return http.post<Res<Record<string, any>>>('/pms/sop-step/delete', payload)
+}
+
 // 员工分页查询
 export function pmsPropertyEmployeeList(payload?: PmsEmployeeListDTO) {
   return http.post<Res<PmsEmployeeVO[]>>('/pms/employee/list', payload)

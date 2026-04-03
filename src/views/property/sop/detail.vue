@@ -7,6 +7,7 @@ import {
   pmsPropertySopStepEnable,
   pmsPropertySopStepSort,
   pmsPmsSopDetail,
+  pmsPmsSopStepDelete,
 } from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
 import {onMounted, ref, defineAsyncComponent} from 'vue'
@@ -48,6 +49,8 @@ const {data: sopDetailData, refresh: refreshSopDetail} = useRequest(pmsPmsSopDet
   defaultParams: [{sopId}],
 })
 
+const {runAsync: runSopStepDelete} = useRequest(pmsPmsSopStepDelete)
+
 const {exportData, loading: exportLoading} = useExport({
   url: '/pms/sop-step/export' as keyof ApiType,
 })
@@ -65,15 +68,14 @@ const handleEditStep = (row: PmsSopStepVO) => {
 }
 
 const handleDeleteStep = (row: PmsSopStepVO) => {
-  // ElMessageBox.confirm('确定删除该步骤吗？', '提示', {
-  //   confirmButtonText: '确定',
-  //   cancelButtonText: '取消',
-  //   type: 'warning',
-  // }).then(async () => {
-  //   await runSopStepDelete({ stepId: row.id })
-  //   await refreshSopStepList()
-  // })
-  console.log(row)
+  ElMessageBox.confirm(`确定删除该步骤吗？${row.title}`, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(async () => {
+    await runSopStepDelete({stepId: row.id})
+    await refreshSopStepList()
+  })
 }
 
 const handleUpdateStop = () => {
