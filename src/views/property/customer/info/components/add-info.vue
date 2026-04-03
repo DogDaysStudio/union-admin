@@ -51,7 +51,12 @@ const schema = computed(() =>
         placeholder: '出生日期',
         colProps: {span: 24},
       }),
-      defineField.UploadFile({label: '证件照片', prop: 'certPhoto', colProps: {span: 24}}),
+      defineField.UploadFile({
+        label: '证件照片',
+        prop: 'certPhoto',
+        colProps: {span: 24},
+        action: '/common/file/upload',
+      }),
       defineField.Input({
         label: '银行账号',
         prop: 'bankAccount',
