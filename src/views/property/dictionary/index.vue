@@ -31,7 +31,6 @@ const {
   data: dicGroupListData,
   runAsync: runDicGroupList,
   loading: dicGroupListLoading,
-  refresh: refreshDicGroupList,
 } = useRequest(pmsPmsDicGroupSearch, {
   manual: false,
   defaultParams: [{keyword: ''}],
@@ -44,7 +43,6 @@ const {
   refresh: refreshDicItemList,
 } = useRequest(pmsPmsDicItemList)
 
-const currentCategoryId = ref('')
 const addDicRef = ref<InstanceType<typeof AddDic>>()
 
 const {runAsync: runDicItemDelete} = useRequest(pmsPmsDicItemDelete)
@@ -82,7 +80,7 @@ const handleExport = async () => {
 }
 
 const handleAddDic = () => {
-  addDicRef.value?.open({categoryId: currentCategoryId.value})
+  addDicRef.value?.open({typeId: typeId.value})
 }
 
 const handleDeleteStep = (row: PmsDicItemVO) => {
@@ -158,6 +156,6 @@ const handleDeleteStep = (row: PmsDicItemVO) => {
         </el-table>
       </section-group>
     </el-col>
-    <AddDic ref="addDicRef" @finish="refreshDicGroupList" />
+    <AddDic ref="addDicRef" @finish="refreshDicItemList" />
   </el-row>
 </template>

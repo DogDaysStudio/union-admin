@@ -11,7 +11,7 @@ const instance = axios.create({
 export const createHeaders = () => {
   // const userStore = useUserStore()
   return {
-    'union-auth': 'b1cb020e4b3a4391a406cc33878b78ce',
+    'union-auth': '07f6e7355a684af29d3176936f0fecbf',
   }
 }
 
