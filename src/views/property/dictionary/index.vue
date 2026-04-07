@@ -1,40 +1,17 @@
 <script setup lang="ts">
-import {Plus, Upload, Download, Search} from '@element-plus/icons-vue'
-import {
-  pmsPmsDicGroupSearch,
-  pmsPmsDicItemDelete,
-  pmsPmsDicItemList,
-} from '@/service/api/pmsProperty'
+import {Plus, Upload, Download} from '@element-plus/icons-vue'
+import {pmsPmsDicItemDelete, pmsPmsDicItemList} from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
 import {ref, defineAsyncComponent, computed} from 'vue'
-// import DicGroup from './components/dic-group.vue'
 import {useExport} from '@/common/hooks'
 
-// const DEFAULT_GROUP_NAME = '未命名分组'
+import SideGroup from './components/side-group.vue'
 
 const AddDic = defineAsyncComponent(() => import('./components/add-dic.vue'))
 
-const defaultProps = {
-  children: 'typeList',
-  label: data => data.groupName || data.typeName,
-}
-
-const keyword = ref('')
 const dicSearch = ref('')
 
-const isAddGroup = ref(false)
-// const newGroupName = ref(DEFAULT_GROUP_NAME)
-
 const typeId = ref('')
-
-const {
-  data: dicGroupListData,
-  runAsync: runDicGroupList,
-  loading: dicGroupListLoading,
-} = useRequest(pmsPmsDicGroupSearch, {
-  manual: false,
-  defaultParams: [{keyword: ''}],
-})
 
 const {
   data: dicItemListData,
@@ -57,22 +34,9 @@ const {exportData, loading: exportLoading} = useExport({
   url: '/pms/dic/item/export' as keyof ApiType,
 })
 
-const handleGroupChange = (node: PmsDicGroupVO) => {
-  typeId.value = node.id
-  runDicItemList({typeId: node.id})
-}
-
-const handleAddGroup = () => {
-  isAddGroup.value = true
-}
-
-// const handleCancelAddGroup = () => {
-//   isAddGroup.value = false
-//   newGroupName.value = DEFAULT_GROUP_NAME
-// }
-
-const handleSearchGroup = () => {
-  runDicGroupList({keyword: keyword.value})
+const handleGroupChange = (id: string) => {
+  typeId.value = id
+  runDicItemList({typeId: id})
 }
 
 const handleExport = async () => {
@@ -96,38 +60,12 @@ const handleDeleteStep = (row: PmsDicItemVO) => {
 </script>
 
 <template>
-  <el-row :gutter="20">
-    <el-col :span="6">
-      <section-group title="字典管理" class="h-full">
-        <div class="flex justify-between items-center mb-4" v-loading="dicGroupListLoading">
-          <el-input
-            v-model="keyword"
-            placeholder="搜索分组"
-            class="mr-3"
-            :prefix-icon="Search"
-            @keydown.enter="handleSearchGroup"
-            clearable
-            @clear="handleSearchGroup"
-          />
-          <el-button :icon="Plus" class="size-8!" @click="handleAddGroup"></el-button>
-        </div>
+  <div class="flex gap-4">
+    <div class="w-90 shrink-0">
+      <SideGroup @change-type="handleGroupChange" />
+    </div>
 
-        <el-tree
-          :data="dicGroupListData?.data"
-          :props="defaultProps"
-          style="--el-tree-node-content-height: 36px"
-          default-expand-all
-          @node-click="handleGroupChange"
-          :expand-on-click-node="false"
-        >
-          <template #default="{data}">
-            <span>{{ data.groupName || data.typeName }}</span>
-          </template>
-        </el-tree>
-      </section-group>
-    </el-col>
-
-    <el-col :span="18">
+    <div class="flex-1">
       <section-group title="字典管理" class="h-full">
         <div class="flex justify-between items-center mb-4">
           <h2 class="font-bold text-base shrink-0">字典值</h2>
@@ -155,7 +93,8 @@ const handleDeleteStep = (row: PmsDicItemVO) => {
           </el-table-column>
         </el-table>
       </section-group>
-    </el-col>
+    </div>
+
     <AddDic ref="addDicRef" @finish="refreshDicItemList" />
-  </el-row>
+  </div>
 </template>
