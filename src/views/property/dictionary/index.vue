@@ -46,7 +46,6 @@ const {
 
 const currentCategoryId = ref('')
 const addDicRef = ref<InstanceType<typeof AddDic>>()
-const tableRef = ref<InstanceType<typeof ElTable>>()
 
 const {runAsync: runDicItemDelete} = useRequest(pmsPmsDicItemDelete)
 
@@ -142,7 +141,6 @@ const handleDeleteStep = (row: PmsDicItemVO) => {
           <el-button :icon="Plus" @click="handleAddDic">添加</el-button>
         </div>
         <el-table
-          ref="tableRef"
           :data="filterDicItemList"
           border
           :loading="dicItemListLoading"

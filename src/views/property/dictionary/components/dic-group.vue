@@ -3,6 +3,7 @@ import {Plus} from '@element-plus/icons-vue'
 import {nextTick, onMounted, ref} from 'vue'
 import {pmsPropertySopCategoryInsert} from '@/service/api/pmsProperty'
 import {useRequest} from 'vue-request'
+import {ElInput} from 'element-plus'
 import Sortable from 'sortablejs'
 
 const {categoryList = [], sopId} = defineProps<{
