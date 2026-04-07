@@ -56,8 +56,8 @@ export function pmsPmsDicGroupSearch(payload: Record<string, any>) {
 }
 
 // 新建分组（默认名称未命名分组）
-export function pmsPmsDicGroupInsert() {
-  return http.post<Res<PmsDicGroupVO>>('/pms/dic/group/insert')
+export function pmsPmsDicGroupInsert(payload: {groupName: string}) {
+  return http.post<Res<PmsDicGroupVO>>('/pms/dic/group/insert', payload)
 }
 
 // 删除分组（级联软删除） | object:{groupId:分组ID}
